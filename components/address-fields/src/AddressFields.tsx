@@ -58,7 +58,7 @@ export interface CountryEntry {
 
 
 
-export interface AddressFieldProps {
+export interface AddressFieldsProps {
     // refs:
     addressRef        ?: React.Ref<HTMLInputElement> // setter ref
     
@@ -96,7 +96,7 @@ export interface AddressFieldProps {
     onZipChange       ?: React.ChangeEventHandler<HTMLInputElement>
     onCountryChange   ?: React.ChangeEventHandler<HTMLInputElement>
 }
-const AddressField = (props: AddressFieldProps) => {
+const AddressFields = (props: AddressFieldsProps) => {
     // props:
     const {
         // refs:
@@ -242,6 +242,6 @@ const AddressField = (props: AddressFieldProps) => {
     );
 };
 export {
-    AddressField,
-    AddressField as default,
+    AddressFields,
+    AddressFields as default,
 }
