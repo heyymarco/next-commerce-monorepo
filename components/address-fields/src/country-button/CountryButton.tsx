@@ -34,7 +34,7 @@ import {
 
 // styles:
 export const useCountryButtonStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
+    () => import(/* webpackPrefetch: true */ './styles/styles.js')
 , { id: 'as1kh4zc2p' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
