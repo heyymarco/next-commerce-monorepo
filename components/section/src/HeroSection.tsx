@@ -1,6 +1,6 @@
 import { default as React, useContext, useMemo } from 'react'
-import { ArticleContext, IArticleContext } from './GenericSection';
-import { Section, SectionProps } from './Section';
+import { ArticleContext, IArticleContext } from './GenericSection.js';
+import { Section, SectionProps } from './Section.js';
 
 
 

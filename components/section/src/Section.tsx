@@ -1,7 +1,7 @@
 import { default as React, useContext, useMemo } from 'react'
 import type { Tag } from '@reusable-ui/core'
 import { Container, ContainerProps, Generic } from '@reusable-ui/components'
-import { ArticleContext, GenericSection, GenericSectionProps, IArticleContext } from './GenericSection';
+import { ArticleContext, GenericSection, GenericSectionProps, IArticleContext } from './GenericSection.js';
 
 
 
