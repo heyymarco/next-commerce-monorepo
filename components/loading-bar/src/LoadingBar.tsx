@@ -11,14 +11,56 @@ import {
     // react components:
     ProgressProps,
     Progress,
+    ProgressBarProps,
     ProgressBar,
 }                           from '@reusable-ui/components'
 
 
 
-const LoadingBar = (props: ProgressProps) => <Progress {...props} semanticRole='status' aria-label='Loading...'>
-    <ProgressBar value={100} progressBarStyle='striped' running />
-</Progress>
+export interface LoadingBarProps
+    extends
+        Omit<ProgressProps, 'children'>,
+        Pick<ProgressBarProps, 'running'>
+{
+}
+const LoadingBar = (props: LoadingBarProps) => {
+    // rest props:
+    const {
+        // states:
+        running = true,
+    ...restProgressProps} = props;
+    
+    
+    
+    // jsx:
+    return (
+        <Progress
+            // other props:
+            {...restProgressProps}
+            
+            
+            
+            // semantics:
+            semanticRole='status'
+            aria-label='Loading...'
+        >
+            <ProgressBar
+                // variants:
+                progressBarStyle='striped'
+                
+                
+                
+                // states:
+                running={running}
+                
+                
+                
+                // values:
+                value={100}
+            />
+        </Progress>
+    );
+}
 export {
     LoadingBar,
     LoadingBar as default,
