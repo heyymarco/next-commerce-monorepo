@@ -32,9 +32,7 @@ import {
 }                           from '@reusable-ui/components'              // a set of official Reusable-UI components
 
 // nextJS:
-import {
-    default as NextImage,
-}                           from 'next/image'
+import NextImage            from 'next/image.js'
 
 
 
