@@ -38,7 +38,7 @@ import NextImage            from 'next/image.js'
 
 // styles:
 export const useImageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/style')
+    () => import(/* webpackPrefetch: true */ './styles/style.js')
 , { id: 'm91zb0019e', specificityWeight: 0 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
 
 
