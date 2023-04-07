@@ -36,7 +36,6 @@ export interface QuantityInputProps
             |'defaultValue'|'value'  // only supports numeric value
             
             // validations:
-            |'required'              // never blank value => not supported
             |'minLength'|'maxLength' // text length constraint is not supported
             |'pattern'               // text regex is not supported
             |'min'|'max'|'step'      // only supports numeric value
@@ -107,6 +106,8 @@ const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
         
         
         // validations:
+        required,
+        
         min,
         max,
         step,
@@ -376,9 +377,11 @@ const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
                     
                     
                     // validations:
-                    min  : inputComponent.props.min  ?? (negativeFn ? maxFn : minFn),
-                    max  : inputComponent.props.max  ?? (negativeFn ? minFn : maxFn),
-                    step : inputComponent.props.step ?? stepFn,
+                    required : inputComponent.props.required,
+                    
+                    min      : inputComponent.props.min  ?? (negativeFn ? maxFn : minFn),
+                    max      : inputComponent.props.max  ?? (negativeFn ? minFn : maxFn),
+                    step     : inputComponent.props.step ?? stepFn,
                     
                     
                     
