@@ -90,6 +90,7 @@ const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
         classes,
         variantClasses,
         stateClasses,
+        className,
         
         
         
@@ -334,6 +335,7 @@ const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
             classes={classes}
             variantClasses={variantClasses}
             stateClasses={stateClasses}
+            className={className}
             
             
             
