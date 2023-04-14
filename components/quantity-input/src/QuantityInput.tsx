@@ -28,10 +28,10 @@ import {
 
 
 
-export interface QuantityInputProps
+export interface QuantityInputProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        Omit<InputProps,
+        Omit<InputProps<TElement>,
             // values:
             |'defaultValue'|'value'  // only supports numeric value
             
@@ -62,7 +62,7 @@ export interface QuantityInputProps
     increaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
     inputComponent          ?: React.ReactComponentElement<any, InputProps>
 }
-const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
+const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: QuantityInputProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // refs:
@@ -310,7 +310,7 @@ const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
     
     // jsx:
     return (
-        <Group
+        <Group<TElement>
             // refs:
             outerRef={outerRef}
             
@@ -358,7 +358,7 @@ const QuantityInput = (props: QuantityInputProps): JSX.Element|null => {
             )}
             
             {/* <Input> */}
-            {React.cloneElement<InputProps>(inputComponent,
+            {React.cloneElement<InputProps<Element>>(inputComponent,
                 // props:
                 {
                     // rest props:
