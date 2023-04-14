@@ -33,7 +33,7 @@ export interface QuantityInputProps<TElement extends Element = HTMLSpanElement>
         // bases:
         Omit<InputProps<TElement>,
             // values:
-            |'defaultValue'|'value'  // only supports numeric value
+            |'defaultValue'|'value'  // only supports numeric value -or- null (blank value)
             
             // validations:
             |'minLength'|'maxLength' // text length constraint is not supported
@@ -45,8 +45,8 @@ export interface QuantityInputProps<TElement extends Element = HTMLSpanElement>
         >
 {
     // values:
-    defaultValue            ?: number
-    value                   ?: number
+    defaultValue            ?: number|null
+    value                   ?: number|null
     
     
     
@@ -157,9 +157,10 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         
         return value;
     });
-    const trimValueOpt = (value: number|undefined): number|undefined => {
+    const trimValueOpt = <TOpt extends null|undefined>(value: number|TOpt): number|TOpt => {
         // conditions:
-        if (value === undefined) return undefined;
+        if (value === null     ) return value;
+        if (value === undefined) return value;
         
         
         
@@ -169,29 +170,42 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     
     
     // fn props:
-    const valueFn        : number|undefined = trimValueOpt(value);
-    const defaultValueFn : number|undefined = trimValueOpt(defaultValue);
+    const valueFn        : number|null|undefined = trimValueOpt(value);
+    const defaultValueFn : number|null|undefined = trimValueOpt(defaultValue);
     
     
     
     // source of truth:
-    const valueRef         = useRef<number>(/*initialState: */valueFn ?? defaultValueFn ?? minFn);
+    const valueRef         = useRef<number|null>(
+        (valueFn !== undefined)
+        ? valueFn
+        : (
+            (defaultValueFn !== undefined)
+            ? defaultValueFn
+            : null
+        )
+    );
     if (valueFn !== undefined) valueRef.current = valueFn;  //   controllable component mode: update the source_of_truth on every_re_render -- on every [value] prop changes
     const [triggerRender]  = useTriggerRender();            // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
     
     type ChangeValueAction = 'setValue'|'decrease'|'increase'
-    const changeValue      = useEvent((action: ChangeValueAction, amount: number): void => {
+    const changeValue      = useEvent((action: ChangeValueAction, amount: number|null): void => {
         let value = valueRef.current;
+        const defaultValueInternal = minFn;
         switch (action) {
             case 'setValue': {
-                value = trimValue(amount);
+                value = trimValueOpt(amount);
             } break;
             
             case 'decrease' : {
-                value = trimValue(value - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                if (amount !== null) {
+                    value = trimValue((value ?? defaultValueInternal) - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                } // if
             } break;
             case 'increase' : {
-                value = trimValue(value + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                if (amount !== null) {
+                    value = trimValue((value ?? defaultValueInternal) + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                } // if
             } break;
         } // switch
         
@@ -214,7 +228,12 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                 // *hack*: trigger `onChange` event:
                 setTimeout(() => {
                     (inputElm as any)?._valueTracker?.stopTracking?.(); // react *hack*
-                    inputElm.valueAsNumber = value; // *hack* set_value before firing input event
+                    if (value !== null) {
+                        inputElm.valueAsNumber = value; // *hack* set_value before firing input event
+                    }
+                    else {
+                        inputElm.value = '';            // *hack* set_value before firing input event
+                    } // if
                     
                     inputElm.dispatchEvent(new Event('input', { bubbles: true, cancelable: false, composed: true }));
                 }, 0); // runs the 'input' event *next after* current event completed
@@ -251,7 +270,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         
         // action:
         if (event.isTrusted) { // ignores the event emmited by `inputElm.dispatchEvent(new Event('input', { bubbles: true, cancelable: false, composed: true }));`
-            changeValue('setValue', event.target.valueAsNumber);
+            changeValue('setValue', event.target.value ? event.target.valueAsNumber : null);
         } // if
     });
     const handleChange              = useMergeEvents(
@@ -348,7 +367,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                 {
                     // accessibilities:
                     title   : decreaseButtonComponent.props.title   ?? 'decrease quantity',
-                    enabled : decreaseButtonComponent.props.enabled ?? (valueRef.current > minFn),
+                    enabled : decreaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current > minFn)),
                     
                     
                     
@@ -372,8 +391,8 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     
                     
                     // values:
-                 // defaultValue : inputComponent.props.defaultValue ?? defaultValueFn,   // fully controllable, no defaultValue
-                    value        : inputComponent.props.value        ?? valueRef.current, // fully controllable
+                 // defaultValue : inputComponent.props.defaultValue ?? defaultValueFn   ?? '', // fully controllable, no defaultValue
+                    value        : inputComponent.props.value        ?? valueRef.current ?? '', // fully controllable
                     onChange     : handleChange,
                     
                     
@@ -398,7 +417,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                 {
                     // accessibilities:
                     title   : increaseButtonComponent.props.title   ?? 'increase quantity',
-                    enabled : increaseButtonComponent.props.enabled ?? (valueRef.current < maxFn),
+                    enabled : increaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current < maxFn)),
                     
                     
                     
