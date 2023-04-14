@@ -17,13 +17,13 @@ import {
 
 
 
-export interface LoadingBarProps
+export interface LoadingBarProps<TElement extends Element = HTMLElement>
     extends
-        Omit<ProgressProps, 'children'>,
-        Pick<ProgressBarProps, 'running'>
+        Omit<ProgressProps<TElement>, 'children'>,
+        Pick<ProgressBarProps<Element>, 'running'>
 {
 }
-const LoadingBar = (props: LoadingBarProps) => {
+const LoadingBar = <TElement extends Element = HTMLElement>(props: LoadingBarProps<TElement>) => {
     // rest props:
     const {
         // states:
@@ -34,7 +34,7 @@ const LoadingBar = (props: LoadingBarProps) => {
     
     // jsx:
     return (
-        <Progress
+        <Progress<TElement>
             // other props:
             {...restProgressProps}
             
