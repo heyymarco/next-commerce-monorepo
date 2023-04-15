@@ -61,6 +61,14 @@ export interface QuantityInputProps<TElement extends Element = HTMLSpanElement>
     decreaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
     increaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
     inputComponent          ?: React.ReactComponentElement<any, InputProps>
+    
+    
+    
+    // children:
+    childrenBeforeButton    ?: React.ReactNode
+    childrenBeforeInput     ?: React.ReactNode
+    childrenAfterInput      ?: React.ReactNode
+    childrenAfterButton     ?: React.ReactNode
 }
 const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: QuantityInputProps<TElement>): JSX.Element|null => {
     // rest props:
@@ -124,6 +132,14 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         decreaseButtonComponent = (<ButtonIcon icon='remove' /> as React.ReactComponentElement<any, ButtonProps>),
         increaseButtonComponent = (<ButtonIcon icon='add'    /> as React.ReactComponentElement<any, ButtonProps>),
         inputComponent          = (<Input                    /> as React.ReactComponentElement<any, InputProps>),
+        
+        
+        
+        // children:
+        childrenBeforeButton,
+        childrenBeforeInput,
+        childrenAfterInput,
+        childrenAfterButton,
     ...restInputProps} = props;
     
     
@@ -361,6 +377,8 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             // styles:
             style={style}
         >
+            {childrenBeforeButton}
+            
             {/* <Button> */}
             {React.cloneElement<ButtonProps>(decreaseButtonComponent,
                 // props:
@@ -375,6 +393,8 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     onClick : handleDecreaseButtonClick,
                 },
             )}
+            
+            {childrenBeforeInput}
             
             {/* <Input> */}
             {React.cloneElement<InputProps<Element>>(inputComponent,
@@ -411,6 +431,8 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                 },
             )}
             
+            {childrenAfterInput}
+            
             {/* <Button> */}
             {React.cloneElement<ButtonProps>(increaseButtonComponent,
                 // props:
@@ -425,6 +447,8 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     onClick : handleIncreaseButtonClick,
                 },
             )}
+            
+            {childrenAfterButton}
         </Group>
     );
 };
