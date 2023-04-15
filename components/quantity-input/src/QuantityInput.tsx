@@ -8,13 +8,24 @@ import {
     // hooks:
     useRef,
 }                           from 'react'
+
+// cssfn:
+import type {
+    // types:
+    Optional,
+}                           from '@cssfn/core'                  // writes css in javascript
+
+// reusable-ui core:
 import {
     // react helper hooks:
     useTriggerRender,
     useEvent,
     useMergeEvents,
     useMergeRefs,
-}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+    useMergeClasses,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
 import {
     ButtonProps,
     
@@ -24,7 +35,7 @@ import {
     
     InputProps,
     Input,
-}                           from '@reusable-ui/components'              // a set of official Reusable-UI components
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
 
@@ -277,6 +288,38 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     
     
     
+    // classes:
+    const specialClasses    = ['solid', 'fluid', 'not-solid', 'not-fluid'];
+    const hasSpecialClasses = (className: Optional<string>): boolean => !!className && specialClasses.includes(className);
+    const decreaseButtonClasses = useMergeClasses(
+        // preserves the original `classes` from `decreaseButtonComponent`:
+        decreaseButtonComponent.props.classes,
+        
+        
+        
+        // classes:
+        ...(decreaseButtonComponent.props.classes?.some(hasSpecialClasses) ? [/* do not inject any className */] : ['solid']),
+    );
+    const inputClasses = useMergeClasses(
+        // preserves the original `classes` from `inputComponent`:
+        inputComponent.props.classes,
+        
+        
+        
+        // classes:
+        ...(inputComponent.props.classes?.some(hasSpecialClasses) ? [/* do not inject any className */] : ['fluid']),
+    );
+    const increaseButtonClasses = useMergeClasses(
+        // preserves the original `classes` from `increaseButtonComponent`:
+        increaseButtonComponent.props.classes,
+        
+        
+        
+        // classes:
+        ...(increaseButtonComponent.props.classes?.some(hasSpecialClasses) ? [/* do not inject any className */] : ['solid']),
+    );
+    
+    
     // handlers:
     const handleChangeInternal      = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
         // conditions:
@@ -383,14 +426,19 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             {React.cloneElement<ButtonProps>(decreaseButtonComponent,
                 // props:
                 {
+                    // classes:
+                    classes      : decreaseButtonClasses,
+                    
+                    
+                    
                     // accessibilities:
-                    title   : decreaseButtonComponent.props.title   ?? 'decrease quantity',
-                    enabled : decreaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current > minFn)),
+                    title        : decreaseButtonComponent.props.title   ?? 'decrease quantity',
+                    enabled      : decreaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current > minFn)),
                     
                     
                     
                     // handlers:
-                    onClick : handleDecreaseButtonClick,
+                    onClick      : handleDecreaseButtonClick,
                 },
             )}
             
@@ -406,7 +454,12 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     
                     
                     // refs:
-                    elmRef : mergedInputRef,
+                    elmRef       : mergedInputRef,
+                    
+                    
+                    
+                    // classes:
+                    classes      : inputClasses,
                     
                     
                     
@@ -418,16 +471,16 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     
                     
                     // validations:
-                    required : inputComponent.props.required,
+                    required     : inputComponent.props.required,
                     
-                    min      : inputComponent.props.min  ?? (negativeFn ? maxFn : minFn),
-                    max      : inputComponent.props.max  ?? (negativeFn ? minFn : maxFn),
-                    step     : inputComponent.props.step ?? stepFn,
+                    min          : inputComponent.props.min  ?? (negativeFn ? maxFn : minFn),
+                    max          : inputComponent.props.max  ?? (negativeFn ? minFn : maxFn),
+                    step         : inputComponent.props.step ?? stepFn,
                     
                     
                     
                     // formats:
-                    type : inputComponent.props.type ?? type,
+                    type         : inputComponent.props.type ?? type,
                 },
             )}
             
@@ -437,14 +490,19 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             {React.cloneElement<ButtonProps>(increaseButtonComponent,
                 // props:
                 {
+                    // classes:
+                    classes      : increaseButtonClasses,
+                    
+                    
+                    
                     // accessibilities:
-                    title   : increaseButtonComponent.props.title   ?? 'increase quantity',
-                    enabled : increaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current < maxFn)),
+                    title        : increaseButtonComponent.props.title   ?? 'increase quantity',
+                    enabled      : increaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current < maxFn)),
                     
                     
                     
                     // handlers:
-                    onClick : handleIncreaseButtonClick,
+                    onClick      : handleIncreaseButtonClick,
                 },
             )}
             
