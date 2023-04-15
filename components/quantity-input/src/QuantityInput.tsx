@@ -71,7 +71,7 @@ export interface QuantityInputProps<TElement extends Element = HTMLSpanElement>
     // components:
     decreaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
     increaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
-    inputComponent          ?: React.ReactComponentElement<any, InputProps>
+    inputComponent          ?: React.ReactComponentElement<any, InputProps<TElement>>
     
     
     
@@ -142,7 +142,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         // components:
         decreaseButtonComponent = (<ButtonIcon icon='remove' /> as React.ReactComponentElement<any, ButtonProps>),
         increaseButtonComponent = (<ButtonIcon icon='add'    /> as React.ReactComponentElement<any, ButtonProps>),
-        inputComponent          = (<Input                    /> as React.ReactComponentElement<any, InputProps>),
+        inputComponent          = (<Input                    /> as React.ReactComponentElement<any, InputProps<TElement>>),
         
         
         
@@ -445,7 +445,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             {childrenBeforeInput}
             
             {/* <Input> */}
-            {React.cloneElement<InputProps<Element>>(inputComponent,
+            {React.cloneElement<InputProps<TElement>>(inputComponent,
                 // props:
                 {
                     // rest props:
