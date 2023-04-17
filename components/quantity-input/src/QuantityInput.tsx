@@ -51,6 +51,11 @@ export interface QuantityInputProps<TElement extends Element = HTMLSpanElement>
             |'pattern'               // text regex is not supported
             |'min'|'max'|'step'      // only supports numeric value
             
+            // formats:
+            |'type'                  // only supports number
+            |'autoCapitalize'        // nothing to capitalize of number
+            |'inputMode'             // always 'numeric'
+            
             // children:
             |'children'              // no nested children
         >
@@ -131,11 +136,6 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         min,
         max,
         step,
-        
-        
-        
-        // formats:
-        type = 'number',
         
         
         
@@ -480,7 +480,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     
                     
                     // formats:
-                    type         : inputComponent.props.type ?? type,
+                    type         : inputComponent.props.type ?? 'number',
                 },
             )}
             
