@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/quantity-input",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "",
   "main": "dist/QuantityInput.js",
   "types": "dist/QuantityInput.d.ts",

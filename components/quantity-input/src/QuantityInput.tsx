@@ -187,7 +187,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             value        = minFn + (steps * stepFn);
         } // if
         
-        return value;
+        return decimalize(value);
     });
     const trimValueOpt = <TOpt extends null|undefined>(value: number|TOpt): number|TOpt => {
         // conditions:
@@ -227,19 +227,16 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         switch (action) {
             case 'setValue': {
                 value = trimValueOpt(amount);
-                value = decimalize(value);
             } break;
             
             case 'decrease' : {
                 if (amount !== null) {
                     value = trimValue((value ?? defaultValueInternal) - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
-                    value = decimalize(value);
                 } // if
             } break;
             case 'increase' : {
                 if (amount !== null) {
                     value = trimValue((value ?? defaultValueInternal) + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
-                    value = decimalize(value);
                 } // if
             } break;
         } // switch
