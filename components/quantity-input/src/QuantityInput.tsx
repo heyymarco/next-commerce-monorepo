@@ -17,6 +17,11 @@ import type {
 
 // reusable-ui core:
 import {
+    // a set of numeric utility functions:
+    decimalize,
+    
+    
+    
     // react helper hooks:
     useTriggerRender,
     useEvent,
@@ -222,16 +227,19 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         switch (action) {
             case 'setValue': {
                 value = trimValueOpt(amount);
+                value = decimalize(value);
             } break;
             
             case 'decrease' : {
                 if (amount !== null) {
                     value = trimValue((value ?? defaultValueInternal) - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                    value = decimalize(value);
                 } // if
             } break;
             case 'increase' : {
                 if (amount !== null) {
                     value = trimValue((value ?? defaultValueInternal) + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                    value = decimalize(value);
                 } // if
             } break;
         } // switch

@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/quantity-input",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "dist/QuantityInput.js",
   "types": "dist/QuantityInput.d.ts",
@@ -21,7 +21,7 @@
   "dependencies": {
     "@cssfn/core": "^2.5.0",
     "@reusable-ui/components": "^5.2.0",
-    "@reusable-ui/core": "^5.2.0",
+    "@reusable-ui/core": "^5.2.1",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {
