@@ -180,13 +180,18 @@ const AddressFields = (props: AddressFieldsProps) => {
                             onClick={() => {
                                 const countryInputElm = countryInputRefInternal.current;
                                 if (countryInputElm) {
-                                    // *hack*: trigger `onChange` event:
-                                    setTimeout(() => {
-                                        (countryInputElm as any)?._valueTracker?.stopTracking?.(); // react *hack*
-                                        countryInputElm.value = code; // *hack* set_value before firing input event
+                                    // react *hack*: trigger `onChange` event:
+                                    scheduleTriggerEvent(() => { // runs the `input` event *next after* current macroTask completed
+                                        const oldValue = countryInputElm.value; // react *hack* get_prev_value *before* modifying
+                                        countryInputElm.value = code;           // react *hack* set_value *before* firing `input` event
+                                        (countryInputElm as any)._valueTracker?.setValue(oldValue); // react *hack* in order to React *see* the changes when `input` event fired
                                         
+                                        
+                                        
+                                        // fire `input` native event to trigger `onChange` synthetic event:
                                         countryInputElm.dispatchEvent(new Event('input', { bubbles: true, cancelable: false, composed: true }));
-                                    }, 0); // runs the 'input' event *next after* current event completed
+                                        // countryInputElm.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: false, composed: true, data: code, dataTransfer: null, inputType: 'insertFromPaste', isComposing: false, view: null, detail: 0 }));
+                                    });
                                 } // if
                             }}
                         >
