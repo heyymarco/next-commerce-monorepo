@@ -245,6 +245,10 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         
         // trigger `onChange` if the value changed:
         if (valueRef.current !== value) {
+            const oldValue = valueRef.current; // react *hack* get_prev_value *before* modifying (by any re-render => fully controllable `value = valueRef.current`)
+            
+            
+            
             if (valueFn === undefined) { // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
                 valueRef.current = value; // update
                 triggerRender();          // sync the UI to `valueRef.current`
@@ -257,18 +261,21 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             
             const inputElm = inputRefInternal.current;
             if (inputElm) {
-                // *hack*: trigger `onChange` event:
-                setTimeout(() => {
-                    (inputElm as any)?._valueTracker?.stopTracking?.(); // react *hack*
+                // react *hack*: trigger `onChange` event:
+                scheduleTriggerEvent(() => { // runs the `input` event *next after* current macroTask completed
                     if (value !== null) {
-                        inputElm.valueAsNumber = value; // *hack* set_value before firing input event
+                        inputElm.valueAsNumber = value; // react *hack* set_value *before* firing `input` event
                     }
                     else {
-                        inputElm.value = '';            // *hack* set_value before firing input event
+                        inputElm.value = '';            // react *hack* set_value *before* firing `input` event
                     } // if
+                    (inputElm as any)._valueTracker?.setValue(`${oldValue}`); // react *hack* in order to React *see* the changes when `input` event fired
                     
+                    
+                    
+                    // fire `input` native event to trigger `onChange` synthetic event:
                     inputElm.dispatchEvent(new Event('input', { bubbles: true, cancelable: false, composed: true }));
-                }, 0); // runs the 'input' event *next after* current event completed
+                });
             } // if
         } // if
     });
