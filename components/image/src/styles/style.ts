@@ -31,7 +31,7 @@ export default () => style({
         
         // appearances:
         objectFit  : 'contain', // default to contain (no image part is loss)
-        visibility : 'visible', // override Site.global
+        // visibility : 'visible', // override Site.global // not needed anymore
         
         
         
