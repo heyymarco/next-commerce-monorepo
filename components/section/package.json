@@ -19,8 +19,8 @@
   "author": "heyymarco",
   "license": "ISC",
   "dependencies": {
-    "@reusable-ui/components": "^5.2.0",
-    "@reusable-ui/core": "^5.2.0",
+    "@reusable-ui/components": "^6.0.0",
+    "@reusable-ui/core": "^6.0.0",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {
