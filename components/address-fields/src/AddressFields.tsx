@@ -9,6 +9,12 @@ import {
     useRef,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useScheduleTriggerEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // simple-components:
@@ -152,6 +158,11 @@ const AddressFields = (props: AddressFieldsProps) => {
     
     
     
+    // events:
+    const scheduleTriggerEvent = useScheduleTriggerEvent();
+    
+    
+    
     // jsx:
     return (
         <>
@@ -189,8 +200,7 @@ const AddressFields = (props: AddressFieldsProps) => {
                                         
                                         
                                         // fire `input` native event to trigger `onChange` synthetic event:
-                                        countryInputElm.dispatchEvent(new Event('input', { bubbles: true, cancelable: false, composed: true }));
-                                        // countryInputElm.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: false, composed: true, data: code, dataTransfer: null, inputType: 'insertFromPaste', isComposing: false, view: null, detail: 0 }));
+                                        countryInputElm.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: false, composed: true, data: code, dataTransfer: null, inputType: 'insertFromPaste', isComposing: false, view: null, detail: 0 }));
                                     });
                                 } // if
                             }}
