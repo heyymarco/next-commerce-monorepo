@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/image",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/Image.js",
   "types": "dist/Image.d.ts",
@@ -19,8 +19,8 @@
   "author": "heyymarco",
   "license": "ISC",
   "dependencies": {
-    "@cssfn/core": "^2.5.0",
-    "@cssfn/cssfn-react": "^2.5.0",
+    "@cssfn/core": "^3.0.0",
+    "@cssfn/cssfn-react": "^3.0.0",
     "@reusable-ui/components": "^6.0.0",
     "@reusable-ui/core": "^6.0.0",
     "@types/react": "^18.0.33"
