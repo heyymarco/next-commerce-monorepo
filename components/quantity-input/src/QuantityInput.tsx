@@ -18,7 +18,7 @@ import type {
 // reusable-ui core:
 import {
     // a set of numeric utility functions:
-    decimalize,
+    clamp,
     
     
     
@@ -28,6 +28,7 @@ import {
     useMergeEvents,
     useMergeRefs,
     useMergeClasses,
+    useScheduleTriggerEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -166,54 +167,30 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     const stepFn     : number  = Math.abs(step ?? 1);
     const negativeFn : boolean = (maxFn < minFn);
     
-    const trimValue    = useEvent((value: number): number => {
-        // make sure the requested value is between the min value & max value:
-        value     = Math.min(Math.max(
-            value
-        , (negativeFn ? maxFn : minFn)), (negativeFn ? minFn : maxFn));
-        
-        // if step was specified => stepping the value starting from min value:
-        if (stepFn > 0) {
-            let steps    = Math.round((value - minFn) / stepFn); // get the_nearest_stepped_value
-            
-            // make sure the_nearest_stepped_value is not exceeded the max value:
-            let maxSteps = (maxFn - minFn) / stepFn;
-            maxSteps     = negativeFn ? Math.ceil(maxSteps) : Math.floor(maxSteps); // remove the decimal fraction
-            
-            // re-align the steps:
-            steps        = negativeFn ? Math.max(steps, maxSteps) : Math.min(steps, maxSteps);
-            
-            // calculate the new value:
-            value        = minFn + (steps * stepFn);
-        } // if
-        
-        return decimalize(value);
+    const trimValue = useEvent(<TOpt extends number|null|undefined>(value: number|TOpt): number|TOpt => {
+        return clamp(minFn, value, maxFn, stepFn);
     });
-    const trimValueOpt = <TOpt extends null|undefined>(value: number|TOpt): number|TOpt => {
-        // conditions:
-        if (value === null     ) return value;
-        if (value === undefined) return value;
-        
-        
-        
-        return trimValue(value);
-    };
     
     
     
     // fn props:
-    const valueFn        : number|null|undefined = trimValueOpt(value);
-    const defaultValueFn : number|null|undefined = trimValueOpt(defaultValue);
+    const valueFn        : number|null|undefined = trimValue(value);
+    const defaultValueFn : number|null|undefined = trimValue(defaultValue);
+    
+    
+    
+    // events:
+    const scheduleTriggerEvent = useScheduleTriggerEvent();
     
     
     
     // source of truth:
-    const valueRef         = useRef<number|null>(
+    const valueRef         = useRef<number|null>(/*initialState: */
         (valueFn !== undefined)
-        ? valueFn
+        ? valueFn // as number|null
         : (
             (defaultValueFn !== undefined)
-            ? defaultValueFn
+            ? defaultValueFn // as number|null
             : null
         )
     );
@@ -226,7 +203,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         const defaultValueInternal = minFn;
         switch (action) {
             case 'setValue': {
-                value = trimValueOpt(amount);
+                value = trimValue(amount);
             } break;
             
             case 'decrease' : {
