@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/address-fields",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "",
   "main": "dist/AddressFields.js",
   "types": "dist/AddressFields.d.ts",
@@ -21,8 +21,8 @@
   "dependencies": {
     "@cssfn/core": "^3.0.0",
     "@cssfn/cssfn-react": "^3.0.0",
-    "@reusable-ui/components": "^6.0.0",
-    "@reusable-ui/core": "^6.0.0",
+    "@reusable-ui/components": "^6.0.2",
+    "@reusable-ui/core": "^6.0.2",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {

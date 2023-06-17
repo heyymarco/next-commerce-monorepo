@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/section",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,8 +19,8 @@
   "author": "heyymarco",
   "license": "ISC",
   "dependencies": {
-    "@reusable-ui/components": "^6.0.0",
-    "@reusable-ui/core": "^6.0.0",
+    "@reusable-ui/components": "^6.0.2",
+    "@reusable-ui/core": "^6.0.2",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {
