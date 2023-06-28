@@ -7,6 +7,7 @@ import {
     
     // hooks:
     useState,
+    useRef,
 }                           from 'react'
 
 // cssfn:
@@ -18,6 +19,7 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
     useMergeEvents,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
@@ -29,7 +31,7 @@ import {
     
     Busy,
     Icon,
-}                           from '@reusable-ui/components'              // a set of official Reusable-UI components
+}                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
 // nextJS:
 import NextImage            from 'next/image.js'
@@ -68,11 +70,6 @@ export interface ImageProps<TElement extends Element = HTMLElement>
 const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElement>) => {
     // styles:
     const styleSheet = useImageStyleSheet();
-    
-    
-    
-    // states:
-    const [isLoaded, setIsLoaded] = useState<boolean|undefined>(undefined);
     
     
     
@@ -128,6 +125,46 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         onErrorCapture,
         onLoadingComplete,
     ...restGenericProps} = props;
+    
+    
+    
+    // states:
+    const [isLoaded, setIsLoaded] = useState<boolean|undefined>(undefined);
+    
+    
+    
+    // dom effects:
+    const prevSrcRef = useRef<typeof src>(src);
+    useIsomorphicLayoutEffect(() => { // needs a fast resetter before `onError|onLoadingComplete` runs
+        // conditions:
+        if (prevSrcRef.current === src) return; // exact the same => ignore
+        const prevSrc = prevSrcRef.current;
+        const realPrevSrc = (
+            !prevSrc
+            ? undefined
+            : (typeof(prevSrc) === 'string')
+                ? prevSrc
+                : ('default' in prevSrc)
+                    ? prevSrc.default.src
+                    : prevSrc.src
+        );
+        const realSrc = (
+            !src
+            ? undefined
+            : (typeof(src) === 'string')
+                ? src
+                : ('default' in src)
+                    ? src.default.src
+                    : src.src
+        );
+        if (realPrevSrc === realSrc) return; // not the same but equivalent of src => ignore
+        prevSrcRef.current = src; // sync
+        
+        
+        
+        // resets:
+        setIsLoaded(undefined);
+    }, [src]);
     
     
     
