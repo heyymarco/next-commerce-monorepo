@@ -8,9 +8,14 @@ import {
 
 
 export default () => style({
+    // positions:
+    position       : 'relative', // suppress <NextImage>'s warning message
+    
+    
+    
     // layouts:
     display        : 'inline-flex', // make an inline element like <img>
-    flexDirection  : 'row',         // we'll manipulate the <img> width
+    flexDirection  : 'column',      // we'll manipulate the <img> height
     justifyContent : 'center',
     alignItems     : 'center',
     
@@ -25,7 +30,7 @@ export default () => style({
     ...children(':where(img)', {
         // positions:
         // position   : 'absolute',              // fill the <figure> BUT can't take space
-        position   : ['relative', '!important'], // fill the <figure> AND can take space // !important : to override <NextImage>
+        position   : ['relative', '!important'], // fill the <figure> AND can take space // !important : to override <NextImage>'s position
         
         
         
@@ -36,9 +41,12 @@ export default () => style({
         
         
         // sizes:
-        flex   : [[0, 0, 'auto']],       // ungrowable, unshrinkable, initial from <img>'s width // set to fixed_size to make customization easier
-        width  : ['100%', '!important'], // follows the <figure>'s width  // !important : to override <NextImage>
-        height : ['100%', '!important'], // follows the <figure>'s height // !important : to override <NextImage>
+        flex      : [[1, 1, 'auto']],        // growable, shrinkable, initial from <img>'s height
+        width     : ['unset', '!important'], // remove <NextImage>'s width
+        height    : ['unset', '!important'], // remove <NextImage>'s height
+        maxWidth  : '100%',
+        maxHeight : '100%',
+        minHeight : 0,
     }),
     ...children(':where(.status)', {
         // positions:
