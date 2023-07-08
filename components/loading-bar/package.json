@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/loading-bar",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "",
   "main": "dist/LoadingBar.js",
   "types": "dist/LoadingBar.d.ts",
@@ -19,7 +19,7 @@
   "author": "heyymarco",
   "license": "ISC",
   "dependencies": {
-    "@reusable-ui/components": "^6.0.3",
+    "@reusable-ui/components": "^6.0.4",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {
