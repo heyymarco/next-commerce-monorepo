@@ -8,11 +8,13 @@
     "build": "npx lerna run tsc",
     "publish": "npm run build && npx lerna publish from-package"
   },
+  "type": "module",
   "workspaces": [
     "components/*",
     "websites_/*"
   ],
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "lerna": "^6.6.1"
   },
   "dependencies": {
