@@ -44,15 +44,16 @@ import {
     VisuallyHidden,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
 
+// heymarco components:
+import {
+    // react components:
+    EditableButton,
+}                           from '@heymarco/editable-button'
+
 // redux:
 import type {
     EntityState
 }                           from '@reduxjs/toolkit'
-
-// internals:
-import {
-    CountryButton,
-}                           from './country-button/CountryButton.js'
 
 
 
@@ -175,7 +176,7 @@ const AddressFields = (props: AddressFieldsProps) => {
                 </Label>
                 <DropdownListButton
                     buttonChildren={selectedCountry?.name ?? 'Country'}
-                    buttonComponent={<CountryButton isValid={!!selectedCountry} assertiveFocusable={true} />}
+                    buttonComponent={<EditableButton isValid={!!selectedCountry} assertiveFocusable={true} />}
                     
                     theme='primary'
                     mild={true}
