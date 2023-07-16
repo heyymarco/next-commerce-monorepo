@@ -10,7 +10,7 @@
   },
   "workspaces": [
     "components/*",
-    "websites/*"
+    "websites_/*"
   ],
   "devDependencies": {
     "lerna": "^6.6.1"
