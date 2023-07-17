@@ -208,12 +208,22 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
             
             case 'decrease' : {
                 if (amount !== null) {
-                    value = trimValue((value ?? defaultValueInternal) - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                    if (value === null) {
+                        value = trimValue(defaultValueInternal);
+                    }
+                    else {
+                        value = trimValue(value - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                    } // if
                 } // if
             } break;
             case 'increase' : {
                 if (amount !== null) {
-                    value = trimValue((value ?? defaultValueInternal) + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                    if (value === null) {
+                        value = trimValue(defaultValueInternal);
+                    }
+                    else {
+                        value = trimValue(value + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                    } // if
                 } // if
             } break;
         } // switch
@@ -422,7 +432,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     
                     // accessibilities:
                     title        : decreaseButtonComponent.props.title   ?? 'decrease quantity',
-                    enabled      : decreaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current > minFn)),
+                    enabled      : decreaseButtonComponent.props.enabled ?? ((valueRef.current === null) || (valueRef.current > minFn)),
                     
                     
                     
@@ -486,7 +496,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                     
                     // accessibilities:
                     title        : increaseButtonComponent.props.title   ?? 'increase quantity',
-                    enabled      : increaseButtonComponent.props.enabled ?? (!!valueRef.current && (valueRef.current < maxFn)),
+                    enabled      : increaseButtonComponent.props.enabled ?? ((valueRef.current === null) || (valueRef.current < maxFn)),
                     
                     
                     
