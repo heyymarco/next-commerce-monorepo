@@ -46,6 +46,21 @@ export const useImageStyleSheet = dynamicStyleSheet(
 
 
 
+// utilities:
+const getRealSrc = (src: NextImageProps['src']|undefined):string|undefined => {
+    return (
+        !src
+        ? undefined
+        : (typeof(src) === 'string')
+            ? src
+            : ('default' in src)
+                ? src.default.src
+                : src.src
+    );
+}
+
+
+
 type NextImageProps = Parameters<typeof NextImage>[0]
 export interface ImageProps<TElement extends Element = HTMLElement>
     extends
@@ -130,7 +145,14 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     
     
     // states:
-    const [isLoaded, setIsLoaded] = useState<boolean|undefined>(undefined);
+    const [isLoaded, setIsLoaded] = useState<boolean|undefined>((): false|undefined => {
+        const realSrc = getRealSrc(src);
+        /*
+            * no image  => show error indicator.
+            * has image => show loading indicator => then onLoadingComplete => true => show the image
+        */
+        return !realSrc ? false : undefined;
+    });
     
     
     
@@ -140,31 +162,21 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         // conditions:
         if (prevSrcRef.current === src) return; // exact the same => ignore
         const prevSrc = prevSrcRef.current;
-        const realPrevSrc = (
-            !prevSrc
-            ? undefined
-            : (typeof(prevSrc) === 'string')
-                ? prevSrc
-                : ('default' in prevSrc)
-                    ? prevSrc.default.src
-                    : prevSrc.src
-        );
-        const realSrc = (
-            !src
-            ? undefined
-            : (typeof(src) === 'string')
-                ? src
-                : ('default' in src)
-                    ? src.default.src
-                    : src.src
-        );
+        const realPrevSrc = getRealSrc(prevSrc);
+        const realSrc     = getRealSrc(src);
         if (realPrevSrc === realSrc) return; // not the same but equivalent of src => ignore
         prevSrcRef.current = src; // sync
         
         
         
         // resets:
-        setIsLoaded(undefined);
+        setIsLoaded(
+            /*
+            * no image  => show error indicator.
+            * has image => show loading indicator => then onLoadingComplete => true => show the image
+            */
+            !realSrc ? false : undefined
+        );
     }, [src]);
     
     
