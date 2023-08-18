@@ -427,7 +427,6 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ??
             // if there is a request/client/server error => assumes as a connection problem:
             ((): React.ReactNode => {
-
                 const fetchErrorMessageResult = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorInfo) : fetchErrorMessage;
                 return (fetchErrorMessageResult !== undefined) ? fetchErrorMessageResult : _fetchErrorMessageDefault(fetchErrorInfo);
             })()
