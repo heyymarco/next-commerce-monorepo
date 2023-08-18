@@ -131,7 +131,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
         fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
         fieldErrorIconDefault       = 'text_fields',
-        fieldErrorIconComponent     = (<Icon<Element> icon={fieldErrorIconDefault}          /> as React.ReactComponentElement<any, IconProps<Element>>),
+        fieldErrorIconComponent     = (<Icon<Element> icon={undefined as any}               /> as React.ReactComponentElement<any, IconProps<Element>>),
         fieldErrorFocusDefault      = true,
         fetchErrorMessageDefault    = _fetchErrorMessageDefault,
     } = props;
