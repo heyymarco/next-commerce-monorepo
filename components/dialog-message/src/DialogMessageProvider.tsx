@@ -145,10 +145,6 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     
-    // refs:
-    
-    
-    
     // stable callbacks:
     const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false>                           ): Promise<void> => {
         setDialogMessage(dialogMessage);
