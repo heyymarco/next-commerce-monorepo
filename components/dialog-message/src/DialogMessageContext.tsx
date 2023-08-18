@@ -9,6 +9,12 @@ import {
     createContext,
 }                           from 'react'
 
+// reusable-ui components:
+import type {
+    // simple-components:
+    IconProps,
+}                           from '@reusable-ui/components'
+
 // internals:
 import type {
     // types:
@@ -20,7 +26,9 @@ import type {
 
 // contexts:
 export interface ShowMessageFieldErrorOptions {
-    fieldErrorFocus   ?: boolean
+    fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
+    fieldErrorIcon     ?: IconProps<Element>['icon']
+    fieldErrorFocus    ?: boolean
 }
 export interface ShowMessageFetchErrorOptions {
     fetchErrorMessage ?: FetchErrorMessage

@@ -78,8 +78,8 @@ import {
 
 
 // defaults:
-const _fieldErrorIconFind       : NonNullable<DialogMessageProviderProps['fieldErrorIconFind']> = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
-const _fetchErrorMessageDefault : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
+const _fieldErrorIconFindDefault : NonNullable<ShowMessageFieldErrorOptions['fieldErrorIconFind']>      = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
+const _fetchErrorMessageDefault  : Extract<ShowMessageFetchErrorOptions['fetchErrorMessage'], Function> = ({isRequestError, isServerError}) => <>
     <p>
         Oops, there was an error processing the command.
     </p>
@@ -111,11 +111,11 @@ export interface DialogMessageProviderProps {
     
     fieldErrorListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     fieldErrorListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
-    fieldErrorIconFind           ?: (invalidField: Element) => string|null|undefined
-    fieldErrorIconDefault        ?: IconProps<Element>['icon']
+    fieldErrorIconFindDefault    ?: ShowMessageFieldErrorOptions['fieldErrorIconFind']
+    fieldErrorIconDefault        ?: ShowMessageFieldErrorOptions['fieldErrorIcon']
     fieldErrorIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
-    fieldErrorFocusDefault       ?: boolean
-    fetchErrorMessageDefault     ?: FetchErrorMessage
+    fieldErrorFocusDefault       ?: ShowMessageFieldErrorOptions['fieldErrorFocus']
+    fetchErrorMessageDefault     ?: ShowMessageFetchErrorOptions['fetchErrorMessage']
 }
 const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProviderProps>): JSX.Element|null => {
     // rest props:
@@ -132,7 +132,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
         fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
-        fieldErrorIconFind          = _fieldErrorIconFind,
+        fieldErrorIconFindDefault   = _fieldErrorIconFindDefault,
         fieldErrorIconDefault       = 'text_fields',
         fieldErrorIconComponent     = (<Icon<Element> icon={undefined as any}               /> as React.ReactComponentElement<any, IconProps<Element>>),
         fieldErrorFocusDefault      = true,
@@ -204,7 +204,11 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                                 {
                                     // appearances:
                                     icon : fieldErrorIconComponent.props.icon ?? (
-                                        fieldErrorIconFind(invalidField)
+                                        options?.fieldErrorIconFind?.(invalidField)
+                                        ??
+                                        fieldErrorIconFindDefault(invalidField)
+                                        ??
+                                        options?.fieldErrorIcon
                                         ??
                                         fieldErrorIconDefault
                                     ),
