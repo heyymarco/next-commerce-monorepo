@@ -19,3 +19,15 @@ export const paragraphify = (text: string): React.ReactElement => {
         </>
     );
 };
+
+export const isTypeError = (error: any): boolean => {
+    return (
+        (error instanceof TypeError)
+        ||
+        (
+            (typeof(error) === 'string')
+            &&
+            error.startsWith('TypeError:')
+        )
+    );
+};

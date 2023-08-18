@@ -66,6 +66,7 @@ import type {
 import {
     // utilities:
     paragraphify,
+    isTypeError,
 }                           from './utilities.js'
 import {
     // contexts:
@@ -334,10 +335,10 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     !!error?.request
                     ||
                     // rtkq's  error request:
-                    (error?.error instanceof TypeError)
+                    isTypeError(error?.error)
                     ||
                     // fetch's error request:
-                    (error instanceof TypeError)
+                    isTypeError(error)
                 );
                 
                 let errorCode = (
