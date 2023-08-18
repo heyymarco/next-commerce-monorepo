@@ -78,6 +78,7 @@ import {
 
 
 // defaults:
+const _fieldErrorIconFind       : NonNullable<DialogMessageProviderProps['fieldErrorIconFind']> = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
 const _fetchErrorMessageDefault : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
     <p>
         Oops, there was an error processing the command.
@@ -131,7 +132,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
         fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
-        fieldErrorIconFind          = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1),
+        fieldErrorIconFind          = _fieldErrorIconFind,
         fieldErrorIconDefault       = 'text_fields',
         fieldErrorIconComponent     = (<Icon<Element> icon={undefined as any}               /> as React.ReactComponentElement<any, IconProps<Element>>),
         fieldErrorFocusDefault      = true,
