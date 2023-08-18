@@ -89,6 +89,11 @@ const _fetchErrorMessageDefault  : Extract<ShowMessageFetchErrorOptions['fetchEr
         Make sure your internet connection is available.
     </p>}
     {isServerError && <p>
+        There was a <strong>problem on our server</strong>.
+        <br />
+        The server may be busy or currently under maintenance.
+    </p>}
+    {isServerError && <p>
         Please try again in a few minutes.
         <br />
         If the problem still persists, please contact our technical support.
