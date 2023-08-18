@@ -17,6 +17,7 @@ import {
     useEvent,
     EventHandler,
     useMergeEvents,
+    useMergeRefs,
     useMountedFlag,
 }                           from '@reusable-ui/core'
 
@@ -27,7 +28,6 @@ import {
     Icon,
     ButtonProps,
     Button,
-    CloseButtonProps,
     CloseButton,
     
     
@@ -86,7 +86,7 @@ export interface DialogMessageProviderProps {
     cardBodyComponent            ?: React.ReactComponentElement<any, CardBodyProps<Element>>
     cardFooterComponent          ?: React.ReactComponentElement<any, CardFooterProps<Element>>
     
-    closeButtonComponent         ?: React.ReactComponentElement<any, CloseButtonProps>
+    closeButtonComponent         ?: React.ReactComponentElement<any, ButtonProps>
     okButtonComponent            ?: React.ReactComponentElement<any, ButtonProps>
     
     fieldErrorListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
@@ -106,7 +106,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         cardBodyComponent           = (<CardBody<Element>                                                   /> as React.ReactComponentElement<any, CardBodyProps<Element>>),
         cardFooterComponent         = (<CardFooter<Element>                                                 /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
         
-        closeButtonComponent        = (<CloseButton                                                         /> as React.ReactComponentElement<any, CloseButtonProps>),
+        closeButtonComponent        = (<CloseButton                                                         /> as React.ReactComponentElement<any, ButtonProps>),
         okButtonComponent           = (<Button                                                              /> as React.ReactComponentElement<any, ButtonProps>),
         
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                                      /> as React.ReactComponentElement<any, ListProps<Element>>),
@@ -146,7 +146,6 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // refs:
-    const modalStatusButtonRef    = useRef<HTMLButtonElement|null>(null);
     
     
     
@@ -350,10 +349,41 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     
+    // refs:
+    const okButtonRefInternal     = useRef<HTMLButtonElement|null>(null);
+    const okButtonRef             = useMergeRefs(
+        // preserves the original `elmRef` from `okButtonComponent`:
+        okButtonComponent.props.elmRef,
+        
+        
+        
+        okButtonRefInternal,
+    );
+    
+    
+    
     // handlers:
     const handleCloseDialogMessage          = useEvent((): void => {
         setDialogMessage(false); // close the <ModalStatus>
     });
+    const closeButtonHandleClick            = useMergeEvents(
+        // preserves the original `onClick` from `closeButtonComponent`:
+        closeButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        handleCloseDialogMessage,
+    );
+    const okButtonHandleClick               = useMergeEvents(
+        // preserves the original `onClick` from `okButtonComponent`:
+        okButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        handleCloseDialogMessage,
+    );
     
     const handleModalExpandedChangeInternal = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}) => {
         // conditions:
@@ -376,7 +406,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     const handleModalFocusInternal          = useEvent(() => {
         setTimeout(() => {
-            modalStatusButtonRef.current?.focus();
+            okButtonRefInternal.current?.focus();
         }, 0); // wait to next macroTask, to make sure the keyboard event from <Input> was gone
     });
     const handleModalFocus                  = useMergeEvents(
@@ -444,29 +474,58 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 
                 // children:
                 (modalStatusComponent.props.children ?? (!!dialogMessage && <>
-                    <CardHeader>
-                        {dialogMessage.title ?? 'Notification'}
-                        <CloseButton
-                            // handlers:
-                            onClick={handleCloseDialogMessage}
-                        />
-                    </CardHeader>
-                    <CardBody>
-                        {dialogMessage.message}
-                    </CardBody>
-                    <CardFooter>
-                        <Button
-                            // refs:
-                            elmRef={modalStatusButtonRef}
+                    {React.cloneElement<CardHeaderProps<Element>>(cardHeaderComponent,
+                        // props:
+                        undefined,
+                        
+                        
+                        
+                        // children:
+                        cardHeaderComponent.props.children ?? <>
+                            {dialogMessage.title ?? 'Notification'}
+                            {React.cloneElement<ButtonProps>(closeButtonComponent,
+                                // props:
+                                {
+                                    // handlers:
+                                    onClick : closeButtonHandleClick,
+                                },
+                            )}
+                        </>,
+                    )}
+                    {React.cloneElement<CardBodyProps<Element>>(cardBodyComponent,
+                        // props:
+                        undefined,
+                        
+                        
+                        
+                        // children:
+                        cardBodyComponent.props.children ?? dialogMessage.message,
+                    )}
+                    {React.cloneElement<CardFooterProps<Element>>(cardFooterComponent,
+                        // props:
+                        undefined,
+                        
+                        
+                        
+                        // children:
+                        cardFooterComponent.props.children ?? React.cloneElement<ButtonProps>(okButtonComponent,
+                            // props:
+                            {
+                                // refs:
+                                elmRef  : okButtonRef,
+                                
+                                
+                                
+                                // handlers:
+                                onClick : okButtonHandleClick,
+                            },
                             
                             
                             
-                            // handlers:
-                            onClick={handleCloseDialogMessage}
-                        >
-                            Okay
-                        </Button>
-                    </CardFooter>
+                            // children:
+                            okButtonComponent.props.children ?? 'Okay',
+                        ),
+                    )}
                 </>)),
             )}
         </DialogMessageContext.Provider>
