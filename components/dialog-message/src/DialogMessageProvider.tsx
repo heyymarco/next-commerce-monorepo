@@ -77,6 +77,25 @@ import {
 
 
 
+// defaults:
+const _fetchErrorMessageDefault : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
+    <p>
+        Oops, there was an error processing the command.
+    </p>
+    {isRequestError && <p>
+        There was a <strong>problem contacting our server</strong>.
+        <br />
+        Make sure your internet connection is available.
+    </p>}
+    {isServerError && <p>
+        Please try again in a few minutes.
+        <br />
+        If the problem still persists, please contact our technical support.
+    </p>}
+</>;
+
+
+
 // react components:
 export interface DialogMessageProviderProps {
     // components:
@@ -100,35 +119,21 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     // rest props:
     const {
         // components:
-        modalStatusComponent        = (<ModalStatus theme='primary' modalCardStyle='scrollable' lazy={true} /> as React.ReactComponentElement<any, ModalStatusProps<Element>>),
+        modalStatusComponent        = (<ModalStatus modalCardStyle='scrollable' lazy={true} /> as React.ReactComponentElement<any, ModalStatusProps<Element>>),
         
-        cardHeaderComponent         = (<CardHeader<Element>                                                 /> as React.ReactComponentElement<any, CardHeaderProps<Element>>),
-        cardBodyComponent           = (<CardBody<Element>                                                   /> as React.ReactComponentElement<any, CardBodyProps<Element>>),
-        cardFooterComponent         = (<CardFooter<Element>                                                 /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
+        cardHeaderComponent         = (<CardHeader<Element>                                 /> as React.ReactComponentElement<any, CardHeaderProps<Element>>),
+        cardBodyComponent           = (<CardBody<Element>                                   /> as React.ReactComponentElement<any, CardBodyProps<Element>>),
+        cardFooterComponent         = (<CardFooter<Element>                                 /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
         
-        closeButtonComponent        = (<CloseButton                                                         /> as React.ReactComponentElement<any, ButtonProps>),
-        okButtonComponent           = (<Button                                                              /> as React.ReactComponentElement<any, ButtonProps>),
+        closeButtonComponent        = (<CloseButton                                         /> as React.ReactComponentElement<any, ButtonProps>),
+        okButtonComponent           = (<Button                                              /> as React.ReactComponentElement<any, ButtonProps>),
         
-        fieldErrorListComponent     = (<List<Element> listStyle='flat'                                      /> as React.ReactComponentElement<any, ListProps<Element>>),
-        fieldErrorListItemComponent = (<ListItem<Element>                                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
+        fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
+        fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
         fieldErrorIconDefault       = 'text_fields',
-        fieldErrorIconComponent     = (<Icon<Element> icon={fieldErrorIconDefault}                          /> as React.ReactComponentElement<any, IconProps<Element>>),
+        fieldErrorIconComponent     = (<Icon<Element> icon={fieldErrorIconDefault}          /> as React.ReactComponentElement<any, IconProps<Element>>),
         fieldErrorFocusDefault      = true,
-        fetchErrorMessageDefault    = ({isRequestError, isServerError}) => <>
-            <p>
-                Oops, there was an error processing the command.
-            </p>
-            {isRequestError && <p>
-                There was a <strong>problem contacting our server</strong>.
-                <br />
-                Make sure your internet connection is available.
-            </p>}
-            {isServerError && <p>
-                Please try again in a few minutes.
-                <br />
-                If the problem still persists, please contact our technical support.
-            </p>}
-        </>,
+        fetchErrorMessageDefault    = _fetchErrorMessageDefault,
     } = props;
     
     
@@ -323,8 +328,10 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 const isClientError  = (errorCode >= 400) && (errorCode <= 499);
                 const isServerError  = (errorCode >= 500) && (errorCode <= 599);
                 
-                const fetchErrorMessage = options?.fetchErrorMessage ?? fetchErrorMessageDefault;
-                return (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage({ isRequestError, isClientError, isServerError }) : fetchErrorMessage;
+                const fetchErrorMessage       = options?.fetchErrorMessage ?? fetchErrorMessageDefault;
+                const fetchErrorMessageArg    : Parameters<Extract<FetchErrorMessage, Function>>[0] = { isRequestError, isClientError, isServerError };
+                const fetchErrorMessageResult = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorMessageArg) : fetchErrorMessage;
+                return (fetchErrorMessageResult !== undefined) ? fetchErrorMessageResult : _fetchErrorMessageDefault(fetchErrorMessageArg);
             })()
         );
     });
