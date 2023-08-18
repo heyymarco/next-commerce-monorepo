@@ -255,8 +255,14 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         await showMessageError(
             // axios' human_readable server error   response:
             // axios' human_readable server message response:
+            // rtkq's human_readable server error   response:
+            // rtkq's human_readable server message response:
             ((): React.ReactElement|undefined => {
-                const data = error?.response?.data;
+                const data = (
+                    error?.response?.data // axios' response data
+                    ??
+                    error?.data           // rtkq's response data
+                );
                 
                 
                 
@@ -327,6 +333,9 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     // axios'  error request:
                     !!error?.request
                     ||
+                    // rtkq's  error request:
+                    (error?.error instanceof TypeError)
+                    ||
                     // fetch's error request:
                     (error instanceof TypeError)
                 );
@@ -334,6 +343,9 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 let errorCode = (
                     // axios'  error status code:
                     error?.response?.status
+                    ??
+                    // rtkq's  error status code:
+                    error?.status
                     ??
                     // fetch's error status code:
                     error?.cause?.status // passing a `Response` object
