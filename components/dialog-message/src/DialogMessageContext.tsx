@@ -19,6 +19,8 @@ import type {
 import type {
     // types:
     DialogMessage,
+    
+    FieldErrorMessage,
     FetchErrorMessage,
 }                           from './types.js'
 
@@ -33,15 +35,18 @@ export interface ShowMessageFieldErrorOptions
     extends
         ShowMessageErrorOptions
 {
+    fieldErrorMessage  ?: FieldErrorMessage
     fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
     fieldErrorIcon     ?: IconProps<Element>['icon']
     fieldErrorFocus    ?: boolean
+    context            ?: any
 }
 export interface ShowMessageFetchErrorOptions
     extends
         ShowMessageErrorOptions
 {
     fetchErrorMessage ?: FetchErrorMessage
+    context           ?: any
 }
 export interface ShowMessageSuccessOptions
 {

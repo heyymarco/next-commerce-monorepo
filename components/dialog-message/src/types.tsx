@@ -19,4 +19,5 @@ export interface DialogMessage {
     message  : React.ReactNode
 }
 
-export type FetchErrorMessage = React.ReactNode|((errorInfo: { isRequestError: boolean, isClientError: boolean, isServerError: boolean }) => React.ReactNode)
+export type FieldErrorMessage = React.ReactNode|((errorInfo: { invalidFields : ArrayLike<Element>, context: any }) => React.ReactNode)
+export type FetchErrorMessage = React.ReactNode|((errorInfo: { isRequestError: boolean, isClientError: boolean, isServerError: boolean, errorCode: number, error: any, context: any }) => React.ReactNode)
