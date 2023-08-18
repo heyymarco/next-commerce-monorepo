@@ -110,6 +110,7 @@ export interface DialogMessageProviderProps {
     
     fieldErrorListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     fieldErrorListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
+    fieldErrorIconFind           ?: (invalidField: Element) => string|null|undefined
     fieldErrorIconDefault        ?: IconProps<Element>['icon']
     fieldErrorIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
     fieldErrorFocusDefault       ?: boolean
@@ -130,6 +131,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
         fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
+        fieldErrorIconFind          = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1),
         fieldErrorIconDefault       = 'text_fields',
         fieldErrorIconComponent     = (<Icon<Element> icon={undefined as any}               /> as React.ReactComponentElement<any, IconProps<Element>>),
         fieldErrorFocusDefault      = true,
@@ -201,7 +203,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                                 {
                                     // appearances:
                                     icon : fieldErrorIconComponent.props.icon ?? (
-                                        ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1)
+                                        fieldErrorIconFind(invalidField)
                                         ??
                                         fieldErrorIconDefault
                                     ),
