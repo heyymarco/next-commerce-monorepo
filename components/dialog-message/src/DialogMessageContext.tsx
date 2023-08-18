@@ -20,41 +20,41 @@ import type {
     // types:
     DialogMessage,
     
+    FieldErrorTitle,
     FieldErrorMessage,
+    
+    FetchErrorTitle,
     FetchErrorMessage,
 }                           from './types.js'
 
 
 
 // contexts:
-export interface ShowMessageErrorOptions
-{
-    title              ?: string
+export interface ShowMessageErrorOptions {
+    title              ?: React.ReactNode
 }
-export interface ShowMessageFieldErrorOptions
-    extends
-        ShowMessageErrorOptions
-{
+export interface ShowMessageFieldErrorOptions {
+    fieldErrorTitle    ?: FieldErrorTitle
+    
     fieldErrorMessage  ?: FieldErrorMessage
     fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
     fieldErrorIcon     ?: IconProps<Element>['icon']
     fieldErrorFocus    ?: boolean
+    
     context            ?: any
 }
-export interface ShowMessageFetchErrorOptions
-    extends
-        ShowMessageErrorOptions
-{
-    fetchErrorMessage ?: FetchErrorMessage
-    context           ?: any
+export interface ShowMessageFetchErrorOptions {
+    fetchErrorTitle    ?: FetchErrorTitle
+    
+    fetchErrorMessage  ?: FetchErrorMessage
+    
+    context            ?: any
 }
-export interface ShowMessageSuccessOptions
-{
-    title              ?: string
+export interface ShowMessageSuccessOptions {
+    title              ?: React.ReactNode
 }
-export interface ShowMessageNotificationOptions
-{
-    title              ?: string
+export interface ShowMessageNotificationOptions {
+    title              ?: React.ReactNode
 }
 
 export interface DialogMessageApi {

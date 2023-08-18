@@ -61,6 +61,14 @@ import {
 import type {
     // types:
     DialogMessage,
+    
+    FieldErrorInfo,
+    FetchErrorInfo,
+    
+    FieldErrorTitle,
+    FieldErrorMessage,
+    
+    FetchErrorTitle,
     FetchErrorMessage,
 }                           from './types.js'
 import {
@@ -83,7 +91,8 @@ import {
 
 
 // defaults:
-const _fieldErrorMessageDefault  : Extract<ShowMessageFieldErrorOptions['fieldErrorMessage'], Function> = ({invalidFields}) => {
+const _fieldErrorTitleDefault    : Exclude<FieldErrorTitle  , Function> = undefined;
+const _fieldErrorMessageDefault  : Extract<FieldErrorMessage, Function> = ({invalidFields}) => {
     const isPlural = (invalidFields?.length > 1);
     return (
         <p>
@@ -91,9 +100,10 @@ const _fieldErrorMessageDefault  : Extract<ShowMessageFieldErrorOptions['fieldEr
         </p>
     );
 };
-const _fieldErrorIconFindDefault : NonNullable<ShowMessageFieldErrorOptions['fieldErrorIconFind']>      = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
+const _fieldErrorIconFindDefault : NonNullable<ShowMessageFieldErrorOptions['fieldErrorIconFind']> = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
 
-const _fetchErrorMessageDefault  : Extract<ShowMessageFetchErrorOptions['fetchErrorMessage'], Function> = ({isRequestError, isServerError}) => <>
+const _fetchErrorTitleDefault    : Exclude<FetchErrorTitle  , Function> = undefined;
+const _fetchErrorMessageDefault  : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
     <p>
         Oops, there was an error processing the command.
     </p>
@@ -128,6 +138,7 @@ export interface DialogMessageProviderProps {
     closeButtonComponent         ?: React.ReactComponentElement<any, ButtonProps>
     okButtonComponent            ?: React.ReactComponentElement<any, ButtonProps>
     
+    fieldErrorTitleDefault       ?: ShowMessageFieldErrorOptions['fieldErrorTitle']
     fieldErrorMessageDefault     ?: ShowMessageFieldErrorOptions['fieldErrorMessage']
     fieldErrorListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     fieldErrorListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
@@ -135,6 +146,8 @@ export interface DialogMessageProviderProps {
     fieldErrorIconDefault        ?: ShowMessageFieldErrorOptions['fieldErrorIcon']
     fieldErrorIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
     fieldErrorFocusDefault       ?: ShowMessageFieldErrorOptions['fieldErrorFocus']
+    
+    fetchErrorTitleDefault       ?: ShowMessageFetchErrorOptions['fetchErrorTitle']
     fetchErrorMessageDefault     ?: ShowMessageFetchErrorOptions['fetchErrorMessage']
 }
 const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProviderProps>): JSX.Element|null => {
@@ -150,6 +163,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         closeButtonComponent        = (<CloseButton                                         /> as React.ReactComponentElement<any, ButtonProps>),
         okButtonComponent           = (<Button                                              /> as React.ReactComponentElement<any, ButtonProps>),
         
+        fieldErrorTitleDefault      = _fieldErrorTitleDefault,
         fieldErrorMessageDefault    = _fieldErrorMessageDefault,
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
         fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
@@ -157,6 +171,8 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         fieldErrorIconDefault       = 'text_fields',
         fieldErrorIconComponent     = (<Icon<Element> icon={undefined as any}               /> as React.ReactComponentElement<any, IconProps<Element>>),
         fieldErrorFocusDefault      = true,
+        
+        fetchErrorTitleDefault      = _fetchErrorTitleDefault,
         fetchErrorMessageDefault    = _fetchErrorMessageDefault,
     } = props;
     
@@ -196,19 +212,30 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         const {
+            fieldErrorTitle   = fieldErrorTitleDefault,
+            
             fieldErrorMessage = fieldErrorMessageDefault,
             fieldErrorIconFind,
             fieldErrorIcon,
             fieldErrorFocus = fieldErrorFocusDefault,
             
             context,
-        ...showMessageErrorOptions} = options ?? {};
+        } = options ?? {};
+        
+        
+        
+        // populate data:
+        const fieldErrorInfo : FieldErrorInfo = {
+            invalidFields,
+            
+            context,
+        };
         
         
         
         // show message:
         await showMessageError(<>
-            {(typeof(fieldErrorMessage) === 'function') ? fieldErrorMessage({ invalidFields, context }) : fieldErrorMessage}
+            {(typeof(fieldErrorMessage) === 'function') ? fieldErrorMessage(fieldErrorInfo) : fieldErrorMessage}
             {/* <List> */}
             {React.cloneElement<ListProps<Element>>(fieldErrorListComponent,
                 // props:
@@ -253,7 +280,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     )
                 )),
             )}
-        </>, showMessageErrorOptions);
+        </>, { title: ((typeof(fieldErrorTitle) === 'function') ? (fieldErrorTitle(fieldErrorInfo) ?? _fieldErrorTitleDefault) : fieldErrorTitle) });
         if (!isMounted.current) return; // unmounted => abort
         
         
@@ -272,13 +299,57 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     });
     const showMessageFetchError   = useEvent(async (error         : any                         , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
         const {
+            fetchErrorTitle   = fetchErrorTitleDefault,
+            
             fetchErrorMessage = fetchErrorMessageDefault,
             
             context,
-        ...showMessageErrorOptions} = options ?? {};
+        } = options ?? {};
         
         
         
+        // populate data:
+        const isRequestError = ( // the request was made but no response was received
+            // axios'  error request:
+            !!error?.request
+            ||
+            // rtkq's  error request:
+            isTypeError(error?.error)
+            ||
+            // fetch's error request:
+            isTypeError(error)
+        );
+        
+        let errorCode = (
+            // axios'  error status code:
+            error?.response?.status
+            ??
+            // rtkq's  error status code:
+            error?.status
+            ??
+            // fetch's error status code:
+            error?.cause?.status // passing a `Response` object
+            ??
+            error?.cause         // passing a `Response`'s status code
+        );
+        if (typeof(errorCode) !== 'number') errorCode = 0;
+        const isClientError  = (errorCode >= 400) && (errorCode <= 499);
+        const isServerError  = (errorCode >= 500) && (errorCode <= 599);
+        
+        const fetchErrorInfo : FetchErrorInfo = {
+            isRequestError,
+            isClientError,
+            isServerError,
+            
+            errorCode,
+            error,
+            
+            context,
+        };
+        
+        
+        
+        // show message:
         await showMessageError(
             // axios' human_readable server error   response:
             // axios' human_readable server message response:
@@ -356,38 +427,11 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ??
             // if there is a request/client/server error => assumes as a connection problem:
             ((): React.ReactNode => {
-                const isRequestError = ( // the request was made but no response was received
-                    // axios'  error request:
-                    !!error?.request
-                    ||
-                    // rtkq's  error request:
-                    isTypeError(error?.error)
-                    ||
-                    // fetch's error request:
-                    isTypeError(error)
-                );
-                
-                let errorCode = (
-                    // axios'  error status code:
-                    error?.response?.status
-                    ??
-                    // rtkq's  error status code:
-                    error?.status
-                    ??
-                    // fetch's error status code:
-                    error?.cause?.status // passing a `Response` object
-                    ??
-                    error?.cause         // passing a `Response`'s status code
-                );
-                if (typeof(errorCode) !== 'number') errorCode = 0;
-                const isClientError  = (errorCode >= 400) && (errorCode <= 499);
-                const isServerError  = (errorCode >= 500) && (errorCode <= 599);
-                
-                const fetchErrorMessageArg    : Parameters<Extract<FetchErrorMessage, Function>>[0] = { isRequestError, isClientError, isServerError, errorCode, error, context };
-                const fetchErrorMessageResult = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorMessageArg) : fetchErrorMessage;
-                return (fetchErrorMessageResult !== undefined) ? fetchErrorMessageResult : _fetchErrorMessageDefault(fetchErrorMessageArg);
+
+                const fetchErrorMessageResult = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorInfo) : fetchErrorMessage;
+                return (fetchErrorMessageResult !== undefined) ? fetchErrorMessageResult : _fetchErrorMessageDefault(fetchErrorInfo);
             })()
-        , showMessageErrorOptions);
+        , { title: ((typeof(fetchErrorTitle) === 'function') ? (fetchErrorTitle(fetchErrorInfo) ?? _fetchErrorTitleDefault) : fetchErrorTitle) });
     });
     const showMessageSuccess      = useEvent(async (success       : React.ReactNode             , options?: ShowMessageSuccessOptions     ): Promise<void> => {
         await showMessage({
