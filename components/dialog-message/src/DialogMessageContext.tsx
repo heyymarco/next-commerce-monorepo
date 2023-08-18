@@ -25,22 +25,41 @@ import type {
 
 
 // contexts:
-export interface ShowMessageFieldErrorOptions {
+export interface ShowMessageErrorOptions
+{
+    title              ?: string
+}
+export interface ShowMessageFieldErrorOptions
+    extends
+        ShowMessageErrorOptions
+{
     fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
     fieldErrorIcon     ?: IconProps<Element>['icon']
     fieldErrorFocus    ?: boolean
 }
-export interface ShowMessageFetchErrorOptions {
+export interface ShowMessageFetchErrorOptions
+    extends
+        ShowMessageErrorOptions
+{
     fetchErrorMessage ?: FetchErrorMessage
 }
+export interface ShowMessageSuccessOptions
+{
+    title              ?: string
+}
+export interface ShowMessageNotificationOptions
+{
+    title              ?: string
+}
+
 export interface DialogMessageApi {
     // dialogs:
-    showMessage             : (dialogMessage : React.SetStateAction<DialogMessage|false>                           ) => Promise<void>
-    showMessageError        : (error         : React.ReactNode                                                     ) => Promise<void>
-    showMessageFieldError   : (invalidFields : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions) => Promise<void>
-    showMessageFetchError   : (error         : any,                          options?: ShowMessageFetchErrorOptions) => Promise<void>
-    showMessageSuccess      : (success       : React.ReactNode                                                     ) => Promise<void>
-    showMessageNotification : (notification  : React.ReactNode                                                     ) => Promise<void>
+    showMessage             : (dialogMessage : React.SetStateAction<DialogMessage|false>                             ) => Promise<void>
+    showMessageError        : (error         : React.ReactNode             , options?: ShowMessageErrorOptions       ) => Promise<void>
+    showMessageFieldError   : (invalidFields : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions  ) => Promise<void>
+    showMessageFetchError   : (error         : any                         , options?: ShowMessageFetchErrorOptions  ) => Promise<void>
+    showMessageSuccess      : (success       : React.ReactNode             , options?: ShowMessageSuccessOptions     ) => Promise<void>
+    showMessageNotification : (notification  : React.ReactNode             , options?: ShowMessageNotificationOptions) => Promise<void>
 }
 export const DialogMessageContext = createContext<DialogMessageApi>({
     // dialogs:

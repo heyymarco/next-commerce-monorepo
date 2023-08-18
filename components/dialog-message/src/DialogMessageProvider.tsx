@@ -69,8 +69,12 @@ import {
 }                           from './utilities.js'
 import {
     // contexts:
+    ShowMessageErrorOptions,
     ShowMessageFieldErrorOptions,
     ShowMessageFetchErrorOptions,
+    ShowMessageSuccessOptions,
+    ShowMessageNotificationOptions,
+    
     DialogMessageApi,
     DialogMessageContext,
 }                           from './DialogMessageContext.js'
@@ -159,21 +163,21 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false>                           ): Promise<void> => {
+    const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false>                             ): Promise<void> => {
         setDialogMessage(dialogMessage);
         return new Promise<void>((resolved) => {
             signalsDialogMessageClosed.current.push(resolved); // wait until <ModalStatus> to be closed by user
         });
     });
     
-    const showMessageError        = useEvent(async (error         : React.ReactNode                                                     ): Promise<void> => {
+    const showMessageError        = useEvent(async (error         : React.ReactNode             , options?: ShowMessageErrorOptions       ): Promise<void> => {
         await showMessage({
             theme   : 'danger',
-            title   : 'Error',
+            title   : options?.title ?? 'Error',
             message : error,
         });
     });
-    const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions): Promise<void> => {
+    const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
         // conditions:
         if (!invalidFields?.length) return; // no field error => nothing to show => ignore
         
@@ -229,7 +233,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     )
                 )),
             )}
-        </>);
+        </>, options);
         if (!isMounted.current) return; // unmounted => abort
         
         
@@ -247,7 +251,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async (error         : any,                          options?: ShowMessageFetchErrorOptions): Promise<void> => {
+    const showMessageFetchError   = useEvent(async (error         : any                         , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
         await showMessageError(
             // axios' human_readable server error   response:
             // axios' human_readable server message response:
@@ -345,19 +349,19 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 const fetchErrorMessageResult = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorMessageArg) : fetchErrorMessage;
                 return (fetchErrorMessageResult !== undefined) ? fetchErrorMessageResult : _fetchErrorMessageDefault(fetchErrorMessageArg);
             })()
-        );
+        , options);
     });
-    const showMessageSuccess      = useEvent(async (success       : React.ReactNode                                                     ): Promise<void> => {
+    const showMessageSuccess      = useEvent(async (success       : React.ReactNode             , options?: ShowMessageSuccessOptions     ): Promise<void> => {
         await showMessage({
             theme   : 'success',
-            title   : 'Success',
+            title   : options?.title ?? 'Success',
             message : success,
         });
     });
-    const showMessageNotification = useEvent(async (notification  : React.ReactNode                                                     ): Promise<void> => {
+    const showMessageNotification = useEvent(async (notification  : React.ReactNode             , options?: ShowMessageNotificationOptions): Promise<void> => {
         await showMessage({
             theme   : 'primary',
-            title   : 'Notification',
+            title   : options?.title ?? 'Notification',
             message : notification,
         });
     });
