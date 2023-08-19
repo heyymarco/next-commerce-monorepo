@@ -27,13 +27,13 @@ export interface ShowMessageOptions
             |'message' // we redefined `message` prop
         >
 {
-    // contents:
-    title         ?: React.ReactNode
 }
 export interface ShowMessageErrorOptions        extends ShowMessageOptions {
+    // contents:
     title              ?: React.ReactNode
 }
 export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
+    // contents:
     fieldErrorTitle    ?: FieldErrorTitle
     
     fieldErrorMessage  ?: FieldErrorMessage
@@ -41,28 +41,38 @@ export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
     fieldErrorIcon     ?: IconProps<Element>['icon']
     fieldErrorFocus    ?: boolean
     
+    
+    
+    // contexts:
     context            ?: any
 }
 export interface ShowMessageFetchErrorOptions   extends ShowMessageOptions {
+    // contents:
     fetchErrorTitle    ?: FetchErrorTitle
     
     fetchErrorMessage  ?: FetchErrorMessage
     
+    
+    
+    // contexts:
     context            ?: any
 }
 export interface ShowMessageSuccessOptions      extends ShowMessageOptions {
+    // contents:
     title              ?: React.ReactNode
 }
 export interface ShowMessageNotificationOptions extends ShowMessageOptions {
+    // contents:
     title              ?: React.ReactNode
 }
 
 
 
 // states:
-export interface DialogMessage extends ShowMessageOptions {
+export interface DialogMessage                  extends ShowMessageOptions {
     // contents:
-    message        : React.ReactNode
+    title              ?: React.ReactNode
+    message             : React.ReactNode
 }
 
 
