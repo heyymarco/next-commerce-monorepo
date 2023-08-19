@@ -1,11 +1,6 @@
 export type *       from './types.js'
 export type {
-    ShowMessageErrorOptions,
-    ShowMessageFieldErrorOptions,
-    ShowMessageFetchErrorOptions,
-    ShowMessageSuccessOptions,
-    ShowMessageNotificationOptions,
-    
+    // contexts:
     DialogMessageApi,
 }                   from './DialogMessageContext.js'
 

@@ -59,12 +59,27 @@ import {
 
 // internals:
 import type {
-    // types:
+    // options:
+    ShowMessageErrorOptions,
+    ShowMessageFieldErrorOptions,
+    ShowMessageFetchErrorOptions,
+    ShowMessageSuccessOptions,
+    ShowMessageNotificationOptions,
+    
+    
+    
+    // states:
     DialogMessage,
     
+    
+    
+    // args:
     FieldErrorInfo,
     FetchErrorInfo,
     
+    
+    
+    // dynamic data:
     FieldErrorTitle,
     FieldErrorMessage,
     
@@ -78,12 +93,6 @@ import {
 }                           from './utilities.js'
 import {
     // contexts:
-    ShowMessageErrorOptions,
-    ShowMessageFieldErrorOptions,
-    ShowMessageFetchErrorOptions,
-    ShowMessageSuccessOptions,
-    ShowMessageNotificationOptions,
-    
     DialogMessageApi,
     DialogMessageContext,
 }                           from './DialogMessageContext.js'
@@ -559,7 +568,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     // jsx:
     const {
-        // messages:
+        // contents:
         title,   // take
         message, // take
     ...restModalBaseProps} = prevDialogMessage.current || {};
