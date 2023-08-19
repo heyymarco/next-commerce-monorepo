@@ -26,6 +26,13 @@ import type {
 
 
 
+// utilities:
+const notNestedError = async () => {
+    throw Error(`A \`useDialogMessage()\` hook must be nested in \`<DialogMessageProvider>\`.`);
+};
+
+
+
 // contexts:
 export interface DialogMessageApi {
     // dialogs:
@@ -38,10 +45,10 @@ export interface DialogMessageApi {
 }
 export const DialogMessageContext = createContext<DialogMessageApi>({
     // dialogs:
-    showMessage             : async () => {}, // outside a <DialogMessageProvider> => do nothing
-    showMessageError        : async () => {}, // outside a <DialogMessageProvider> => do nothing
-    showMessageFieldError   : async () => {}, // outside a <DialogMessageProvider> => do nothing
-    showMessageFetchError   : async () => {}, // outside a <DialogMessageProvider> => do nothing
-    showMessageSuccess      : async () => {}, // outside a <DialogMessageProvider> => do nothing
-    showMessageNotification : async () => {}, // outside a <DialogMessageProvider> => do nothing
+    showMessage             : notNestedError,
+    showMessageError        : notNestedError,
+    showMessageFieldError   : notNestedError,
+    showMessageFetchError   : notNestedError,
+    showMessageSuccess      : notNestedError,
+    showMessageNotification : notNestedError,
 });
