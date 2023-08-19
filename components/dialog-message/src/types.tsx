@@ -4,17 +4,24 @@ import {
     default as React,
 }                           from 'react'
 
-// reusable-ui core:
+// heymarco components:
 import type {
-    // color options of UI:
-    ThemeName,
-}                           from '@reusable-ui/core'
+    // dialog-components:
+    ModalBaseProps,
+}                           from '@heymarco/modal-status'
 
 
 
 // types:
-export interface DialogMessage {
-    theme         ?: ThemeName
+export interface DialogMessage
+    extends
+        Omit<ModalBaseProps<Element>,
+            // messages:
+            |'title'   // we redefined `title`   prop
+            |'message' // we redefined `message` prop
+        >
+{
+    // messages:
     title         ?: React.ReactNode
     message        : React.ReactNode
 }

@@ -559,12 +559,10 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     // jsx:
     const {
-        theme,   // will be outside <ModalStatus>'s children (needs to cache)
-    } = prevDialogMessage.current || {};
-    const {
-        title,   // will be inside  <ModalStatus>'s children (no need to cache, the <ModalStatus> already does internally)
-        message, // will be inside  <ModalStatus>'s children (no need to cache, the <ModalStatus> already does internally)
-    } = dialogMessage || {};
+        // messages:
+        title,   // take
+        message, // take
+    ...restModalBaseProps} = prevDialogMessage.current || {};
     const isExpanded = (dialogMessage !== false);
     return (
         <DialogMessageContext.Provider value={dialogMessageApi}>
@@ -573,8 +571,9 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             {React.cloneElement<ModalStatusProps<Element>>(modalStatusComponent,
                 // props:
                 {
-                    // variants:
-                    theme            : modalStatusComponent.props.theme ?? theme ?? 'primary',
+                    // other props:
+                    ...restModalBaseProps,
+                    ...modalStatusComponent.props, // overwrites restModalBaseProps (if any conflics)
                     
                     
                     
