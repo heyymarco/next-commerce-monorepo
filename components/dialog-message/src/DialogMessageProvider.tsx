@@ -203,10 +203,29 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     });
     
     const showMessageError        = useEvent(async (error         : React.ReactNode             , options?: ShowMessageErrorOptions       ): Promise<void> => {
+        // defaults:
+        const {
+            // contents:
+            title = 'Error',
+            
+            
+            
+            // options:
+            theme = 'danger',
+        ...restOptions} = options ?? {};
+        
+        
+        
         await showMessage({
-            theme   : 'danger',
-            title   : options?.title ?? 'Error',
+            // contents:
+            title,
             message : error,
+            
+            
+            
+            // options:
+            theme,
+            ...restOptions,
         });
     });
     const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
