@@ -64,6 +64,7 @@ const ModalStatus = <TElement extends Element = HTMLElement, TModalExpandedChang
     
     
     
+    // cache:
     const [hasChildren, lastExistingChildren, clearChildren] = useLastExistingChildren(children);
     
     
