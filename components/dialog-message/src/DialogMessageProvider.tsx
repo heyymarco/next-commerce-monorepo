@@ -499,17 +499,57 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         });
     });
     const showMessageSuccess      = useEvent(async (success       : React.ReactNode                  , options?: ShowMessageSuccessOptions     ): Promise<void> => {
+        // defaults:
+        const {
+            // contents:
+            title = 'Success',
+            
+            
+            
+            // options:
+            theme = 'success',
+        ...restOptions} = options ?? {};
+        
+        
+        
+        // show message:
         await showMessage({
-            theme   : 'success',
-            title   : options?.title ?? 'Success',
+            // contents:
+            title,
             message : success,
+            
+            
+            
+            // options:
+            theme,
+            ...restOptions,
         });
     });
     const showMessageNotification = useEvent(async (notification  : React.ReactNode                  , options?: ShowMessageNotificationOptions): Promise<void> => {
+        // defaults:
+        const {
+            // contents:
+            title = 'Notification',
+            
+            
+            
+            // options:
+            theme = 'primary',
+        ...restOptions} = options ?? {};
+        
+        
+        
+        // show message:
         await showMessage({
-            theme   : 'primary',
-            title   : options?.title ?? 'Notification',
+            // contents:
+            title,
             message : notification,
+            
+            
+            
+            // options:
+            theme,
+            ...restOptions,
         });
     });
     
