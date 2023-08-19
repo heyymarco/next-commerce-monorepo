@@ -181,8 +181,8 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     // states:
     const [dialogMessage, setDialogMessage]      = useState<DialogMessage|false>(false);
     
-    const prevDialogMessage                      = useRef<DialogMessage|undefined>(dialogMessage || undefined);
-    if (dialogMessage) prevDialogMessage.current = dialogMessage;
+    const prevDialogMessage                      = useRef<DialogMessage|false>(dialogMessage);
+    if (dialogMessage !== false) prevDialogMessage.current = dialogMessage;
     
     const signalsDialogMessageClosed             = useRef<(() => void)[]>([]);
     
@@ -552,6 +552,14 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // jsx:
+    const {
+        theme,   // will be outside <ModalStatus>'s children (needs to cache)
+    } = prevDialogMessage.current || {};
+    const {
+        title,   // will be inside  <ModalStatus>'s children (no need to cache, the <ModalStatus> already does internally)
+        message, // will be inside  <ModalStatus>'s children (no need to cache, the <ModalStatus> already does internally)
+    } = dialogMessage || {};
+    const isExpanded = (dialogMessage !== false);
     return (
         <DialogMessageContext.Provider value={dialogMessageApi}>
             {props.children}
@@ -560,7 +568,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 // props:
                 {
                     // variants:
-                    theme            : modalStatusComponent.props.theme ?? prevDialogMessage.current?.theme ?? 'primary',
+                    theme            : modalStatusComponent.props.theme ?? theme ?? 'primary',
                     
                     
                     
@@ -573,7 +581,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 
                 
                 // children:
-                (modalStatusComponent.props.children ?? (!!dialogMessage && <>
+                (modalStatusComponent.props.children ?? (isExpanded && <>
                     {React.cloneElement<CardHeaderProps<Element>>(cardHeaderComponent,
                         // props:
                         undefined,
@@ -582,7 +590,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                         
                         // children:
                         cardHeaderComponent.props.children ?? <>
-                            {dialogMessage.title ?? 'Notification'}
+                            {title}
                             {React.cloneElement<ButtonProps>(closeButtonComponent,
                                 // props:
                                 {
@@ -599,7 +607,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                         
                         
                         // children:
-                        cardBodyComponent.props.children ?? dialogMessage.message,
+                        cardBodyComponent.props.children ?? message,
                     )}
                     {React.cloneElement<CardFooterProps<Element>>(cardFooterComponent,
                         // props:
