@@ -179,14 +179,9 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // states:
-    const [dialogMessage, setDialogMessage]      = useState<DialogMessage|false>(false);
-    
-    const prevDialogMessage                      = useRef<DialogMessage|false>(dialogMessage);
-    if (dialogMessage !== false) prevDialogMessage.current = dialogMessage;
-    
-    const signalsDialogMessageClosed             = useRef<(() => void)[]>([]);
-    
-    const isMounted                              = useMountedFlag();
+    const [dialogMessage, setDialogMessage] = useState<DialogMessage|false>(false);
+    const signalsDialogMessageClosed        = useRef<(() => void)[]>([]);
+    const isMounted                         = useMountedFlag();
     
     
     
@@ -459,6 +454,12 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         okButtonRefInternal,
     );
+    
+    
+    
+    // cache:
+    const prevDialogMessage       = useRef<DialogMessage|false>(dialogMessage);
+    if (dialogMessage !== false) prevDialogMessage.current = dialogMessage;
     
     
     
