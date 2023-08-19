@@ -521,6 +521,11 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     );
     
     const handleClosedDialogMessageInternal = useEvent((): void => {
+        // clear the prevDialogMessage *after* the <ModalStatus> is fully hidden:
+        prevDialogMessage.current = false;
+        
+        
+        
         // notify the <ModalStatus> is closed by user:
         for (const signalDialogMessageClosed of signalsDialogMessageClosed.current) {
             signalDialogMessageClosed();
