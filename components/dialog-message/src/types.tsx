@@ -79,11 +79,16 @@ export interface DialogMessage                  extends ShowMessageOptions {
 
 // args:
 export interface FieldErrorInfo {
+    // data:
     invalidFields  : ArrayLike<Element>
     
+    
+    
+    // contexts:
     context        : any
 }
 export interface FetchErrorInfo {
+    // data:
     isRequestError : boolean
     isClientError  : boolean
     isServerError  : boolean
@@ -91,6 +96,9 @@ export interface FetchErrorInfo {
     errorCode      : number
     error          : any
     
+    
+    
+    // contexts:
     context        : any
 }
 
