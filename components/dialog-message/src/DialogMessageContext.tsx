@@ -28,7 +28,7 @@ import type {
 
 // utilities:
 const notNestedError = async (): Promise<void> => {
-    throw Error(`A \`useDialogMessage()\` hook must be nested in \`<DialogMessageProvider>\`.`);
+    throw Error('A `useDialogMessage()` hook must be nested in `<DialogMessageProvider>`.');
 };
 
 
