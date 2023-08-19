@@ -272,10 +272,12 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         // show message:
-        let title : React.ReactNode = ((typeof(fieldErrorTitle) === 'function') ? fieldErrorTitle(fieldErrorInfo) : fieldErrorTitle);
-        if (title === undefined) title = _fieldErrorTitleDefault;
+        let title   : React.ReactNode      = (typeof(fieldErrorTitle  ) === 'function') ? fieldErrorTitle(fieldErrorInfo  ) : fieldErrorTitle;
+        if (title   === undefined) title   = _fieldErrorTitleDefault;
+        let message : React.ReactNode      = (typeof(fieldErrorMessage) === 'function') ? fieldErrorMessage(fieldErrorInfo) : fieldErrorMessage;
+        if (message === undefined) message = _fieldErrorMessageDefault(fieldErrorInfo);
         await showMessageError(<>
-            {(typeof(fieldErrorMessage) === 'function') ? fieldErrorMessage(fieldErrorInfo) : fieldErrorMessage}
+            {message}
             {/* <List> */}
             {React.cloneElement<ListProps<Element>>(fieldErrorListComponent,
                 // props:
@@ -342,20 +344,25 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         } // if
     });
     const showMessageFetchError   = useEvent(async (error         : any                              , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
+        // defaults:
         const {
+            // contents:
             fetchErrorTitle   = fetchErrorTitleDefault,
             
             fetchErrorMessage = fetchErrorMessageDefault,
             
+            
+            
+            // contexts:
             context,
-        } = options ?? {};
+        ...restOptions} = options ?? {};
         
         
         
         // populate data:
         const isRequestError = ( // the request was made but no response was received
             // axios'  error request:
-            !!error?.request
+            !!error?.request // the request property must be exist
             ||
             // rtkq's  error request:
             isTypeError(error?.error)
@@ -376,11 +383,12 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ??
             error?.cause         // passing a `Response`'s status code
         );
-        if (typeof(errorCode) !== 'number') errorCode = 0;
-        const isClientError  = (errorCode >= 400) && (errorCode <= 499);
-        const isServerError  = (errorCode >= 500) && (errorCode <= 599);
+        if (typeof(errorCode) !== 'number') errorCode = 0; // ignore if the code is not a number
+        const isClientError  = (errorCode >= 400) && (errorCode <= 499); // 400-499
+        const isServerError  = (errorCode >= 500) && (errorCode <= 599); // 500-599
         
         const fetchErrorInfo : FetchErrorInfo = {
+            // data:
             isRequestError,
             isClientError,
             isServerError,
@@ -388,17 +396,22 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             errorCode,
             error,
             
+            
+            
+            // contexts:
             context,
         };
         
         
         
         // show message:
+        let title   : React.ReactNode      = (typeof(fetchErrorTitle  ) === 'function') ? fetchErrorTitle(fetchErrorInfo  ) : fetchErrorTitle;
+        if (title   === undefined) title   = _fetchErrorTitleDefault;
         await showMessageError(
-            // axios' human_readable server error   response:
-            // axios' human_readable server message response:
-            // rtkq's human_readable server error   response:
-            // rtkq's human_readable server message response:
+            // axios'  human_readable server error   response:
+            // axios'  human_readable server message response:
+            // rtkq's  human_readable server error   response:
+            // rtkq's  human_readable server message response:
             ((): React.ReactElement|undefined => {
                 const data = (
                     error?.response?.data // axios' response data
@@ -430,7 +443,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             // fetch's human_readable server message response:
             (await (async (): Promise<React.ReactElement|undefined> => {
                 // conditions:
-                const response = error?.cause;
+                const response = error?.cause; // a `Response` object passed on Error('string', Response)
                 if (!(response instanceof Response)) return undefined; // not a `Response` object => skip
                 const contentType = response.headers.get('Content-Type');
                 if (!contentType) return undefined; // no 'Content-Type' defined => skip
@@ -471,10 +484,19 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ??
             // if there is a request/client/server error => assumes as a connection problem:
             ((): React.ReactNode => {
-                const fetchErrorMessageResult = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorInfo) : fetchErrorMessage;
-                return (fetchErrorMessageResult !== undefined) ? fetchErrorMessageResult : _fetchErrorMessageDefault(fetchErrorInfo);
+                let message : React.ReactNode      = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorInfo) : fetchErrorMessage;
+                if (message === undefined) message = _fetchErrorMessageDefault(fetchErrorInfo);
+                return message;
             })()
-        , { title: ((typeof(fetchErrorTitle) === 'function') ? (fetchErrorTitle(fetchErrorInfo) ?? _fetchErrorTitleDefault) : fetchErrorTitle) });
+        , {
+            // contents:
+            title,
+            
+            
+            
+            // options:
+            ...restOptions,
+        });
     });
     const showMessageSuccess      = useEvent(async (success       : React.ReactNode                  , options?: ShowMessageSuccessOptions     ): Promise<void> => {
         await showMessage({
