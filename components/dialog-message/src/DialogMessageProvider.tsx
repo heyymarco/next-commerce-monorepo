@@ -91,6 +91,7 @@ import {
     // utilities:
     paragraphify,
     isTypeError,
+    isReactNode,
 }                           from './utilities.js'
 import {
     // contexts:
@@ -198,19 +199,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     // stable callbacks:
     const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false> | React.ReactNode, options?: ShowMessageOptions            ): Promise<void> => {
         // handle overloads:
-        if (
-            (dialogMessage             !==  false      ) // not `false`                      /* `false`         is used for closing     <ModalStatus> */
-            &&
-            (typeof(dialogMessage)     !== 'function'  ) // not a Function                   /* Function        is used for dispatching <ModalStatus> */
-            &&
-            (
-                (typeof(dialogMessage) !== 'object'    ) // not object
-                ||
-                (dialogMessage         ===  null       ) // is  object of `null`
-                ||
-                !('message'            in dialogMessage) // is  object of not_DialogMessage  /* `DialogMessage` is used for opening     <ModalStatus> */
-            )
-        ) {
+        if (isReactNode(dialogMessage, 'message')) {
             return await showMessage({ // recursive call
                 // contents:
                 message : dialogMessage,
