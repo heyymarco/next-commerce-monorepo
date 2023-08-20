@@ -7,7 +7,7 @@ import {
 // internals:
 import type {
     // types:
-    InvalidFields,
+    FieldErrorList,
 }                           from './types.js'
 
 
@@ -53,7 +53,7 @@ export const isReactNode = <TDialogMessage extends {}>(dialogMessage : React.Set
         )
     );
 };
-export const isInvalidFields = <TDialogMessage extends {}>(dialogMessage : React.SetStateAction<TDialogMessage|false> | InvalidFields, uniqueProp: keyof TDialogMessage): dialogMessage is InvalidFields => {
+export const isFieldErrorList = <TDialogMessage extends {}>(dialogMessage : React.SetStateAction<TDialogMessage|false> | FieldErrorList, uniqueProp: keyof TDialogMessage): dialogMessage is FieldErrorList => {
     return (
         (dialogMessage             !==  false      ) // not `false`                       /* `false`         is used for closing     <ModalStatus> */
         &&

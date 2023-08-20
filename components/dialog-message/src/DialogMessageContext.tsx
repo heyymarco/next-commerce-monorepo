@@ -41,7 +41,7 @@ export interface DialogMessageApi {
     showMessage             (message       : React.ReactNode             , options?: ShowMessageOptions            ): Promise<void>
     
     showMessageError        (error         : React.ReactNode             , options?: ShowMessageErrorOptions       ): Promise<void>
-    showMessageFieldError   (invalidFields : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions  ): Promise<void>
+    showMessageFieldError   (fieldErrors   : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions  ): Promise<void>
     showMessageFetchError   (error         : any                         , options?: ShowMessageFetchErrorOptions  ): Promise<void>
     showMessageSuccess      (success       : React.ReactNode             , options?: ShowMessageSuccessOptions     ): Promise<void>
     showMessageNotification (notification  : React.ReactNode             , options?: ShowMessageNotificationOptions): Promise<void>

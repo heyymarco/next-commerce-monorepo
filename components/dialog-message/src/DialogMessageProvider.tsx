@@ -60,7 +60,7 @@ import {
 // internals:
 import type {
     // types:
-    InvalidFields,
+    FieldErrorList,
     
     
     
@@ -101,7 +101,7 @@ import {
     paragraphify,
     isTypeError,
     isReactNode,
-    isInvalidFields,
+    isFieldErrorList,
 }                           from './utilities.js'
 import {
     // contexts:
@@ -113,15 +113,15 @@ import {
 
 // defaults:
 const _fieldErrorTitleDefault    : Exclude<FieldErrorTitle  , Function> = undefined;
-const _fieldErrorMessageDefault  : Extract<FieldErrorMessage, Function> = ({invalidFields}) => {
-    const isPlural = (invalidFields?.length > 1);
+const _fieldErrorMessageDefault  : Extract<FieldErrorMessage, Function> = ({fieldErrors}) => {
+    const isPlural = (fieldErrors?.length > 1);
     return (
         <p>
             There {isPlural ? 'are some' : 'is an'} invalid field{isPlural ? 's' : ''} that {isPlural ? 'need' : 'needs'} to be fixed:
         </p>
     );
 };
-const _fieldErrorIconFindDefault : NonNullable<ShowMessageFieldErrorOptions['fieldErrorIconFind']> = (invalidField: Element) => ((invalidField.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
+const _fieldErrorIconFindDefault : NonNullable<DialogMessageFieldError['fieldErrorIconFind']> = (fieldError: Element) => ((fieldError.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
 
 const _fetchErrorTitleDefault    : Exclude<FetchErrorTitle  , Function> = undefined;
 const _fetchErrorMessageDefault  : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
@@ -159,14 +159,14 @@ export interface DialogMessageProviderProps {
     closeButtonComponent         ?: React.ReactComponentElement<any, ButtonProps>
     okButtonComponent            ?: React.ReactComponentElement<any, ButtonProps>
     
-    fieldErrorTitleDefault       ?: ShowMessageFieldErrorOptions['fieldErrorTitle']
-    fieldErrorMessageDefault     ?: ShowMessageFieldErrorOptions['fieldErrorMessage']
+    fieldErrorTitleDefault       ?: DialogMessageFieldError['fieldErrorTitle']
+    fieldErrorMessageDefault     ?: DialogMessageFieldError['fieldErrorMessage']
     fieldErrorListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     fieldErrorListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
-    fieldErrorIconFindDefault    ?: ShowMessageFieldErrorOptions['fieldErrorIconFind']
-    fieldErrorIconDefault        ?: ShowMessageFieldErrorOptions['fieldErrorIcon']
+    fieldErrorIconFindDefault    ?: DialogMessageFieldError['fieldErrorIconFind']
+    fieldErrorIconDefault        ?: DialogMessageFieldError['fieldErrorIcon']
     fieldErrorIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
-    fieldErrorFocusDefault       ?: ShowMessageFieldErrorOptions['fieldErrorFocus']
+    fieldErrorFocusDefault       ?: DialogMessageFieldError['fieldErrorFocus']
     
     fetchErrorTitleDefault       ?: ShowMessageFetchErrorOptions['fetchErrorTitle']
     fetchErrorMessageDefault     ?: ShowMessageFetchErrorOptions['fetchErrorMessage']
@@ -282,12 +282,12 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageFieldError   = useEvent(async (dialogMessageFieldError   :                      DialogMessageFieldError|false   | InvalidFields  , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
+    const showMessageFieldError   = useEvent(async (dialogMessageFieldError   :                      DialogMessageFieldError|false   | FieldErrorList , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
         // handle overloads:
-        if (isInvalidFields(dialogMessageFieldError, 'invalidFields')) {
+        if (isFieldErrorList(dialogMessageFieldError, 'fieldErrors')) {
             return await showMessageFieldError({ // recursive call
                 // contents:
-                invalidFields : dialogMessageFieldError,
+                fieldErrors : dialogMessageFieldError,
                 
                 
                 
@@ -308,7 +308,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             // contents:
             fieldErrorTitle    = fieldErrorTitleDefault,
             
-            invalidFields,     // take the [invalidFields] as a part of [error message]
+            fieldErrors,       // take the [fieldErrors] as a part of [error message]
             fieldErrorMessage  = fieldErrorMessageDefault,
             fieldErrorIconFind = fieldErrorIconFindDefault,
             fieldErrorIcon     = fieldErrorIconDefault,
@@ -323,14 +323,14 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         // conditions:
-        if (!invalidFields?.length) return; // no field error => nothing to show => ignore
+        if (!fieldErrors?.length) return; // no field error => nothing to show => ignore
         
         
         
         // populate data:
         const fieldErrorInfo : FieldErrorInfo = {
             // data:
-            invalidFields,
+            fieldErrors,
             
             
             
@@ -358,7 +358,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     
                     
                     // children:
-                    (fieldErrorListComponent.props.children ?? Array.from(invalidFields).map((invalidField, index) =>
+                    (fieldErrorListComponent.props.children ?? Array.from(fieldErrors).map((fieldError, index) =>
                         React.cloneElement<ListItemProps<Element>>(fieldErrorListItemComponent,
                             // props:
                             {
@@ -374,7 +374,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                                     {
                                         // appearances:
                                         icon : fieldErrorIconComponent.props.icon ?? (
-                                            fieldErrorIconFind(invalidField)
+                                            fieldErrorIconFind(fieldError)
                                             ??
                                             fieldErrorIcon // if not found
                                         ),
@@ -382,9 +382,9 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                                 )}
                                 &nbsp;
                                 {
-                                    (invalidField as HTMLElement).getAttribute?.('aria-label')
+                                    (fieldError as HTMLElement).getAttribute?.('aria-label')
                                     ||
-                                    (invalidField.children?.[0] as HTMLInputElement)?.placeholder
+                                    (fieldError.children?.[0] as HTMLInputElement)?.placeholder
                                 }
                             </>),
                         )
@@ -404,9 +404,9 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         // focus the first fieldError:
         if (fieldErrorFocus) {
             const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), iframe';
-            const firstInvalidField = invalidFields?.[0];
-            const firstFocusableElm = (firstInvalidField.matches(focusableSelector) ? firstInvalidField : firstInvalidField?.querySelector(focusableSelector)) as HTMLElement|null;
-            firstInvalidField.scrollIntoView({
+            const firstFieldError = fieldErrors?.[0];
+            const firstFocusableElm = (firstFieldError.matches(focusableSelector) ? firstFieldError : firstFieldError?.querySelector(focusableSelector)) as HTMLElement|null;
+            firstFieldError.scrollIntoView({
                 block    : 'start',
                 behavior : 'smooth',
             });

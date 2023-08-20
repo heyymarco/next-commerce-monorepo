@@ -19,14 +19,14 @@ import type {
 
 
 // types:
-export type InvalidFields = ArrayLike<Element>|null|undefined
+export type FieldErrorList = ArrayLike<Element>|null|undefined
 
 
 
 // args:
 export interface FieldErrorInfo {
     // data:
-    invalidFields  : ArrayLike<Element>
+    fieldErrors    : Exclude<FieldErrorList, null|undefined>
     
     
     
@@ -106,9 +106,9 @@ export interface DialogMessageFieldError        extends ShowMessageFieldErrorOpt
     // contents:
     fieldErrorTitle    ?: FieldErrorTitle
     
-    invalidFields       : InvalidFields
+    fieldErrors         : FieldErrorList
     fieldErrorMessage  ?: FieldErrorMessage
-    fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
+    fieldErrorIconFind ?: (fieldError: Element) => string|null|undefined
     fieldErrorIcon     ?: IconProps<Element>['icon']
     fieldErrorFocus    ?: boolean
     
