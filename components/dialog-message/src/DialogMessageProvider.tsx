@@ -73,6 +73,7 @@ import type {
     DialogMessage,
     DialogMessageError,
     DialogMessageSuccess,
+    DialogMessageNotification,
     
     
     
@@ -199,7 +200,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async (dialogMessage        : React.SetStateAction<DialogMessage|false>       | React.ReactNode, options?: ShowMessageOptions          ): Promise<void> => {
+    const showMessage             = useEvent(async (dialogMessage             : React.SetStateAction<DialogMessage|false>            | React.ReactNode, options?: ShowMessageOptions            ): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessage, 'message')) {
             return await showMessage({ // recursive call
@@ -226,7 +227,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         });
     });
     
-    const showMessageError        = useEvent(async (dialogMessageError   :                      DialogMessageError|false   | React.ReactNode, options?: ShowMessageErrorOptions     ): Promise<void> => {
+    const showMessageError        = useEvent(async (dialogMessageError        :                      DialogMessageError|false        | React.ReactNode, options?: ShowMessageErrorOptions       ): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageError, 'error')) {
             return await showMessageError({ // recursive call
@@ -275,7 +276,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             });
         } // if
     });
-    const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|null|undefined                                       , options?: ShowMessageFieldErrorOptions): Promise<void> => {
+    const showMessageFieldError   = useEvent(async (invalidFields             : ArrayLike<Element>|null|undefined                                     , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
         // conditions:
         if (!invalidFields?.length) return; // no field error => nothing to show => ignore
         
@@ -384,7 +385,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async (error         : any                                                                     , options?: ShowMessageFetchErrorOptions): Promise<void> => {
+    const showMessageFetchError   = useEvent(async (error                     : any                                                                   , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
         // defaults:
         const {
             // contents:
@@ -539,7 +540,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restOptions,
         });
     });
-    const showMessageSuccess      = useEvent(async (dialogMessageSuccess :                      DialogMessageSuccess|false | React.ReactNode, options?: ShowMessageSuccessOptions   ): Promise<void> => {
+    const showMessageSuccess      = useEvent(async (dialogMessageSuccess      :                      DialogMessageSuccess|false      | React.ReactNode, options?: ShowMessageSuccessOptions     ): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageSuccess, 'success')) {
             return await showMessageSuccess({ // recursive call
@@ -588,32 +589,54 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             });
         } // if
     });
-    const showMessageNotification = useEvent(async (notification  : React.ReactNode                                            , options?: ShowMessageNotificationOptions): Promise<void> => {
-        // defaults:
-        const {
-            // contents:
-            title = 'Notification',
-            
-            
-            
-            // options:
-            theme = 'primary',
-        ...restOptions} = options ?? {};
+    const showMessageNotification = useEvent(async (dialogMessageNotification :                      DialogMessageNotification|false | React.ReactNode, options?: ShowMessageNotificationOptions): Promise<void> => {
+        // handle overloads:
+        if (isReactNode(dialogMessageNotification, 'notification')) {
+            return await showMessageNotification({ // recursive call
+                // contents:
+                notification : dialogMessageNotification,
+                
+                
+                
+                // options:
+                ...options, // DialogMessageNotification extends ShowMessageNotificationOptions
+            });
+        } // if
         
         
         
-        // show message:
-        await showMessage({
-            // contents:
-            title,
-            message : notification,
+        if (!dialogMessageNotification) {
+            // hide message:
+            return await showMessage(false);
+        }
+        else {
+            // defaults:
+            const {
+                // contents:
+                title  = 'Notification', // if [title] not defined => defaults to 'Notification'
+                notification,            // take the [notification] as [message]
+                
+                
+                
+                // options:
+                theme  = 'primary',      // if [theme] not defined => defaults to 'primary'
+            ...restDialogMessage} = dialogMessageNotification;
             
             
             
-            // options:
-            theme,
-            ...restOptions,
-        });
+            // show message:
+            return await showMessage({
+                // contents:
+                title,
+                message : notification,
+                
+                
+                
+                // options:
+                theme,
+                ...restDialogMessage,
+            });
+        } // if
     });
     
     
