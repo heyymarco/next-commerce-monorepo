@@ -93,6 +93,7 @@ import type {
     DialogMessage,
     DialogMessageError,
     DialogMessageFieldError,
+    DialogMessageFetchError,
     DialogMessageSuccess,
     DialogMessageNotification,
 }                           from './types.js'
@@ -102,6 +103,7 @@ import {
     isTypeError,
     isReactNode,
     isFieldErrorList,
+    isError,
 }                           from './utilities.js'
 import {
     // contexts:
@@ -172,8 +174,8 @@ export interface DialogMessageProviderProps {
     fieldErrorLabelFindDefault   ?: DialogMessageFieldError['fieldErrorLabelFind']
     fieldErrorFocusDefault       ?: DialogMessageFieldError['fieldErrorFocus']
     
-    fetchErrorTitleDefault       ?: ShowMessageFetchErrorOptions['fetchErrorTitle']
-    fetchErrorMessageDefault     ?: ShowMessageFetchErrorOptions['fetchErrorMessage']
+    fetchErrorTitleDefault       ?: DialogMessageFetchError['fetchErrorTitle']
+    fetchErrorMessageDefault     ?: DialogMessageFetchError['fetchErrorMessage']
 }
 const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProviderProps>): JSX.Element|null => {
     // rest props:
@@ -419,45 +421,67 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async (error                     : any                                                                   , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
+    const showMessageFetchError   = useEvent(async (dialogMessageFetchError   :                      DialogMessageFetchError|false   | any            , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
+        // handle overloads:
+        if (isError(dialogMessageFetchError, 'fetchError')) {
+            return await showMessageFetchError({ // recursive call
+                // contents:
+                fetchError : dialogMessageFetchError,
+                
+                
+                
+                // options:
+                ...options, // DialogMessageFetchError extends ShowMessageFetchErrorOptions
+            });
+        } // if
+        dialogMessageFetchError = dialogMessageFetchError as unknown as (DialogMessageFetchError|false); // for satisfying TS
+        
+        
+        
+        // hide message if `false`:
+        if (dialogMessageFetchError === false) return await showMessageError(false);
+        
+        
+        
         // defaults:
         const {
             // contents:
             fetchErrorTitle   = fetchErrorTitleDefault,
             
+            fetchError,       // take the [fetchError] as a part of [error message]
             fetchErrorMessage = fetchErrorMessageDefault,
             
             
             
             // contexts:
-            context,
-        ...restOptions} = options ?? {};
+            context,          // take the [context] to be passed into title|message constructor
+        ...restShowMessageOptions} = dialogMessageFetchError;
         
         
         
         // populate data:
-        const isRequestError = ( // the request was made but no response was received
+        const isRequestError = (  // the request was made but no response was received
             // axios'  error request:
-            !!error?.request // the request property must be exist
+            !!fetchError?.request // the request property must be exist
             ||
             // rtkq's  error request:
-            isTypeError(error?.error)
+            isTypeError(fetchError?.error)
             ||
             // fetch's error request:
-            isTypeError(error)
+            isTypeError(fetchError)
         );
         
         let errorCode = (
             // axios'  error status code:
-            error?.response?.status
+            fetchError?.response?.status
             ??
             // rtkq's  error status code:
-            error?.status
+            fetchError?.status
             ??
             // fetch's error status code:
-            error?.cause?.status // passing a `Response` object
+            fetchError?.cause?.status // passing a `Response` object
             ??
-            error?.cause         // passing a `Response`'s status code
+            fetchError?.cause         // passing a `Response`'s status code
         );
         if (typeof(errorCode) !== 'number') errorCode = 0; // ignore if the code is not a number
         const isClientError  = (errorCode >= 400) && (errorCode <= 499); // 400-499
@@ -470,7 +494,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             isServerError,
             
             errorCode,
-            error,
+            error : fetchError,
             
             
             
@@ -483,95 +507,96 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         // show message:
         let title   : React.ReactNode      = (typeof(fetchErrorTitle  ) === 'function') ? fetchErrorTitle(fetchErrorInfo  ) : fetchErrorTitle;
         if (title   === undefined) title   = _fetchErrorTitleDefault;
-        await showMessageError(
-            // axios'  human_readable server error   response:
-            // axios'  human_readable server message response:
-            // rtkq's  human_readable server error   response:
-            // rtkq's  human_readable server message response:
-            ((): React.ReactElement|undefined => {
-                const data = (
-                    error?.response?.data // axios' response data
-                    ??
-                    error?.data           // rtkq's response data
-                );
-                
-                
-                
-                // response as json:
-                if (typeof(data) === 'object') {
-                    const error   = data?.error;
-                    if ((typeof(error)   === 'string') && !!error  ) return paragraphify(error);   // not an empty string => a valid error message
+        await showMessageError({
+            // contents:
+            title,
+            error : (
+                // axios'  human_readable server error   response:
+                // axios'  human_readable server message response:
+                // rtkq's  human_readable server error   response:
+                // rtkq's  human_readable server message response:
+                ((): React.ReactElement|undefined => {
+                    const data = (
+                        fetchError?.response?.data // axios' response data
+                        ??
+                        fetchError?.data           // rtkq's response data
+                    );
                     
-                    const message = data?.message;
-                    if ((typeof(message) === 'string') && !!message) return paragraphify(message); // not an empty string => a valid error message
-                }
-                // response as text:
-                else if (typeof(data) === 'string') {
-                    if (!!data) return paragraphify(data); // not an empty string => a valid error message
-                } // if
-                
-                
-                
-                return undefined; // unknown response format => skip
-            })()
-            ??
-            // fetch's human_readable server error   response:
-            // fetch's human_readable server message response:
-            (await (async (): Promise<React.ReactElement|undefined> => {
-                // conditions:
-                const response = error?.cause; // a `Response` object passed on Error('string', Response)
-                if (!(response instanceof Response)) return undefined; // not a `Response` object => skip
-                const contentType = response.headers.get('Content-Type');
-                if (!contentType) return undefined; // no 'Content-Type' defined => skip
-                
-                
-                
-                // response as json:
-                if ((/^application\/json/i).test(contentType)) {
-                    try {
-                        const data    = await response.json();
-                        
+                    
+                    
+                    // response as json:
+                    if (typeof(data) === 'object') {
                         const error   = data?.error;
                         if ((typeof(error)   === 'string') && !!error  ) return paragraphify(error);   // not an empty string => a valid error message
                         
                         const message = data?.message;
                         if ((typeof(message) === 'string') && !!message) return paragraphify(message); // not an empty string => a valid error message
                     }
-                    catch {
-                        return undefined; // parse failed => skip
-                    } // try
-                }
-                // response as text:
-                else if ((/^text/i).test(contentType)) {
-                    try {
-                        const text = await response.text();
-                        
-                        if (!!text) return paragraphify(text); // not an empty string => a valid error message
+                    // response as text:
+                    else if (typeof(data) === 'string') {
+                        if (!!data) return paragraphify(data); // not an empty string => a valid error message
+                    } // if
+                    
+                    
+                    
+                    return undefined; // unknown response format => skip
+                })()
+                ??
+                // fetch's human_readable server error   response:
+                // fetch's human_readable server message response:
+                (await (async (): Promise<React.ReactElement|undefined> => {
+                    // conditions:
+                    const response = fetchError?.cause; // a `Response` object passed on Error('string', Response)
+                    if (!(response instanceof Response)) return undefined; // not a `Response` object => skip
+                    const contentType = response.headers.get('Content-Type');
+                    if (!contentType) return undefined; // no 'Content-Type' defined => skip
+                    
+                    
+                    
+                    // response as json:
+                    if ((/^application\/json/i).test(contentType)) {
+                        try {
+                            const data    = await response.json();
+                            
+                            const error   = data?.error;
+                            if ((typeof(error)   === 'string') && !!error  ) return paragraphify(error);   // not an empty string => a valid error message
+                            
+                            const message = data?.message;
+                            if ((typeof(message) === 'string') && !!message) return paragraphify(message); // not an empty string => a valid error message
+                        }
+                        catch {
+                            return undefined; // parse failed => skip
+                        } // try
                     }
-                    catch {
-                        return undefined; // parse failed => skip
-                    } // try
-                } // if
-                
-                
-                
-                return undefined; // unknown response format => skip
-            })())
-            ??
-            // if there is a request/client/server error => assumes as a connection problem:
-            ((): React.ReactNode => {
-                let message : React.ReactNode      = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorInfo) : fetchErrorMessage;
-                if (message === undefined) message = _fetchErrorMessageDefault(fetchErrorInfo);
-                return message;
-            })()
-        , {
-            // contents:
-            title,
+                    // response as text:
+                    else if ((/^text/i).test(contentType)) {
+                        try {
+                            const text = await response.text();
+                            
+                            if (!!text) return paragraphify(text); // not an empty string => a valid error message
+                        }
+                        catch {
+                            return undefined; // parse failed => skip
+                        } // try
+                    } // if
+                    
+                    
+                    
+                    return undefined; // unknown response format => skip
+                })())
+                ??
+                // if there is a request/client/server error => assumes as a connection problem:
+                ((): React.ReactNode => {
+                    let message : React.ReactNode      = (typeof(fetchErrorMessage) === 'function') ? fetchErrorMessage(fetchErrorInfo) : fetchErrorMessage;
+                    if (message === undefined) message = _fetchErrorMessageDefault(fetchErrorInfo);
+                    return message;
+                })()
+            ),
             
             
             
             // options:
-            ...restOptions,
+            ...restShowMessageOptions,
         });
     });
     const showMessageSuccess      = useEvent(async (dialogMessageSuccess      :                      DialogMessageSuccess|false      | React.ReactNode, options?: ShowMessageSuccessOptions     ): Promise<void> => {

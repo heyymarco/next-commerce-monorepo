@@ -74,15 +74,6 @@ export interface ShowMessageErrorOptions        extends ShowMessageOptions {
 export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
 }
 export interface ShowMessageFetchErrorOptions   extends ShowMessageOptions {
-    // contents:
-    fetchErrorTitle    ?: FetchErrorTitle
-    
-    fetchErrorMessage  ?: FetchErrorMessage
-    
-    
-    
-    // contexts:
-    context            ?: any
 }
 export interface ShowMessageSuccessOptions      extends ShowMessageOptions {
 }
@@ -112,6 +103,18 @@ export interface DialogMessageFieldError        extends ShowMessageFieldErrorOpt
     fieldErrorIcon      ?: IconProps<Element>['icon']
     fieldErrorLabelFind ?: (fieldError: Element) => string|null|undefined
     fieldErrorFocus     ?: boolean
+    
+    
+    
+    // contexts:
+    context             ?: any
+}
+export interface DialogMessageFetchError        extends ShowMessageFieldErrorOptions {
+    // contents:
+    fetchErrorTitle     ?: FetchErrorTitle
+    
+    fetchError           : any
+    fetchErrorMessage   ?: FetchErrorMessage
     
     
     

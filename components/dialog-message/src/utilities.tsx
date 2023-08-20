@@ -68,3 +68,18 @@ export const isFieldErrorList = <TDialogMessage extends {}>(dialogMessage : Reac
         )
     );
 };
+export const isError = <TDialogMessage extends {}>(dialogMessage : React.SetStateAction<TDialogMessage|false> | any, uniqueProp: keyof TDialogMessage): dialogMessage is any => {
+    return (
+        (dialogMessage             !==  false      ) // not `false`                       /* `false`         is used for closing     <ModalStatus> */
+        &&
+        (typeof(dialogMessage)     !== 'function'  ) // not a Function                    /* Function        is used for dispatching <ModalStatus> */
+        &&
+        (
+            (typeof(dialogMessage) !== 'object'    ) // not object
+            ||
+            (dialogMessage         ===  null       ) // is  object of `null`
+            ||
+            !(uniqueProp           in dialogMessage) // is  object of not_TDialogMessage  /* `TDialogMessage` is used for opening    <ModalStatus> */
+        )
+    );
+};
