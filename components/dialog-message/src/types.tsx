@@ -94,36 +94,37 @@ export interface ShowMessageNotificationOptions extends ShowMessageOptions {
 // states:
 export interface DialogMessage                  extends ShowMessageOptions {
     // contents:
-    title              ?: React.ReactNode
-    message             : React.ReactNode
+    title               ?: React.ReactNode
+    message              : React.ReactNode
 }
 export interface DialogMessageError             extends ShowMessageErrorOptions {
     // contents:
-    title              ?: React.ReactNode
-    error               : React.ReactNode
+    title               ?: React.ReactNode
+    error                : React.ReactNode
 }
 export interface DialogMessageFieldError        extends ShowMessageFieldErrorOptions {
     // contents:
-    fieldErrorTitle    ?: FieldErrorTitle
+    fieldErrorTitle     ?: FieldErrorTitle
     
-    fieldErrors         : FieldErrorList
-    fieldErrorMessage  ?: FieldErrorMessage
-    fieldErrorIconFind ?: (fieldError: Element) => string|null|undefined
-    fieldErrorIcon     ?: IconProps<Element>['icon']
-    fieldErrorFocus    ?: boolean
+    fieldErrors          : FieldErrorList
+    fieldErrorMessage   ?: FieldErrorMessage
+    fieldErrorIconFind  ?: (fieldError: Element) => string|null|undefined
+    fieldErrorIcon      ?: IconProps<Element>['icon']
+    fieldErrorLabelFind ?: (fieldError: Element) => string|null|undefined
+    fieldErrorFocus     ?: boolean
     
     
     
     // contexts:
-    context            ?: any
+    context             ?: any
 }
 export interface DialogMessageSuccess           extends ShowMessageSuccessOptions {
     // contents:
-    title              ?: React.ReactNode
-    success             : React.ReactNode
+    title               ?: React.ReactNode
+    success              : React.ReactNode
 }
 export interface DialogMessageNotification      extends ShowMessageNotificationOptions {
     // contents:
-    title              ?: React.ReactNode
-    notification        : React.ReactNode
+    title               ?: React.ReactNode
+    notification         : React.ReactNode
 }

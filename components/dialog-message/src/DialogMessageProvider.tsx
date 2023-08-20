@@ -112,8 +112,8 @@ import {
 
 
 // defaults:
-const _fieldErrorTitleDefault    : Exclude<FieldErrorTitle  , Function> = undefined;
-const _fieldErrorMessageDefault  : Extract<FieldErrorMessage, Function> = ({fieldErrors}) => {
+const _fieldErrorTitleDefault     : Exclude<FieldErrorTitle  , Function> = undefined;
+const _fieldErrorMessageDefault   : Extract<FieldErrorMessage, Function> = ({fieldErrors}) => {
     const isPlural = (fieldErrors?.length > 1);
     return (
         <p>
@@ -121,10 +121,13 @@ const _fieldErrorMessageDefault  : Extract<FieldErrorMessage, Function> = ({fiel
         </p>
     );
 };
-const _fieldErrorIconFindDefault : NonNullable<DialogMessageFieldError['fieldErrorIconFind']> = (fieldError: Element) => ((fieldError.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
+const _fieldErrorIconFindDefault  : NonNullable<DialogMessageFieldError['fieldErrorIconFind' ]> = (fieldError: Element) => ((fieldError.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
+const _fieldErrorIconDefault      : NonNullable<DialogMessageFieldError['fieldErrorIcon'     ]> = 'text_fields';
+const _fieldErrorLabelFindDefault : NonNullable<DialogMessageFieldError['fieldErrorLabelFind']> = (fieldError: Element) => (fieldError as HTMLElement).getAttribute?.('aria-label') || (fieldError.children?.[0] as HTMLInputElement)?.placeholder;
+const _fieldErrorFocusDefault     : NonNullable<DialogMessageFieldError['fieldErrorFocus'    ]> = true;
 
-const _fetchErrorTitleDefault    : Exclude<FetchErrorTitle  , Function> = undefined;
-const _fetchErrorMessageDefault  : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
+const _fetchErrorTitleDefault     : Exclude<FetchErrorTitle  , Function> = undefined;
+const _fetchErrorMessageDefault   : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
     <p>
         Oops, there was an error processing the command.
     </p>
@@ -166,6 +169,7 @@ export interface DialogMessageProviderProps {
     fieldErrorIconFindDefault    ?: DialogMessageFieldError['fieldErrorIconFind']
     fieldErrorIconDefault        ?: DialogMessageFieldError['fieldErrorIcon']
     fieldErrorIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
+    fieldErrorLabelFindDefault   ?: DialogMessageFieldError['fieldErrorLabelFind']
     fieldErrorFocusDefault       ?: DialogMessageFieldError['fieldErrorFocus']
     
     fetchErrorTitleDefault       ?: ShowMessageFetchErrorOptions['fetchErrorTitle']
@@ -189,9 +193,10 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         fieldErrorListComponent     = (<List<Element> listStyle='flat'                      /> as React.ReactComponentElement<any, ListProps<Element>>),
         fieldErrorListItemComponent = (<ListItem<Element>                                   /> as React.ReactComponentElement<any, ListItemProps<Element>>),
         fieldErrorIconFindDefault   = _fieldErrorIconFindDefault,
-        fieldErrorIconDefault       = 'text_fields',
+        fieldErrorIconDefault       = _fieldErrorIconDefault,
         fieldErrorIconComponent     = (<Icon<Element> icon={undefined as any}               /> as React.ReactComponentElement<any, IconProps<Element>>),
-        fieldErrorFocusDefault      = true,
+        fieldErrorLabelFindDefault  = _fieldErrorLabelFindDefault,
+        fieldErrorFocusDefault      = _fieldErrorFocusDefault,
         
         fetchErrorTitleDefault      = _fetchErrorTitleDefault,
         fetchErrorMessageDefault    = _fetchErrorMessageDefault,
@@ -306,18 +311,19 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         // defaults:
         const {
             // contents:
-            fieldErrorTitle    = fieldErrorTitleDefault,
+            fieldErrorTitle     = fieldErrorTitleDefault,
             
-            fieldErrors,       // take the [fieldErrors] as a part of [error message]
-            fieldErrorMessage  = fieldErrorMessageDefault,
-            fieldErrorIconFind = fieldErrorIconFindDefault,
-            fieldErrorIcon     = fieldErrorIconDefault,
-            fieldErrorFocus    = fieldErrorFocusDefault,
+            fieldErrors,        // take the [fieldErrors] as a part of [error message]
+            fieldErrorMessage   = fieldErrorMessageDefault,
+            fieldErrorIconFind  = fieldErrorIconFindDefault,
+            fieldErrorIcon      = fieldErrorIconDefault,
+            fieldErrorLabelFind = fieldErrorLabelFindDefault,
+            fieldErrorFocus     = fieldErrorFocusDefault,
             
             
             
             // contexts:
-            context,           // take the [context] to be passed into title|message constructor
+            context,            // take the [context] to be passed into title|message constructor
         ...restShowMessageOptions} = dialogMessageFieldError;
         
         
@@ -368,25 +374,25 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                             
                             
                             // children:
-                            (fieldErrorListItemComponent.props.children ?? <>
-                                {React.cloneElement<IconProps<Element>>(fieldErrorIconComponent,
-                                    // props:
-                                    {
-                                        // appearances:
-                                        icon : fieldErrorIconComponent.props.icon ?? (
-                                            fieldErrorIconFind(fieldError)
-                                            ??
-                                            fieldErrorIcon // if not found
-                                        ),
-                                    },
-                                )}
-                                &nbsp;
-                                {
-                                    (fieldError as HTMLElement).getAttribute?.('aria-label')
-                                    ||
-                                    (fieldError.children?.[0] as HTMLInputElement)?.placeholder
-                                }
-                            </>),
+                            (fieldErrorListItemComponent.props.children ?? ((): React.ReactNode => {
+                                let icon : DialogMessageFieldError['fieldErrorIcon']|null = fieldErrorIconComponent.props.icon;
+                                if (icon === undefined) icon = fieldErrorIconFind(fieldError);
+                                if (icon === undefined) icon = fieldErrorIcon;
+                                const label = fieldErrorLabelFind(fieldError);
+                                return (<>
+                                    {!!icon && React.cloneElement<IconProps<Element>>(fieldErrorIconComponent,
+                                        // props:
+                                        {
+                                            // appearances:
+                                            icon : icon,
+                                        },
+                                    )}
+                                    {!!icon && !!label && <>
+                                        &nbsp;
+                                    </>}
+                                    {label}
+                                </>);
+                            })()),
                         )
                     )),
                 )}
@@ -404,7 +410,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         // focus the first fieldError:
         if (fieldErrorFocus) {
             const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"]), iframe';
-            const firstFieldError = fieldErrors?.[0];
+            const firstFieldError   = fieldErrors?.[0];
             const firstFocusableElm = (firstFieldError.matches(focusableSelector) ? firstFieldError : firstFieldError?.querySelector(focusableSelector)) as HTMLElement|null;
             firstFieldError.scrollIntoView({
                 block    : 'start',
