@@ -71,6 +71,7 @@ import type {
     
     // states:
     DialogMessage,
+    DialogMessageError,
     
     
     
@@ -197,7 +198,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false> | React.ReactNode, options?: ShowMessageOptions            ): Promise<void> => {
+    const showMessage             = useEvent(async (dialogMessage      : React.SetStateAction<DialogMessage|false>     | React.ReactNode, options?: ShowMessageOptions            ): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessage, 'message')) {
             return await showMessage({ // recursive call
@@ -213,7 +214,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         
-        // show message:
+        // show|hide message:
         setDialogMessage(dialogMessage);
         
         
@@ -224,32 +225,54 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         });
     });
     
-    const showMessageError        = useEvent(async (error         : React.ReactNode                                            , options?: ShowMessageErrorOptions       ): Promise<void> => {
-        // defaults:
-        const {
-            // contents:
-            title = 'Error',
-            
-            
-            
-            // options:
-            theme = 'danger',
-        ...restOptions} = options ?? {};
+    const showMessageError        = useEvent(async (dialogMessageError :                      DialogMessageError|false | React.ReactNode, options?: ShowMessageErrorOptions       ): Promise<void> => {
+        // handle overloads:
+        if (isReactNode(dialogMessageError, 'error')) {
+            return await showMessageError({ // recursive call
+                // contents:
+                error : dialogMessageError,
+                
+                
+                
+                // options:
+                ...options, // DialogMessageError extends ShowMessageErrorOptions
+            });
+        } // if
         
         
         
-        // show message:
-        await showMessage({
-            // contents:
-            title,
-            message : error,
+        if (!dialogMessageError) {
+            // hide message:
+            return await showMessage(false);
+        }
+        else {
+            // defaults:
+            const {
+                // contents:
+                title  = 'Error',  // if [title] not defined => defaults to 'Error'
+                error,             // take the [error] as [message]
+                
+                
+                
+                // options:
+                theme  = 'danger', // if [theme] not defined => defaults to 'danger'
+            ...restDialogMessage} = dialogMessageError;
             
             
             
-            // options:
-            theme,
-            ...restOptions,
-        });
+            // show message:
+            return await showMessage({
+                // contents:
+                title,
+                message : error,
+                
+                
+                
+                // options:
+                theme,
+                ...restDialogMessage,
+            });
+        } // if
     });
     const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|null|undefined                          , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
         // conditions:

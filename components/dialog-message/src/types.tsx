@@ -29,8 +29,6 @@ export interface ShowMessageOptions
 {
 }
 export interface ShowMessageErrorOptions        extends ShowMessageOptions {
-    // contents:
-    title              ?: React.ReactNode
 }
 export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
     // contents:
@@ -73,6 +71,11 @@ export interface DialogMessage                  extends ShowMessageOptions {
     // contents:
     title              ?: React.ReactNode
     message             : React.ReactNode
+}
+export interface DialogMessageError             extends ShowMessageErrorOptions {
+    // contents:
+    title              ?: React.ReactNode
+    error               : React.ReactNode
 }
 
 
