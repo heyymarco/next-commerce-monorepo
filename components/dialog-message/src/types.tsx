@@ -56,8 +56,6 @@ export interface ShowMessageFetchErrorOptions   extends ShowMessageOptions {
     context            ?: any
 }
 export interface ShowMessageSuccessOptions      extends ShowMessageOptions {
-    // contents:
-    title              ?: React.ReactNode
 }
 export interface ShowMessageNotificationOptions extends ShowMessageOptions {
     // contents:
@@ -76,6 +74,11 @@ export interface DialogMessageError             extends ShowMessageErrorOptions 
     // contents:
     title              ?: React.ReactNode
     error               : React.ReactNode
+}
+export interface DialogMessageSuccess           extends ShowMessageSuccessOptions {
+    // contents:
+    title              ?: React.ReactNode
+    success             : React.ReactNode
 }
 
 
