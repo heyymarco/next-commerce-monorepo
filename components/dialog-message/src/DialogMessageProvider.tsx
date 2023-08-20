@@ -60,6 +60,7 @@ import {
 // internals:
 import type {
     // options:
+    ShowMessageOptions,
     ShowMessageErrorOptions,
     ShowMessageFieldErrorOptions,
     ShowMessageFetchErrorOptions,
@@ -195,7 +196,34 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false>                                  ): Promise<void> => {
+    const showMessage             = useEvent(async (dialogMessage : React.SetStateAction<DialogMessage|false> | React.ReactNode, options?: ShowMessageOptions            ): Promise<void> => {
+        // handle overloads:
+        if (
+            (dialogMessage             !==  false      ) // not `false`                      /* `false`         is used for closing     <ModalStatus> */
+            &&
+            (typeof(dialogMessage)     !== 'function'  ) // not a Function                   /* Function        is used for dispatching <ModalStatus> */
+            &&
+            (
+                (typeof(dialogMessage) !== 'object'    ) // not object
+                ||
+                (dialogMessage         ===  null       ) // is  object of `null`
+                ||
+                !('message'            in dialogMessage) // is  object of not_DialogMessage  /* `DialogMessage` is used for opening     <ModalStatus> */
+            )
+        ) {
+            return await showMessage({ // recursive call
+                // contents:
+                message : dialogMessage,
+                
+                
+                
+                // options:
+                ...options, // DialogMessage extends ShowMessageOptions
+            });
+        } // if
+        
+        
+        
         // show message:
         setDialogMessage(dialogMessage);
         
@@ -207,7 +235,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         });
     });
     
-    const showMessageError        = useEvent(async (error         : React.ReactNode                  , options?: ShowMessageErrorOptions       ): Promise<void> => {
+    const showMessageError        = useEvent(async (error         : React.ReactNode                                            , options?: ShowMessageErrorOptions       ): Promise<void> => {
         // defaults:
         const {
             // contents:
@@ -234,7 +262,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restOptions,
         });
     });
-    const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|null|undefined, options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
+    const showMessageFieldError   = useEvent(async (invalidFields : ArrayLike<Element>|null|undefined                          , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
         // conditions:
         if (!invalidFields?.length) return; // no field error => nothing to show => ignore
         
@@ -343,7 +371,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async (error         : any                              , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
+    const showMessageFetchError   = useEvent(async (error         : any                                                        , options?: ShowMessageFetchErrorOptions  ): Promise<void> => {
         // defaults:
         const {
             // contents:
@@ -498,7 +526,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restOptions,
         });
     });
-    const showMessageSuccess      = useEvent(async (success       : React.ReactNode                  , options?: ShowMessageSuccessOptions     ): Promise<void> => {
+    const showMessageSuccess      = useEvent(async (success       : React.ReactNode                                            , options?: ShowMessageSuccessOptions     ): Promise<void> => {
         // defaults:
         const {
             // contents:
@@ -525,7 +553,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restOptions,
         });
     });
-    const showMessageNotification = useEvent(async (notification  : React.ReactNode                  , options?: ShowMessageNotificationOptions): Promise<void> => {
+    const showMessageNotification = useEvent(async (notification  : React.ReactNode                                            , options?: ShowMessageNotificationOptions): Promise<void> => {
         // defaults:
         const {
             // contents:
