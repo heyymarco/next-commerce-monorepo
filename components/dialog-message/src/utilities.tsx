@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// internals:
+import type {
+    // types:
+    InvalidFields,
+}                           from './types.js'
+
 
 
 // utilities:
@@ -33,6 +39,21 @@ export const isTypeError = (error: any): boolean => {
 };
 
 export const isReactNode = <TDialogMessage extends {}>(dialogMessage : React.SetStateAction<TDialogMessage|false> | React.ReactNode, uniqueProp: keyof TDialogMessage): dialogMessage is Exclude<React.ReactNode, false|Function> => {
+    return (
+        (dialogMessage             !==  false      ) // not `false`                       /* `false`         is used for closing     <ModalStatus> */
+        &&
+        (typeof(dialogMessage)     !== 'function'  ) // not a Function                    /* Function        is used for dispatching <ModalStatus> */
+        &&
+        (
+            (typeof(dialogMessage) !== 'object'    ) // not object
+            ||
+            (dialogMessage         ===  null       ) // is  object of `null`
+            ||
+            !(uniqueProp           in dialogMessage) // is  object of not_TDialogMessage  /* `TDialogMessage` is used for opening    <ModalStatus> */
+        )
+    );
+};
+export const isInvalidFields = <TDialogMessage extends {}>(dialogMessage : React.SetStateAction<TDialogMessage|false> | InvalidFields, uniqueProp: keyof TDialogMessage): dialogMessage is InvalidFields => {
     return (
         (dialogMessage             !==  false      ) // not `false`                       /* `false`         is used for closing     <ModalStatus> */
         &&

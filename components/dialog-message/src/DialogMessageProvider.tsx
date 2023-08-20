@@ -59,21 +59,8 @@ import {
 
 // internals:
 import type {
-    // options:
-    ShowMessageOptions,
-    ShowMessageErrorOptions,
-    ShowMessageFieldErrorOptions,
-    ShowMessageFetchErrorOptions,
-    ShowMessageSuccessOptions,
-    ShowMessageNotificationOptions,
-    
-    
-    
-    // states:
-    DialogMessage,
-    DialogMessageError,
-    DialogMessageSuccess,
-    DialogMessageNotification,
+    // types:
+    InvalidFields,
     
     
     
@@ -89,12 +76,32 @@ import type {
     
     FetchErrorTitle,
     FetchErrorMessage,
+    
+    
+    
+    // options:
+    ShowMessageOptions,
+    ShowMessageErrorOptions,
+    ShowMessageFieldErrorOptions,
+    ShowMessageFetchErrorOptions,
+    ShowMessageSuccessOptions,
+    ShowMessageNotificationOptions,
+    
+    
+    
+    // states:
+    DialogMessage,
+    DialogMessageError,
+    DialogMessageFieldError,
+    DialogMessageSuccess,
+    DialogMessageNotification,
 }                           from './types.js'
 import {
     // utilities:
     paragraphify,
     isTypeError,
     isReactNode,
+    isInvalidFields,
 }                           from './utilities.js'
 import {
     // contexts:
@@ -243,42 +250,56 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         
-        if (!dialogMessageError) {
-            // hide message:
-            return await showMessage(false);
-        }
-        else {
-            // defaults:
-            const {
+        // hide message if `false`:
+        if (dialogMessageError === false) return await showMessage(false);
+        
+        
+        
+        // defaults:
+        const {
+            // contents:
+            title  = 'Error',  // if [title] not defined => defaults to 'Error'
+            error,             // take the [error] as [message]
+            
+            
+            
+            // options:
+            theme  = 'danger', // if [theme] not defined => defaults to 'danger'
+        ...restShowMessageOptions} = dialogMessageError;
+        
+        
+        
+        // show message:
+        return await showMessage({
+            // contents:
+            title,
+            message : error,
+            
+            
+            
+            // options:
+            theme,
+            ...restShowMessageOptions,
+        });
+    });
+    const showMessageFieldError   = useEvent(async (dialogMessageFieldError   :                      DialogMessageFieldError|false   | InvalidFields  , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
+        // handle overloads:
+        if (isInvalidFields(dialogMessageFieldError, 'invalidFields')) {
+            return await showMessageFieldError({ // recursive call
                 // contents:
-                title  = 'Error',  // if [title] not defined => defaults to 'Error'
-                error,             // take the [error] as [message]
+                invalidFields : dialogMessageFieldError,
                 
                 
                 
                 // options:
-                theme  = 'danger', // if [theme] not defined => defaults to 'danger'
-            ...restDialogMessage} = dialogMessageError;
-            
-            
-            
-            // show message:
-            return await showMessage({
-                // contents:
-                title,
-                message : error,
-                
-                
-                
-                // options:
-                theme,
-                ...restDialogMessage,
+                ...options, // DialogMessageFieldError extends ShowMessageFieldErrorOptions
             });
         } // if
-    });
-    const showMessageFieldError   = useEvent(async (invalidFields             : ArrayLike<Element>|null|undefined                                     , options?: ShowMessageFieldErrorOptions  ): Promise<void> => {
-        // conditions:
-        if (!invalidFields?.length) return; // no field error => nothing to show => ignore
+        
+        
+        
+        // hide message if `false`:
+        if (dialogMessageFieldError === false) return await showMessageError(false);
         
         
         
@@ -287,6 +308,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             // contents:
             fieldErrorTitle    = fieldErrorTitleDefault,
             
+            invalidFields,     // take the [invalidFields] as a part of [error message]
             fieldErrorMessage  = fieldErrorMessageDefault,
             fieldErrorIconFind = fieldErrorIconFindDefault,
             fieldErrorIcon     = fieldErrorIconDefault,
@@ -295,8 +317,13 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             
             
             // contexts:
-            context,
-        ...restOptions} = options ?? {};
+            context,           // take the [context] to be passed into title|message constructor
+        ...restShowMessageOptions} = dialogMessageFieldError;
+        
+        
+        
+        // conditions:
+        if (!invalidFields?.length) return; // no field error => nothing to show => ignore
         
         
         
@@ -318,56 +345,57 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         if (title   === undefined) title   = _fieldErrorTitleDefault;
         let message : React.ReactNode      = (typeof(fieldErrorMessage) === 'function') ? fieldErrorMessage(fieldErrorInfo) : fieldErrorMessage;
         if (message === undefined) message = _fieldErrorMessageDefault(fieldErrorInfo);
-        await showMessageError(<>
-            {message}
-            {/* <List> */}
-            {React.cloneElement<ListProps<Element>>(fieldErrorListComponent,
-                // props:
-                undefined,
-                
-                
-                
-                // children:
-                (fieldErrorListComponent.props.children ?? Array.from(invalidFields).map((invalidField, index) =>
-                    React.cloneElement<ListItemProps<Element>>(fieldErrorListItemComponent,
-                        // props:
-                        {
-                            key : fieldErrorListItemComponent.key ?? index,
-                        },
-                        
-                        
-                        
-                        // children:
-                        (fieldErrorListItemComponent.props.children ?? <>
-                            {React.cloneElement<IconProps<Element>>(fieldErrorIconComponent,
-                                // props:
-                                {
-                                    // appearances:
-                                    icon : fieldErrorIconComponent.props.icon ?? (
-                                        fieldErrorIconFind(invalidField)
-                                        ??
-                                        fieldErrorIcon // if not found
-                                    ),
-                                },
-                            )}
-                            &nbsp;
-                            {
-                                (invalidField as HTMLElement).getAttribute?.('aria-label')
-                                ||
-                                (invalidField.children?.[0] as HTMLInputElement)?.placeholder
-                            }
-                        </>),
-                    )
-                )),
-            )}
-        </>, {
+        await showMessageError({
             // contents:
             title,
+            error : <>
+                {message}
+                {/* <List> */}
+                {React.cloneElement<ListProps<Element>>(fieldErrorListComponent,
+                    // props:
+                    undefined,
+                    
+                    
+                    
+                    // children:
+                    (fieldErrorListComponent.props.children ?? Array.from(invalidFields).map((invalidField, index) =>
+                        React.cloneElement<ListItemProps<Element>>(fieldErrorListItemComponent,
+                            // props:
+                            {
+                                key : fieldErrorListItemComponent.key ?? index,
+                            },
+                            
+                            
+                            
+                            // children:
+                            (fieldErrorListItemComponent.props.children ?? <>
+                                {React.cloneElement<IconProps<Element>>(fieldErrorIconComponent,
+                                    // props:
+                                    {
+                                        // appearances:
+                                        icon : fieldErrorIconComponent.props.icon ?? (
+                                            fieldErrorIconFind(invalidField)
+                                            ??
+                                            fieldErrorIcon // if not found
+                                        ),
+                                    },
+                                )}
+                                &nbsp;
+                                {
+                                    (invalidField as HTMLElement).getAttribute?.('aria-label')
+                                    ||
+                                    (invalidField.children?.[0] as HTMLInputElement)?.placeholder
+                                }
+                            </>),
+                        )
+                    )),
+                )}
+            </>,
             
             
             
             // options:
-            ...restOptions,
+            ...restShowMessageOptions,
         });
         if (!isMounted.current) return; // unmounted => abort
         
@@ -556,38 +584,37 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         
-        if (!dialogMessageSuccess) {
-            // hide message:
-            return await showMessage(false);
-        }
-        else {
-            // defaults:
-            const {
-                // contents:
-                title  = 'Success', // if [title] not defined => defaults to 'Success'
-                success,            // take the [success] as [message]
-                
-                
-                
-                // options:
-                theme  = 'success', // if [theme] not defined => defaults to 'success'
-            ...restDialogMessage} = dialogMessageSuccess;
+        // hide message if `false`:
+        if (dialogMessageSuccess === false) return await showMessage(false);
+        
+        
+        
+        // defaults:
+        const {
+            // contents:
+            title  = 'Success', // if [title] not defined => defaults to 'Success'
+            success,            // take the [success] as [message]
             
             
             
-            // show message:
-            return await showMessage({
-                // contents:
-                title,
-                message : success,
-                
-                
-                
-                // options:
-                theme,
-                ...restDialogMessage,
-            });
-        } // if
+            // options:
+            theme  = 'success', // if [theme] not defined => defaults to 'success'
+        ...restShowMessageOptions} = dialogMessageSuccess;
+        
+        
+        
+        // show message:
+        return await showMessage({
+            // contents:
+            title,
+            message : success,
+            
+            
+            
+            // options:
+            theme,
+            ...restShowMessageOptions,
+        });
     });
     const showMessageNotification = useEvent(async (dialogMessageNotification :                      DialogMessageNotification|false | React.ReactNode, options?: ShowMessageNotificationOptions): Promise<void> => {
         // handle overloads:
@@ -605,38 +632,37 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         
-        if (!dialogMessageNotification) {
-            // hide message:
-            return await showMessage(false);
-        }
-        else {
-            // defaults:
-            const {
-                // contents:
-                title  = 'Notification', // if [title] not defined => defaults to 'Notification'
-                notification,            // take the [notification] as [message]
-                
-                
-                
-                // options:
-                theme  = 'primary',      // if [theme] not defined => defaults to 'primary'
-            ...restDialogMessage} = dialogMessageNotification;
+        // hide message if `false`:
+        if (dialogMessageNotification === false) return await showMessage(false);
+        
+        
+        
+        // defaults:
+        const {
+            // contents:
+            title  = 'Notification', // if [title] not defined => defaults to 'Notification'
+            notification,            // take the [notification] as [message]
             
             
             
-            // show message:
-            return await showMessage({
-                // contents:
-                title,
-                message : notification,
-                
-                
-                
-                // options:
-                theme,
-                ...restDialogMessage,
-            });
-        } // if
+            // options:
+            theme  = 'primary',      // if [theme] not defined => defaults to 'primary'
+        ...restShowMessageOptions} = dialogMessageNotification;
+        
+        
+        
+        // show message:
+        return await showMessage({
+            // contents:
+            title,
+            message : notification,
+            
+            
+            
+            // options:
+            theme,
+            ...restShowMessageOptions,
+        });
     });
     
     

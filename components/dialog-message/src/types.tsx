@@ -18,71 +18,8 @@ import type {
 
 
 
-// options:
-export interface ShowMessageOptions
-    extends
-        Omit<ModalBaseProps<Element>,
-            // contents:
-            |'title'   // we redefined `title`   prop
-            |'message' // we redefined `message` prop
-        >
-{
-}
-export interface ShowMessageErrorOptions        extends ShowMessageOptions {
-}
-export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
-    // contents:
-    fieldErrorTitle    ?: FieldErrorTitle
-    
-    fieldErrorMessage  ?: FieldErrorMessage
-    fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
-    fieldErrorIcon     ?: IconProps<Element>['icon']
-    fieldErrorFocus    ?: boolean
-    
-    
-    
-    // contexts:
-    context            ?: any
-}
-export interface ShowMessageFetchErrorOptions   extends ShowMessageOptions {
-    // contents:
-    fetchErrorTitle    ?: FetchErrorTitle
-    
-    fetchErrorMessage  ?: FetchErrorMessage
-    
-    
-    
-    // contexts:
-    context            ?: any
-}
-export interface ShowMessageSuccessOptions      extends ShowMessageOptions {
-}
-export interface ShowMessageNotificationOptions extends ShowMessageOptions {
-}
-
-
-
-// states:
-export interface DialogMessage                  extends ShowMessageOptions {
-    // contents:
-    title              ?: React.ReactNode
-    message             : React.ReactNode
-}
-export interface DialogMessageError             extends ShowMessageErrorOptions {
-    // contents:
-    title              ?: React.ReactNode
-    error               : React.ReactNode
-}
-export interface DialogMessageSuccess           extends ShowMessageSuccessOptions {
-    // contents:
-    title              ?: React.ReactNode
-    success             : React.ReactNode
-}
-export interface DialogMessageNotification      extends ShowMessageNotificationOptions {
-    // contents:
-    title              ?: React.ReactNode
-    notification        : React.ReactNode
-}
+// types:
+export type InvalidFields = ArrayLike<Element>|null|undefined
 
 
 
@@ -119,3 +56,74 @@ export type FieldErrorMessage = React.ReactNode | ((errorInfo: FieldErrorInfo) =
 
 export type FetchErrorTitle   = React.ReactNode | ((errorInfo: FetchErrorInfo) => React.ReactNode)
 export type FetchErrorMessage = React.ReactNode | ((errorInfo: FetchErrorInfo) => React.ReactNode)
+
+
+
+// options:
+export interface ShowMessageOptions
+    extends
+        Omit<ModalBaseProps<Element>,
+            // contents:
+            |'title'   // we redefined `title`   prop
+            |'message' // we redefined `message` prop
+        >
+{
+}
+export interface ShowMessageErrorOptions        extends ShowMessageOptions {
+}
+export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
+}
+export interface ShowMessageFetchErrorOptions   extends ShowMessageOptions {
+    // contents:
+    fetchErrorTitle    ?: FetchErrorTitle
+    
+    fetchErrorMessage  ?: FetchErrorMessage
+    
+    
+    
+    // contexts:
+    context            ?: any
+}
+export interface ShowMessageSuccessOptions      extends ShowMessageOptions {
+}
+export interface ShowMessageNotificationOptions extends ShowMessageOptions {
+}
+
+
+
+// states:
+export interface DialogMessage                  extends ShowMessageOptions {
+    // contents:
+    title              ?: React.ReactNode
+    message             : React.ReactNode
+}
+export interface DialogMessageError             extends ShowMessageErrorOptions {
+    // contents:
+    title              ?: React.ReactNode
+    error               : React.ReactNode
+}
+export interface DialogMessageFieldError        extends ShowMessageFieldErrorOptions {
+    // contents:
+    fieldErrorTitle    ?: FieldErrorTitle
+    
+    invalidFields       : InvalidFields
+    fieldErrorMessage  ?: FieldErrorMessage
+    fieldErrorIconFind ?: (invalidField: Element) => string|null|undefined
+    fieldErrorIcon     ?: IconProps<Element>['icon']
+    fieldErrorFocus    ?: boolean
+    
+    
+    
+    // contexts:
+    context            ?: any
+}
+export interface DialogMessageSuccess           extends ShowMessageSuccessOptions {
+    // contents:
+    title              ?: React.ReactNode
+    success             : React.ReactNode
+}
+export interface DialogMessageNotification      extends ShowMessageNotificationOptions {
+    // contents:
+    title              ?: React.ReactNode
+    notification        : React.ReactNode
+}
