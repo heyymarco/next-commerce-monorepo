@@ -11,18 +11,23 @@ import {
 
 // internals:
 import type {
+    // types:
+    FieldErrorList,
+    
+    
+    
     // options:
     ShowMessageOptions,
-    ShowMessageErrorOptions,
-    ShowMessageFieldErrorOptions,
-    ShowMessageFetchErrorOptions,
-    ShowMessageSuccessOptions,
-    ShowMessageNotificationOptions,
     
     
     
     // states:
     DialogMessage,
+    DialogMessageError,
+    DialogMessageFieldError,
+    DialogMessageFetchError,
+    DialogMessageSuccess,
+    DialogMessageNotification,
 }                           from './types.js'
 
 
@@ -37,14 +42,23 @@ const notNestedError = async (): Promise<void> => {
 // contexts:
 export interface DialogMessageApi {
     // dialogs:
-    showMessage             (dialogMessage : React.SetStateAction<DialogMessage|false>                             ): Promise<void>
-    showMessage             (message       : React.ReactNode             , options?: ShowMessageOptions            ): Promise<void>
+    showMessage             (dialogMessage : React.SetStateAction<DialogMessage|false>                 ): Promise<void>
+    showMessage             (message       : React.ReactNode             , options?: ShowMessageOptions): Promise<void>
     
-    showMessageError        (error         : React.ReactNode             , options?: ShowMessageErrorOptions       ): Promise<void>
-    showMessageFieldError   (fieldErrors   : ArrayLike<Element>|undefined, options?: ShowMessageFieldErrorOptions  ): Promise<void>
-    showMessageFetchError   (error         : any                         , options?: ShowMessageFetchErrorOptions  ): Promise<void>
-    showMessageSuccess      (success       : React.ReactNode             , options?: ShowMessageSuccessOptions     ): Promise<void>
-    showMessageNotification (notification  : React.ReactNode             , options?: ShowMessageNotificationOptions): Promise<void>
+    showMessageError        (error         : DialogMessageError|false                                  ): Promise<void>
+    showMessageError        (error         : React.ReactNode             , options?: ShowMessageOptions): Promise<void>
+    
+    showMessageFieldError   (fieldErrors   : DialogMessageFieldError|false                             ): Promise<void>
+    showMessageFieldError   (fieldErrors   : FieldErrorList              , options?: ShowMessageOptions): Promise<void>
+    
+    showMessageFetchError   (error         : DialogMessageFetchError|false                             ): Promise<void>
+    showMessageFetchError   (error         : any                         , options?: ShowMessageOptions): Promise<void>
+    
+    showMessageSuccess      (success       : DialogMessageSuccess|false                                ): Promise<void>
+    showMessageSuccess      (success       : React.ReactNode             , options?: ShowMessageOptions): Promise<void>
+    
+    showMessageNotification (notification  : DialogMessageNotification|false                           ): Promise<void>
+    showMessageNotification (notification  : React.ReactNode             , options?: ShowMessageOptions): Promise<void>
 }
 export const DialogMessageContext = createContext<DialogMessageApi>({
     // dialogs:

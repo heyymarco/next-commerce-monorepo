@@ -69,31 +69,21 @@ export interface ShowMessageOptions
         >
 {
 }
-export interface ShowMessageErrorOptions        extends ShowMessageOptions {
-}
-export interface ShowMessageFieldErrorOptions   extends ShowMessageOptions {
-}
-export interface ShowMessageFetchErrorOptions   extends ShowMessageOptions {
-}
-export interface ShowMessageSuccessOptions      extends ShowMessageOptions {
-}
-export interface ShowMessageNotificationOptions extends ShowMessageOptions {
-}
 
 
 
 // states:
-export interface DialogMessage                  extends ShowMessageOptions {
+export interface DialogMessage             extends ShowMessageOptions {
     // contents:
     title               ?: React.ReactNode
     message              : React.ReactNode
 }
-export interface DialogMessageError             extends ShowMessageErrorOptions {
+export interface DialogMessageError        extends ShowMessageOptions {
     // contents:
     title               ?: React.ReactNode
     error                : React.ReactNode
 }
-export interface DialogMessageFieldError        extends ShowMessageFieldErrorOptions {
+export interface DialogMessageFieldError   extends ShowMessageOptions {
     // contents:
     fieldErrorTitle     ?: FieldErrorTitle
     
@@ -109,7 +99,7 @@ export interface DialogMessageFieldError        extends ShowMessageFieldErrorOpt
     // contexts:
     context             ?: any
 }
-export interface DialogMessageFetchError        extends ShowMessageFieldErrorOptions {
+export interface DialogMessageFetchError   extends ShowMessageOptions {
     // contents:
     fetchErrorTitle     ?: FetchErrorTitle
     
@@ -121,12 +111,12 @@ export interface DialogMessageFetchError        extends ShowMessageFieldErrorOpt
     // contexts:
     context             ?: any
 }
-export interface DialogMessageSuccess           extends ShowMessageSuccessOptions {
+export interface DialogMessageSuccess      extends ShowMessageOptions {
     // contents:
     title               ?: React.ReactNode
     success              : React.ReactNode
 }
-export interface DialogMessageNotification      extends ShowMessageNotificationOptions {
+export interface DialogMessageNotification extends ShowMessageOptions {
     // contents:
     title               ?: React.ReactNode
     notification         : React.ReactNode
