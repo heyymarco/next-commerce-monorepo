@@ -209,7 +209,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async (dialogMessage             : React.SetStateAction<DialogMessage|false>            | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessage             = useEvent(async (dialogMessage             : React.SetStateAction<DialogMessage|false> | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessage, 'message')) {
             return await showMessage({ // recursive call
@@ -236,7 +236,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         });
     });
     
-    const showMessageError        = useEvent(async (dialogMessageError        :                      DialogMessageError|false        | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessageError        = useEvent(async (dialogMessageError        : DialogMessageError|false                  | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageError, 'error')) {
             return await showMessageError({ // recursive call
@@ -284,7 +284,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageFieldError   = useEvent(async (dialogMessageFieldError   :                      DialogMessageFieldError|false   | FieldErrorList , options?: ShowMessageOptions): Promise<void> => {
+    const showMessageFieldError   = useEvent(async (dialogMessageFieldError   : DialogMessageFieldError|false             | FieldErrorList , options?: ShowMessageOptions): Promise<void> => {
         // handle overloads:
         if (isFieldErrorList(dialogMessageFieldError, 'fieldErrors')) {
             return await showMessageFieldError({ // recursive call
@@ -416,7 +416,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async (dialogMessageFetchError   :                      DialogMessageFetchError|false   | any            , options?: ShowMessageOptions): Promise<void> => {
+    const showMessageFetchError   = useEvent(async (dialogMessageFetchError   : DialogMessageFetchError|false             | any            , options?: ShowMessageOptions): Promise<void> => {
         // handle overloads:
         if (isError(dialogMessageFetchError, 'fetchError')) {
             return await showMessageFetchError({ // recursive call
@@ -594,7 +594,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageSuccess      = useEvent(async (dialogMessageSuccess      :                      DialogMessageSuccess|false      | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessageSuccess      = useEvent(async (dialogMessageSuccess      : DialogMessageSuccess|false                | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageSuccess, 'success')) {
             return await showMessageSuccess({ // recursive call
@@ -642,7 +642,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageNotification = useEvent(async (dialogMessageNotification :                      DialogMessageNotification|false | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessageNotification = useEvent(async (dialogMessageNotification : DialogMessageNotification|false           | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageNotification, 'notification')) {
             return await showMessageNotification({ // recursive call
