@@ -11,7 +11,8 @@
   "type": "module",
   "workspaces": [
     "components/*",
-    "websites_/*"
+    "websites_/*",
+    "tests/*"
   ],
   "devDependencies": {
     "cross-env": "^7.0.3",
