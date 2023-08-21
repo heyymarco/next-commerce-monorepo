@@ -42,6 +42,9 @@ import {
     CardFooter,
     CardBodyProps,
     CardBody,
+    CardProps,
+    Card,
+    CardComponentProps,
     
     
     
@@ -159,6 +162,7 @@ export interface DialogMessageProviderProps {
     // components:
     modalStatusComponent         ?: React.ReactComponentElement<any, ModalStatusProps<Element>>
     
+    cardComponent                ?: CardComponentProps<Element>['cardComponent']
     cardHeaderComponent          ?: React.ReactComponentElement<any, CardHeaderProps<Element>>
     cardBodyComponent            ?: React.ReactComponentElement<any, CardBodyProps<Element>>
     cardFooterComponent          ?: React.ReactComponentElement<any, CardFooterProps<Element>>
@@ -186,6 +190,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         // components:
         modalStatusComponent        = (<ModalStatus modalCardStyle='scrollable' /> as React.ReactComponentElement<any, ModalStatusProps<Element>>),
         
+        cardComponent               = (<Card<Element>                           /> as React.ReactComponentElement<any, CardProps<Element>>),
         cardHeaderComponent         = (<CardHeader<Element>                     /> as React.ReactComponentElement<any, CardHeaderProps<Element>>),
         cardBodyComponent           = (<CardBody<Element>                       /> as React.ReactComponentElement<any, CardBodyProps<Element>>),
         cardFooterComponent         = (<CardFooter<Element>                     /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
@@ -832,7 +837,12 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     
                     
                     // behaviors:
-                    lazy             : modalStatusComponent.props.lazy ?? true,
+                    lazy             : modalStatusComponent.props.lazy          ?? true,
+                    
+                    
+                    
+                    // components:
+                    cardComponent    : modalStatusComponent.props.cardComponent ?? cardComponent,
                     
                     
                     
