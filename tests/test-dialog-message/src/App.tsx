@@ -55,6 +55,33 @@ function App() {
                 </button>
                 
                 <button onClick={async () => {
+                    const answer = await showMessage({
+                        title : <span>Say Hello</span>,
+                        message: <>
+                            <p>
+                                Hello <strong>world</strong>!
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            </p>
+                        </>,
+                        options: {
+                            ok   : <Button>Yea</Button>,
+                            no    : <Button>Noo</Button>,
+                            maybe : <Button>Ummm</Button>,
+                        }
+                        
+                    });
+                    showMessageNotification({
+                        notification : <>
+                            The answer is <strong>{`${answer}`}</strong>
+                        </>,
+                    });
+                }}>
+                    Show Modal with options
+                </button>
+                
+                <button onClick={async () => {
                     const answer = await showMessage<'yes'|'no'|'maybe'>({
                         title : <span>Say Hello</span>,
                         message: <>
@@ -66,7 +93,7 @@ function App() {
                             </p>
                         </>,
                         options: {
-                            yes   : <Button>Yea</Button>,
+                            yes   : <Button type='submit'>Yea</Button>,
                             no    : <Button>Noo</Button>,
                             maybe : <Button>Ummm</Button>,
                         }
