@@ -210,14 +210,14 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     // states:
     const [dialogMessage, setDialogMessage] = useState<DialogMessage<any>|false>(false);
-    const signalsDialogMessageClosed        = useRef<(() => void)[]>([]);
+    const signalsDialogMessageClosed        = useRef<((answer: any|undefined) => void)[]>([]);
     const isMounted                         = useMountedFlag();
     const answerRef                         = useRef<any|undefined>(undefined);
     
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async <TAnswer extends any>(dialogMessage             : React.SetStateAction<DialogMessage<TAnswer>|false> | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
+    const showMessage             = useEvent(async <TAnswer extends any>(dialogMessage             : React.SetStateAction<DialogMessage<TAnswer>|false> | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined> => {
         // handle overloads:
         if (isReactNode(dialogMessage, 'message')) {
             return await showMessage({ // recursive call
@@ -239,12 +239,12 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         // when message closed:
-        return new Promise<void>((resolved) => {
+        return new Promise<TAnswer|undefined>((resolved) => {
             signalsDialogMessageClosed.current.push(resolved); // wait until <ModalStatus> to be closed by user
         });
     });
     
-    const showMessageError        = useEvent(async <TAnswer extends any>(dialogMessageError        : DialogMessageError<TAnswer>|false                  | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
+    const showMessageError        = useEvent(async <TAnswer extends any>(dialogMessageError        : DialogMessageError<TAnswer>|false                  | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined> => {
         // handle overloads:
         if (isReactNode(dialogMessageError, 'error')) {
             return await showMessageError({ // recursive call
@@ -292,7 +292,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageFieldError   = useEvent(async <TAnswer extends any>(dialogMessageFieldError   : DialogMessageFieldError<TAnswer>|false             | FieldErrorList , options?: ShowMessageOptions<TAnswer>): Promise<void> => {
+    const showMessageFieldError   = useEvent(async <TAnswer extends any>(dialogMessageFieldError   : DialogMessageFieldError<TAnswer>|false             | FieldErrorList , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined> => {
         // handle overloads:
         if (isFieldErrorList(dialogMessageFieldError, 'fieldErrors')) {
             return await showMessageFieldError({ // recursive call
@@ -424,7 +424,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async <TAnswer extends any>(dialogMessageFetchError   : DialogMessageFetchError<TAnswer>|false             | any            , options?: ShowMessageOptions<TAnswer>): Promise<void> => {
+    const showMessageFetchError   = useEvent(async <TAnswer extends any>(dialogMessageFetchError   : DialogMessageFetchError<TAnswer>|false             | any            , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined> => {
         // handle overloads:
         if (isError(dialogMessageFetchError, 'fetchError')) {
             return await showMessageFetchError({ // recursive call
@@ -602,7 +602,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageSuccess      = useEvent(async <TAnswer extends any>(dialogMessageSuccess      : DialogMessageSuccess<TAnswer>|false                | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
+    const showMessageSuccess      = useEvent(async <TAnswer extends any>(dialogMessageSuccess      : DialogMessageSuccess<TAnswer>|false                | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined> => {
         // handle overloads:
         if (isReactNode(dialogMessageSuccess, 'success')) {
             return await showMessageSuccess({ // recursive call
@@ -650,7 +650,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageNotification = useEvent(async <TAnswer extends any>(dialogMessageNotification : DialogMessageNotification<TAnswer>|false           | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
+    const showMessageNotification = useEvent(async <TAnswer extends any>(dialogMessageNotification : DialogMessageNotification<TAnswer>|false           | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined> => {
         // handle overloads:
         if (isReactNode(dialogMessageNotification, 'notification')) {
             return await showMessageNotification({ // recursive call
@@ -759,7 +759,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         // notify the <ModalStatus> is closed by user:
         for (const signalDialogMessageClosed of signalsDialogMessageClosed.current) {
-            signalDialogMessageClosed();
+            signalDialogMessageClosed(answer);
         } // for
         signalsDialogMessageClosed.current.splice(0); // clear
     });
