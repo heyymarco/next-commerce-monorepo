@@ -21,7 +21,7 @@ import {
 
 
 // react components:
-export interface ButtonWithAnswerProps<TAnswer extends any>
+export interface ButtonWithAnswerProps<TAnswer extends any = 'ok'>
     extends
         // bases:
         ButtonProps,
@@ -39,7 +39,7 @@ export interface ButtonWithAnswerProps<TAnswer extends any>
     // handlers:
     onAnswer : (answer: TAnswer) => void
 }
-const ButtonWithAnswer = <TAnswer extends any>(props: ButtonWithAnswerProps<TAnswer>): JSX.Element|null => {
+const ButtonWithAnswer = <TAnswer extends any = 'ok'>(props: ButtonWithAnswerProps<TAnswer>): JSX.Element|null => {
     // rest props:
     const {
         // contents:

@@ -42,23 +42,23 @@ const notNestedError = async (): Promise<any|undefined> => {
 // contexts:
 export interface DialogMessageApi {
     // dialogs:
-    showMessage             <TAnswer extends any>(dialogMessage             : React.SetStateAction<DialogMessage<TAnswer>|false>                                       ): Promise<TAnswer|undefined>
-    showMessage             <TAnswer extends any>(message                   : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
+    showMessage             <TAnswer extends any = 'ok'>(dialogMessage             : React.SetStateAction<DialogMessage<TAnswer>|false>                                       ): Promise<TAnswer|undefined>
+    showMessage             <TAnswer extends any = 'ok'>(message                   : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
     
-    showMessageError        <TAnswer extends any>(dialogMessageError        : DialogMessageError<TAnswer>|false                                                        ): Promise<TAnswer|undefined>
-    showMessageError        <TAnswer extends any>(error                     : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
+    showMessageError        <TAnswer extends any = 'ok'>(dialogMessageError        : DialogMessageError<TAnswer>|false                                                        ): Promise<TAnswer|undefined>
+    showMessageError        <TAnswer extends any = 'ok'>(error                     : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
     
-    showMessageFieldError   <TAnswer extends any>(dialogMessageFieldError   : DialogMessageFieldError<TAnswer>|false                                                   ): Promise<TAnswer|undefined>
-    showMessageFieldError   <TAnswer extends any>(fieldErrors               : FieldErrorList                                    , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
+    showMessageFieldError   <TAnswer extends any = 'ok'>(dialogMessageFieldError   : DialogMessageFieldError<TAnswer>|false                                                   ): Promise<TAnswer|undefined>
+    showMessageFieldError   <TAnswer extends any = 'ok'>(fieldErrors               : FieldErrorList                                    , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
     
-    showMessageFetchError   <TAnswer extends any>(dialogMessageFetchError   : DialogMessageFetchError<TAnswer>|false                                                   ): Promise<TAnswer|undefined>
-    showMessageFetchError   <TAnswer extends any>(fetchError                : any                                               , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
+    showMessageFetchError   <TAnswer extends any = 'ok'>(dialogMessageFetchError   : DialogMessageFetchError<TAnswer>|false                                                   ): Promise<TAnswer|undefined>
+    showMessageFetchError   <TAnswer extends any = 'ok'>(fetchError                : any                                               , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
     
-    showMessageSuccess      <TAnswer extends any>(dialogMessageSuccess      : DialogMessageSuccess<TAnswer>|false                                                      ): Promise<TAnswer|undefined>
-    showMessageSuccess      <TAnswer extends any>(success                   : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
+    showMessageSuccess      <TAnswer extends any = 'ok'>(dialogMessageSuccess      : DialogMessageSuccess<TAnswer>|false                                                      ): Promise<TAnswer|undefined>
+    showMessageSuccess      <TAnswer extends any = 'ok'>(success                   : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
     
-    showMessageNotification <TAnswer extends any>(dialogMessageNotification : DialogMessageNotification<TAnswer>|false                                                 ): Promise<TAnswer|undefined>
-    showMessageNotification <TAnswer extends any>(notification              : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
+    showMessageNotification <TAnswer extends any = 'ok'>(dialogMessageNotification : DialogMessageNotification<TAnswer>|false                                                 ): Promise<TAnswer|undefined>
+    showMessageNotification <TAnswer extends any = 'ok'>(notification              : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<TAnswer|undefined>
 }
 export const DialogMessageContext = createContext<DialogMessageApi>({
     // dialogs:

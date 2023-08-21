@@ -21,7 +21,7 @@ import type {
 
 // types:
 export type FieldErrorList                               = ArrayLike<Element>|null|undefined
-export type AnswerOptionList<TAnswer extends any> = Map<TAnswer, ButtonComponentProps['buttonComponent']>|Record<Extract<TAnswer, string|number|symbol>, ButtonComponentProps['buttonComponent']>
+export type AnswerOptionList<TAnswer extends any = 'ok'> = Map<TAnswer, ButtonComponentProps['buttonComponent']>|Record<Extract<TAnswer, string|number|symbol>, ButtonComponentProps['buttonComponent']>
 
 
 
@@ -62,7 +62,7 @@ export type FetchErrorMessage = React.ReactNode | ((errorInfo: FetchErrorInfo) =
 
 
 // options:
-export interface ShowMessageOptions<TAnswer extends any>
+export interface ShowMessageOptions<TAnswer extends any = 'ok'>
     extends
         Omit<ModalBaseProps<Element>,
             // contents:
@@ -77,7 +77,7 @@ export interface ShowMessageOptions<TAnswer extends any>
 
 
 // states:
-export interface DialogMessage<TAnswer extends any>
+export interface DialogMessage<TAnswer extends any = 'ok'>
     extends
         ShowMessageOptions<TAnswer>
 {
@@ -85,7 +85,7 @@ export interface DialogMessage<TAnswer extends any>
     title               ?: React.ReactNode
     message              : React.ReactNode
 }
-export interface DialogMessageError<TAnswer extends any>
+export interface DialogMessageError<TAnswer extends any = 'ok'>
     extends
         ShowMessageOptions<TAnswer>
 {
@@ -93,7 +93,7 @@ export interface DialogMessageError<TAnswer extends any>
     title               ?: React.ReactNode
     error                : React.ReactNode
 }
-export interface DialogMessageFieldError<TAnswer extends any>
+export interface DialogMessageFieldError<TAnswer extends any = 'ok'>
     extends
         ShowMessageOptions<TAnswer>
 {
@@ -112,7 +112,7 @@ export interface DialogMessageFieldError<TAnswer extends any>
     // contexts:
     context             ?: any
 }
-export interface DialogMessageFetchError<TAnswer extends any>
+export interface DialogMessageFetchError<TAnswer extends any = 'ok'>
     extends
         ShowMessageOptions<TAnswer>
 {
@@ -127,7 +127,7 @@ export interface DialogMessageFetchError<TAnswer extends any>
     // contexts:
     context             ?: any
 }
-export interface DialogMessageSuccess<TAnswer extends any>
+export interface DialogMessageSuccess<TAnswer extends any = 'ok'>
     extends
         ShowMessageOptions<TAnswer>
 {
@@ -135,7 +135,7 @@ export interface DialogMessageSuccess<TAnswer extends any>
     title               ?: React.ReactNode
     success              : React.ReactNode
 }
-export interface DialogMessageNotification<TAnswer extends any>
+export interface DialogMessageNotification<TAnswer extends any = 'ok'>
     extends
         ShowMessageOptions<TAnswer>
 {

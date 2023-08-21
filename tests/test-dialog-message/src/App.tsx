@@ -6,6 +6,7 @@ import {
     HeadPortal,
 } from '@cssfn/cssfn-react'
 import '@reusable-ui/typos/effects';
+import { Button } from '@reusable-ui/components'
 import { useDialogMessage } from '@heymarco/dialog-message';
 
 
@@ -43,6 +44,33 @@ function App() {
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                             </p>
                         </>,
+                    });
+                    showMessageNotification({
+                        notification : <>
+                            The answer is <strong>{`${answer}`}</strong>
+                        </>,
+                    });
+                }}>
+                    Show Modal with options
+                </button>
+                
+                <button onClick={async () => {
+                    const answer = await showMessage<'yes'|'no'|'maybe'>({
+                        title : <span>Say Hello</span>,
+                        message: <>
+                            <p>
+                                Hello <strong>world</strong>!
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            </p>
+                        </>,
+                        options: {
+                            yes   : <Button>Yea</Button>,
+                            no    : <Button>Noo</Button>,
+                            maybe : <Button>Ummm</Button>,
+                        }
+                        
                     });
                     showMessageNotification({
                         notification : <>
