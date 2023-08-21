@@ -42,23 +42,23 @@ const notNestedError = async (): Promise<void> => {
 // contexts:
 export interface DialogMessageApi {
     // dialogs:
-    showMessage             (dialogMessage             : React.SetStateAction<DialogMessage|false>                              ): Promise<void>
-    showMessage             (message                   : React.ReactNode                          , options?: ShowMessageOptions): Promise<void>
+    showMessage             <TAnswer extends any>(dialogMessage             : React.SetStateAction<DialogMessage<TAnswer>|false>                                       ): Promise<void>
+    showMessage             <TAnswer extends any>(message                   : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<void>
     
-    showMessageError        (dialogMessageError        : DialogMessageError|false                                               ): Promise<void>
-    showMessageError        (error                     : React.ReactNode                          , options?: ShowMessageOptions): Promise<void>
+    showMessageError        <TAnswer extends any>(dialogMessageError        : DialogMessageError<TAnswer>|false                                                        ): Promise<void>
+    showMessageError        <TAnswer extends any>(error                     : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<void>
     
-    showMessageFieldError   (dialogMessageFieldError   : DialogMessageFieldError|false                                          ): Promise<void>
-    showMessageFieldError   (fieldErrors               : FieldErrorList                           , options?: ShowMessageOptions): Promise<void>
+    showMessageFieldError   <TAnswer extends any>(dialogMessageFieldError   : DialogMessageFieldError<TAnswer>|false                                                   ): Promise<void>
+    showMessageFieldError   <TAnswer extends any>(fieldErrors               : FieldErrorList                                    , options?: ShowMessageOptions<TAnswer>): Promise<void>
     
-    showMessageFetchError   (dialogMessageFetchError   : DialogMessageFetchError|false                                          ): Promise<void>
-    showMessageFetchError   (fetchError                : any                                      , options?: ShowMessageOptions): Promise<void>
+    showMessageFetchError   <TAnswer extends any>(dialogMessageFetchError   : DialogMessageFetchError<TAnswer>|false                                                   ): Promise<void>
+    showMessageFetchError   <TAnswer extends any>(fetchError                : any                                               , options?: ShowMessageOptions<TAnswer>): Promise<void>
     
-    showMessageSuccess      (dialogMessageSuccess      : DialogMessageSuccess|false                                             ): Promise<void>
-    showMessageSuccess      (success                   : React.ReactNode                          , options?: ShowMessageOptions): Promise<void>
+    showMessageSuccess      <TAnswer extends any>(dialogMessageSuccess      : DialogMessageSuccess<TAnswer>|false                                                      ): Promise<void>
+    showMessageSuccess      <TAnswer extends any>(success                   : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<void>
     
-    showMessageNotification (dialogMessageNotification : DialogMessageNotification|false                                        ): Promise<void>
-    showMessageNotification (notification              : React.ReactNode                          , options?: ShowMessageOptions): Promise<void>
+    showMessageNotification <TAnswer extends any>(dialogMessageNotification : DialogMessageNotification<TAnswer>|false                                                 ): Promise<void>
+    showMessageNotification <TAnswer extends any>(notification              : React.ReactNode                                   , options?: ShowMessageOptions<TAnswer>): Promise<void>
 }
 export const DialogMessageContext = createContext<DialogMessageApi>({
     // dialogs:

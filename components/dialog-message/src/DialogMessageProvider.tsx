@@ -28,6 +28,7 @@ import {
     Icon,
     ButtonProps,
     Button,
+    ButtonComponentProps,
     CloseButton,
     
     
@@ -61,6 +62,7 @@ import {
 import type {
     // types:
     FieldErrorList,
+    AnswerOptionList,
     
     
     
@@ -118,10 +120,10 @@ const _fieldErrorMessageDefault   : Extract<FieldErrorMessage, Function> = ({fie
         </p>
     );
 };
-const _fieldErrorIconFindDefault  : NonNullable<DialogMessageFieldError['fieldErrorIconFind' ]> = (fieldError: Element) => ((fieldError.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
-const _fieldErrorIconDefault      : NonNullable<DialogMessageFieldError['fieldErrorIcon'     ]> = 'text_fields';
-const _fieldErrorLabelFindDefault : NonNullable<DialogMessageFieldError['fieldErrorLabelFind']> = (fieldError: Element) => (fieldError as HTMLElement).getAttribute?.('aria-label') || (fieldError.children?.[0] as HTMLInputElement)?.placeholder;
-const _fieldErrorFocusDefault     : NonNullable<DialogMessageFieldError['fieldErrorFocus'    ]> = true;
+const _fieldErrorIconFindDefault  : NonNullable<DialogMessageFieldError<any>['fieldErrorIconFind' ]> = (fieldError: Element) => ((fieldError.parentElement?.previousElementSibling as HTMLElement)?.children?.[0]?.children?.[0] as HTMLElement)?.style?.getPropertyValue?.('--icon-image')?.slice?.(1, -1);
+const _fieldErrorIconDefault      : NonNullable<DialogMessageFieldError<any>['fieldErrorIcon'     ]> = 'text_fields';
+const _fieldErrorLabelFindDefault : NonNullable<DialogMessageFieldError<any>['fieldErrorLabelFind']> = (fieldError: Element) => (fieldError as HTMLElement).getAttribute?.('aria-label') || (fieldError.children?.[0] as HTMLInputElement)?.placeholder;
+const _fieldErrorFocusDefault     : NonNullable<DialogMessageFieldError<any>['fieldErrorFocus'    ]> = true;
 
 const _fetchErrorTitleDefault     : Exclude<FetchErrorTitle  , Function> = undefined;
 const _fetchErrorMessageDefault   : Extract<FetchErrorMessage, Function> = ({isRequestError, isServerError}) => <>
@@ -157,20 +159,20 @@ export interface DialogMessageProviderProps {
     cardFooterComponent          ?: React.ReactComponentElement<any, CardFooterProps<Element>>
     
     closeButtonComponent         ?: React.ReactComponentElement<any, ButtonProps>
-    okButtonComponent            ?: React.ReactComponentElement<any, ButtonProps>
+    answerButtonComponent        ?: React.ReactComponentElement<any, ButtonProps>
     
-    fieldErrorTitleDefault       ?: DialogMessageFieldError['fieldErrorTitle']
-    fieldErrorMessageDefault     ?: DialogMessageFieldError['fieldErrorMessage']
+    fieldErrorTitleDefault       ?: DialogMessageFieldError<any>['fieldErrorTitle']
+    fieldErrorMessageDefault     ?: DialogMessageFieldError<any>['fieldErrorMessage']
     fieldErrorListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     fieldErrorListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
-    fieldErrorIconFindDefault    ?: DialogMessageFieldError['fieldErrorIconFind']
-    fieldErrorIconDefault        ?: DialogMessageFieldError['fieldErrorIcon']
+    fieldErrorIconFindDefault    ?: DialogMessageFieldError<any>['fieldErrorIconFind']
+    fieldErrorIconDefault        ?: DialogMessageFieldError<any>['fieldErrorIcon']
     fieldErrorIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
-    fieldErrorLabelFindDefault   ?: DialogMessageFieldError['fieldErrorLabelFind']
-    fieldErrorFocusDefault       ?: DialogMessageFieldError['fieldErrorFocus']
+    fieldErrorLabelFindDefault   ?: DialogMessageFieldError<any>['fieldErrorLabelFind']
+    fieldErrorFocusDefault       ?: DialogMessageFieldError<any>['fieldErrorFocus']
     
-    fetchErrorTitleDefault       ?: DialogMessageFetchError['fetchErrorTitle']
-    fetchErrorMessageDefault     ?: DialogMessageFetchError['fetchErrorMessage']
+    fetchErrorTitleDefault       ?: DialogMessageFetchError<any>['fetchErrorTitle']
+    fetchErrorMessageDefault     ?: DialogMessageFetchError<any>['fetchErrorMessage']
 }
 const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProviderProps>): JSX.Element|null => {
     // rest props:
@@ -183,7 +185,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         cardFooterComponent         = (<CardFooter<Element>                                 /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
         
         closeButtonComponent        = (<CloseButton                                         /> as React.ReactComponentElement<any, ButtonProps>),
-        okButtonComponent           = (<Button                                              /> as React.ReactComponentElement<any, ButtonProps>),
+        answerButtonComponent       = (<Button                                              /> as React.ReactComponentElement<any, ButtonProps>),
         
         fieldErrorTitleDefault      = _fieldErrorTitleDefault,
         fieldErrorMessageDefault    = _fieldErrorMessageDefault,
@@ -202,14 +204,14 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // states:
-    const [dialogMessage, setDialogMessage] = useState<DialogMessage|false>(false);
+    const [dialogMessage, setDialogMessage] = useState<DialogMessage<any>|false>(false);
     const signalsDialogMessageClosed        = useRef<(() => void)[]>([]);
     const isMounted                         = useMountedFlag();
     
     
     
     // stable callbacks:
-    const showMessage             = useEvent(async (dialogMessage             : React.SetStateAction<DialogMessage|false> | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessage             = useEvent(async <TAnswer extends any>(dialogMessage             : React.SetStateAction<DialogMessage<TAnswer>|false> | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessage, 'message')) {
             return await showMessage({ // recursive call
@@ -236,7 +238,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         });
     });
     
-    const showMessageError        = useEvent(async (dialogMessageError        : DialogMessageError|false                  | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessageError        = useEvent(async <TAnswer extends any>(dialogMessageError        : DialogMessageError<TAnswer>|false                  | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageError, 'error')) {
             return await showMessageError({ // recursive call
@@ -284,7 +286,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageFieldError   = useEvent(async (dialogMessageFieldError   : DialogMessageFieldError|false             | FieldErrorList , options?: ShowMessageOptions): Promise<void> => {
+    const showMessageFieldError   = useEvent(async <TAnswer extends any>(dialogMessageFieldError   : DialogMessageFieldError<TAnswer>|false             | FieldErrorList , options?: ShowMessageOptions<TAnswer>): Promise<void> => {
         // handle overloads:
         if (isFieldErrorList(dialogMessageFieldError, 'fieldErrors')) {
             return await showMessageFieldError({ // recursive call
@@ -372,7 +374,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                             
                             // children:
                             (fieldErrorListItemComponent.props.children ?? ((): React.ReactNode => {
-                                let icon : DialogMessageFieldError['fieldErrorIcon']|null = fieldErrorIconComponent.props.icon;
+                                let icon : DialogMessageFieldError<TAnswer>['fieldErrorIcon']|null = fieldErrorIconComponent.props.icon;
                                 if (icon === undefined) icon = fieldErrorIconFind(fieldError);
                                 if (icon === undefined) icon = fieldErrorIcon;
                                 const label = fieldErrorLabelFind(fieldError);
@@ -416,7 +418,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             firstFocusableElm?.focus?.({ preventScroll: true });
         } // if
     });
-    const showMessageFetchError   = useEvent(async (dialogMessageFetchError   : DialogMessageFetchError|false             | any            , options?: ShowMessageOptions): Promise<void> => {
+    const showMessageFetchError   = useEvent(async <TAnswer extends any>(dialogMessageFetchError   : DialogMessageFetchError<TAnswer>|false             | any            , options?: ShowMessageOptions<TAnswer>): Promise<void> => {
         // handle overloads:
         if (isError(dialogMessageFetchError, 'fetchError')) {
             return await showMessageFetchError({ // recursive call
@@ -429,7 +431,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                 ...options, // DialogMessageFetchError extends ShowMessageOptions
             });
         } // if
-        dialogMessageFetchError = dialogMessageFetchError as unknown as (DialogMessageFetchError|false); // for satisfying TS
+        dialogMessageFetchError = dialogMessageFetchError as unknown as (DialogMessageFetchError<TAnswer>|false); // for satisfying TS
         
         
         
@@ -594,7 +596,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageSuccess      = useEvent(async (dialogMessageSuccess      : DialogMessageSuccess|false                | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessageSuccess      = useEvent(async <TAnswer extends any>(dialogMessageSuccess      : DialogMessageSuccess<TAnswer>|false                | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageSuccess, 'success')) {
             return await showMessageSuccess({ // recursive call
@@ -642,7 +644,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             ...restShowMessageOptions,
         });
     });
-    const showMessageNotification = useEvent(async (dialogMessageNotification : DialogMessageNotification|false           | React.ReactNode, options?: ShowMessageOptions): Promise<void> => {
+    const showMessageNotification = useEvent(async <TAnswer extends any>(dialogMessageNotification : DialogMessageNotification<TAnswer>|false           | React.ReactNode, options?: ShowMessageOptions<TAnswer>): Promise<void> => {
         // handle overloads:
         if (isReactNode(dialogMessageNotification, 'notification')) {
             return await showMessageNotification({ // recursive call
@@ -696,8 +698,8 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     // refs:
     const okButtonRefInternal     = useRef<HTMLButtonElement|null>(null);
     const okButtonRef             = useMergeRefs(
-        // preserves the original `elmRef` from `okButtonComponent`:
-        okButtonComponent.props.elmRef,
+        // preserves the original `elmRef` from `answerButtonComponent`:
+        answerButtonComponent.props.elmRef,
         
         
         
@@ -707,7 +709,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     // cache:
-    const prevDialogMessage       = useRef<DialogMessage|false>(dialogMessage);
+    const prevDialogMessage       = useRef<DialogMessage<any>|false>(dialogMessage);
     if (dialogMessage !== false) prevDialogMessage.current = dialogMessage;
     
     
@@ -726,8 +728,8 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         handleCloseDialogMessage,
     );
     const okButtonHandleClick               = useMergeEvents(
-        // preserves the original `onClick` from `okButtonComponent`:
-        okButtonComponent.props.onClick,
+        // preserves the original `onClick` from `answerButtonComponent`:
+        answerButtonComponent.props.onClick,
         
         
         
@@ -811,7 +813,25 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         // contents:
         title,   // take
         message, // take
+        options, // take
     ...restModalBaseProps} = prevDialogMessage.current || {};
+    const answerOptions : Extract<AnswerOptionList<any>, Map<any, any>> = (
+        (!options || !((options instanceof Map) ? options.size : Object.keys(options).length))
+        ? new Map<'ok', ButtonComponentProps['buttonComponent']>([
+            ['ok', React.cloneElement<ButtonProps>(answerButtonComponent,
+                // props:
+                undefined,
+                
+                
+                
+                // children:
+                'Okay',
+            )],
+        ])
+        : (options instanceof Map)
+            ? options
+            : new Map<string|number|symbol, ButtonComponentProps['buttonComponent']>(Object.entries(options))
+    );
     const isExpanded = (dialogMessage !== false);
     return (
         <DialogMessageContext.Provider value={dialogMessageApi}>
@@ -870,22 +890,24 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                         
                         
                         // children:
-                        cardFooterComponent.props.children ?? React.cloneElement<ButtonProps>(okButtonComponent,
-                            // props:
-                            {
-                                // refs:
-                                elmRef  : okButtonRef,
-                                
-                                
-                                
-                                // handlers:
-                                onClick : okButtonHandleClick,
-                            },
-                            
-                            
-                            
-                            // children:
-                            okButtonComponent.props.children ?? 'Okay',
+                        ...Array.from(answerOptions).map(([answer, answerComponent = answerButtonComponent], index) =>
+                            cardFooterComponent.props.children ?? React.cloneElement<ButtonProps>(answerComponent,
+                                // props:
+                                {
+                                    // identifiers:
+                                    key     : answerComponent.key ?? index,
+                                    
+                                    
+                                    
+                                    // refs:
+                                    elmRef  : okButtonRef,
+                                    
+                                    
+                                    
+                                    // handlers:
+                                    onClick : okButtonHandleClick,
+                                },
+                            )
                         ),
                     )}
                 </>)),
