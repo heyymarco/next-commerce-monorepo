@@ -1,4 +1,4 @@
-export type *       from './types.js'
+export *            from './types.js'
 export type {
     // contexts:
     DialogMessageApi,
