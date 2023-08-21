@@ -17,7 +17,6 @@ import {
     useEvent,
     EventHandler,
     useMergeEvents,
-    useMergeRefs,
     useMountedFlag,
 }                           from '@reusable-ui/core'
 
@@ -57,6 +56,12 @@ import {
     ModalStatusProps,
     ModalStatus,
 }                           from '@heymarco/modal-status'
+
+// internal components:
+import {
+    // react components:
+    ButtonWithAnswer,
+}                           from './ButtonWithAnswer'
 
 // internals:
 import type {
@@ -207,6 +212,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     const [dialogMessage, setDialogMessage] = useState<DialogMessage<any>|false>(false);
     const signalsDialogMessageClosed        = useRef<(() => void)[]>([]);
     const isMounted                         = useMountedFlag();
+    const answerRef                         = useRef<any|undefined>(undefined);
     
     
     
@@ -695,19 +701,6 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     
     
     
-    // refs:
-    const okButtonRefInternal     = useRef<HTMLButtonElement|null>(null);
-    const okButtonRef             = useMergeRefs(
-        // preserves the original `elmRef` from `answerButtonComponent`:
-        answerButtonComponent.props.elmRef,
-        
-        
-        
-        okButtonRefInternal,
-    );
-    
-    
-    
     // cache:
     const prevDialogMessage       = useRef<DialogMessage<any>|false>(dialogMessage);
     if (dialogMessage !== false) prevDialogMessage.current = dialogMessage;
@@ -725,17 +718,13 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         // actions:
-        handleCloseDialogMessage,
+        handleCloseDialogMessage, // click [x] button => close the <ModalStatus> *without* answer
     );
-    const okButtonHandleClick               = useMergeEvents(
-        // preserves the original `onClick` from `answerButtonComponent`:
-        answerButtonComponent.props.onClick,
-        
-        
-        
+    const answerButtonHandleClick           = useEvent((answer: any): void => {
         // actions:
-        handleCloseDialogMessage,
-    );
+        answerRef.current = answer;
+        handleCloseDialogMessage(); // click [answer] button => close the <ModalStatus> with answer
+    });
     
     const handleModalExpandedChangeInternal = useEvent<EventHandler<ModalExpandedChangeEvent>>(({expanded}) => {
         // conditions:
@@ -744,7 +733,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         
         // actions:
-        handleCloseDialogMessage();
+        handleCloseDialogMessage(); // escape_key|click_on_backdrop => close the <ModalStatus> *without* answer
     });
     const handleModalExpandedChange         = useMergeEvents(
         // preserves the original `onExpandedChange` from `modalStatusComponent`:
@@ -756,24 +745,15 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         handleModalExpandedChangeInternal,
     );
     
-    const handleModalFocusInternal          = useEvent(() => {
-        setTimeout(() => {
-            okButtonRefInternal.current?.focus();
-        }, 0); // wait to next macroTask, to make sure the keyboard event from <Input> was gone
-    });
-    const handleModalFocus                  = useMergeEvents(
-        // preserves the original `onExpandStart` from `modalStatusComponent`:
-        modalStatusComponent.props.onExpandStart,
-        
-        
-        
-        // actions:
-        handleModalFocusInternal,
-    );
-    
     const handleClosedDialogMessageInternal = useEvent((): void => {
         // clear the prevDialogMessage *after* the <ModalStatus> is fully hidden:
         prevDialogMessage.current = false;
+        
+        
+        
+        // take & clear the answer:
+        const answer = answerRef.current; // take
+        answerRef.current = undefined;    // clear
         
         
         
@@ -848,7 +828,6 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     
                     // handlers:
                     onExpandedChange : handleModalExpandedChange,
-                    onExpandStart    : handleModalFocus,
                     onCollapseEnd    : handleClosedDialogMessage,
                 },
                 
@@ -890,25 +869,27 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                         
                         
                         // children:
-                        ...Array.from(answerOptions).map(([answer, answerComponent = answerButtonComponent], index) =>
-                            cardFooterComponent.props.children ?? React.cloneElement<ButtonProps>(answerComponent,
-                                // props:
-                                {
-                                    // identifiers:
-                                    key     : answerComponent.key ?? index,
-                                    
-                                    
-                                    
-                                    // refs:
-                                    elmRef  : okButtonRef,
-                                    
-                                    
-                                    
-                                    // handlers:
-                                    onClick : okButtonHandleClick,
-                                },
-                            )
-                        ),
+                        (cardFooterComponent.props.children ?? Array.from(answerOptions).map(([answer, answerComponent = answerButtonComponent], index) =>
+                            <ButtonWithAnswer<any>
+                                // identifiers:
+                                key={index}
+                                
+                                
+                                
+                                // contents:
+                                answer={answer}
+                                
+                                
+                                
+                                // components:
+                                buttonComponent={answerComponent}
+                                
+                                
+                                
+                                // handlers:
+                                onAnswer={answerButtonHandleClick}
+                            />
+                        )),
                     )}
                 </>)),
             )}
