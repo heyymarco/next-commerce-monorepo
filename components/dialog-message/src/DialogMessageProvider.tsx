@@ -61,7 +61,7 @@ import {
 import {
     // react components:
     ButtonWithAnswer,
-}                           from './ButtonWithAnswer'
+}                           from './ButtonWithAnswer.js'
 
 // internals:
 import type {
