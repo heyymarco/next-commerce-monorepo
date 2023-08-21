@@ -202,7 +202,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
             
             
             // children:
-            'Okay',
+            answerButtonComponent.props.children ?? 'Okay',
         ),
         
         fieldErrorTitleDefault      = _fieldErrorTitleDefault,
