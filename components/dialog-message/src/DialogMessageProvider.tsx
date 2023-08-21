@@ -184,14 +184,14 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     // rest props:
     const {
         // components:
-        modalStatusComponent        = (<ModalStatus modalCardStyle='scrollable' lazy={true} /> as React.ReactComponentElement<any, ModalStatusProps<Element>>),
+        modalStatusComponent        = (<ModalStatus modalCardStyle='scrollable' /> as React.ReactComponentElement<any, ModalStatusProps<Element>>),
         
-        cardHeaderComponent         = (<CardHeader<Element>                                 /> as React.ReactComponentElement<any, CardHeaderProps<Element>>),
-        cardBodyComponent           = (<CardBody<Element>                                   /> as React.ReactComponentElement<any, CardBodyProps<Element>>),
-        cardFooterComponent         = (<CardFooter<Element>                                 /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
+        cardHeaderComponent         = (<CardHeader<Element>                     /> as React.ReactComponentElement<any, CardHeaderProps<Element>>),
+        cardBodyComponent           = (<CardBody<Element>                       /> as React.ReactComponentElement<any, CardBodyProps<Element>>),
+        cardFooterComponent         = (<CardFooter<Element>                     /> as React.ReactComponentElement<any, CardFooterProps<Element>>),
         
-        closeButtonComponent        = (<CloseButton                                         /> as React.ReactComponentElement<any, ButtonProps>),
-        answerButtonComponent       = (<Button                                              /> as React.ReactComponentElement<any, ButtonProps>),
+        closeButtonComponent        = (<CloseButton                             /> as React.ReactComponentElement<any, ButtonProps>),
+        answerButtonComponent       = (<Button                                  /> as React.ReactComponentElement<any, ButtonProps>),
         answerOkButtonComponent     = React.cloneElement<ButtonProps>(answerButtonComponent,
             // props:
             {
@@ -828,6 +828,11 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                     // other props:
                     ...restModalBaseProps,
                     ...modalStatusComponent.props, // overwrites restModalBaseProps (if any conflics)
+                    
+                    
+                    
+                    // behaviors:
+                    lazy             : modalStatusComponent.props.lazy ?? true,
                     
                     
                     
