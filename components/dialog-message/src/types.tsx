@@ -21,7 +21,11 @@ import type {
 
 // types:
 export type FieldErrorList                               = ArrayLike<Element>|null|undefined
-export type AnswerOptionList<TAnswer extends any = 'ok'> = Map<TAnswer, ButtonComponentProps['buttonComponent']>|Record<Extract<TAnswer, string|number|symbol>, ButtonComponentProps['buttonComponent']>
+export type AnswerButtonComponentOrChildren              =
+    |Required<ButtonComponentProps>['buttonComponent']
+    |React.ReactComponentElement<React.ExoticComponent<{ children?: React.ReactNode }>, { children?: React.ReactNode }>
+    |Iterable<React.ReactNode>
+export type AnswerOptionList<TAnswer extends any = 'ok'> = Map<TAnswer, AnswerButtonComponentOrChildren>|Record<Extract<TAnswer, string|number|symbol>, AnswerButtonComponentOrChildren>
 
 
 

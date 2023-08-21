@@ -6,7 +6,7 @@ import {
     HeadPortal,
 } from '@cssfn/cssfn-react'
 import '@reusable-ui/typos/effects';
-import { Button } from '@reusable-ui/components'
+import { Button, Icon } from '@reusable-ui/components'
 import { useDialogMessage } from '@heymarco/dialog-message';
 
 
@@ -82,7 +82,7 @@ function App() {
                 </button>
                 
                 <button onClick={async () => {
-                    const answer = await showMessage<'yes'|'no'|'maybe'>({
+                    const answer = await showMessage<'yes'|'no'|'maybe'|'sure'>({
                         title : <span>Say Hello</span>,
                         message: <>
                             <p>
@@ -94,8 +94,12 @@ function App() {
                         </>,
                         options: {
                             yes   : <Button type='submit'>Yea</Button>,
-                            no    : <Button>Noo</Button>,
-                            maybe : <Button>Ummm</Button>,
+                            no    : <Button theme='warning'>Noo</Button>,
+                            maybe : <>Ummm</>,
+                            sure  : [
+                                <Icon key={0} icon='face' />,
+                                <span key={1}>Sure!</span>
+                            ],
                         }
                         
                     });

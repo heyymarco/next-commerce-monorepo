@@ -27,7 +27,6 @@ import {
     Icon,
     ButtonProps,
     Button,
-    ButtonComponentProps,
     CloseButton,
     
     
@@ -67,6 +66,7 @@ import {
 import type {
     // types:
     FieldErrorList,
+    AnswerButtonComponentOrChildren,
     AnswerOptionList,
     
     
@@ -797,7 +797,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     ...restModalBaseProps} = prevDialogMessage.current || {};
     const answerOptions : Extract<AnswerOptionList<any>, Map<any, any>> = (
         (!options || !((options instanceof Map) ? options.size : Object.keys(options).length))
-        ? new Map<'ok', ButtonComponentProps['buttonComponent']>([
+        ? new Map<'ok', AnswerButtonComponentOrChildren>([
             ['ok', React.cloneElement<ButtonProps>(answerButtonComponent,
                 // props:
                 undefined,
@@ -810,7 +810,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         ])
         : (options instanceof Map)
             ? options
-            : new Map<string|number|symbol, ButtonComponentProps['buttonComponent']>(Object.entries(options))
+            : new Map<string|number|symbol, AnswerButtonComponentOrChildren>(Object.entries(options))
     );
     const isExpanded = (dialogMessage !== false);
     return (
@@ -869,27 +869,47 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                         
                         
                         // children:
-                        (cardFooterComponent.props.children ?? Array.from(answerOptions).map(([answer, answerComponent = answerButtonComponent], index) =>
-                            <ButtonWithAnswer<any>
-                                // identifiers:
-                                key={index}
-                                
-                                
-                                
-                                // contents:
-                                answer={answer}
-                                
-                                
-                                
-                                // components:
-                                buttonComponent={answerComponent}
-                                
-                                
-                                
-                                // handlers:
-                                onAnswer={answerButtonHandleClick}
-                            />
-                        )),
+                        (cardFooterComponent.props.children ?? Array.from(answerOptions).map(([answer, answerComponent], index) => {
+                            // jsx:
+                            const answerButtonComponentWithChildren : React.ReactComponentElement<any, ButtonProps> = (
+                                (
+                                    !React.isValidElement<ButtonProps>(answerComponent) // NOT a <SomeElement> => treat as children
+                                    ||
+                                    (answerComponent.type === React.Fragment)           // a <React.Fragment>  => treat as children
+                                )
+                                ? React.cloneElement<ButtonProps>(answerButtonComponent,
+                                    // props:
+                                    undefined,
+                                    
+                                    
+                                    
+                                    // children:
+                                    answerComponent,
+                                )
+                                : answerComponent                                       // a <SomeElement> => treat as <Button>
+                            );
+                            return (
+                                <ButtonWithAnswer<any>
+                                    // identifiers:
+                                    key={index}
+                                    
+                                    
+                                    
+                                    // contents:
+                                    answer={answer}
+                                    
+                                    
+                                    
+                                    // components:
+                                    buttonComponent={answerButtonComponentWithChildren}
+                                    
+                                    
+                                    
+                                    // handlers:
+                                    onAnswer={answerButtonHandleClick}
+                                />
+                            );
+                        })),
                     )}
                 </>)),
             )}
