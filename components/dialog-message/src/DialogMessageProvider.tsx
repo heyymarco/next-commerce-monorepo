@@ -165,6 +165,7 @@ export interface DialogMessageProviderProps {
     
     closeButtonComponent         ?: React.ReactComponentElement<any, ButtonProps>
     answerButtonComponent        ?: React.ReactComponentElement<any, ButtonProps>
+    answerOkButtonComponent      ?: React.ReactComponentElement<any, ButtonProps>
     
     fieldErrorTitleDefault       ?: DialogMessageFieldError<any>['fieldErrorTitle']
     fieldErrorMessageDefault     ?: DialogMessageFieldError<any>['fieldErrorMessage']
@@ -191,6 +192,18 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
         
         closeButtonComponent        = (<CloseButton                                         /> as React.ReactComponentElement<any, ButtonProps>),
         answerButtonComponent       = (<Button                                              /> as React.ReactComponentElement<any, ButtonProps>),
+        answerOkButtonComponent     = React.cloneElement<ButtonProps>(answerButtonComponent,
+            // props:
+            {
+                // actions:
+                type : answerButtonComponent.props.type ?? 'submit',
+            },
+            
+            
+            
+            // children:
+            'Okay',
+        ),
         
         fieldErrorTitleDefault      = _fieldErrorTitleDefault,
         fieldErrorMessageDefault    = _fieldErrorMessageDefault,
@@ -798,15 +811,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
     const answerOptions : Extract<AnswerOptionList<any>, Map<any, any>> = (
         (!options || !((options instanceof Map) ? options.size : Object.keys(options).length))
         ? new Map<'ok', AnswerButtonComponentOrChildren>([
-            ['ok', React.cloneElement<ButtonProps>(answerButtonComponent,
-                // props:
-                undefined,
-                
-                
-                
-                // children:
-                'Okay',
-            )],
+            ['ok', answerOkButtonComponent],
         ])
         : (options instanceof Map)
             ? options
