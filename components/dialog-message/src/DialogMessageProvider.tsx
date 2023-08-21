@@ -889,7 +889,7 @@ const DialogMessageProvider = (props: React.PropsWithChildren<DialogMessageProvi
                                     
                                     
                                     // children:
-                                    answerComponent,
+                                    answerButtonComponent.props.children ?? answerComponent,
                                 )
                                 : answerComponent                                       // a <SomeElement> => treat as <Button>
                             );
