@@ -55,7 +55,7 @@ function App() {
                 </button>
                 
                 <button onClick={async () => {
-                    const answer = await showMessage({
+                    const answer = await showMessage<'ok'|'no'|'maybe'>({
                         title : <span>Say Hello</span>,
                         message: <>
                             <p>
