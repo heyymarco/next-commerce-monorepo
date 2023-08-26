@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/dialog-message",
-  "version": "3.1.10",
+  "version": "3.2.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,7 @@
   "author": "heyymarco",
   "license": "ISC",
   "dependencies": {
-    "@heymarco/modal-status": "^3.1.0",
+    "@heymarco/modal-status": "^3.2.0",
     "@reusable-ui/components": "^6.2.0",
     "@reusable-ui/core": "^6.2.0"
   },

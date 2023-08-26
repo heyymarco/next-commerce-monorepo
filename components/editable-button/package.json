@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/editable-button",
-  "version": "3.0.9",
+  "version": "3.2.0",
   "description": "",
   "main": "dist/EditableButton.js",
   "types": "dist/EditableButton.d.ts",
