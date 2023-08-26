@@ -20,8 +20,8 @@
   "license": "ISC",
   "dependencies": {
     "@heymarco/modal-status": "^3.1.0",
-    "@reusable-ui/components": "^6.1.0",
-    "@reusable-ui/core": "^6.1.0"
+    "@reusable-ui/components": "^6.2.0",
+    "@reusable-ui/core": "^6.2.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
