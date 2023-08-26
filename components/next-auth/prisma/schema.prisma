@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+model Account {
+    // records:
+    id                  String              @id @default(cuid())
+    
+    // provider types:
+    type                String
+    provider            String
+    providerAccountId   String
+    @@unique([provider, providerAccountId])
+    
+    // jwt sessions:
+    refresh_token       String?
+    access_token        String?
+    expires_at          Int?
+    
+    // jwt meta:
+    token_type          String?
+    scope               String?
+    id_token            String?
+    session_state       String?
+    
+    // relations:
+    userId              String
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Account(s) if the user deleted
+}
+
+model Session {
+    // records:
+    id                  String              @id @default(cuid())
+    expires             DateTime
+    
+    // data:
+    sessionToken        String              @unique
+    
+    // relations:
+    userId              String
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Session(s) if the user deleted
+}
+
+model User {
+    // records:
+    id                  String              @id @default(cuid())
+    createdAt           DateTime            @default(now())
+    updatedAt           DateTime            @updatedAt
+    
+    // data:
+    name                String
+    email               String              @unique
+    emailVerified       DateTime?
+    image               String?
+    
+    // relations:
+    accounts            Account[]           // a user may have some related Account(s)          // one to many
+    sessions            Session[]           // a user may have some related Session(s)          // one to many
+    credentials         Credentials?        // a user may have one  related Credentials         // one to one
+    resetPasswordToken  ResetPasswordToken? // a user may have one  related ResetPasswordToken  // one to one
+}
+
+model Credentials {
+    // records:
+    id                  String              @id @default(cuid())
+    
+    // data:
+    username            String?             @unique
+    password            String?
+    
+    // relations:
+    userId              String              @unique
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Credentials if the User deleted
+}
+
+model ResetPasswordToken {
+    // records:
+    id                  String              @id @default(cuid())
+    updatedAt           DateTime            @updatedAt
+    expiresAt           DateTime
+    
+    // data:
+    token               String
+    
+    // relations:
+    userId              String              @unique
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related ResetPasswordToken if the User deleted
+}
+
+// model VerificationToken {
+//     // records:
+//     expires             DateTime
+//     
+//     // data:
+//     identifier          String
+//     token               String              @unique
+//     @@unique([identifier, token])
+// }
