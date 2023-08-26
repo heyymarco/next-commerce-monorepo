@@ -39,7 +39,6 @@
   "dependencies": {
     "@cssfn/core": "^3.1.0",
     "@cssfn/cssfn-react": "^3.1.0",
-    "@prisma/client": "^5.2.0",
     "@reusable-ui/components": "^6.2.0",
     "@reusable-ui/core": "^6.2.0",
     "@types/bcrypt": "^5.0.0",
@@ -52,6 +51,7 @@
   },
   "peerDependencies": {
     "@auth/prisma-adapter": "^1.0.1",
+    "@prisma/client": "^5.2.0",
     "@types/react": "^18.0.0",
     "next": "^13.0.0",
     "next-auth": "^4.23.1",
