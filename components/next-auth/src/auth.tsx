@@ -71,6 +71,7 @@ import {
 // ORMs:
 import type {
     PrismaClient,
+    User as ModelUser,
 }                           from '@prisma/client'
 
 // templates:
@@ -321,7 +322,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         
         
         // an atomic transaction of [`find user by username (or email)`, `find resetPasswordToken by user id`, `create/update the new resetPasswordToken`]:
-        const user = await prisma.$transaction(async (prismaTransaction): Promise<Error|Pick<Required<User>, 'name'|'email'>> => {
+        const user = await prisma.$transaction(async (prismaTransaction): Promise<Error|Pick<ModelUser, 'name'|'email'>> => {
             // find user id by given username (or email):
             const {id: userId} = await prismaTransaction.user.findFirst({
                 where  :
@@ -497,7 +498,7 @@ If the problem still persists, please contact our technical support.`,
         
         
         
-        // find the related email & username of given resetPasswordToken:
+        // find the related email & username by given resetPasswordToken:
         try {
             const user = await prisma.user.findFirst({
                 where  : {
@@ -709,6 +710,8 @@ If the problem still persists, please contact our technical support.`,
             resetPath
         );
         if (!passwordResetRouteResponse) return false;
+        
+        
         
         for (const [headerKey, headerValue] of passwordResetRouteResponse.headers.entries()) {
             res.setHeader(headerKey, headerValue);
