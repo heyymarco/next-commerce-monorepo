@@ -7,9 +7,9 @@ import {
 }                           from 'react'
 
 // next-auth:
-import {
+import type {
     // types:
-    type BuiltInProviderType,
+    BuiltInProviderType,
 }                           from 'next-auth/providers'
 
 

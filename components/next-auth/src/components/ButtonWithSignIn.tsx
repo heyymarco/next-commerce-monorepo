@@ -1,3 +1,5 @@
+'use client'
+
 // react:
 import {
     // react:
@@ -5,9 +7,9 @@ import {
 }                           from 'react'
 
 // next-auth:
-import {
+import type {
     // types:
-    type BuiltInProviderType,
+    BuiltInProviderType,
 }                           from 'next-auth/providers'
 
 // reusable-ui core:
@@ -75,7 +77,7 @@ const ButtonWithSignIn = (props: ButtonWithSignInProps): JSX.Element|null => {
         // actions:
         onSignInWith(providerType);
     });
-    const handleClick          = useMergeEvents(
+    const handleClick         = useMergeEvents(
         // preserves the original `onClick` from `buttonComponent`:
         buttonComponent.props.onClick,
         

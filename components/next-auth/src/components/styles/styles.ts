@@ -9,6 +9,7 @@ import {
     
     // reads/writes css variables configuration:
     usesCssProps,
+    usesPrefixedProps,
     
     
     
@@ -218,6 +219,11 @@ export const usesSignInLayout = () => {
                     gridArea    : 'gotoRecover',
                     justifySelf : 'end',
                 }),
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(signIns, 'tabs')), // apply config's cssProps starting with tabs***
             }),
             ...children(signInTabElm, {
                 // layouts:
@@ -232,6 +238,11 @@ export const usesSignInLayout = () => {
                     '/',
                     '1fr 1fr'
                 ]],
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(signIns, 'signInTab')), // apply config's cssProps starting with signInTab***
             }),
             ...children(recoverTabElm, {
                 // layouts:
@@ -244,6 +255,11 @@ export const usesSignInLayout = () => {
                     '/',
                     '1fr 1fr'
                 ]],
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(signIns, 'recoverTab')), // apply config's cssProps starting with recoverTab***
             }),
             ...children(resetTabElm, {
                 // layouts:
@@ -258,6 +274,11 @@ export const usesSignInLayout = () => {
                     '/',
                     '1fr 1fr'
                 ]],
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(signIns, 'resetTab')), // apply config's cssProps starting with resetTab***
             }),
             
             

@@ -10,5 +10,13 @@ import {
 export const [signIns, signInValues, cssSignInConfig] = cssConfig(() => {
     return {
         /* no config props yet */
+        
+        // tabs:
+        
+        // signInTabs:
+        
+        // recoverTabs:
+        
+        // resetTabs:
     };
 }, { prefix: 'signin' });
