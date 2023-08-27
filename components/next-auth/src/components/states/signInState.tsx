@@ -20,7 +20,7 @@ import {
     useMemo,
 }                           from 'react'
 
-// next:
+// next-js:
 import {
     // navigations:
     useRouter,
@@ -29,9 +29,9 @@ import {
 }                           from 'next/navigation'
 
 // next-auth:
-import {
+import type {
     // types:
-    type BuiltInProviderType,
+    BuiltInProviderType,
 }                           from 'next-auth/providers'
 import {
     // apis:
@@ -83,10 +83,6 @@ import {
 import type {
     CredentialsConfig,
 }                           from '../../credentials.config.js'
-
-
-
-// const endpointUrl  = getApiEndpoint();
 
 
 
