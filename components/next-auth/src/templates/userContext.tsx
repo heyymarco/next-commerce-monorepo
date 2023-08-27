@@ -40,7 +40,7 @@ export interface UserContextProviderProps {
     // models:
     model : Partial<User>
 }
-export const UserContextProvider = (props: React.PropsWithChildren<UserContextProviderProps>): React.ReactNode => {
+export const UserContextProvider = (props: React.PropsWithChildren<UserContextProviderProps>): JSX.Element|null => {
     // jsx:
     return (
         <UserContext.Provider value={props.model}>

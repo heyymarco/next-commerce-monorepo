@@ -39,7 +39,7 @@ export interface ResetPasswordContextProviderProps {
     // data:
     url : string
 }
-export const ResetPasswordContextProvider = (props: React.PropsWithChildren<ResetPasswordContextProviderProps>): React.ReactNode => {
+export const ResetPasswordContextProvider = (props: React.PropsWithChildren<ResetPasswordContextProviderProps>): JSX.Element|null => {
     // jsx:
     return (
         <ResetPasswordContext.Provider value={{ url: props.url }}>

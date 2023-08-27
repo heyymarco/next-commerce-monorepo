@@ -8,14 +8,19 @@ import {
 
 
 // contexts:
-const contextMap = new Map<Context<any>, any[]>();
+const contextMap = new Map<Context<any>, /* contextStack: */any[]>();
 export interface ProviderProps<T> {
+    // contexts:
     value     : T
-    children ?: React.ReactNode | undefined
+    
+    
+    
+    // children:
+    children ?: React.ReactNode
 }
 export interface Context<T extends any> {
     defaultValue : T
-    Provider     : (props: ProviderProps<T>) => React.ReactNode
+    Provider     : (props: ProviderProps<T>) => JSX.Element|null
 }
 export const createContext = <T extends any>(defaultValue: T): Context<T> => {
     const contextStack : T[] = [];
@@ -23,11 +28,11 @@ export const createContext = <T extends any>(defaultValue: T): Context<T> => {
         defaultValue,
         Provider : (props) => {
             // jsx:
-            const ContextEnter = () => {
+            const ContextEnter = (): JSX.Element|null => {
                 contextStack.push(props.value);
                 return null;
             };
-            const ContextExit = () => {
+            const ContextExit = (): JSX.Element|null => {
                 contextStack.pop();
                 return null;
             };
