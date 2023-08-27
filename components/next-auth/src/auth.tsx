@@ -321,7 +321,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         
         
         // an atomic transaction of [`find user by username (or email)`, `find resetPasswordToken by user id`, `create/update the new resetPasswordToken`]:
-        const user = await prisma.$transaction(async (prismaTransaction) => {
+        const user = await prisma.$transaction(async (prismaTransaction): Promise<Error|Pick<Required<User>, 'name'|'email'>> => {
             // find user id by given username (or email):
             const {id: userId} = await prismaTransaction.user.findFirst({
                 where  :
@@ -478,11 +478,7 @@ If the problem still persists, please contact our technical support.`,
         if (req.method !== 'GET')                       return false; // ignore
         if (context.params.nextauth?.[0] !== resetPath) return false; // ignore
         
-        await new Promise<void>((resolve) => {
-            setTimeout(() => {
-                resolve();
-            }, 2000);
-        });
+        
         
         // validate the request parameter(s):
         const {
@@ -539,7 +535,14 @@ If the problem still persists, please contact our technical support.`,
         catch (error: any) {
             // report the failure:
             return NextResponse.json({
-                error: 'An unexpected error occured.',
+                error:
+`Oops, there was an error for validating your token.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
@@ -604,7 +607,7 @@ If the problem still persists, please contact our technical support.`,
         
         try {
             // an atomic transaction of [`find user id by resetPasswordToken`, `delete current resetPasswordToken record`, `create/update user's credentials`]:
-            return await prisma.$transaction(async (prismaTransaction): Promise<false|Response> => {
+            return await prisma.$transaction(async (prismaTransaction): Promise<Response> => {
                 // find the related user id by given resetPasswordToken:
                 const {id: userId} = await prismaTransaction.user.findFirst({
                     where  : {
@@ -667,7 +670,14 @@ If the problem still persists, please contact our technical support.`,
         }
         catch (error: any) {
             return NextResponse.json({
-                error: 'An unexpected error occured.',
+                error:
+`Oops, there was an error for resetting your password.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
