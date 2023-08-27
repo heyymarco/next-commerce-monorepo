@@ -4,18 +4,17 @@ import {
     default as React,
 }                           from 'react'
 
-// nextJS:
-import {
-    // types:
-    type NextApiRequest,
-    type NextApiResponse,
+// next-js:
+import type {
+    NextApiRequest,
+    NextApiResponse,
 }                           from 'next'
 import {
     type NextRequest,
     NextResponse,
 }                           from 'next/server'
 
-// next auth:
+// next-auth:
 import {
     // types:
     type NextAuthOptions,
@@ -40,9 +39,9 @@ import {
     // databases:
     PrismaAdapter,
 }                           from '@auth/prisma-adapter'
-import {
+import type {
     // models:
-    type AdapterUser,
+    AdapterUser,
 }                           from 'next-auth/adapters'
 
 // credentials providers:
@@ -122,7 +121,7 @@ export interface CreateAuthHandlerOptions {
 }
 export interface NextAuthRouteContext {
     params : { nextauth: string[] }
-};
+}
 const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     // options:
     const {
@@ -213,7 +212,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             }),
             
             // OAuth providers:
-            ... authConfig.oAuthProviders ?? [],
+            ...authConfig.oAuthProviders ?? [],
         ],
         callbacks : {
             async signIn({ user, account, credentials, profile: oAuthProfile }) {
@@ -253,6 +252,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             async jwt({ token, user, account, profile: oAuthProfile }) {
                 // assigning userRole(s):
                 if (account) { // if `account` exist, this means that the callback is being invoked for the first time (i.e. the user is being signed in).
+                    // TODO: read roles from database
                     token.userRole ='admin';
                 } // if
                 
@@ -265,6 +265,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 // assigning userRole(s):
                 const sessionUser = session.user;
                 if (sessionUser) {
+                    // TODO: read roles from database
                     // sessionUser.userRole ='admin';
                 } // if
                 
@@ -278,7 +279,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             signIn        : authConfig.PAGE_SIGNIN_PATH,
          // signOut       : '/auth/signout',
             error         : authConfig.PAGE_SIGNIN_PATH, // Error code passed in query string as ?error=
-         // verifyRequest : '/auth/verify-request',      // (used for check email message)
+         // verifyRequest : '/auth/verify-request',      // Check your email: A sign in link has been sent to your email address.
          // newUser       : '/auth/new-user',            // New users will be directed here on first sign in (leave the property out if not of interest)
         },
     };
@@ -288,10 +289,10 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     //#region password_reset handlers
     // general_implementation password_reset handlers:
-    const requestPasswordResetRouteHandler  = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const requestPasswordResetRouteHandler  = async (req: Request, context: NextAuthRouteContext, resetPath: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'POST')                 return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (req.method !== 'POST')                      return false; // ignore
+        if (context.params.nextauth?.[0] !== resetPath) return false; // ignore
         
         
         
@@ -341,7 +342,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             
             
             
-            // limits the resetPasswordToken request:
+            // limits the rate of resetPasswordToken request:
             const resetLimitInHours = (authConfig.EMAIL_RESET_LIMITS ?? 0.25);
             if (resetLimitInHours) {
                 // find the last request date (if found) of resetPasswordToken by user id:
@@ -406,6 +407,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             // generate a link to a page for resetting password:
             const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?resetPasswordToken=${encodeURIComponent(resetToken)}`
             
+            
+            
             // sending an email:
             const { renderToStaticMarkup } = await import('react-dom/server');
             await transporter.sendMail({
@@ -419,11 +422,27 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                                 authConfig.EMAIL_RESET_MESSAGE
                                 ??
                                 <>
-                                    <p>Hi <TemplateUser.Name />.</p>
-                                    <p><strong>Forgot your password?</strong><br />We received a request to reset the password for your account.</p>
-                                    <p>To reset your password, click on the link below:<br /><ResetPassword.Link>Reset Password</ResetPassword.Link></p>
-                                    <p>Or copy and paste the URL into your browser:<br /><u><ResetPassword.Url /></u></p>
-                                    <p>If you did not make this request then please ignore this email.</p>
+                                    <p>
+                                        Hi <TemplateUser.Name />.
+                                    </p>
+                                    <p>
+                                        <strong>Forgot your password?</strong>
+                                        <br />
+                                        We received a request to reset the password for your account.
+                                    </p>
+                                    <p>
+                                        To reset your password, click on the link below:
+                                        <br />
+                                        <ResetPassword.Link>Reset Password</ResetPassword.Link>
+                                    </p>
+                                    <p>
+                                        Or copy and paste the URL into your browser:
+                                        <br />
+                                        <u><ResetPassword.Url /></u>
+                                    </p>
+                                    <p>
+                                        If you did not make this request then please ignore this email.
+                                    </p>
                                 </>
                             }
                         </UserContextProvider>
@@ -441,16 +460,23 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         }
         catch (error: any) {
             // report the failure:
-            console.log('send email failed: ', error);
+            console.log('send email failed: ', error); // TODO: remove log
             return NextResponse.json({
-                error: 'An unexpected error occured.',
+                error:
+`Oops, there was an error for resetting your password.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    const validatePasswordResetRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const validatePasswordResetRouteHandler = async (req: Request, context: NextAuthRouteContext, resetPath: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'GET')                  return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (req.method !== 'GET')                       return false; // ignore
+        if (context.params.nextauth?.[0] !== resetPath) return false; // ignore
         
         await new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -517,10 +543,10 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             }, { status: 500 }); // handled with error
         } // try
     };
-    const applyPasswordResetRouteHandler    = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const applyPasswordResetRouteHandler    = async (req: Request, context: NextAuthRouteContext, resetPath: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'PATCH')                return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (req.method !== 'PATCH')                     return false; // ignore
+        if (context.params.nextauth?.[0] !== resetPath) return false; // ignore
         
         
         
@@ -647,18 +673,18 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     };
     
     // specific next-js /app password_reset handlers:
-    const passwordResetRouteHandler         = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const passwordResetRouteHandler         = async (req: Request, context: NextAuthRouteContext, resetPath: string): Promise<false|Response> => {
         return (
-            await requestPasswordResetRouteHandler(req, context, path)
+            await requestPasswordResetRouteHandler(req, context, resetPath)
             ||
-            await validatePasswordResetRouteHandler(req, context, path)
+            await validatePasswordResetRouteHandler(req, context, resetPath)
             ||
-            await applyPasswordResetRouteHandler(req, context, path)
+            await applyPasswordResetRouteHandler(req, context, resetPath)
         );
     };
     
     // specific next-js /pages password_reset handlers:
-    const passwordResetApiHandler           = async (req: NextApiRequest, res: NextApiResponse, path: string): Promise<boolean> => {
+    const passwordResetApiHandler           = async (req: NextApiRequest, res: NextApiResponse, resetPath: string): Promise<boolean> => {
         const passwordResetRouteResponse = await passwordResetRouteHandler(
             new Request(new URL(req.url ?? '/', 'https://localhost').href,
             {
@@ -670,7 +696,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     nextauth : req.query.nextauth as string[],
                 },
             },
-            'reset'
+            resetPath
         );
         if (!passwordResetRouteResponse) return false;
         

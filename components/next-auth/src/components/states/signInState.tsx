@@ -28,7 +28,7 @@ import {
     useSearchParams,
 }                           from 'next/navigation'
 
-// next auth:
+// next-auth:
 import {
     // types:
     type BuiltInProviderType,

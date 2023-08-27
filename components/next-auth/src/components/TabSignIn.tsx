@@ -6,7 +6,7 @@ import {
     default as React,
 }                           from 'react'
 
-// next auth:
+// next-auth:
 import {
     // types:
     type BuiltInProviderType,
