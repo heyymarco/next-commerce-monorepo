@@ -11,7 +11,7 @@ import type {
 }                           from 'next'
 import {
     type NextRequest,
-    NextResponse,
+    NextResponse as NextResponseFix,
 }                           from 'next/server'
 
 // next-auth:
@@ -45,7 +45,9 @@ import type {
 }                           from 'next-auth/adapters'
 
 // credentials providers:
-import CredentialsProvider  from 'next-auth/providers/credentials'
+import {
+    default as CredentialsProviderFix,
+}                           from 'next-auth/providers/credentials'
 
 // webs:
 import {
@@ -99,6 +101,19 @@ import type {
 import type {
     CredentialsConfig,
 }                           from './credentials.config.js'
+
+
+
+const NextResponse : typeof NextResponseFix = (
+    (NextResponseFix as any).default
+    ??
+    NextResponseFix
+);
+const CredentialsProvider : typeof CredentialsProviderFix = (
+    (CredentialsProviderFix as any).default
+    ??
+    CredentialsProviderFix
+);
 
 
 
