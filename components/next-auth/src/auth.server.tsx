@@ -95,7 +95,7 @@ import {
 // configs:
 import type {
     AuthConfig,
-}                           from './auth.config.js'
+}                           from './auth.config.server.js'
 import type {
     CredentialsConfig,
 }                           from './credentials.config.js'
