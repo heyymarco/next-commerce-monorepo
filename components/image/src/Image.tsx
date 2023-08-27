@@ -33,7 +33,7 @@ import {
     Icon,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
-// nextJS:
+// next-js:
 import * as nextImageCommonJs from 'next/image.js' // a commonJS module
 const NextImage : typeof nextImageCommonJs.default = (nextImageCommonJs.default as any).default ?? nextImageCommonJs.default; // a *hack* for importing from commonJS module
 
