@@ -697,8 +697,7 @@ If the problem still persists, please contact our technical support.`,
     // specific next-js /pages password_reset handlers:
     const passwordResetApiHandler           = async (req: NextApiRequest, res: NextApiResponse, resetPath: string): Promise<boolean> => {
         const passwordResetRouteResponse = await passwordResetRouteHandler(
-            new Request(new URL(req.url ?? '/', 'https://localhost').href,
-            {
+            new Request(new URL(req.url ?? '/', 'https://localhost').href, {
                 method : req.method,
                 body   : /^(POST|PUT|PATCH)$/i.test(req.method ?? '') ? JSON.stringify(req.body) : null,
             }),
@@ -723,16 +722,19 @@ If the problem still persists, please contact our technical support.`,
     
     
     
-    let sessionCookie : string|null = null;
-    
-    // next-auth's built in handlers:
-    const nextAuthHandler = async (req: Request|NextApiRequest, contextOrRes: NextAuthRouteContext|NextApiResponse, isCredentialsCallback: (() => boolean)): Promise<any> => {
+    //#region next-auth's built in handlers
+    const nextAuthHandler                   = async (req: Request|NextApiRequest, contextOrRes: NextAuthRouteContext|NextApiResponse, isCredentialsCallback: (() => boolean)): Promise<any> => {
+        const isDatabaseSession = (session.strategy === 'database');
+        let sessionCookie : string|null = null;
+        
+        
+        
         const response = await NextAuth(req as any, contextOrRes as any, {
             ...authOptions,
             callbacks : {
                 ...authOptions.callbacks,
                 async signIn(params) {
-                    if ((session.strategy === 'database') && isCredentialsCallback()) {
+                    if (isDatabaseSession && isCredentialsCallback()) {
                         // extract the user detail:
                         const {user: userDetail} = params;
                         
@@ -774,7 +776,7 @@ If the problem still persists, please contact our technical support.`,
             },
             jwt : {
                 async encode(params) {
-                    if ((session.strategy === 'database') && isCredentialsCallback()) return ''; // force not to use jwt token => fallback to database token
+                    if (isDatabaseSession && isCredentialsCallback()) return ''; // force not to use jwt token => fallback to database token
                     
                     
                     
@@ -782,7 +784,7 @@ If the problem still persists, please contact our technical support.`,
                     return encode(params);
                 },
                 async decode(params) {
-                    if ((session.strategy === 'database') && isCredentialsCallback()) return null; // force not to use jwt token => fallback to database token
+                    if (isDatabaseSession && isCredentialsCallback()) return null; // force not to use jwt token => fallback to database token
                     
                     
                     
@@ -791,6 +793,9 @@ If the problem still persists, please contact our technical support.`,
                 },
             },
         });
+        
+        
+        
         if (!!sessionCookie) {
             if (!(contextOrRes as any).params) {
                 (contextOrRes as NextApiResponse).appendHeader('Set-Cookie', sessionCookie);
@@ -799,8 +804,12 @@ If the problem still persists, please contact our technical support.`,
                 response.headers.append('Set-Cookie', sessionCookie);
             } // if
         } // if
+        
+        
+        
         return response;
     };
+    //#endregion next-auth's built in handlers
     
     
     
