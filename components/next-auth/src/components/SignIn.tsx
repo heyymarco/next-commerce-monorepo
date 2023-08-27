@@ -129,6 +129,11 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     
     // rest props:
     const {
+        // configs:
+        credentialsConfig   : _credentialsConfig,   // remove
+        
+        
+        
         // auths:
         providers,
         resolveProviderName : _resolveProviderName, // remove

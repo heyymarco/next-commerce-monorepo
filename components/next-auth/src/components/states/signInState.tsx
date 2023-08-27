@@ -245,6 +245,11 @@ const SignInStateContext = createContext<SignInState>({
     resolveProviderName     : () => '',
 });
 export interface SignInStateProps {
+    // configs:
+    credentialsConfig    : CredentialsConfig
+    
+    
+    
     // auths:
     resolveProviderName ?: (oAuthProvider: BuiltInProviderType) => string
     basePath            ?: string
@@ -253,15 +258,15 @@ export interface SignInStateProps {
     
     // pages:
     homepagePath        ?: string
-    
-    
-    
-    // configs:
-    credentialsConfig    : CredentialsConfig
 }
 export const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) => {
     // rest props:
     const {
+        // configs:
+        credentialsConfig,
+        
+        
+        
         // auths:
         resolveProviderName : resolveProviderNameUnstable,
         basePath            = '/api/auth',
@@ -270,11 +275,6 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // pages:
         homepagePath        = '/',
-        
-        
-        
-        // configs:
-        credentialsConfig,
         
         
         
