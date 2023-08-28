@@ -13,9 +13,6 @@ import { loginProviders } from './loginProviders'
 export default function Home() {
     return (
         <Container tag='main' theme='primary'>
-            <p>
-                Sign in goes here...
-            </p>
             <SignIn
                 credentialsConfig={credentialsConfig}
                 providers={loginProviders}

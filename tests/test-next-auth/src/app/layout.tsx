@@ -1,9 +1,10 @@
 import './globals.css'
 import { Inter } from 'next/font/google'
 
-import { StylesCSR } from './StylesCSR' // client_side_rendering CSS (required)
+import { StylesCSR    } from './StylesCSR'    // client_side_rendering CSS (required)
+import { StylesSSR    } from './StylesSSR'    // server_side_rendering CSS (optional)
+import { StylesEffect } from './StylesEffect' // common style such as headings, paragraphs, blockquotes, etc
 
-import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
 import '@reusable-ui/typos/effects'
 import { DialogMessageProvider } from './DialogMessageProvider'
 import { NextAuthSessionProvider } from './NextAuthSessionProvider'
@@ -25,6 +26,7 @@ export default function RootLayout({
             <head>
                 <StylesCSR />
                 <StylesSSR />
+                <StylesEffect />
             </head>
             <body className={inter.className}>
                 <NextAuthSessionProvider>

@@ -286,7 +286,7 @@ export const TabSignIn = (props: TabSignInProps) => {
                 // children:
                 signInButtonComponent.props.children ?? 'Sign In',
             )}
-            <hr className='signinSeparator' />
+            {!!providers.length && <hr className='signinSeparator' />}
             {providers.map((providerType) => {
                 const signInWithProviderButtonComponent : React.ReactComponentElement<any, ButtonProps> = (
                     (typeof(signInWithButtonComponent) === 'function')

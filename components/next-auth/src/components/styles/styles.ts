@@ -116,6 +116,11 @@ export const usesSignInTitleColor = () => {
             
             
             
+            // spacings:
+            margin    : '0px', // kill <h1> auto margin
+            
+            
+            
             // typos:
             textAlign : 'center',
         }),
@@ -136,26 +141,26 @@ export const usesSignInLayout = () => {
             // children:
             ...children([signInTabElm, recoverTabElm, resetTabElm], {
                 // layouts:
-                display      : 'grid',
+                display : 'grid',
                 
                 
                 
                 // spacings:
-                gap: spacers.default,
+                gap     : spacers.default,
                 
                 
                 
                 // children:
                 ...children('form', {
                     // layouts:
-                    display: 'contents',
+                    display : 'contents',
                     
                     
                     
                     // children:
                     ...children([signInTitleElm, recoverTitleElm, resetTitleElm], {
                         // positions:
-                        gridArea  : 'title',
+                        gridArea     : 'title',
                         
                         
                         
@@ -164,15 +169,15 @@ export const usesSignInLayout = () => {
                     }),
                     ...children(usernameElm, {
                         // positions:
-                        gridArea : 'username',
+                        gridArea     : 'username',
                     }),
                     ...children(passwordElm, {
                         // positions:
-                        gridArea : 'password',
+                        gridArea     : 'password',
                     }),
                     ...children(password2Elm, {
                         // positions:
-                        gridArea : 'password2',
+                        gridArea     : 'password2',
                     }),
                     ...children(signinElm, {
                         ...rule('.credentials', {
@@ -182,42 +187,43 @@ export const usesSignInLayout = () => {
                     }),
                     ...children(sendRecoverLinkElm, {
                         // positions:
-                        gridArea : 'actionBtn',
+                        gridArea     : 'actionBtn',
                     }),
                     ...children(resetPasswordElm, {
                         // positions:
-                        gridArea : 'actionBtn',
+                        gridArea     : 'actionBtn',
                     }),
                     ...children(signinSeparatorElm, {
                         // positions:
-                        gridArea  : 'separator',
-                        alignSelf : 'center',
+                     // gridArea     : 'separator', // conditional separator => use implicit area
+                        gridColumn   : '1 / -1',
+                        alignSelf    : 'center',
                         
                         
                         
                         // layouts:
-                        display: 'flex',
+                        display      : 'flex',
                         
                         
                         
                         // spacings:
-                        margin   : 0,
+                        margin       : 0,
                     }),
                 }),
                 ...children(gotoHomeElm, {
                     // positions:
-                    gridArea    : 'gotoHome',
-                    justifySelf : 'start',
+                    gridArea         : 'gotoHome',
+                    justifySelf      : 'start',
                 }),
                 ...children(gotoSignInElm, {
                     // positions:
-                    gridArea    : 'gotoSignIn',
-                    justifySelf : 'start',
+                    gridArea         : 'gotoSignIn',
+                    justifySelf      : 'start',
                 }),
                 ...children(gotoRecoverElm, {
                     // positions:
-                    gridArea    : 'gotoRecover',
-                    justifySelf : 'end',
+                    gridArea         : 'gotoRecover',
+                    justifySelf      : 'end',
                 }),
                 
                 
@@ -233,7 +239,7 @@ export const usesSignInLayout = () => {
                     '"password       password" min-content',
                     '"actionBtn     actionBtn" min-content',
                     '"gotoHome    gotoRecover" min-content',
-                    '"separator     separator" min-content',
+                 // '"separator     separator" min-content', // conditional separator => use implicit area
                     '"........... ..........." auto',
                     '/',
                     '1fr 1fr'
