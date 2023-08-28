@@ -23,7 +23,7 @@ import {
     
     
     // routers:
-    default as NextAuth,
+    default as NextAuthFix,
     
     
     
@@ -108,6 +108,11 @@ const NextResponse : typeof NextResponseFix = (
     (NextResponseFix as any).default
     ??
     NextResponseFix
+);
+const NextAuth : typeof NextAuthFix = (
+    (NextAuthFix as any).default
+    ??
+    NextAuthFix
 );
 const CredentialsProvider : typeof CredentialsProviderFix = (
     (CredentialsProviderFix as any).default
