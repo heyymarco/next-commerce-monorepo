@@ -6,6 +6,7 @@ import { StylesCSR } from './StylesCSR' // client_side_rendering CSS (required)
 import { StylesSSR } from './StylesSSR' // server_side_rendering CSS (optional)
 import '@reusable-ui/typos/effects'
 import { DialogMessageProvider } from './DialogMessageProvider'
+import { NextAuthSessionProvider } from './NextAuthSessionProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,15 +21,17 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
+        <html lang='en'>
             <head>
                 <StylesCSR />
                 <StylesSSR />
             </head>
             <body className={inter.className}>
-                <DialogMessageProvider>
-                    {children}
-                </DialogMessageProvider>
+                <NextAuthSessionProvider>
+                    <DialogMessageProvider>
+                        {children}
+                    </DialogMessageProvider>
+                </NextAuthSessionProvider>
             </body>
         </html>
     )
