@@ -10,7 +10,7 @@ import FacebookProvider     from 'next-auth/providers/facebook'
 import InstagramProvider    from 'next-auth/providers/instagram'
 import TwitterProvider      from 'next-auth/providers/twitter'
 
-import { AuthConfig, ResetPassword, User } from '@heymarco/next-auth/dist/server.js'
+import { AuthConfig, ResetPassword, User } from '@heymarco/next-auth/server'
 
 
 
