@@ -2,6 +2,7 @@
 import {
     // writes css in javascript:
     rule,
+    atRule,
     children,
     style,
     
@@ -21,6 +22,11 @@ import {
 import {
     // a spacer (gap) management system:
     spacers,
+    
+    
+    
+    // a responsive management system:
+    breakpoints,
     
     
     
@@ -209,6 +215,36 @@ export const usesSignInLayout = () => {
                         // spacings:
                         margin       : 0,
                     }),
+                    ...children('.signinGroup', {
+                        // layouts:
+                        display : 'contents',
+                        
+                        
+                        
+                        // children:
+                        ...children(signinElm, {
+                            // sizes:
+                            gridColumnEnd         : 'span 6',
+                            ...atRule(`@container (min-width: ${breakpoints.sm}px)`, {
+                                gridColumnEnd     : 'span 3',
+                                ...rule(':nth-child(2n+1):nth-last-child(1)', {
+                                    gridColumnEnd : 'span 6',
+                                }),
+                            }),
+                            // ...atRule(`@container (min-width: ${breakpoints.lg}px)`, {
+                            //     gridColumnEnd     : 'span 2',
+                            //     ...rule([
+                            //         ':nth-child(3n+1):nth-last-child(2)',
+                            //         ':nth-child(3n+2):nth-last-child(1)',
+                            //     ], {
+                            //         gridColumnEnd : 'span 3',
+                            //     }),
+                            //     ...rule(':nth-child(3n+1):nth-last-child(1)', {
+                            //         gridColumnEnd : 'span 6',
+                            //     }),
+                            // }),
+                        }),
+                    }),
                 }),
                 ...children(gotoHomeElm, {
                     // positions:
@@ -233,16 +269,17 @@ export const usesSignInLayout = () => {
             }),
             ...children(signInTabElm, {
                 // layouts:
-                gridTemplate : [[
-                    '"title             title" min-content',
-                    '"username       username" min-content',
-                    '"password       password" min-content',
-                    '"actionBtn     actionBtn" min-content',
-                    '"gotoHome    gotoRecover" min-content',
-                 // '"separator     separator" min-content', // conditional separator => use implicit area
-                    '"........... ..........." auto',
+                containerType : 'inline-size',
+                gridTemplate  : [[
+                    '"  title       title       title       title       title       title    " min-content',
+                    '" username    username    username    username    username    username  " min-content',
+                    '" password    password    password    password    password    password  " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '" gotoHome    gotoHome    gotoHome   gotoRecover gotoRecover gotoRecover" min-content',
+                 // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
+                    '"........... ........... ........... ........... ........... ..........." auto',
                     '/',
-                    '1fr 1fr'
+                    '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 
                 
@@ -252,14 +289,14 @@ export const usesSignInLayout = () => {
             }),
             ...children(recoverTabElm, {
                 // layouts:
-                gridTemplate : [[
-                    '"title             title" min-content',
-                    '"username       username" min-content',
-                    '"actionBtn     actionBtn" min-content',
-                    '"gotoSignIn  ..........." min-content',
-                    '"........... ..........." auto',
+                gridTemplate  : [[
+                    '"  title       title       title       title       title       title    " min-content',
+                    '" username    username    username    username    username    username  " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '"gotoSignIn  gotoSignIn  gotoSignIn  ........... ........... ..........." min-content',
+                    '"........... ........... ........... ........... ........... ..........." auto',
                     '/',
-                    '1fr 1fr'
+                    '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 
                 
@@ -269,16 +306,16 @@ export const usesSignInLayout = () => {
             }),
             ...children(resetTabElm, {
                 // layouts:
-                gridTemplate : [[
-                    '"title             title" min-content',
-                    '"username       username" min-content',
-                    '"password       password" min-content',
-                    '"password2     password2" min-content',
-                    '"actionBtn     actionBtn" min-content',
-                    '"gotoSignIn  ..........." min-content',
-                    '"........... ..........." auto',
+                gridTemplate  : [[
+                    '"  title       title       title       title       title       title    " min-content',
+                    '" username    username    username    username    username    username  " min-content',
+                    '" password    password    password    password    password    password  " min-content',
+                    '" password2   password2   password2   password2   password2   password2 " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '"gotoSignIn  gotoSignIn  gotoSignIn  ........... ........... ..........." min-content',
+                    '"........... ........... ........... ........... ........... ..........." auto',
                     '/',
-                    '1fr 1fr'
+                    '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 
                 

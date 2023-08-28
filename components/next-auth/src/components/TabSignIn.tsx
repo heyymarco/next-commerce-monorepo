@@ -286,63 +286,67 @@ export const TabSignIn = (props: TabSignInProps) => {
                 // children:
                 signInButtonComponent.props.children ?? 'Sign In',
             )}
-            {!!providers.length && <hr className='signinSeparator' />}
-            {providers.map((providerType) => {
-                const signInWithProviderButtonComponent : React.ReactComponentElement<any, ButtonProps> = (
-                    (typeof(signInWithButtonComponent) === 'function')
-                    ? signInWithButtonComponent(providerType)
-                    : signInWithButtonComponent
-                );
-                
-                
-                
-                // jsx:
-                return (
-                    <ButtonWithSignIn
-                        // identifiers:
-                        key={providerType}
+            {!!providers.length && <>
+                <hr className='signinSeparator' />
+                <div className='signinGroup'>
+                    {providers.map((providerType) => {
+                        const signInWithProviderButtonComponent : React.ReactComponentElement<any, ButtonProps> = (
+                            (typeof(signInWithButtonComponent) === 'function')
+                            ? signInWithButtonComponent(providerType)
+                            : signInWithButtonComponent
+                        );
                         
                         
                         
-                        // auths:
-                        providerType={providerType}
-                        
-                        
-                        
-                        // components:
-                        buttonComponent={
-                            /* <SignInWithProviderButton> */
-                            React.cloneElement<ButtonProps>(signInWithProviderButtonComponent,
-                                // props:
-                                {
-                                    // identifiers:
-                                    key       : providerType,
-                                    
-                                    
-                                    
-                                    // actions:
-                                    type      : signInWithProviderButtonComponent.props.type      ?? 'submit',
-                                    
-                                    
-                                    
-                                    // classes:
-                                    className : signInWithProviderButtonComponent.props.className ?? `signin ${providerType}`,
-                                },
+                        // jsx:
+                        return (
+                            <ButtonWithSignIn
+                                // identifiers:
+                                key={providerType}
                                 
                                 
                                 
-                                // children:
-                                signInWithProviderButtonComponent.props.children ?? <>Sign In with {resolveProviderName(providerType)}</>,
-                            )
-                        }
-                        
-                        
-                        
-                        // handlers:
-                        onSignInWith={doSignInWith}
-                    />
-                );
-            })}
+                                // auths:
+                                providerType={providerType}
+                                
+                                
+                                
+                                // components:
+                                buttonComponent={
+                                    /* <SignInWithProviderButton> */
+                                    React.cloneElement<ButtonProps>(signInWithProviderButtonComponent,
+                                        // props:
+                                        {
+                                            // identifiers:
+                                            key       : providerType,
+                                            
+                                            
+                                            
+                                            // actions:
+                                            type      : signInWithProviderButtonComponent.props.type      ?? 'submit',
+                                            
+                                            
+                                            
+                                            // classes:
+                                            className : signInWithProviderButtonComponent.props.className ?? `signin ${providerType}`,
+                                        },
+                                        
+                                        
+                                        
+                                        // children:
+                                        signInWithProviderButtonComponent.props.children ?? <>Sign In with {resolveProviderName(providerType)}</>,
+                                    )
+                                }
+                                
+                                
+                                
+                                // handlers:
+                                onSignInWith={doSignInWith}
+                            />
+                        );
+                    })}
+                </div>
+            </>}
         </form>
     );
 };
