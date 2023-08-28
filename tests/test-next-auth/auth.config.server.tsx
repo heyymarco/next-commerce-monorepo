@@ -15,7 +15,7 @@ import { AuthConfig, ResetPassword, User } from '@heymarco/next-auth/server'
 
 
 export const authConfig : AuthConfig = {
-    PAGE_SIGNIN_PATH    : '/auth/signin',
+    PAGE_SIGNIN_PATH    : '/signin',
     
     
     
@@ -34,19 +34,25 @@ export const authConfig : AuthConfig = {
             Hi <User.Name />.
         </p>
         <p>
-            <strong>Forgot your password?</strong>
+            <strong>
+                Forgot your password?
+            </strong>
             <br />
             We received a request to reset the password for your account.
         </p>
         <p>
             To reset your password, click on the link below:
             <br />
-            <ResetPassword.Link>Reset Password</ResetPassword.Link>
+            <ResetPassword.Link>
+                Reset Password
+            </ResetPassword.Link>
         </p>
         <p>
             Or copy and paste the URL into your browser:
             <br />
-            <u><ResetPassword.Url /></u>
+            <u>
+                <ResetPassword.Url />
+            </u>
         </p>
         <p>
             If you did not make this request then please ignore this email.
