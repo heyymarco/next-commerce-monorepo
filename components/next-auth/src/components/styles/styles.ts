@@ -2,7 +2,6 @@
 import {
     // writes css in javascript:
     rule,
-    atRule,
     children,
     style,
     
@@ -26,7 +25,8 @@ import {
     
     
     // a responsive management system:
-    breakpoints,
+    ifContainerWidthAtLeast,
+    ifContainerWidthBetween,
     
     
     
@@ -225,24 +225,24 @@ export const usesSignInLayout = () => {
                         ...children(signinElm, {
                             // sizes:
                             gridColumnEnd         : 'span 6',
-                            ...atRule(`@container (min-width: ${breakpoints.sm}px)`, {
+                            ...ifContainerWidthBetween('sm', 'md', {
                                 gridColumnEnd     : 'span 3',
                                 ...rule(':nth-child(2n+1):nth-last-child(1)', {
                                     gridColumnEnd : 'span 6',
                                 }),
                             }),
-                            // ...atRule(`@container (min-width: ${breakpoints.lg}px)`, {
-                            //     gridColumnEnd     : 'span 2',
-                            //     ...rule([
-                            //         ':nth-child(3n+1):nth-last-child(2)',
-                            //         ':nth-child(3n+2):nth-last-child(1)',
-                            //     ], {
-                            //         gridColumnEnd : 'span 3',
-                            //     }),
-                            //     ...rule(':nth-child(3n+1):nth-last-child(1)', {
-                            //         gridColumnEnd : 'span 6',
-                            //     }),
-                            // }),
+                            ...ifContainerWidthAtLeast('lg', {
+                                gridColumnEnd     : 'span 2',
+                                ...rule([
+                                    ':nth-child(3n+1):nth-last-child(2)',
+                                    ':nth-child(3n+2):nth-last-child(1)',
+                                ], {
+                                    gridColumnEnd : 'span 3',
+                                }),
+                                ...rule(':nth-child(3n+1):nth-last-child(1)', {
+                                    gridColumnEnd : 'span 6',
+                                }),
+                            }),
                         }),
                     }),
                 }),

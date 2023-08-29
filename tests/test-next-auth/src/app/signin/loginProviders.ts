@@ -10,10 +10,4 @@ export const loginProviders : BuiltInProviderType[] = [
     'google',
     'facebook',
     'instagram',
-    'apple',
-    'twitter',
-    'google',
-    'facebook',
-    'instagram',
-    'google',
 ];
