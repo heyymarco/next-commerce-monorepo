@@ -1,5 +1,5 @@
 import { default as React, createContext } from 'react'
-import { Container, ContainerProps, ControlProps } from '@reusable-ui/components'
+import { Container, ContainerProps, ControlProps } from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
 

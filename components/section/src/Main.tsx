@@ -1,5 +1,5 @@
 import { default as React, useMemo } from 'react'
-import { Generic } from '@reusable-ui/components'
+import { Generic } from '@reusable-ui/components'      // a set of official Reusable-UI components
 import { SectionProps } from './Section.js';
 import { ArticleContext, GenericSection, IArticleContext } from './GenericSection.js';
 

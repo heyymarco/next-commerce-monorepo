@@ -13,7 +13,7 @@ import {
     Progress,
     ProgressBarProps,
     ProgressBar,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
 

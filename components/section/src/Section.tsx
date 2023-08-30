@@ -1,6 +1,6 @@
 import { default as React, useContext, useMemo } from 'react'
-import type { Tag } from '@reusable-ui/core'
-import { Container, ContainerProps, Generic } from '@reusable-ui/components'
+import type { Tag } from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+import { Container, ContainerProps, Generic } from '@reusable-ui/components'      // a set of official Reusable-UI components
 import { ArticleContext, GenericSection, GenericSectionProps, IArticleContext } from './GenericSection.js';
 
 
