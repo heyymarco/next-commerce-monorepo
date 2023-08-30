@@ -35,10 +35,6 @@ import {
     encode,
     decode,
 }                           from 'next-auth/jwt'
-import {
-    // databases:
-    PrismaAdapter,
-}                           from '@auth/prisma-adapter'
 import type {
     // models:
     AdapterUser,
@@ -102,6 +98,11 @@ import type {
     CredentialsConfig,
 }                           from './credentials.config.js'
 
+// internals:
+import {
+    PrismaAdapterWithCredentials,
+}                           from './PrismaAdapterWithCredentials.js'
+
 
 
 const NextResponse : typeof NextResponseFix = (
@@ -154,7 +155,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     
     //#region configs
-    const adapter     = PrismaAdapter(prisma);
+    const adapter     = PrismaAdapterWithCredentials(prisma);
     const session     : SessionOptions = {
         strategy  : 'database',
         
@@ -182,53 +183,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     
-                    // find user data by given username (or email):
-                    const userDetail = await prisma.user.findFirst({
-                        where  :
-                            credentials.username.includes('@') // if username contains '@' => treat as email, otherwise regular username
-                            ? {
-                                email        : credentials.username,
-                            }
-                            : {
-                                credentials  : {
-                                    username : credentials.username,
-                                },
-                            },
-                        select : {
-                            id               : true, // required: for id key
-                            
-                            name             : true, // optional: for profile name
-                            email            : true, // required: for email account linking
-                            emailVerified    : true, // required: for distinguish between `AdapterUser` vs `User`
-                            image            : true, // optional: for profile image
-                            
-                            credentials : {
-                                select : {
-                                    password : true, // required: for password hash comparison
-                                },
-                            },
-                        },
-                    });
-                    if (!userDetail) return null; // no user found with given username (or email) => return null (not found)
-                    
-                    
-                    
-                    // remove credentials property to increase security strength:
-                    const {
-                        credentials : expectedCredentials,
-                        ...restAdapterUser
-                    } = userDetail;
-                    
-                    
-                    
-                    // perform password hash comparison:
-                    if (!expectedCredentials) return null; // no credential was configured on the user's account => unable to compare => return null (assumes as password do not match)
-                    if (!(await bcrypt.compare(credentials.password, expectedCredentials.password ?? ''))) return null; // password hash comparison do not match => return null (password do not match)
-                    
-                    
-                    
-                    // the verification passed => authorized => return An `AdapterUser` object:
-                    return restAdapterUser;
+                    return adapter.getUserByCredentials(credentials);
                 },
             }),
             

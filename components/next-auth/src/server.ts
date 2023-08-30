@@ -5,3 +5,5 @@ export *            from './auth.config.server.js'
 export *            from './credentials.config.js'
 
 export *            from './auth.server.js'
+
+export *            from './PrismaAdapterWithCredentials.js'
