@@ -128,11 +128,6 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     
     // rest props:
     const {
-        // accessibilities:
-        alternateSignInText,
-        
-        
-        
         // configs:
         credentialsConfig   : _credentialsConfig,   // remove
         
@@ -387,11 +382,6 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                 
                 // children:
                 <TabSignIn
-                    // accessibilities:
-                    alternateSignInText={alternateSignInText}
-                    
-                    
-                    
                     // auths:
                     providers={providers}
                     

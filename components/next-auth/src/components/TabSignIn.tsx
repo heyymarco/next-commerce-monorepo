@@ -51,7 +51,6 @@ import {
 }                           from './ButtonWithSignIn.js'
 import {
     // react components:
-    AlternateSignInSeparatorProps,
     AlternateSignInSeparator,
 }                           from './AlternateSignInSeparator.js'
 
@@ -68,11 +67,7 @@ import {
 
 
 // react components:
-export interface TabSignInProps
-    extends
-        // components:
-        Pick<AlternateSignInSeparatorProps, 'alternateSignInText'>
-{
+export interface TabSignInProps {
     // auths:
     providers                         ?: BuiltInProviderType[]
     
@@ -95,11 +90,6 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         
-        // accessibilities:
-        alternateSignInText,
-        
-        
-        
         // components:
         signInTitleComponent              = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
@@ -107,7 +97,7 @@ export const TabSignIn = (props: TabSignInProps) => {
         passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         signInButtonComponent             = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
         signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
-        alternateSignInSeparatorComponent = (<AlternateSignInSeparator alternateSignInText={alternateSignInText}  />                    as React.ReactComponentElement<any, GenericProps<Element>>),
+        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
     } = props;
     
     
