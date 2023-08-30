@@ -303,7 +303,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             }, { status: 400 }); // handled with error
         } // if
         const {
-            resetToken,
+            resetPasswordToken,
             user,
         } = result;
         
@@ -312,7 +312,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         // send a link of resetPasswordToken to the user's email:
         try {
             // generate a link to a page for resetting password:
-            const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?resetPasswordToken=${encodeURIComponent(resetToken)}`
+            const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
             
             
             

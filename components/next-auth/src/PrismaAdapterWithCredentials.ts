@@ -39,7 +39,7 @@ export interface AdapterWithCredentials
         Adapter
 {
     getUserByCredentials     : (credentials: Credentials) => Awaitable<AdapterUser|null>
-    createResetPasswordToken : (usernameOrEmail: string, options?: CreateResetPasswordTokenOptions) => Awaitable<{ resetToken: string, user: AdapterUser}|Date|null>
+    createResetPasswordToken : (usernameOrEmail: string, options?: CreateResetPasswordTokenOptions) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
@@ -105,9 +105,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             
             // generate the resetPasswordToken data:
-            const resetToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
-            const resetMaxAge = emailResetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
-            const resetExpiry = new Date(Date.now() + resetMaxAge);
+            const resetPasswordToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
+            const resetPasswordMaxAge = emailResetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
+            const resetPasswordExpiry = new Date(Date.now() + resetPasswordMaxAge);
             
             
             
@@ -165,12 +165,12 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                     create : {
                         userId        : userId,
                         
-                        expiresAt     : resetExpiry,
-                        token         : resetToken,
+                        expiresAt     : resetPasswordExpiry,
+                        token         : resetPasswordToken,
                     },
                     update : {
-                        expiresAt     : resetExpiry,
-                        token         : resetToken,
+                        expiresAt     : resetPasswordExpiry,
+                        token         : resetPasswordToken,
                     },
                     select : {
                         user : true,
@@ -180,7 +180,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             });
             if (!user || (user instanceof Date)) return user;
             return {
-                resetToken,
+                resetPasswordToken,
                 user,
             };
         },
