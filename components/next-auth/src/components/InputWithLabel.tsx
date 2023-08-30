@@ -19,7 +19,7 @@ import {
     // composite-components:
     GroupProps,
     Group,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 
 

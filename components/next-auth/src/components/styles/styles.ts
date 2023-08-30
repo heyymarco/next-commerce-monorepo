@@ -55,7 +55,7 @@ import {
     onContentStylesChange,
     usesContentLayout,
     usesContentVariants,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
 import {

@@ -53,7 +53,7 @@ import {
     
     // a validation management system:
     ValidationProvider,
-}                           from '@reusable-ui/core'
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
@@ -64,7 +64,7 @@ import {
     
     // utility-components:
     useDialogMessage,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
 import {

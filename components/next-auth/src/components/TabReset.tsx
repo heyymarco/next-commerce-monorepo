@@ -51,7 +51,7 @@ import {
     // utility-components:
     ModalStatusProps,
     ModalStatus,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
 import {

@@ -22,7 +22,7 @@ import {
     ButtonIcon,
     InputProps,
     TextInput,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
 import {

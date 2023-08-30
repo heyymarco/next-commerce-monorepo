@@ -48,7 +48,7 @@ import {
     TabPanel,
     TabProps,
     Tab,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
 import {
@@ -79,9 +79,8 @@ import {
 
 // styles:
 export const useSignInStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles')
+    () => import(/* webpackPrefetch: true */ './styles/styles.js')
 , { id: 'mhxnjino7v' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './styles/styles'
 
 
 
@@ -129,6 +128,11 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     
     // rest props:
     const {
+        // accessibilities:
+        alternateSignInText,
+        
+        
+        
         // configs:
         credentialsConfig   : _credentialsConfig,   // remove
         
@@ -165,6 +169,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         passwordInputComponent,
         signInButtonComponent,
         signInWithButtonComponent,
+        alternateSignInSeparatorComponent,
         
         sendRecoverLinkButtonComponent,
         
@@ -382,6 +387,11 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                 
                 // children:
                 <TabSignIn
+                    // accessibilities:
+                    alternateSignInText={alternateSignInText}
+                    
+                    
+                    
                     // auths:
                     providers={providers}
                     
@@ -394,6 +404,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     passwordInputComponent={passwordInputComponent}
                     signInButtonComponent={signInButtonComponent}
                     signInWithButtonComponent={signInWithButtonComponent}
+                    alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
                 <GotoHomeButton />,
                 <GotoRecoverButton />,

@@ -22,6 +22,11 @@ import {
 
 // reusable-ui components:
 import {
+    // base-components:
+    GenericProps,
+    
+    
+    
     // simple-components:
     ButtonProps,
     ButtonComponentProps,
@@ -29,7 +34,7 @@ import {
     InputProps,
     TextInput,
     PasswordInput,
-}                           from '@reusable-ui/components'
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
 import {
@@ -44,6 +49,11 @@ import {
     // react components:
     ButtonWithSignIn,
 }                           from './ButtonWithSignIn.js'
+import {
+    // react components:
+    AlternateSignInSeparatorProps,
+    AlternateSignInSeparator,
+}                           from './AlternateSignInSeparator.js'
 
 // internals:
 import {
@@ -58,19 +68,24 @@ import {
 
 
 // react components:
-export interface TabSignInProps {
+export interface TabSignInProps
+    extends
+        // components:
+        Pick<AlternateSignInSeparatorProps, 'alternateSignInText'>
+{
     // auths:
-    providers                 ?: BuiltInProviderType[]
+    providers                         ?: BuiltInProviderType[]
     
     
     
     // components:
-    signInTitleComponent      ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    signInTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    usernameInputComponent    ?: React.ReactComponentElement<any, InputProps<Element>>
-    passwordInputComponent    ?: React.ReactComponentElement<any, InputProps<Element>>
-    signInButtonComponent     ?: ButtonComponentProps['buttonComponent']
-    signInWithButtonComponent ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
+    usernameInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
+    passwordInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
+    signInButtonComponent             ?: ButtonComponentProps['buttonComponent']
+    signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
+    alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
 }
 export const TabSignIn = (props: TabSignInProps) => {
     // rest props:
@@ -80,13 +95,19 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         
-        // components:
-        signInTitleComponent      = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        // accessibilities:
+        alternateSignInText,
         
-        usernameInputComponent    = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />            as React.ReactComponentElement<any, InputProps<Element>>),
-        passwordInputComponent    = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
-        signInButtonComponent     = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
-        signInWithButtonComponent = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
+        
+        
+        // components:
+        signInTitleComponent              = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        
+        usernameInputComponent            = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />            as React.ReactComponentElement<any, InputProps<Element>>),
+        passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
+        signInButtonComponent             = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
+        signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
+        alternateSignInSeparatorComponent = (<AlternateSignInSeparator alternateSignInText={alternateSignInText}  />                    as React.ReactComponentElement<any, GenericProps<Element>>),
     } = props;
     
     
@@ -287,7 +308,13 @@ export const TabSignIn = (props: TabSignInProps) => {
                 signInButtonComponent.props.children ?? 'Sign In',
             )}
             {!!providers.length && <>
-                <hr className='signinSeparator' />
+                {React.cloneElement<GenericProps<Element>>(alternateSignInSeparatorComponent,
+                    // props:
+                    {
+                        // classes:
+                        className : alternateSignInSeparatorComponent.props.className ?? 'signinSeparator',
+                    },
+                )}
                 <div className='signinGroup'>
                     {providers.map((providerType) => {
                         const signInWithProviderButtonComponent : React.ReactComponentElement<any, ButtonProps> = (
