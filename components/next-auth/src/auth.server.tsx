@@ -55,9 +55,6 @@ import {
     randomUUID,
 }                           from 'crypto'
 import {
-    customAlphabet,
-}                           from 'nanoid/async'
-import {
     default as bcrypt,
 }                           from 'bcrypt'
 
@@ -69,7 +66,6 @@ import {
 // ORMs:
 import type {
     PrismaClient,
-    User as ModelUser,
 }                           from '@prisma/client'
 
 // templates:
@@ -289,92 +285,27 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         
         
         
-        // generate the resetPasswordToken data:
-        const resetToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
-        const resetMaxAge = (authConfig.EMAIL_RESET_MAX_AGE ?? 24) * 60 * 60 * 1000 /* convert to milliseconds */;
-        const resetExpiry = new Date(Date.now() + resetMaxAge);
-        
-        
-        
-        // an atomic transaction of [`find user by username (or email)`, `find resetPasswordToken by user id`, `create/update the new resetPasswordToken`]:
-        const user = await prisma.$transaction(async (prismaTransaction): Promise<Error|Pick<ModelUser, 'name'|'email'>> => {
-            // find user id by given username (or email):
-            const {id: userId} = await prismaTransaction.user.findFirst({
-                where  :
-                    username.includes('@') // if username contains '@' => treat as email, otherwise regular username
-                    ? {
-                        email        : username,
-                    }
-                    : {
-                        credentials  : {
-                            username : username,
-                        },
-                    },
-                select : {
-                    id               : true, // required: for id key
-                },
-            }) ?? {};
-            if (userId === undefined) return Error('There is no user with the specified username or email.', { cause: 404 });
-            
-            
-            
-            // limits the rate of resetPasswordToken request:
-            const resetLimitInHours = (authConfig.EMAIL_RESET_LIMITS ?? 0.25);
-            if (resetLimitInHours) {
-                // find the last request date (if found) of resetPasswordToken by user id:
-                const {updatedAt: lastRequestDate} = await prismaTransaction.resetPasswordToken.findUnique({
-                    where  : {
-                        userId       : userId,
-                    },
-                    select : {
-                        updatedAt    : true,
-                    },
-                }) ?? {};
-                
-                // calculate how often the last request of resetPasswordToken:
-                if (!!lastRequestDate) {
-                    const now         = Date.now();
-                    const minInterval = resetLimitInHours * 60 * 60 * 1000 /* convert to milliseconds */;
-                    if ((now - lastRequestDate.valueOf()) < minInterval) { // the request interval is shorter than minInterval  => reject the request
-                        // the reset request is too frequent => reject:
-                        return Error(`The password reset request is too often. Please try again ${moment(now).to(lastRequestDate.valueOf() + minInterval)}.`, { cause: 400 });
-                    } // if
-                } // if
-            } // if
-            
-            
-            
-            // create/update the resetPasswordToken record and get the related user name & email:
-            const {user} = await prismaTransaction.resetPasswordToken.upsert({
-                where  : {
-                    userId        : userId,
-                },
-                create : {
-                    userId        : userId,
-                    
-                    expiresAt     : resetExpiry,
-                    token         : resetToken,
-                },
-                update : {
-                    expiresAt     : resetExpiry,
-                    token         : resetToken,
-                },
-                select : {
-                    user : {
-                        select : {
-                            name  : true, // get the related user name
-                            email : true, // get the related user email
-                        },
-                    },
-                },
-            });
-            return user;
+        const now    = new Date();
+        const result = await adapter.createResetPasswordToken(username, {
+            now,
+            resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS ?? 0.25),
         });
-        if (user instanceof Error) {
+        if (!result) {
+            // the user account is not found => reject:
             return NextResponse.json({
-                error: user.message,
-            }, { status: Number.parseInt(user.cause as any) || 400 }); // handled with error
+                error: 'There is no user with the specified username or email.',
+            }, { status: 404 }); // handled with error
         } // if
+        if (result instanceof Date) {
+            // the reset request is too frequent => reject:
+            return NextResponse.json({
+                error: `The password reset request is too often. Please try again ${moment(now).to(result)}.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        const {
+            resetToken,
+            user,
+        } = result;
         
         
         

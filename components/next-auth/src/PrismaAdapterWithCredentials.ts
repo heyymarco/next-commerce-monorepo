@@ -21,22 +21,32 @@ import type {
 import {
     default as bcrypt,
 }                           from 'bcrypt'
+import {
+    customAlphabet,
+}                           from 'nanoid/async'
 
 
 
 type Adapter = ReturnType<typeof PrismaAdapter>
 export type Credentials = Record<'username'|'password', string>
+export interface CreateResetPasswordTokenOptions {
+    now               ?: Date
+    resetLimitInHours ?: number
+    emailResetMaxAge  ?: number
+}
 export interface AdapterWithCredentials
     extends
         Adapter
 {
-    getUserByCredentials : (credentials: Credentials) => Awaitable<AdapterUser|null>
+    getUserByCredentials     : (credentials: Credentials) => Awaitable<AdapterUser|null>
+    createResetPasswordToken : (usernameOrEmail: string, options?: CreateResetPasswordTokenOptions) => Awaitable<{ resetToken: string, user: AdapterUser}|Date|null>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
         ...PrismaAdapter(prisma),
         
-        getUserByCredentials: async (credentials) => {
+        getUserByCredentials     : async (credentials) => {
+            // credentials:
             const {
                 username : usernameOrEmail,
                 password,
@@ -83,6 +93,96 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             // the verification passed => authorized => return An `AdapterUser` object:
             return restUser;
+        },
+        createResetPasswordToken : async (usernameOrEmail, options) => {
+            // options:
+            const {
+                now = new Date(),
+                resetLimitInHours,
+                emailResetMaxAge = 24,
+            } = options ?? {};
+            
+            
+            
+            // generate the resetPasswordToken data:
+            const resetToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
+            const resetMaxAge = emailResetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
+            const resetExpiry = new Date(Date.now() + resetMaxAge);
+            
+            
+            
+            // an atomic transaction of [`find user by username (or email)`, `find resetPasswordToken by user id`, `create/update the new resetPasswordToken`]:
+            const user = await prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => {
+                // find user id by given username (or email):
+                const {id: userId} = await prismaTransaction.user.findFirst({
+                    where  :
+                        usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
+                        ? {
+                            email        : usernameOrEmail,
+                        }
+                        : {
+                            credentials  : {
+                                username : usernameOrEmail,
+                            },
+                        },
+                    select : {
+                        id               : true, // required: for id key
+                    },
+                }) ?? {};
+                if (userId === undefined) return null;
+                
+                
+                
+                // limits the rate of resetPasswordToken request:
+                if (resetLimitInHours) {
+                    // find the last request date (if found) of resetPasswordToken by user id:
+                    const {updatedAt: lastRequestDate} = await prismaTransaction.resetPasswordToken.findUnique({
+                        where  : {
+                            userId       : userId,
+                        },
+                        select : {
+                            updatedAt    : true,
+                        },
+                    }) ?? {};
+                    
+                    // calculate how often the last request of resetPasswordToken:
+                    if (!!lastRequestDate) {
+                        const minInterval = resetLimitInHours * 60 * 60 * 1000 /* convert to milliseconds */;
+                        if ((now.valueOf() - lastRequestDate.valueOf()) < minInterval) { // the request interval is shorter than minInterval  => reject the request
+                            // the reset request is too frequent => reject:
+                            return new Date(lastRequestDate.valueOf() + minInterval);
+                        } // if
+                    } // if
+                } // if
+                
+                
+                
+                // create/update the resetPasswordToken record and get the related user name & email:
+                const {user} = await prismaTransaction.resetPasswordToken.upsert({
+                    where  : {
+                        userId        : userId,
+                    },
+                    create : {
+                        userId        : userId,
+                        
+                        expiresAt     : resetExpiry,
+                        token         : resetToken,
+                    },
+                    update : {
+                        expiresAt     : resetExpiry,
+                        token         : resetToken,
+                    },
+                    select : {
+                        user : true,
+                    },
+                });
+                return user;
+            });
+            if (!user || (user instanceof Date)) return user;
+            return {
+                resetToken,
+                user,
+            };
         },
     };
 };

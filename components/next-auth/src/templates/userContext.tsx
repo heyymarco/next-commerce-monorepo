@@ -4,10 +4,11 @@ import {
     default as React,
 }                           from 'react'
 
-// models:
+// next-auth:
 import type {
-    User,
-}                           from '@prisma/client'
+    // models:
+    AdapterUser,
+}                           from 'next-auth/adapters'
 
 // internals:
 import {
@@ -23,7 +24,7 @@ import {
 
 
 // contexts:
-const UserContext = createContext<Partial<Omit<User, 'createdAt'|'updatedAt'|'emailVerified'>>>({
+const UserContext = createContext<Partial<AdapterUser>>({
 });
 
 
@@ -38,7 +39,7 @@ export const useUserContext = () => {
 // react components:
 export interface UserContextProviderProps {
     // models:
-    model : Partial<User>
+    model : Partial<AdapterUser>
 }
 export const UserContextProvider = (props: React.PropsWithChildren<UserContextProviderProps>): JSX.Element|null => {
     // jsx:
