@@ -82,7 +82,6 @@ import type {
     // models:
     User,
     AdapterUser,
-    Session,
 }                           from './types.js'
 import type {
     AdapterWithCredentials,
@@ -122,9 +121,10 @@ const transporter = nodemailer.createTransport({
 
 // general_implementation auth handlers:
 export interface CreateAuthHandlerOptions {
-    adapter           : AdapterWithCredentials
-    authConfig        : AuthConfig
-    credentialsConfig : CredentialsConfig
+    adapter            : AdapterWithCredentials
+    authConfig         : AuthConfig
+    credentialsConfig  : CredentialsConfig
+    callbacks         ?: NextAuthOptions['callbacks']
 }
 export interface NextAuthRouteContext {
     params : { nextauth: string[] }
@@ -135,6 +135,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         adapter,
         authConfig,
         credentialsConfig,
+        callbacks,
     } = options;
     
     
@@ -192,7 +193,20 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             ...authConfig.oAuthProviders ?? [],
         ],
         callbacks : {
-            async signIn({ user, account, credentials, profile: oAuthProfile }) {
+            ...callbacks,
+            
+            async signIn(params) {
+                const result = callbacks?.signIn?.(params);
+                if ((result === true) || (typeof(result) === 'string')) return result;
+                
+                
+                
+                const {
+                    user,
+                } = params;
+                
+                
+                
                 if (!('emailVerified' in user)) {
                     // sign up (register a new user)
                     
@@ -226,7 +240,15 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 // all verification passed => logged in
                 return true;
             },
-            async jwt({ token, user, account, profile: oAuthProfile }) {
+            async jwt(params) {
+                const {
+                    token,
+                    user,
+                    account,
+                } = params;
+                
+                
+                
                 // assigning userRole(s):
                 if (account) { // if `account` exist, this means that the callback is being invoked for the first time (i.e. the user is being signed in).
                     // add a related role to token object:
@@ -243,11 +265,18 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 
                 // the token object will be attached to the client side cookie:
-                return token;
+                return callbacks?.jwt?.({ ...params, token }) ?? token;
             },
-            async session({ session, user: dbUser, token }) {
+            async session(params) {
+                const {
+                    session,
+                    user: dbUser,
+                } = params;
+                
+                
+                
                 // assigning userRole(s):
-                const sessionUser = (session as Session).user;
+                const sessionUser = session.user;
                 if (sessionUser) {
                     // add a related role to session object:
                     const role = (
@@ -263,7 +292,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 
                 // the session object will be synced to the client side:
-                return session;
+                return callbacks?.session?.({ ...params, session }) ?? session;
             },
         },
         pages     : {
