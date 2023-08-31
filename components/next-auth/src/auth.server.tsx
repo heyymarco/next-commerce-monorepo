@@ -54,9 +54,6 @@ import {
 import {
     randomUUID,
 }                           from 'crypto'
-import {
-    default as bcrypt,
-}                           from 'bcrypt'
 
 // formats:
 import {
@@ -297,7 +294,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             const now    = new Date();
             const result = await adapter.createResetPasswordToken(username, {
                 now,
-                resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS ?? 0.25),
+                resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS  ?? 0.25),
+                emailResetMaxAge  : (authConfig.EMAIL_RESET_MAX_AGE ?? 24),
             });
             if (!result) {
                 // the user account is not found => reject:
@@ -419,7 +417,9 @@ If the problem still persists, please contact our technical support.`,
         
         // find the related email & username by given resetPasswordToken:
         try {
-            const result = await adapter.validateResetPasswordToken(resetPasswordToken);
+            const result = await adapter.validateResetPasswordToken(resetPasswordToken, {
+                now : new Date(),
+            });
             if (!result) {
                 return NextResponse.json({
                     error: 'The reset password token is invalid or expired.',
@@ -503,73 +503,22 @@ If the problem still persists, please contact our technical support.`,
         
         
         
-        // generate the hashed password:
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        
-        
         try {
-            // an atomic transaction of [`find user id by resetPasswordToken`, `delete current resetPasswordToken record`, `create/update user's credentials`]:
-            return await prisma.$transaction(async (prismaTransaction): Promise<Response> => {
-                // find the related user id by given resetPasswordToken:
-                const {id: userId} = await prismaTransaction.user.findFirst({
-                    where  : {
-                        resetPasswordToken : {
-                            token        : resetPasswordToken,
-                            expiresAt : {
-                                gt       : new Date(Date.now()),
-                            },
-                        },
-                    },
-                    select : {
-                        id               : true, // required: for id key
-                    },
-                }) ?? {};
-                if (userId === undefined) {
-                    return NextResponse.json({
-                        error: 'The reset password token is invalid or expired.',
-                    }, { status: 404 }); // handled with error
-                } // if
-                
-                
-                
-                // delete the current resetPasswordToken record so it cannot be re-use again:
-                await prismaTransaction.resetPasswordToken.delete({
-                    where  : {
-                        userId : userId,
-                    },
-                    select : {
-                        id     : true,
-                    },
-                });
-                
-                
-                
-                // create/update user's credentials:
-                await prismaTransaction.credentials.upsert({
-                    where  : {
-                        userId   : userId,
-                    },
-                    create : {
-                        userId   : userId,
-                        password : hashedPassword,
-                    },
-                    update : {
-                        password : hashedPassword,
-                    },
-                    select : {
-                        id       : true,
-                    },
-                });
-                
-                
-                
-                // report the success:
-                return NextResponse.json({
-                    ok       : true,
-                    message  : 'The password has been successfully changed. Now you can sign in with the new password.',
-                }); // handled with success
+            const result = await adapter.applyResetPasswordToken(resetPasswordToken, password, {
+                now : new Date(),
             });
+            if (!result) {
+                return NextResponse.json({
+                    error: 'The reset password token is invalid or expired.',
+                }, { status: 404 }); // handled with error
+            } // if
+            
+            
+            
+            return NextResponse.json({
+                ok       : true,
+                message  : 'The password has been successfully changed. Now you can sign in with the new password.',
+            }); // handled with success
         }
         catch (error: any) {
             return NextResponse.json({

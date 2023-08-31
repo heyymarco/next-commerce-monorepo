@@ -47,6 +47,12 @@ export interface CreateResetPasswordTokenOptions {
     resetLimitInHours ?: number
     emailResetMaxAge  ?: number
 }
+export interface ValidateResetPasswordTokenOptions {
+    now               ?: Date
+}
+export interface ApplyResetPasswordTokenOptions {
+    now               ?: Date
+}
 
 
 
@@ -54,15 +60,16 @@ export interface AdapterWithCredentials
     extends
         Adapter
 {
-    validateCredentials        : (credentials: Credentials) => Awaitable<AdapterUser|null>
-    createResetPasswordToken   : (usernameOrEmail: string, options?: CreateResetPasswordTokenOptions) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
-    validateResetPasswordToken : (resetPasswordToken: string) => Awaitable<ResetPasswordTokenData|null>
+    validateCredentials        : (credentials        : Credentials) => Awaitable<AdapterUser|null>
+    createResetPasswordToken   : (usernameOrEmail    : string                  , options?: CreateResetPasswordTokenOptions  ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    validateResetPasswordToken : (resetPasswordToken : string                  , options?: ValidateResetPasswordTokenOptions) => Awaitable<ResetPasswordTokenData|null>
+    applyResetPasswordToken    : (resetPasswordToken : string, password: string, options?: ApplyResetPasswordTokenOptions   ) => Awaitable<boolean>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
         ...PrismaAdapter(prisma),
         
-        validateCredentials       : async (credentials) => {
+        validateCredentials        : async (credentials) => {
             // credentials:
             const {
                 username : usernameOrEmail,
@@ -111,7 +118,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             // the verification passed => authorized => return An `AdapterUser` object:
             return restUser;
         },
-        createResetPasswordToken   : async (usernameOrEmail, options) => {
+        createResetPasswordToken   : async (usernameOrEmail                             , options) => {
             // options:
             const {
                 now = new Date(),
@@ -124,7 +131,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             // generate the resetPasswordToken data:
             const resetPasswordToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
             const resetPasswordMaxAge = emailResetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
-            const resetPasswordExpiry = new Date(Date.now() + resetPasswordMaxAge);
+            const resetPasswordExpiry = new Date(now.valueOf() + resetPasswordMaxAge);
             
             
             
@@ -201,13 +208,20 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 user,
             };
         },
-        validateResetPasswordToken : async (resetPasswordToken: string) => {
+        validateResetPasswordToken : async (resetPasswordToken: string                  , options) => {
+            // options:
+            const {
+                now = new Date(),
+            } = options ?? {};
+            
+            
+            
             const user = await prisma.user.findFirst({
                 where  : {
                     resetPasswordToken : {
                         token        : resetPasswordToken,
                         expiresAt : {
-                            gt       : new Date(Date.now()),
+                            gt       : now,
                         },
                     },
                 },
@@ -225,6 +239,77 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 email    : user.email,
                 username : user.credentials?.username || null,
             };
+        },
+        applyResetPasswordToken    : async (resetPasswordToken: string, password: string, options) => {
+            // options:
+            const {
+                now = new Date(),
+            } = options ?? {};
+            
+            
+            
+            // generate the hashed password:
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            
+            
+            // an atomic transaction of [`find user id by resetPasswordToken`, `delete current resetPasswordToken record`, `create/update user's credentials`]:
+            return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
+                // find the related user id by given resetPasswordToken:
+                const {id: userId} = await prismaTransaction.user.findFirst({
+                    where  : {
+                        resetPasswordToken : {
+                            token        : resetPasswordToken,
+                            expiresAt : {
+                                gt       : now,
+                            },
+                        },
+                    },
+                    select : {
+                        id               : true, // required: for id key
+                    },
+                }) ?? {};
+                if (userId === undefined) {
+                    // report the error:
+                    return false;
+                } // if
+                
+                
+                
+                // delete the current resetPasswordToken record so it cannot be re-use again:
+                await prismaTransaction.resetPasswordToken.delete({
+                    where  : {
+                        userId : userId,
+                    },
+                    select : {
+                        id     : true,
+                    },
+                });
+                
+                
+                
+                // create/update user's credentials:
+                await prismaTransaction.credentials.upsert({
+                    where  : {
+                        userId   : userId,
+                    },
+                    create : {
+                        userId   : userId,
+                        password : hashedPassword,
+                    },
+                    update : {
+                        password : hashedPassword,
+                    },
+                    select : {
+                        id       : true,
+                    },
+                });
+                
+                
+                
+                // report the success:
+                return true;
+            });
         },
     };
 };
