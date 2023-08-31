@@ -184,7 +184,10 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                             failureLockDuration : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION ?? 0.25),
                         });
                         if (result === null) return null;
-                        if (result instanceof Date) return null;
+                        if (result instanceof Date) {
+                            console.log('LOGIN LOCKED IN', result);
+                            throw Error('account locked!');
+                        }
                         return result;
                     }
                     catch {
