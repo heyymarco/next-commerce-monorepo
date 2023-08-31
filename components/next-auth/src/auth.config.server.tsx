@@ -26,44 +26,52 @@ import {
 
 
 export interface AuthConfig {
-    PAGE_SIGNIN_PATH    : string
+    PAGE_SIGNIN_PATH                  : string
     
     
     
-    USER_SIGNUP_ENABLE  : boolean
+    USER_SIGNUP_ENABLE                : boolean
+    
+    USER_SIGNIN_FAILURE_MAX_ATTEMPS   : number /* times */
+    USER_SIGNIN_FAILURE_LOCK_DURATION : number /* hours */
     
     
     
-    SESSION_MAX_AGE     : number /* hours */
-    SESSION_UPDATE_AGE  : number /* hours */
+    SESSION_MAX_AGE                   : number /* hours */
+    SESSION_UPDATE_AGE                : number /* hours */
     
     
     
-    EMAIL_RESET_SUBJECT : string
-    EMAIL_RESET_MESSAGE : React.ReactNode
-    EMAIL_RESET_LIMITS  : number /* hours */
-    EMAIL_RESET_MAX_AGE : number /* hours */
+    EMAIL_RESET_SUBJECT               : string
+    EMAIL_RESET_MESSAGE               : React.ReactNode
+    EMAIL_RESET_LIMITS                : number /* hours */
+    EMAIL_RESET_MAX_AGE               : number /* hours */
     
     
     
-    oAuthProviders      : OAuthConfig<any>[]
+    oAuthProviders                    : OAuthConfig<any>[]
 }
 export const defaultAuthConfig : AuthConfig = {
-    PAGE_SIGNIN_PATH    : '/auth/signin',
+    PAGE_SIGNIN_PATH                  : '/auth/signin',
     
     
     
-    USER_SIGNUP_ENABLE  : true,
+    USER_SIGNUP_ENABLE                : true,
     
     
     
-    SESSION_MAX_AGE     : 24   /* hours */,
-    SESSION_UPDATE_AGE  : 6    /* hours */,
+    USER_SIGNIN_FAILURE_MAX_ATTEMPS   : 5    /* times */,
+    USER_SIGNIN_FAILURE_LOCK_DURATION : 0.25 /* hours */,
     
     
     
-    EMAIL_RESET_SUBJECT : 'Password Reset Request',
-    EMAIL_RESET_MESSAGE : <>
+    SESSION_MAX_AGE                   : 24   /* hours */,
+    SESSION_UPDATE_AGE                : 6    /* hours */,
+    
+    
+    
+    EMAIL_RESET_SUBJECT               : 'Password Reset Request',
+    EMAIL_RESET_MESSAGE               : <>
         <p>
             Hi <User.Name />.
         </p>
@@ -92,12 +100,12 @@ export const defaultAuthConfig : AuthConfig = {
             If you did not make this request then please ignore this email.
         </p>
     </>,
-    EMAIL_RESET_LIMITS  : 0.25 /* hours */,
-    EMAIL_RESET_MAX_AGE : 24   /* hours */,
+    EMAIL_RESET_LIMITS                : 0.25 /* hours */,
+    EMAIL_RESET_MAX_AGE               : 24   /* hours */,
     
     
     
-    oAuthProviders      : [
+    oAuthProviders                    : [
         GoogleProvider({
             clientId     : process.env.GOOGLE_ID        ?? '',
             clientSecret : process.env.GOOGLE_SECRET    ?? '',

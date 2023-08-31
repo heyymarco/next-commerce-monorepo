@@ -178,7 +178,14 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     // get user by valid credentials:
                     try {
-                        return adapter.validateCredentials(credentials);
+                        const result = await adapter.validateCredentials(credentials, {
+                            now                 : new Date(),
+                            failureMaxAttemps   : (authConfig.USER_SIGNIN_FAILURE_MAX_ATTEMPS   ?? null),
+                            failureLockDuration : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION ?? 0.25),
+                        });
+                        if (result === null) return null;
+                        if (result instanceof Date) return null;
+                        return result;
                     }
                     catch {
                         return null; // something was wrong when reading database => unable to verify
