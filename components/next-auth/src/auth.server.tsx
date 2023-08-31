@@ -60,11 +60,6 @@ import {
     default as moment,
 }                           from 'moment'
 
-// ORMs:
-import type {
-    PrismaClient,
-}                           from '@prisma/client'
-
 // templates:
 import {
     // react components:
@@ -92,8 +87,8 @@ import type {
 }                           from './credentials.config.js'
 
 // internals:
-import {
-    PrismaAdapterWithCredentials,
+import type {
+    AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
 
 
@@ -130,7 +125,7 @@ const transporter = nodemailer.createTransport({
 
 // general_implementation auth handlers:
 export interface CreateAuthHandlerOptions {
-    prisma            : PrismaClient
+    adapter           : AdapterWithCredentials
     authConfig        : AuthConfig
     credentialsConfig : CredentialsConfig
 }
@@ -140,7 +135,7 @@ export interface NextAuthRouteContext {
 const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     // options:
     const {
-        prisma,
+        adapter,
         authConfig,
         credentialsConfig,
     } = options;
@@ -148,7 +143,6 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     
     //#region configs
-    const adapter     = PrismaAdapterWithCredentials(prisma);
     const session     : SessionOptions = {
         strategy  : 'database',
         

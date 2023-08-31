@@ -1,6 +1,7 @@
 // heymarco components:
 import {
     createAuthRouteHandler,
+    PrismaAdapterWithCredentials,
 }                           from '@heymarco/next-auth/server'
 
 // ORMs:
@@ -19,7 +20,7 @@ import {
 
 
 const authRouteHandler = createAuthRouteHandler({
-    prisma            : prisma,
+    adapter           : PrismaAdapterWithCredentials(prisma),
     authConfig        : authConfig,
     credentialsConfig : credentialsConfig,
 })
