@@ -419,8 +419,8 @@ If the problem still persists, please contact our technical support.`,
         
         // find the related email & username by given resetPasswordToken:
         try {
-            const tokenData = await adapter.validateResetPasswordToken(resetPasswordToken);
-            if (!tokenData) {
+            const result = await adapter.validateResetPasswordToken(resetPasswordToken);
+            if (!result) {
                 return NextResponse.json({
                     error: 'The reset password token is invalid or expired.',
                 }, { status: 404 }); // handled with error
@@ -431,8 +431,8 @@ If the problem still persists, please contact our technical support.`,
             // report the success:
             return NextResponse.json({
                 ok       : true,
-                email    : tokenData.email,
-                username : tokenData.username,
+                email    : result.email,
+                username : result.username,
             }); // handled with success
         }
         catch (error: any) {
