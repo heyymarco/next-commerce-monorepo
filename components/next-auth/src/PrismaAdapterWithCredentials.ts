@@ -27,25 +27,42 @@ import {
 
 
 
+// types:
 type Adapter = ReturnType<typeof PrismaAdapter>
 export type Credentials = Record<'username'|'password', string>
+export interface ResetPasswordTokenData {
+    email    : string
+    username : string|null
+}
+
+
+// models:
+export type { AdapterUser }
+
+
+
+// options:
 export interface CreateResetPasswordTokenOptions {
     now               ?: Date
     resetLimitInHours ?: number
     emailResetMaxAge  ?: number
 }
+
+
+
 export interface AdapterWithCredentials
     extends
         Adapter
 {
-    getUserByCredentials     : (credentials: Credentials) => Awaitable<AdapterUser|null>
-    createResetPasswordToken : (usernameOrEmail: string, options?: CreateResetPasswordTokenOptions) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    validateCredentials        : (credentials: Credentials) => Awaitable<AdapterUser|null>
+    createResetPasswordToken   : (usernameOrEmail: string, options?: CreateResetPasswordTokenOptions) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    validateResetPasswordToken : (resetPasswordToken: string) => Awaitable<ResetPasswordTokenData|null>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
         ...PrismaAdapter(prisma),
         
-        getUserByCredentials     : async (credentials) => {
+        validateCredentials       : async (credentials) => {
             // credentials:
             const {
                 username : usernameOrEmail,
@@ -94,7 +111,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             // the verification passed => authorized => return An `AdapterUser` object:
             return restUser;
         },
-        createResetPasswordToken : async (usernameOrEmail, options) => {
+        createResetPasswordToken   : async (usernameOrEmail, options) => {
             // options:
             const {
                 now = new Date(),
@@ -182,6 +199,31 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             return {
                 resetPasswordToken,
                 user,
+            };
+        },
+        validateResetPasswordToken : async (resetPasswordToken: string) => {
+            const user = await prisma.user.findFirst({
+                where  : {
+                    resetPasswordToken : {
+                        token        : resetPasswordToken,
+                        expiresAt : {
+                            gt       : new Date(Date.now()),
+                        },
+                    },
+                },
+                select : {
+                    email            : true,
+                    credentials : {
+                        select : {
+                            username : true,
+                        },
+                    },
+                },
+            });
+            if (!user) return null;
+            return {
+                email    : user.email,
+                username : user.credentials?.username || null,
             };
         },
     };

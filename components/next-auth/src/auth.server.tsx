@@ -179,7 +179,13 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     
-                    return adapter.getUserByCredentials(credentials);
+                    // get user by valid credentials:
+                    try {
+                        return adapter.validateCredentials(credentials);
+                    }
+                    catch {
+                        return null; // something was wrong when reading database => unable to verify
+                    } // try
                 },
             }),
             
@@ -285,38 +291,39 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         
         
         
-        const now    = new Date();
-        const result = await adapter.createResetPasswordToken(username, {
-            now,
-            resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS ?? 0.25),
-        });
-        if (!result) {
-            // the user account is not found => reject:
-            return NextResponse.json({
-                error: 'There is no user with the specified username or email.',
-            }, { status: 404 }); // handled with error
-        } // if
-        if (result instanceof Date) {
-            // the reset request is too frequent => reject:
-            return NextResponse.json({
-                error: `The password reset request is too often. Please try again ${moment(now).to(result)}.`,
-            }, { status: 400 }); // handled with error
-        } // if
-        const {
-            resetPasswordToken,
-            user,
-        } = result;
-        
-        
-        
-        // send a link of resetPasswordToken to the user's email:
+        // create a new resetPasswordToken and then send a link of resetPasswordToken to the user's email:
         try {
+            // create a new resetPasswordToken:
+            const now    = new Date();
+            const result = await adapter.createResetPasswordToken(username, {
+                now,
+                resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS ?? 0.25),
+            });
+            if (!result) {
+                // the user account is not found => reject:
+                return NextResponse.json({
+                    error: 'There is no user with the specified username or email.',
+                }, { status: 404 }); // handled with error
+            } // if
+            if (result instanceof Date) {
+                // the reset request is too frequent => reject:
+                return NextResponse.json({
+                    error: `The password reset request is too often. Please try again ${moment(now).to(result)}.`,
+                }, { status: 400 }); // handled with error
+            } // if
+            const {
+                resetPasswordToken,
+                user,
+            } = result;
+            
+            
+            
             // generate a link to a page for resetting password:
             const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
             
             
             
-            // sending an email:
+            // send a link of resetPasswordToken to the user's email:
             const { renderToStaticMarkup } = await import('react-dom/server');
             await transporter.sendMail({
                 from    : process.env.EMAIL_RESET_FROM, // sender address
@@ -412,25 +419,8 @@ If the problem still persists, please contact our technical support.`,
         
         // find the related email & username by given resetPasswordToken:
         try {
-            const user = await prisma.user.findFirst({
-                where  : {
-                    resetPasswordToken : {
-                        token        : resetPasswordToken,
-                        expiresAt : {
-                            gt       : new Date(Date.now()),
-                        },
-                    },
-                },
-                select : {
-                    email            : true,
-                    credentials : {
-                        select : {
-                            username : true,
-                        },
-                    },
-                },
-            });
-            if (!user) {
+            const tokenData = await adapter.validateResetPasswordToken(resetPasswordToken);
+            if (!tokenData) {
                 return NextResponse.json({
                     error: 'The reset password token is invalid or expired.',
                 }, { status: 404 }); // handled with error
@@ -441,8 +431,8 @@ If the problem still persists, please contact our technical support.`,
             // report the success:
             return NextResponse.json({
                 ok       : true,
-                email    : user.email,
-                username : user.credentials?.username ?? null,
+                email    : tokenData.email,
+                username : tokenData.username,
             }); // handled with success
         }
         catch (error: any) {
