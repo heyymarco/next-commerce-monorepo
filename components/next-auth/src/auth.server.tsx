@@ -178,15 +178,16 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     // get user by valid credentials:
                     try {
+                        const now    = new Date();
                         const result = await adapter.validateCredentials(credentials, {
-                            now                 : new Date(),
+                            now                 : now,
                             failureMaxAttemps   : (authConfig.USER_SIGNIN_FAILURE_MAX_ATTEMPS   ?? null),
                             failureLockDuration : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION ?? 0.25),
                         });
                         if (result === null) return null;
                         if (result instanceof Date) {
                             console.log('LOGIN LOCKED IN', result);
-                            throw Error('account locked!');
+                            throw Error(`Your account is locked due to too many login attempts. Please try again ${moment(now).to(result)}.`);
                         }
                         return result;
                     }
