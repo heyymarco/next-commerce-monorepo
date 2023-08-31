@@ -24,21 +24,12 @@ import {
     
     // routers:
     default as NextAuthFix,
-    
-    
-    
-    // models:
-    type User,
 }                           from 'next-auth'
 import {
     // cryptos:
     encode,
     decode,
 }                           from 'next-auth/jwt'
-import type {
-    // models:
-    AdapterUser,
-}                           from 'next-auth/adapters'
 
 // credentials providers:
 import {
@@ -87,6 +78,12 @@ import type {
 }                           from './credentials.config.js'
 
 // internals:
+import type {
+    // models:
+    User,
+    AdapterUser,
+    Session,
+}                           from './types.js'
 import type {
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
@@ -232,8 +229,15 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             async jwt({ token, user, account, profile: oAuthProfile }) {
                 // assigning userRole(s):
                 if (account) { // if `account` exist, this means that the callback is being invoked for the first time (i.e. the user is being signed in).
-                    // TODO: read roles from database
-                    token.userRole ='admin';
+                    // add a related role to token object:
+                    const role = (
+                        !!user.id
+                        ? adapter.getRoleByUserId(user.id)
+                        :   !!user.email
+                            ? adapter.getRoleByUserEmail(user.email)
+                            : null
+                    );
+                    token.role = role;
                 } // if
                 
                 
@@ -243,10 +247,17 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             },
             async session({ session, user: dbUser, token }) {
                 // assigning userRole(s):
-                const sessionUser = session.user;
+                const sessionUser = (session as Session).user;
                 if (sessionUser) {
-                    // TODO: read roles from database
-                    // sessionUser.userRole ='admin';
+                    // add a related role to session object:
+                    const role = (
+                        !!dbUser.id
+                        ? await adapter.getRoleByUserId(dbUser.id)
+                        :   !!dbUser.email
+                            ? await adapter.getRoleByUserEmail(dbUser.email)
+                            : null
+                    );
+                    session.role = role ?? null;
                 } // if
                 
                 

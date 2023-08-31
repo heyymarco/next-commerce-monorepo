@@ -3,10 +3,6 @@ import type {
     // types:
     Awaitable,
 }                           from 'next-auth'
-import type {
-    // models:
-    AdapterUser,
-}                           from 'next-auth/adapters'
 import {
     // databases:
     PrismaAdapter,
@@ -25,6 +21,13 @@ import {
     customAlphabet,
 }                           from 'nanoid/async'
 
+// internals:
+import type {
+    // models:
+    AdapterUser,
+    AdapterRole,
+}                           from './types.js'
+
 
 
 // types:
@@ -38,6 +41,12 @@ export interface ResetPasswordTokenData {
 
 // models:
 export type { AdapterUser }
+
+export interface DefaultRole {
+    id   : string
+    name : string
+}
+export interface Role extends DefaultRole {}
 
 
 
@@ -69,6 +78,9 @@ export interface AdapterWithCredentials
     createResetPasswordToken   : (usernameOrEmail    : string                  , options?: CreateResetPasswordTokenOptions  ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
     validateResetPasswordToken : (resetPasswordToken : string                  , options?: ValidateResetPasswordTokenOptions) => Awaitable<ResetPasswordTokenData|null>
     applyResetPasswordToken    : (resetPasswordToken : string, password: string, options?: ApplyResetPasswordTokenOptions   ) => Awaitable<boolean>
+    
+    getRoleByUserId            : (userId             : string                                                               ) => Awaitable<AdapterRole|null>
+    getRoleByUserEmail         : (userEmail          : string                                                               ) => Awaitable<AdapterRole|null>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
@@ -382,6 +394,37 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 // report the success:
                 return true;
             });
+        },
+        
+        getRoleByUserId            : async (userId             : string                          ) => {
+            if (!('role' in prisma)) return null;
+            
+            const user = await prisma.user.findUnique({
+                where  : {
+                    id : userId,
+                },
+                select : {
+                    // @ts-ignore
+                    role : true,
+                },
+            });
+            // @ts-ignore
+            return user?.role ?? null;
+        },
+        getRoleByUserEmail         : async (userEmail          : string                          ) => {
+            if (!('role' in prisma)) return null;
+            
+            const user = await prisma.user.findUnique({
+                where  : {
+                    email : userEmail,
+                },
+                select : {
+                    // @ts-ignore
+                    role : true,
+                },
+            });
+            // @ts-ignore
+            return user?.role ?? null;
         },
     };
 };

@@ -33,7 +33,7 @@ model Account {
     
     // relations:
     userId              String
-    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Account(s) if the user deleted
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Account(s) if the User deleted
 }
 
 model Session {
@@ -46,7 +46,7 @@ model Session {
     
     // relations:
     userId              String
-    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Session(s) if the user deleted
+    user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Session(s) if the User deleted
 }
 
 model User {
@@ -62,10 +62,13 @@ model User {
     image               String?
     
     // relations:
-    accounts            Account[]           // a user may have some related Account(s)          // one to many
-    sessions            Session[]           // a user may have some related Session(s)          // one to many
-    credentials         Credentials?        // a user may have one  related Credentials         // one to one
-    resetPasswordToken  ResetPasswordToken? // a user may have one  related ResetPasswordToken  // one to one
+    accounts            Account[]           // a User may have some related Account(s)          // one  to many
+    sessions            Session[]           // a User may have some related Session(s)          // one  to many
+    credentials         Credentials?        // a User may have one  related Credentials         // one  to one
+    resetPasswordToken  ResetPasswordToken? // a User may have one  related ResetPasswordToken  // one  to one
+    
+    // roleId              String?
+    // role                Role?               @relation(fields: [roleId], references: [id], onDelete: SetNull) // preserve the related User(s) if the Role deleted
 }
 
 model Credentials {
@@ -97,12 +100,17 @@ model ResetPasswordToken {
     user                User                @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related ResetPasswordToken if the User deleted
 }
 
-// model VerificationToken {
+// model Role {
 //     // records:
-//     expires             DateTime
+//     id                  String              @id @default(cuid())
 //     
 //     // data:
-//     identifier          String
-//     token               String              @unique
-//     @@unique([identifier, token])
+//     name                String              @unique
+//     product_read        Boolean
+//     product_create      Boolean
+//     product_update      Boolean
+//     product_delete      Boolean
+//     
+//     // relations:
+//     users               User[]              // a Role may have some related Users(s)  // one  to many
 // }

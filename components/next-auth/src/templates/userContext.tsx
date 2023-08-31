@@ -4,13 +4,11 @@ import {
     default as React,
 }                           from 'react'
 
-// next-auth:
+// internals:
 import type {
     // models:
     AdapterUser,
-}                           from 'next-auth/adapters'
-
-// internals:
+}                           from '../types.js'
 import {
     // contexts:
     createContext,
