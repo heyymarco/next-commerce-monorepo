@@ -2,15 +2,16 @@
 import {
     // react:
     default as React,
-}                           from 'react'
+}                               from 'react'
 
 // OAuth providers:
-import GoogleProvider       from 'next-auth/providers/google'
-import FacebookProvider     from 'next-auth/providers/facebook'
-import InstagramProvider    from 'next-auth/providers/instagram'
-import TwitterProvider      from 'next-auth/providers/twitter'
+import GoogleProvider           from 'next-auth/providers/google'
+import FacebookProvider         from 'next-auth/providers/facebook'
+import InstagramProvider        from 'next-auth/providers/instagram'
+import TwitterProvider          from 'next-auth/providers/twitter'
 
-import { AuthConfig, ResetPassword, User } from '@heymarco/next-auth/server'
+import { AuthConfig }           from '@heymarco/next-auth/server'
+import { ResetPassword, User }  from '@heymarco/next-auth/templates'
 
 
 

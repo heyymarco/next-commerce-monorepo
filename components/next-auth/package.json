@@ -27,7 +27,9 @@
     "./client": "./dist/client.js",
     "./client.js": "./dist/client.js",
     "./server": "./dist/server.js",
-    "./server.js": "./dist/server.js"
+    "./server.js": "./dist/server.js",
+    "./templates": "./dist/templates.js",
+    "./templates.js": "./dist/templates.js"
   },
   "sideEffects": false,
   "publishConfig": {

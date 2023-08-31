@@ -1,6 +1,5 @@
-export *            from './components/index.js'
+export *            from './types.js'
 
-export *            from './templates/User.js'
-export *            from './templates/ResetPassword.js'
+export *            from './components/index.js'
 
 export *            from './credentials.config.js'

@@ -39,17 +39,6 @@ export interface ResetPasswordTokenData {
 }
 
 
-// models:
-export type { AdapterUser }
-
-export interface DefaultRole {
-    id   : string
-    name : string
-}
-export interface Role extends DefaultRole {}
-
-
-
 // options:
 export interface ValidateCredentialsOptions {
     now                 ?: Date
