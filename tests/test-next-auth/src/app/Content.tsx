@@ -34,6 +34,11 @@ export default function Content() {
                     {!!session && <Button theme='secondary' onClick={() => signOut()}>
                         Sign Out
                     </Button>}
+                    {!!session && <div>
+                        <p>
+                            Role: {!!session.role && JSON.stringify(session.role)}
+                        </p>
+                    </div>}
                 </>
             }
         </article>
