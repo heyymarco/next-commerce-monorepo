@@ -155,6 +155,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                                     lockedAt        : null, // clear the lock_date constraint
                                 },
                             });
+                            expectedCredentials.failuresAttemps = null; // reset this variable too
                         } // if
                     } // if
                 }
