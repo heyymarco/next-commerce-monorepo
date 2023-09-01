@@ -16,6 +16,6 @@ export const resetPasswordElm   = ':where(.resetPassword)'
 
 export const signinSeparatorElm = ':where(.signinSeparator)'
 
-export const gotoHomeElm        = ':where(.gotoHome)'
 export const gotoSignInElm      = ':where(.gotoSignIn)'
 export const gotoRecoverElm     = ':where(.gotoRecover)'
+export const gotoHomeElm        = ':where(.gotoHome)'

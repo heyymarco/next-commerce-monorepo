@@ -153,9 +153,9 @@ export interface SignInState {
     
     
     // navigations:
-    gotoHome                : () => void
     gotoSignIn              : () => void
     gotoRecover             : () => void
+    gotoHome                : () => void
     
     
     
@@ -227,9 +227,9 @@ const SignInStateContext = createContext<SignInState>({
     
     
     // navigations:
-    gotoHome                : () => {},
     gotoSignIn              : () => {},
     gotoRecover             : () => {},
+    gotoHome                : () => {},
     
     
     
@@ -530,14 +530,14 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         setIsBusyInternal(isBusy);
     });
     
-    const gotoHome     = useEvent(() => {
-        router.push(homepagePath);
-    });
     const gotoSignIn   = useEvent(() => {
         setSection('signIn');
     });
     const gotoRecover  = useEvent(() => {
         setSection('recover');
+    });
+    const gotoHome     = useEvent(() => {
+        router.push(homepagePath);
     });
     
     const doSignIn     = useEvent(async (): Promise<void> => {
@@ -906,9 +906,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // navigations:
-        gotoHome,                // stable ref
         gotoSignIn,              // stable ref
         gotoRecover,             // stable ref
+        gotoHome,                // stable ref
         
         
         

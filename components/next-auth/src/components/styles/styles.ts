@@ -77,9 +77,9 @@ import {
     
     signinSeparatorElm,
     
-    gotoHomeElm,
     gotoSignInElm,
     gotoRecoverElm,
+    gotoHomeElm,
 }                           from './elements.js'
 import {
     // configs:
@@ -246,11 +246,6 @@ export const usesSignInLayout = () => {
                         }),
                     }),
                 }),
-                ...children(gotoHomeElm, {
-                    // positions:
-                    gridArea         : 'gotoHome',
-                    justifySelf      : 'start',
-                }),
                 ...children(gotoSignInElm, {
                     // positions:
                     gridArea         : 'gotoSignIn',
@@ -260,6 +255,11 @@ export const usesSignInLayout = () => {
                     // positions:
                     gridArea         : 'gotoRecover',
                     justifySelf      : 'end',
+                }),
+                ...children(gotoHomeElm, {
+                    // positions:
+                    gridArea         : 'gotoHome',
+                    justifySelf      : 'start',
                 }),
                 
                 
@@ -274,8 +274,9 @@ export const usesSignInLayout = () => {
                     '"  title       title       title       title       title       title    " min-content',
                     '" username    username    username    username    username    username  " min-content',
                     '" password    password    password    password    password    password  " min-content',
+                    '"gotoRecover gotoRecover gotoRecover gotoRecover gotoRecover gotoRecover" min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '" gotoHome    gotoHome    gotoHome   gotoRecover gotoRecover gotoRecover" min-content',
+                    '" gotoHome    gotoHome    gotoHome   ........... ........... ..........." min-content',
                  // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
                     '"........... ........... ........... ........... ........... ..........." auto',
                     '/',

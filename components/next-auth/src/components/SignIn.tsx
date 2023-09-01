@@ -109,9 +109,9 @@ export interface SignInProps<TElement extends Element = HTMLElement>
     recoverTabPanelComponent   ?: React.ReactComponentElement<any, TabPanelProps<Element>>
     resetTabPanelComponent     ?: React.ReactComponentElement<any, TabPanelProps<Element>>
     
-    gotoHomeButtonComponent    ?: ButtonComponentProps['buttonComponent']
     gotoSignInButtonComponent  ?: ButtonComponentProps['buttonComponent']
     gotoRecoverButtonComponent ?: ButtonComponentProps['buttonComponent']
+    gotoHomeButtonComponent    ?: ButtonComponentProps['buttonComponent']
 }
 const SignIn         = <TElement extends Element = HTMLElement>(props: SignInProps<TElement>) => {
     return (
@@ -152,9 +152,9 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         recoverTabPanelComponent   = (<TabPanel />                                          as React.ReactComponentElement<any, TabPanelProps<Element>>),
         resetTabPanelComponent     = (<TabPanel />                                          as React.ReactComponentElement<any, TabPanelProps<Element>>),
         
-        gotoHomeButtonComponent    = (<ButtonIcon icon='home'        buttonStyle='link' />  as React.ReactComponentElement<any, ButtonProps>),
         gotoSignInButtonComponent  = (<ButtonIcon icon='arrow_back'  buttonStyle='link' />  as React.ReactComponentElement<any, ButtonProps>),
         gotoRecoverButtonComponent = (<ButtonIcon icon='help_center' buttonStyle='link' />  as React.ReactComponentElement<any, ButtonProps>),
+        gotoHomeButtonComponent    = (<ButtonIcon icon='home'        buttonStyle='link' />  as React.ReactComponentElement<any, ButtonProps>),
         
         signInTitleComponent,
         recoverTitleComponent,
@@ -199,33 +199,14 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         
         // navigations:
-        gotoHome,
         gotoSignIn,
         gotoRecover,
+        gotoHome,
     } = useSignInState();
     
     
     
     // handlers:
-    const gotoHomeButtonHandleClickInternal    = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
-        // conditions:
-        if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
-        event.preventDefault();
-        
-        
-        
-        // actions:
-        gotoHome();
-    });
-    const gotoHomeButtonHandleClick            = useMergeEvents(
-        // preserves the original `onClick` from `gotoHomeButtonComponent`:
-        gotoHomeButtonComponent.props.onClick,
-        
-        
-        
-        // actions:
-        gotoHomeButtonHandleClickInternal,
-    );
     const gotoSignInButtonHandleClickInternal  = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
@@ -264,27 +245,29 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         // actions:
         gotoRecoverButtonHandleClickInternal,
     );
+    const gotoHomeButtonHandleClickInternal    = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
+        event.preventDefault();
+        
+        
+        
+        // actions:
+        gotoHome();
+    });
+    const gotoHomeButtonHandleClick            = useMergeEvents(
+        // preserves the original `onClick` from `gotoHomeButtonComponent`:
+        gotoHomeButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        gotoHomeButtonHandleClickInternal,
+    );
     
     
     
     // nested components:
-    const GotoHomeButton    = () => React.cloneElement<ButtonProps>(gotoHomeButtonComponent,
-        // props:
-        {
-            // classes:
-            className : gotoHomeButtonComponent.props.className    ?? 'gotoHome',
-            
-            
-            
-            // handlers:
-            onClick   : gotoHomeButtonHandleClick,
-        },
-        
-        
-        
-        // children:
-        gotoHomeButtonComponent.props.children                     ?? 'Back to Home',
-    );
     const GotoSignInButton  = () => React.cloneElement<ButtonProps>(gotoSignInButtonComponent,
         // props:
         {
@@ -318,6 +301,23 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         gotoRecoverButtonComponent.props.children                  ?? 'Forgot Password?',
+    );
+    const GotoHomeButton    = () => React.cloneElement<ButtonProps>(gotoHomeButtonComponent,
+        // props:
+        {
+            // classes:
+            className : gotoHomeButtonComponent.props.className    ?? 'gotoHome',
+            
+            
+            
+            // handlers:
+            onClick   : gotoHomeButtonHandleClick,
+        },
+        
+        
+        
+        // children:
+        gotoHomeButtonComponent.props.children                     ?? 'Back to Home',
     );
     
     
@@ -396,8 +396,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     signInWithButtonComponent={signInWithButtonComponent}
                     alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
-                <GotoHomeButton />,
                 <GotoRecoverButton />,
+                <GotoHomeButton />,
             ),
             React.cloneElement<TabPanelProps<Element>>(recoverTabPanelComponent,
                 // props:
