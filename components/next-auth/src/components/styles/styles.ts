@@ -80,7 +80,7 @@ import {
     
     signinSeparatorElm,
     
-    gotoSignUpElm,
+    switchSignUpElm,
     gotoSignInElm,
     gotoRecoverElm,
     gotoHomeElm,
@@ -254,9 +254,9 @@ export const usesSignInLayout = () => {
                         }),
                     }),
                 }),
-                ...children(gotoSignUpElm, {
+                ...children(switchSignUpElm, {
                     // positions:
-                    gridArea         : 'gotoSignUp',
+                    gridArea         : 'switchSignUp',
                     justifySelf      : 'center',
                 }),
                 ...children(gotoSignInElm, {
@@ -284,13 +284,13 @@ export const usesSignInLayout = () => {
                 // layouts:
                 containerType  : 'inline-size',
                 gridTemplate   : [[
-                    '"  title       title       title       title       title       title    " min-content',
-                    '" username    username    username    username    username    username  " min-content',
-                    '" password    password    password    password    password    password  " min-content',
-                    '" gotoHome    gotoHome    gotoHome   gotoRecover gotoRecover gotoRecover" min-content',
-                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '"gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp " min-content',
-                 // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
+                    '"    title        title        title        title        title        title   " min-content',
+                    '"  username     username     username     username     username     username  " min-content',
+                    '"  password     password     password     password     password     password  " min-content',
+                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
+                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
+                    '"switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn" min-content',
+                 // '"  separator    separator    separator    separator    separator    separator " min-content', // conditional separator => use implicit area
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
@@ -306,13 +306,13 @@ export const usesSignInLayout = () => {
                 // layouts:
                 containerType  : 'inline-size',
                 gridTemplate   : [[
-                    '"  title       title       title       title       title       title    " min-content',
-                    '" username    username    username    username    username    username  " min-content',
-                    '" password    password    password    password    password    password  " min-content',
-                    '" gotoHome    gotoHome    gotoHome   gotoRecover gotoRecover gotoRecover" min-content',
-                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '"gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp " min-content',
-                 // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
+                    '"    title        title        title        title        title        title   " min-content',
+                    '"  username     username     username     username     username     username  " min-content',
+                    '"  password     password     password     password     password     password  " min-content',
+                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
+                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
+                    '"switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp" min-content',
+                 // '"  separator    separator    separator    separator    separator    separator " min-content', // conditional separator => use implicit area
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
@@ -327,10 +327,10 @@ export const usesSignInLayout = () => {
             ...children(recoverTabElm, {
                 // layouts:
                 gridTemplate   : [[
-                    '"  title       title       title       title       title       title    " min-content',
-                    '" username    username    username    username    username    username  " min-content',
-                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '"gotoSignIn  gotoSignIn  gotoSignIn  ........... ........... ..........." min-content',
+                    '"    title        title        title        title        title        title   " min-content',
+                    '"  username     username     username     username     username     username  " min-content',
+                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
+                    '" gotoSignIn   gotoSignIn   gotoSignIn  ............ ............ ............" min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
@@ -345,12 +345,12 @@ export const usesSignInLayout = () => {
             ...children(resetTabElm, {
                 // layouts:
                 gridTemplate   : [[
-                    '"  title       title       title       title       title       title    " min-content',
-                    '" username    username    username    username    username    username  " min-content',
-                    '" password    password    password    password    password    password  " min-content',
-                    '" password2   password2   password2   password2   password2   password2 " min-content',
-                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '"gotoSignIn  gotoSignIn  gotoSignIn  ........... ........... ..........." min-content',
+                    '"    title        title        title        title        title        title   " min-content',
+                    '"  username     username     username     username     username     username  " min-content',
+                    '"  password     password     password     password     password     password  " min-content',
+                    '"  password2    password2    password2    password2    password2    password2 " min-content',
+                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
+                    '" gotoSignIn   gotoSignIn   gotoSignIn  ............ ............ ............" min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
