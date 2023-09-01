@@ -154,9 +154,9 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         resetTabPanelComponent     = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         
         gotoSignUpButtonComponent  = (<ButtonIcon icon='account_box' buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
-        gotoSignInButtonComponent  = (<ButtonIcon icon='arrow_back'  buttonStyle='link' />                              as React.ReactComponentElement<any, ButtonProps>),
-        gotoRecoverButtonComponent = (<ButtonIcon icon='help_center' buttonStyle='link' />                              as React.ReactComponentElement<any, ButtonProps>),
-        gotoHomeButtonComponent    = (<ButtonIcon icon='home'        buttonStyle='link' />                              as React.ReactComponentElement<any, ButtonProps>),
+        gotoSignInButtonComponent  = (<ButtonIcon icon='arrow_back'  buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
+        gotoRecoverButtonComponent = (<ButtonIcon icon='help_center' buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
+        gotoHomeButtonComponent    = (<ButtonIcon icon='home'        buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
         
         signInTitleComponent,
         recoverTitleComponent,
