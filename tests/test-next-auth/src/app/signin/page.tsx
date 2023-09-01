@@ -16,6 +16,7 @@ export default function Home() {
             <SignIn
                 credentialsConfig={credentialsConfig}
                 providers={loginProviders}
+                signUpEnable={true}
             />
         </Container>
     )

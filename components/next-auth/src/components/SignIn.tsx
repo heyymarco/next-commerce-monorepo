@@ -102,6 +102,11 @@ export interface SignInProps<TElement extends Element = HTMLElement>
         TabRecoverProps,
         TabResetProps
 {
+    // auths:
+    signUpEnable               ?: boolean
+    
+    
+    
     // components:
     bodyComponent              ?: React.ReactComponentElement<any, BasicProps<TElement>>
     tabComponent               ?: React.ReactComponentElement<any, TabProps<Element>>
@@ -135,6 +140,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         
         // auths:
+        signUpEnable        = true,
         providers,
         resolveProviderName : _resolveProviderName, // remove
         basePath            : _basePath,            // remove
@@ -435,7 +441,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     signInWithButtonComponent={signInWithButtonComponent}
                     alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
-                <GotoSignUpButton />,
+                (signUpEnable && <GotoSignUpButton />),
                 <GotoRecoverButton />,
                 <GotoHomeButton />,
             ),
