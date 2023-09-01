@@ -77,6 +77,7 @@ import {
     
     signinSeparatorElm,
     
+    gotoSignUpElm,
     gotoSignInElm,
     gotoRecoverElm,
     gotoHomeElm,
@@ -246,6 +247,11 @@ export const usesSignInLayout = () => {
                         }),
                     }),
                 }),
+                ...children(gotoSignUpElm, {
+                    // positions:
+                    gridArea         : 'gotoSignUp',
+                    justifySelf      : 'center',
+                }),
                 ...children(gotoSignInElm, {
                     // positions:
                     gridArea         : 'gotoSignIn',
@@ -274,9 +280,9 @@ export const usesSignInLayout = () => {
                     '"  title       title       title       title       title       title    " min-content',
                     '" username    username    username    username    username    username  " min-content',
                     '" password    password    password    password    password    password  " min-content',
-                    '"gotoRecover gotoRecover gotoRecover gotoRecover gotoRecover gotoRecover" min-content',
+                    '" gotoHome    gotoHome    gotoHome   gotoRecover gotoRecover gotoRecover" min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '" gotoHome    gotoHome    gotoHome   ........... ........... ..........." min-content',
+                    '"gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp " min-content',
                  // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
                     '"........... ........... ........... ........... ........... ..........." auto',
                     '/',

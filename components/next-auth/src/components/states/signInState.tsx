@@ -88,6 +88,7 @@ import type {
 
 // contexts:
 export type SignInSection =
+    | 'signUp'
     | 'signIn'
     | 'recover'
     | 'reset'
@@ -153,6 +154,7 @@ export interface SignInState {
     
     
     // navigations:
+    gotoSignUp              : () => void
     gotoSignIn              : () => void
     gotoRecover             : () => void
     gotoHome                : () => void
@@ -227,6 +229,7 @@ const SignInStateContext = createContext<SignInState>({
     
     
     // navigations:
+    gotoSignUp              : () => {},
     gotoSignIn              : () => {},
     gotoRecover             : () => {},
     gotoHome                : () => {},
@@ -530,6 +533,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         setIsBusyInternal(isBusy);
     });
     
+    const gotoSignUp   = useEvent(() => {
+        setSection('signUp');
+    });
     const gotoSignIn   = useEvent(() => {
         setSection('signIn');
     });
@@ -906,6 +912,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // navigations:
+        gotoSignUp,              // stable ref
         gotoSignIn,              // stable ref
         gotoRecover,             // stable ref
         gotoHome,                // stable ref
