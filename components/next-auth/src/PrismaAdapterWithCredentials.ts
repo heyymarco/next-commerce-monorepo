@@ -136,53 +136,57 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 
                 
                 // verify whether the credentials is not locked out:
-                const lockedAt = expectedCredentials.lockedAt ?? null;
-                if (lockedAt !== null) {
-                    const lockedUntil = new Date(/* since: */ lockedAt.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert to milliseconds */));
-                    if (lockedUntil > now) {
-                        // still in locked period => return the released_out date:
-                        return lockedUntil;
-                    }
-                    else {
-                        // the locked period expires => unlock & reset failure_counter:
-                        await prismaTransaction.credentials.update({
-                            where  : {
-                                id : expectedCredentials.id,
-                            },
-                            data   : {
-                                failuresAttemps : null, // clear the failure_counter
-                                lockedAt        : null, // clear the lock_date constraint
-                            },
-                        });
+                {
+                    const lockedAt = expectedCredentials.lockedAt ?? null;
+                    if (lockedAt !== null) {
+                        const lockedUntil = new Date(/* since: */ lockedAt.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert to milliseconds */));
+                        if (lockedUntil > now) {
+                            // still in locked period => return the released_out date:
+                            return lockedUntil;
+                        }
+                        else {
+                            // the locked period expires => unlock & reset failure_counter:
+                            await prismaTransaction.credentials.update({
+                                where  : {
+                                    id : expectedCredentials.id,
+                                },
+                                data   : {
+                                    failuresAttemps : null, // clear the failure_counter
+                                    lockedAt        : null, // clear the lock_date constraint
+                                },
+                            });
+                        } // if
                     } // if
-                } // if
+                }
                 
                 
                 
                 // perform password hash comparison:
-                const isSuccess = !!password && !!expectedCredentials.password && await bcrypt.compare(password, expectedCredentials.password);
-                if (!isSuccess) { // signIn attemp failed:
-                    if (failureMaxAttemps) {
-                        // increase the failure_counter and/or lockedAt:
-                        const currentFailuresAttemps = (expectedCredentials.failuresAttemps ?? 0) + 1;
-                        const isLocked               = (currentFailuresAttemps >= failureMaxAttemps);
-                        await prismaTransaction.credentials.update({
-                            where  : {
-                                id : expectedCredentials.id,
-                            },
-                            data   : {
-                                failuresAttemps : currentFailuresAttemps,
-                                lockedAt        : (
-                                    !isLocked   // if under limit
-                                    ? undefined // do not lock now, the user still have a/some chance(s) to retry
-                                    : now       // lock now, too many retries
-                                ),
-                            },
-                        });
-                        if (isLocked) return now; // the credentials is has been locked
+                {
+                    const isSuccess = !!password && !!expectedCredentials.password && await bcrypt.compare(password, expectedCredentials.password);
+                    if (!isSuccess) { // signIn attemp failed:
+                        if (failureMaxAttemps) {
+                            // increase the failure_counter and/or lockedAt:
+                            const currentFailuresAttemps = (expectedCredentials.failuresAttemps ?? 0) + 1;
+                            const isLocked               = (currentFailuresAttemps >= failureMaxAttemps);
+                            await prismaTransaction.credentials.update({
+                                where  : {
+                                    id : expectedCredentials.id,
+                                },
+                                data   : {
+                                    failuresAttemps : currentFailuresAttemps,
+                                    lockedAt        : (
+                                        !isLocked   // if under limit
+                                        ? undefined // do not lock now, the user still have a/some chance(s) to retry
+                                        : now       // lock now, too many retries
+                                    ),
+                                },
+                            });
+                            if (isLocked) return new Date(/* since: */ now.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert to milliseconds */)); // the credentials is has been locked
+                        } // if
                     } // if
-                } // if
-                if (!isSuccess) return null; // password hash comparison do not match => return null (password do not match)
+                    if (!isSuccess) return null; // password hash comparison do not match => return null (password do not match)
+                }
                 
                 
                 
