@@ -67,22 +67,22 @@ import {
 
 
 // react components:
-export interface TabSignInProps {
+export interface TabSignUpProps {
     // auths:
     providers                         ?: BuiltInProviderType[]
     
     
     
     // components:
-    signInTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    signUpTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
     usernameInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
-    signInButtonComponent             ?: ButtonComponentProps['buttonComponent']
+    signUpButtonComponent             ?: ButtonComponentProps['buttonComponent']
     signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
     alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
 }
-export const TabSignIn = (props: TabSignInProps) => {
+export const TabSignUp = (props: TabSignUpProps) => {
     // rest props:
     const {
         // auths:
@@ -91,13 +91,13 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         // components:
-        signInTitleComponent              = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        signUpTitleComponent              = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        usernameInputComponent            = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />            as React.ReactComponentElement<any, InputProps<Element>>),
-        passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
-        signInButtonComponent             = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
-        signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
-        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
+        usernameInputComponent            = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
+        passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
+        signUpButtonComponent             = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} /> as React.ReactComponentElement<any, ButtonProps>),
+        signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignUpProps>['signInWithButtonComponent']),
+        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                                    as React.ReactComponentElement<any, GenericProps<Element>>),
     } = props;
     
     
@@ -106,7 +106,7 @@ export const TabSignIn = (props: TabSignInProps) => {
     const signInState = useSignInState();
     const {
         // states:
-        isSignInSection,
+        isSignUpSection,
         
         
         
@@ -144,7 +144,7 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         
-        (isSignInSection ? usernameRef : undefined),
+        (isSignUpSection ? usernameRef : undefined),
     );
     const mergedPasswordInputRef = useMergeRefs(
         // preserves the original `elmRef` from `passwordInputComponent`:
@@ -152,13 +152,13 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         
-        (isSignInSection ? passwordRef : undefined),
+        (isSignUpSection ? passwordRef : undefined),
     );
     
     
     
     // handlers:
-    const signInButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const signUpButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
         event.preventDefault();
@@ -168,14 +168,14 @@ export const TabSignIn = (props: TabSignInProps) => {
         // actions:
         doSignIn();
     });
-    const signInButtonHandleClick         = useMergeEvents(
-        // preserves the original `onClick` from `signInButtonComponent`:
-        signInButtonComponent.props.onClick,
+    const signUpButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `signUpButtonComponent`:
+        signUpButtonComponent.props.onClick,
         
         
         
         // actions:
-        signInButtonHandleClickInternal,
+        signUpButtonHandleClickInternal,
     );
     
     
@@ -184,7 +184,7 @@ export const TabSignIn = (props: TabSignInProps) => {
     return (
         <form
             // refs:
-            ref={isSignInSection ? formRef : undefined}
+            ref={isSignUpSection ? formRef : undefined}
             
             
             
@@ -196,12 +196,12 @@ export const TabSignIn = (props: TabSignInProps) => {
             // handlers:
             onSubmit={handlePreventSubmit}
         >
-            {/* <SignInTitle> */}
-            {React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(signInTitleComponent,
+            {/* <SignUpTitle> */}
+            {React.cloneElement<Pick<React.HTMLAttributes<Element>, 'className'>>(signUpTitleComponent,
                 // props:
                 {
                     // classes:
-                    className : signInTitleComponent.props.className ?? 'signInTitle',
+                    className : signUpTitleComponent.props.className ?? 'signUpTitle',
                 },
             )}
             {/* <UsernameInput> */}
@@ -274,28 +274,28 @@ export const TabSignIn = (props: TabSignInProps) => {
                     ...passwordHandlers,
                 },
             )}
-            {/* <SignInButton> */}
-            {React.cloneElement<ButtonProps>(signInButtonComponent,
+            {/* <SignUpButton> */}
+            {React.cloneElement<ButtonProps>(signUpButtonComponent,
                 // props:
                 {
                     // actions:
-                    type      : signInButtonComponent.props.type      ?? 'submit',
+                    type      : signUpButtonComponent.props.type      ?? 'submit',
                     
                     
                     
                     // classes:
-                    className : signInButtonComponent.props.className ?? 'doSignIn credentials',
+                    className : signUpButtonComponent.props.className ?? 'doSignUp',
                     
                     
                     
                     // handlers:
-                    onClick   : signInButtonHandleClick,
+                    onClick   : signUpButtonHandleClick,
                 },
                 
                 
                 
                 // children:
-                signInButtonComponent.props.children ?? 'Sign In',
+                signUpButtonComponent.props.children ?? 'Sign Up',
             )}
             {!!providers.length && <>
                 {React.cloneElement<GenericProps<Element>>(alternateSignInSeparatorComponent,

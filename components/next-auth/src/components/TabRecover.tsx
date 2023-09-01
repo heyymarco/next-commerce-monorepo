@@ -194,7 +194,7 @@ export const TabRecover = (props: TabRecoverProps) => {
                     
                     
                     // classes:
-                    className : sendRecoverLinkButtonComponent.props.className ?? 'sendRecoverLink',
+                    className : sendRecoverLinkButtonComponent.props.className ?? 'doRecover',
                     
                     
                     

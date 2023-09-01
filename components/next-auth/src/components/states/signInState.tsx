@@ -94,6 +94,7 @@ export type SignInSection =
     | 'reset'
 export type BusyState =
     | false               // idle
+    |'signUp'             // busy: sign up
     | BuiltInProviderType // busy: login with ...
     | 'recover'           // busy: recover
     | 'reset'             // busy: reset
@@ -114,6 +115,7 @@ export interface SignInState {
     
     // states:
     section                 : SignInSection
+    isSignUpSection         : boolean
     isSignInSection         : boolean
     isRecoverSection        : boolean
     isResetSection          : boolean
@@ -189,6 +191,7 @@ const SignInStateContext = createContext<SignInState>({
     
     // states:
     section                 : 'signIn',
+    isSignUpSection         : false,
     isSignInSection         : false,
     isRecoverSection        : false,
     isResetSection          : false,
@@ -308,6 +311,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // states:
     const [section       , setSection       ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
+    const isSignUpSection                     = (section === 'signUp');
     const isSignInSection                     = (section === 'signIn');
     const isRecoverSection                    = (section === 'recover');
     const isResetSection                      = (section === 'reset');
@@ -872,6 +876,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // states:
         section,                 // mutable value
+        isSignUpSection,         // mutable value
         isSignInSection,         // mutable value
         isRecoverSection,        // mutable value
         isResetSection,          // mutable value
@@ -938,6 +943,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // states:
         section,
+        isSignUpSection,
         isSignInSection,
         isRecoverSection,
         isResetSection,
@@ -978,6 +984,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     !isBusy // disabled if busy
                     &&
                     (
+                        isSignUpSection // always enabled on 'signUp' section
+                        ||
                         isSignInSection // always enabled on 'signIn' section
                         ||
                         (isRecoverSection && !isRecoverSent)                     // on 'recover' section => enabled if recoverRequest was NOT sent

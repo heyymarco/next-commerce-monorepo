@@ -60,10 +60,12 @@ import {
 // internals:
 import {
     // elements:
+    signUpTabElm,
     signInTabElm,
     recoverTabElm,
     resetTabElm,
     
+    signUpTitleElm,
     signInTitleElm,
     recoverTitleElm,
     resetTitleElm,
@@ -71,9 +73,10 @@ import {
     usernameElm,
     passwordElm,
     password2Elm,
-    signinElm,
-    sendRecoverLinkElm,
-    resetPasswordElm,
+    doSignUpElm,
+    doSignInElm,
+    doRecover,
+    doReset,
     
     signinSeparatorElm,
     
@@ -146,7 +149,7 @@ export const usesSignInLayout = () => {
         ...usesContentLayout(),
         ...style({
             // children:
-            ...children([signInTabElm, recoverTabElm, resetTabElm], {
+            ...children([signUpTabElm, signInTabElm, recoverTabElm, resetTabElm], {
                 // layouts:
                 display : 'grid',
                 
@@ -165,7 +168,7 @@ export const usesSignInLayout = () => {
                     
                     
                     // children:
-                    ...children([signInTitleElm, recoverTitleElm, resetTitleElm], {
+                    ...children([signUpTitleElm, signInTitleElm, recoverTitleElm, resetTitleElm], {
                         // positions:
                         gridArea     : 'title',
                         
@@ -186,17 +189,21 @@ export const usesSignInLayout = () => {
                         // positions:
                         gridArea     : 'password2',
                     }),
-                    ...children(signinElm, {
+                    ...children(doSignUpElm, {
+                        // positions:
+                        gridArea : 'actionBtn',
+                    }),
+                    ...children(doSignInElm, {
                         ...rule('.credentials', {
                             // positions:
                             gridArea : 'actionBtn',
                         }),
                     }),
-                    ...children(sendRecoverLinkElm, {
+                    ...children(doRecover, {
                         // positions:
                         gridArea     : 'actionBtn',
                     }),
-                    ...children(resetPasswordElm, {
+                    ...children(doReset, {
                         // positions:
                         gridArea     : 'actionBtn',
                     }),
@@ -223,7 +230,7 @@ export const usesSignInLayout = () => {
                         
                         
                         // children:
-                        ...children(signinElm, {
+                        ...children(doSignInElm, {
                             // sizes:
                             gridColumnEnd         : 'span 6',
                             ...ifContainerWidthBetween('sm', 'md', {
@@ -273,10 +280,10 @@ export const usesSignInLayout = () => {
                 // customize:
                 ...usesCssProps(usesPrefixedProps(signIns, 'tabs')), // apply config's cssProps starting with tabs***
             }),
-            ...children(signInTabElm, {
+            ...children(signUpTabElm, {
                 // layouts:
-                containerType : 'inline-size',
-                gridTemplate  : [[
+                containerType  : 'inline-size',
+                gridTemplate   : [[
                     '"  title       title       title       title       title       title    " min-content',
                     '" username    username    username    username    username    username  " min-content',
                     '" password    password    password    password    password    password  " min-content',
@@ -284,10 +291,33 @@ export const usesSignInLayout = () => {
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
                     '"gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp " min-content',
                  // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
-                    '"........... ........... ........... ........... ........... ..........." auto',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                justifyContent : 'stretch', // stretch the content horizontally
+                alignContent   : 'start', // place the excess vertical space to the end
+                
+                
+                
+                // customize:
+                ...usesCssProps(usesPrefixedProps(signIns, 'signUpTab')), // apply config's cssProps starting with signUpTab***
+            }),
+            ...children(signInTabElm, {
+                // layouts:
+                containerType  : 'inline-size',
+                gridTemplate   : [[
+                    '"  title       title       title       title       title       title    " min-content',
+                    '" username    username    username    username    username    username  " min-content',
+                    '" password    password    password    password    password    password  " min-content',
+                    '" gotoHome    gotoHome    gotoHome   gotoRecover gotoRecover gotoRecover" min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '"gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp  gotoSignUp " min-content',
+                 // '" separator   separator   separator   separator   separator   separator " min-content', // conditional separator => use implicit area
+                    '/',
+                    '1fr 1fr 1fr 1fr 1fr 1fr'
+                ]],
+                justifyContent : 'stretch', // stretch the content horizontally
+                alignContent   : 'start', // place the excess vertical space to the end
                 
                 
                 
@@ -296,15 +326,16 @@ export const usesSignInLayout = () => {
             }),
             ...children(recoverTabElm, {
                 // layouts:
-                gridTemplate  : [[
+                gridTemplate   : [[
                     '"  title       title       title       title       title       title    " min-content',
                     '" username    username    username    username    username    username  " min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
                     '"gotoSignIn  gotoSignIn  gotoSignIn  ........... ........... ..........." min-content',
-                    '"........... ........... ........... ........... ........... ..........." auto',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                justifyContent : 'stretch', // stretch the content horizontally
+                alignContent   : 'start', // place the excess vertical space to the end
                 
                 
                 
@@ -313,17 +344,18 @@ export const usesSignInLayout = () => {
             }),
             ...children(resetTabElm, {
                 // layouts:
-                gridTemplate  : [[
+                gridTemplate   : [[
                     '"  title       title       title       title       title       title    " min-content',
                     '" username    username    username    username    username    username  " min-content',
                     '" password    password    password    password    password    password  " min-content',
                     '" password2   password2   password2   password2   password2   password2 " min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
                     '"gotoSignIn  gotoSignIn  gotoSignIn  ........... ........... ..........." min-content',
-                    '"........... ........... ........... ........... ........... ..........." auto',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                justifyContent : 'stretch', // stretch the content horizontally
+                alignContent   : 'start', // place the excess vertical space to the end
                 
                 
                 

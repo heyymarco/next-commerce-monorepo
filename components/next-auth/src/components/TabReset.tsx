@@ -499,7 +499,7 @@ export const TabReset = (props: TabResetProps) => {
                     
                     
                     // classes:
-                    className : resetPasswordButtonComponent.props.className ?? 'resetPassword',
+                    className : resetPasswordButtonComponent.props.className ?? 'doReset',
                     
                     
                     

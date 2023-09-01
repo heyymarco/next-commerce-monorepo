@@ -53,6 +53,11 @@ import {
 // internal components:
 import {
     // reusable-ui components:
+    TabSignUpProps,
+    TabSignUp,
+}                           from './TabSignUp.js'
+import {
+    // reusable-ui components:
     TabSignInProps,
     TabSignIn,
 }                           from './TabSignIn.js'
@@ -98,6 +103,7 @@ export interface SignInProps<TElement extends Element = HTMLElement>
         SignInStateProps,
         
         // tabs:
+        TabSignUpProps,
         TabSignInProps,
         TabRecoverProps,
         TabResetProps
@@ -110,6 +116,7 @@ export interface SignInProps<TElement extends Element = HTMLElement>
     // components:
     bodyComponent              ?: React.ReactComponentElement<any, BasicProps<TElement>>
     tabComponent               ?: React.ReactComponentElement<any, TabProps<Element>>
+    signUpTabPanelComponent    ?: React.ReactComponentElement<any, TabPanelProps<Element>>
     signInTabPanelComponent    ?: React.ReactComponentElement<any, TabPanelProps<Element>>
     recoverTabPanelComponent   ?: React.ReactComponentElement<any, TabPanelProps<Element>>
     resetTabPanelComponent     ?: React.ReactComponentElement<any, TabPanelProps<Element>>
@@ -155,6 +162,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         // components:
         bodyComponent              = (<Content mild={true} />                                                           as React.ReactComponentElement<any, BasicProps<TElement>>),
         tabComponent               = (<Tab headerComponent={null}>{undefined}</Tab>                                     as React.ReactComponentElement<any, TabProps<Element>>),
+        signUpTabPanelComponent    = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         signInTabPanelComponent    = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         recoverTabPanelComponent   = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         resetTabPanelComponent     = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
@@ -164,9 +172,12 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         gotoRecoverButtonComponent = (<ButtonIcon icon='help_center' buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
         gotoHomeButtonComponent    = (<ButtonIcon icon='home'        buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
         
+        signUpTitleComponent,
         signInTitleComponent,
         recoverTitleComponent,
         resetTitleComponent,
+        
+        signUpButtonComponent,
         
         usernameInputComponent,
         passwordInputComponent,
@@ -378,13 +389,15 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
             
             
             // states:
-            expandedTabIndex : tabComponent.props.expandedTabIndex ?? (
-                (section === 'recover')
-                ? 1
-                :   (section === 'reset')
-                    ? 2
-                    : 0
-            ),
+            expandedTabIndex : tabComponent.props.expandedTabIndex ?? ((): number => {
+                switch (section) {
+                    case 'signUp' : return 0;
+                    case 'recover': return 1 + (+signUpEnable);
+                    case 'reset'  : return 2 + (+signUpEnable);
+                    case 'signIn' :
+                    default       : return 0 + (+signUpEnable);
+                } // switch
+            })(),
             
             
             
@@ -411,6 +424,39 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         tabComponent.props.children ?? [
+            (!!signUpEnable && React.cloneElement<TabPanelProps<Element>>(signUpTabPanelComponent,
+                // props:
+                {
+                    // identifiers:
+                    key       : signUpTabPanelComponent.key              ?? 'signUp',
+                    
+                    
+                    
+                    // classes:
+                    className : signUpTabPanelComponent.props.className  ?? 'signUp',
+                },
+                
+                
+                
+                // children:
+                <TabSignUp
+                    // auths:
+                    providers={providers}
+                    
+                    
+                    
+                    // components:
+                    signUpTitleComponent={signUpTitleComponent}
+                    
+                    usernameInputComponent={usernameInputComponent}
+                    passwordInputComponent={passwordInputComponent}
+                    signUpButtonComponent={signUpButtonComponent}
+                    signInWithButtonComponent={signInWithButtonComponent}
+                    alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
+                />,
+                <GotoRecoverButton />,
+                <GotoHomeButton />,
+            )),
             React.cloneElement<TabPanelProps<Element>>(signInTabPanelComponent,
                 // props:
                 {
@@ -441,7 +487,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     signInWithButtonComponent={signInWithButtonComponent}
                     alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
-                (signUpEnable && <GotoSignUpButton />),
+                (!!signUpEnable && <GotoSignUpButton />),
                 <GotoRecoverButton />,
                 <GotoHomeButton />,
             ),

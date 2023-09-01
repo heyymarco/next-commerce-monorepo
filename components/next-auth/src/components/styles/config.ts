@@ -13,6 +13,8 @@ export const [signIns, signInValues, cssSignInConfig] = cssConfig(() => {
         
         // tabs:
         
+        // signUpTabs:
+        
         // signInTabs:
         
         // recoverTabs:
