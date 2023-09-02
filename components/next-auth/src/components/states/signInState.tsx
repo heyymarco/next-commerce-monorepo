@@ -131,6 +131,11 @@ export interface SignInState {
     
     email                   : string|null
     
+    usernameRef             : React.MutableRefObject<HTMLInputElement|null>
+    username                : string
+    usernameHandlers        : FieldHandlers<HTMLInputElement>
+    usernameValid           : boolean
+    
     usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
     usernameOrEmail         : string
     usernameOrEmailHandlers : FieldHandlers<HTMLInputElement>
@@ -206,6 +211,11 @@ const SignInStateContext = createContext<SignInState>({
     formRef                 : { current: null },
     
     email                   : null,
+    
+    usernameRef             : { current: null },
+    username                : '',
+    usernameHandlers        : { onChange: () => {} },
+    usernameValid           : false,
     
     usernameOrEmailRef      : { current: null },
     usernameOrEmail         : '',
@@ -325,11 +335,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // fields:
     const formRef            = useRef<HTMLFormElement|null>(null);
+    const usernameRef        = useRef<HTMLInputElement|null>(null);
     const usernameOrEmailRef = useRef<HTMLInputElement|null>(null);
     const passwordRef        = useRef<HTMLInputElement|null>(null);
     const password2Ref       = useRef<HTMLInputElement|null>(null);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
+    const [username        , setUsername        , usernameHandlers       ] = useFieldState();
     const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailHandlers] = useFieldState();
     const [password        , setPassword        , passwordHandlers       ] = useFieldState();
     const [password2       , setPassword2       , password2Handlers      ] = useFieldState();
@@ -346,6 +358,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // validations:
     const isUpdating              = (section === 'reset');
+    
+    const usernameValid           = (username.length >= 1);
     const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
     
     const passwordValidLength     = !isUpdating ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
@@ -485,10 +499,21 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         })();
     }, [resetPasswordToken, tokenVerified]);
     
+    // focus on username field when the section is 'signUp':
+    useEffect(() => {
+        // conditions:
+        if (section !== 'signUp') return; // other than 'signUp' => ignore
+        
+        
+        
+        // actions:
+        usernameRef.current?.focus();
+    }, [section]);
+    
     // focus on usernameOrEmail field when the section is 'signIn' or 'recover':
     useEffect(() => {
         // conditions:
-        if (section === 'reset') return; // other than 'signIn' or 'recover' => ignore
+        if ((section !== 'signIn') && (section !== 'recover')) return; // other than 'signIn' or 'recover' => ignore
         
         
         
@@ -524,6 +549,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // reset fields & validations:
         setEnableValidation(false);
+        setUsername('');
         setUsernameOrEmail('');
         setPassword('');
         setPassword2('');
@@ -892,6 +918,11 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         email : (tokenVerified === false) ? '' : (tokenVerified?.email ?? null), // mutable value
         
+        usernameRef,             // stable ref
+        username,                // mutable value
+        usernameHandlers,        // stable ref
+        usernameValid,           // mutable value
+        
         usernameOrEmailRef,      // stable ref
         usernameOrEmail,         // mutable value
         usernameOrEmailHandlers, // stable ref
@@ -955,6 +986,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // fields & validations:
         tokenVerified,
+        
+        username,
+        usernameValid,
         
         usernameOrEmail,
         usernameOrEmailValid,
