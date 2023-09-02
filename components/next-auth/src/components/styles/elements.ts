@@ -20,6 +20,7 @@ export const doReset            = ':where(.doReset)'
 export const signinSeparatorElm = ':where(.signinSeparator)'
 
 export const switchSignUpElm    = ':where(.switchSignUp)'
+export const switchSignInElm    = ':where(.switchSignIn)'
 export const gotoSignInElm      = ':where(.gotoSignIn)'
 export const gotoRecoverElm     = ':where(.gotoRecover)'
 export const gotoHomeElm        = ':where(.gotoHome)'

@@ -122,6 +122,7 @@ export interface SignInProps<TElement extends Element = HTMLElement>
     resetTabPanelComponent       ?: React.ReactComponentElement<any, TabPanelProps<Element>>
     
     switchSignUpButtonComponent  ?: ButtonComponentProps['buttonComponent']
+    switchSignInButtonComponent  ?: ButtonComponentProps['buttonComponent']
     gotoSignInButtonComponent    ?: ButtonComponentProps['buttonComponent']
     gotoRecoverButtonComponent   ?: ButtonComponentProps['buttonComponent']
     gotoHomeButtonComponent      ?: ButtonComponentProps['buttonComponent']
@@ -168,6 +169,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         resetTabPanelComponent      = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         
         switchSignUpButtonComponent = (<ButtonIcon icon='account_box' buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
+        switchSignInButtonComponent = (<ButtonIcon icon='login'       buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
         gotoSignInButtonComponent   = (<ButtonIcon icon='arrow_back'  buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
         gotoRecoverButtonComponent  = (<ButtonIcon icon='help_center' buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
         gotoHomeButtonComponent     = (<ButtonIcon icon='home'        buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
@@ -246,6 +248,25 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         // actions:
         switchSignUpButtonHandleClickInternal,
     );
+    const switchSignInButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+        // conditions:
+        if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
+        event.preventDefault();
+        
+        
+        
+        // actions:
+        gotoSignIn();
+    });
+    const switchSignInButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `switchSignInButtonComponent`:
+        switchSignInButtonComponent.props.onClick,
+        
+        
+        
+        // actions:
+        switchSignInButtonHandleClickInternal,
+    );
     const gotoSignInButtonHandleClickInternal   = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
@@ -323,6 +344,23 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         switchSignUpButtonComponent.props.children                  ?? <>Don&apos;t have an account? <strong>SignUp</strong></>,
+    );
+    const SwitchSignInButton = () => React.cloneElement<ButtonProps>(switchSignInButtonComponent,
+        // props:
+        {
+            // classes:
+            className : switchSignInButtonComponent.props.className ?? 'switchSignIn',
+            
+            
+            
+            // handlers:
+            onClick   : switchSignInButtonHandleClick,
+        },
+        
+        
+        
+        // children:
+        switchSignInButtonComponent.props.children                  ?? <>Already have an account? <strong>SignIn</strong></>,
     );
     const GotoSignInButton   = () => React.cloneElement<ButtonProps>(gotoSignInButtonComponent,
         // props:
@@ -454,6 +492,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     signInWithButtonComponent={signInWithButtonComponent}
                     alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
+                <SwitchSignInButton />,
                 <GotoRecoverButton />,
                 <GotoHomeButton />,
             )),

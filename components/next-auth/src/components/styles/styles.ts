@@ -81,6 +81,7 @@ import {
     signinSeparatorElm,
     
     switchSignUpElm,
+    switchSignInElm,
     gotoSignInElm,
     gotoRecoverElm,
     gotoHomeElm,
@@ -259,6 +260,11 @@ export const usesSignInLayout = () => {
                     gridArea         : 'switchSignUp',
                     justifySelf      : 'center',
                 }),
+                ...children(switchSignInElm, {
+                    // positions:
+                    gridArea         : 'switchSignIn',
+                    justifySelf      : 'center',
+                }),
                 ...children(gotoSignInElm, {
                     // positions:
                     gridArea         : 'gotoSignIn',
@@ -295,7 +301,7 @@ export const usesSignInLayout = () => {
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start', // place the excess vertical space to the end
+                alignContent   : 'start',   // place the excess vertical space to the end
                 
                 
                 
@@ -317,7 +323,7 @@ export const usesSignInLayout = () => {
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start', // place the excess vertical space to the end
+                alignContent   : 'start',   // place the excess vertical space to the end
                 
                 
                 
@@ -335,7 +341,7 @@ export const usesSignInLayout = () => {
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start', // place the excess vertical space to the end
+                alignContent   : 'start',   // place the excess vertical space to the end
                 
                 
                 
@@ -355,7 +361,7 @@ export const usesSignInLayout = () => {
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
                 justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start', // place the excess vertical space to the end
+                alignContent   : 'start',   // place the excess vertical space to the end
                 
                 
                 
