@@ -34,6 +34,7 @@ import {
     InputProps,
     TextInput,
     PasswordInput,
+    EmailInput,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
@@ -75,6 +76,7 @@ export interface TabSignUpProps {
     // components:
     signUpTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
+    emailInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     usernameInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
     password2InputComponent           ?: React.ReactComponentElement<any, InputProps<Element>>
@@ -86,6 +88,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         // components:
         signUpTitleComponent              = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
+        emailInputComponent               = (<InputWithLabel icon='alternate_email'    inputComponent={<EmailInput    />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
         usernameInputComponent            = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
         passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
         password2InputComponent           = passwordInputComponent,
@@ -104,6 +107,11 @@ export const TabSignUp = (props: TabSignUpProps) => {
         
         // fields & validations:
         formRef,
+        
+        emailRef,
+        email,
+        emailHandlers,
+        emailValid,
         
         usernameRef,
         username,
@@ -142,12 +150,22 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     // states:
+    const [emailFocused    , emailFocusHandlers    ] = useFocusState<HTMLSpanElement>();
+    const [usernameFocused , usernameFocusHandlers ] = useFocusState<HTMLSpanElement>();
     const [passwordFocused , passwordFocusHandlers ] = useFocusState<HTMLSpanElement>();
     const [password2Focused, password2FocusHandlers] = useFocusState<HTMLSpanElement>();
     
     
     
     // refs:
+    const mergedEmailInputRef     = useMergeRefs(
+        // preserves the original `elmRef` from `emailInputComponent`:
+        emailInputComponent.props.elmRef,
+        
+        
+        
+        (isSignUpSection ? emailRef : undefined),
+    );
     const mergedUsernameInputRef  = useMergeRefs(
         // preserves the original `elmRef` from `usernameInputComponent`:
         usernameInputComponent.props.elmRef,
@@ -222,6 +240,42 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     className : signUpTitleComponent.props.className ?? 'signUpTitle',
                 },
             )}
+            {/* <EmailInput> */}
+            {React.cloneElement<InputProps<Element>>(emailInputComponent,
+                // props:
+                {
+                    // refs:
+                    elmRef       : mergedEmailInputRef,
+                    
+                    
+                    
+                    // classes:
+                    className    : emailInputComponent.props.className    ?? 'email',
+                    
+                    
+                    
+                    // accessibilities:
+                    placeholder  : emailInputComponent.props.placeholder  ?? 'Email',
+                    autoComplete : emailInputComponent.props.autoComplete ?? 'email',
+                    
+                    
+                    
+                    // values:
+                    value        : emailInputComponent.props.value        ?? email,
+                    
+                    
+                    
+                    // validations:
+                    isValid      : emailInputComponent.props.isValid      ?? emailValid,
+                    required     : emailInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // handlers:
+                    ...emailHandlers,
+                    ...emailFocusHandlers,
+                },
+            )}
             {/* <UsernameInput> */}
             {React.cloneElement<InputProps<Element>>(usernameInputComponent,
                 // props:
@@ -237,7 +291,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // accessibilities:
-                    placeholder  : usernameInputComponent.props.placeholder  ?? 'Username or Email',
+                    placeholder  : usernameInputComponent.props.placeholder  ?? 'Username',
                     autoComplete : usernameInputComponent.props.autoComplete ?? 'username',
                     
                     
@@ -255,6 +309,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...usernameHandlers,
+                    ...usernameFocusHandlers,
                 },
             )}
             {/* <PasswordInput> */}

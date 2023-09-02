@@ -296,6 +296,7 @@ export const usesSignInLayout = () => {
                 containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
                     '"    title        title        title        title        title        title   " min-content',
+                    '"    email        email        email        email        email        email   " min-content',
                     '"  username     username     username     username     username     username  " min-content',
                     '"  password     password     password     password     password     password  " min-content',
                     '"  password2    password2    password2    password2    password2    password2 " min-content',
