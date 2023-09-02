@@ -63,41 +63,33 @@ import {
     // handlers:
     handlePreventSubmit,
 }                           from './utilities.js'
+import {
+    // hooks:
+    useFocusState,
+}                           from './hooks.js'
 
 
 
 // react components:
 export interface TabSignUpProps {
-    // auths:
-    providers                         ?: BuiltInProviderType[]
-    
-    
-    
     // components:
     signUpTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
     usernameInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
+    password2InputComponent           ?: React.ReactComponentElement<any, InputProps<Element>>
     signUpButtonComponent             ?: ButtonComponentProps['buttonComponent']
-    signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
-    alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
 }
 export const TabSignUp = (props: TabSignUpProps) => {
     // rest props:
     const {
-        // auths:
-        providers = [],
-        
-        
-        
         // components:
         signUpTitleComponent              = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
         usernameInputComponent            = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
         passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
+        password2InputComponent           = passwordInputComponent,
         signUpButtonComponent             = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} /> as React.ReactComponentElement<any, ButtonProps>),
-        signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignUpProps>['signInWithButtonComponent']),
-        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                                    as React.ReactComponentElement<any, GenericProps<Element>>),
     } = props;
     
     
@@ -122,6 +114,18 @@ export const TabSignUp = (props: TabSignUpProps) => {
         password,
         passwordHandlers,
         passwordValid,
+        passwordValidLength,
+        passwordValidUppercase,
+        passwordValidLowercase,
+        
+        password2Ref,
+        password2,
+        password2Handlers,
+        password2Valid,
+        password2ValidLength,
+        password2ValidUppercase,
+        password2ValidLowercase,
+        password2ValidMatch,
         
         
         
@@ -137,8 +141,14 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     
+    // states:
+    const [passwordFocused , passwordFocusHandlers ] = useFocusState<HTMLSpanElement>();
+    const [password2Focused, password2FocusHandlers] = useFocusState<HTMLSpanElement>();
+    
+    
+    
     // refs:
-    const mergedUsernameInputRef = useMergeRefs(
+    const mergedUsernameInputRef  = useMergeRefs(
         // preserves the original `elmRef` from `usernameInputComponent`:
         usernameInputComponent.props.elmRef,
         
@@ -146,13 +156,21 @@ export const TabSignUp = (props: TabSignUpProps) => {
         
         (isSignUpSection ? usernameRef : undefined),
     );
-    const mergedPasswordInputRef = useMergeRefs(
+    const mergedPasswordInputRef  = useMergeRefs(
         // preserves the original `elmRef` from `passwordInputComponent`:
         passwordInputComponent.props.elmRef,
         
         
         
         (isSignUpSection ? passwordRef : undefined),
+    );
+    const mergedPassword2InputRef = useMergeRefs(
+        // preserves the original `elmRef` from `password2InputComponent`:
+        password2InputComponent.props.elmRef,
+        
+        
+        
+        (isSignUpSection ? password2Ref : undefined),
     );
     
     
@@ -254,8 +272,8 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // accessibilities:
-                    placeholder  : passwordInputComponent.props.placeholder  ?? 'Password',
-                    autoComplete : passwordInputComponent.props.autoComplete ?? 'current-password',
+                    placeholder  : passwordInputComponent.props.placeholder  ?? 'New Password',
+                    autoComplete : passwordInputComponent.props.autoComplete ?? 'new-password',
                     
                     
                     
@@ -272,6 +290,43 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...passwordHandlers,
+                    ...passwordFocusHandlers,
+                },
+            )}
+            {/* <PasswordInput> */}
+            {React.cloneElement<InputProps<Element>>(password2InputComponent,
+                // props:
+                {
+                    // refs:
+                    elmRef       : mergedPassword2InputRef,
+                    
+                    
+                    
+                    // classes:
+                    className    : password2InputComponent.props.className    ?? 'password2',
+                    
+                    
+                    
+                    // accessibilities:
+                    placeholder  : password2InputComponent.props.placeholder  ?? 'Confirm New Password',
+                    autoComplete : password2InputComponent.props.autoComplete ?? 'new-password',
+                    
+                    
+                    
+                    // values:
+                    value        : password2InputComponent.props.value        ?? password2,
+                    
+                    
+                    
+                    // validations:
+                    isValid      : password2InputComponent.props.isValid      ?? password2Valid,
+                    required     : password2InputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // handlers:
+                    ...password2Handlers,
+                    ...password2FocusHandlers,
                 },
             )}
             {/* <SignUpButton> */}
@@ -297,73 +352,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 // children:
                 signUpButtonComponent.props.children ?? 'Sign Up',
             )}
-            {!!providers.length && <>
-                {React.cloneElement<GenericProps<Element>>(alternateSignInSeparatorComponent,
-                    // props:
-                    {
-                        // classes:
-                        className : alternateSignInSeparatorComponent.props.className ?? 'signinSeparator',
-                    },
-                )}
-                <div className='signinGroup'>
-                    {providers.map((providerType) => {
-                        const signInWithProviderButtonComponent : React.ReactComponentElement<any, ButtonProps> = (
-                            (typeof(signInWithButtonComponent) === 'function')
-                            ? signInWithButtonComponent(providerType)
-                            : signInWithButtonComponent
-                        );
-                        
-                        
-                        
-                        // jsx:
-                        return (
-                            <ButtonWithSignIn
-                                // identifiers:
-                                key={providerType}
-                                
-                                
-                                
-                                // auths:
-                                providerType={providerType}
-                                
-                                
-                                
-                                // components:
-                                buttonComponent={
-                                    /* <SignInWithProviderButton> */
-                                    React.cloneElement<ButtonProps>(signInWithProviderButtonComponent,
-                                        // props:
-                                        {
-                                            // identifiers:
-                                            key       : providerType,
-                                            
-                                            
-                                            
-                                            // actions:
-                                            type      : signInWithProviderButtonComponent.props.type      ?? 'submit',
-                                            
-                                            
-                                            
-                                            // classes:
-                                            className : signInWithProviderButtonComponent.props.className ?? `doSignIn ${providerType}`,
-                                        },
-                                        
-                                        
-                                        
-                                        // children:
-                                        signInWithProviderButtonComponent.props.children ?? <>Sign In with {resolveProviderName(providerType)}</>,
-                                    )
-                                }
-                                
-                                
-                                
-                                // handlers:
-                                onSignInWith={doSignInWith}
-                            />
-                        );
-                    })}
-                </div>
-            </>}
         </form>
     );
 };

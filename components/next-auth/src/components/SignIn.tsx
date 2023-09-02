@@ -478,22 +478,14 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                 
                 // children:
                 <TabSignUp
-                    // auths:
-                    providers={providers}
-                    
-                    
-                    
                     // components:
                     signUpTitleComponent={signUpTitleComponent}
                     
                     usernameInputComponent={usernameInputComponent}
                     passwordInputComponent={passwordInputComponent}
                     signUpButtonComponent={signUpButtonComponent}
-                    signInWithButtonComponent={signInWithButtonComponent}
-                    alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
                 <SwitchSignInButton />,
-                <GotoRecoverButton />,
                 <GotoHomeButton />,
             )),
             React.cloneElement<TabPanelProps<Element>>(signInTabPanelComponent,
