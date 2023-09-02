@@ -655,8 +655,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 // resets:
                 setEnableValidation(false);
-                setUsernameOrEmail('');
-                setPassword('');
+             // setUsernameOrEmail(''); // already reseted above
+             // setPassword('');        // already reseted above
             } // if
         } // if
     });
