@@ -113,10 +113,10 @@ export const TabSignIn = (props: TabSignInProps) => {
         // fields & validations:
         formRef,
         
-        usernameRef,
-        username,
-        usernameHandlers,
-        usernameValid,
+        usernameOrEmailRef,
+        usernameOrEmail,
+        usernameOrEmailHandlers,
+        usernameOrEmailValid,
         
         passwordRef,
         password,
@@ -144,7 +144,7 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         
-        (isSignInSection ? usernameRef : undefined),
+        (isSignInSection ? usernameOrEmailRef : undefined),
     );
     const mergedPasswordInputRef        = useMergeRefs(
         // preserves the original `elmRef` from `passwordInputComponent`:
@@ -225,18 +225,18 @@ export const TabSignIn = (props: TabSignInProps) => {
                     
                     
                     // values:
-                    value        : usernameOrEmailInputComponent.props.value        ?? username,
+                    value        : usernameOrEmailInputComponent.props.value        ?? usernameOrEmail,
                     
                     
                     
                     // validations:
-                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameValid,
+                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameOrEmailValid,
                     required     : usernameOrEmailInputComponent.props.required     ?? true,
                     
                     
                     
                     // handlers:
-                    ...usernameHandlers,
+                    ...usernameOrEmailHandlers,
                 },
             )}
             {/* <PasswordInput> */}

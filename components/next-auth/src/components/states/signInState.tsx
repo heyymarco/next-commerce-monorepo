@@ -131,10 +131,10 @@ export interface SignInState {
     
     email                   : string|null
     
-    usernameRef             : React.MutableRefObject<HTMLInputElement|null>
-    username                : string
-    usernameHandlers        : FieldHandlers<HTMLInputElement>
-    usernameValid           : boolean
+    usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
+    usernameOrEmail         : string
+    usernameOrEmailHandlers : FieldHandlers<HTMLInputElement>
+    usernameOrEmailValid    : boolean
     
     passwordRef             : React.MutableRefObject<HTMLInputElement|null>
     password                : string
@@ -207,10 +207,10 @@ const SignInStateContext = createContext<SignInState>({
     
     email                   : null,
     
-    usernameRef             : { current: null },
-    username                : '',
-    usernameHandlers        : { onChange: () => {} },
-    usernameValid           : false,
+    usernameOrEmailRef      : { current: null },
+    usernameOrEmail         : '',
+    usernameOrEmailHandlers : { onChange: () => {} },
+    usernameOrEmailValid    : false,
     
     passwordRef             : { current: null },
     password                : '',
@@ -324,15 +324,15 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // fields:
-    const formRef      = useRef<HTMLFormElement|null>(null);
-    const usernameRef  = useRef<HTMLInputElement|null>(null);
-    const passwordRef  = useRef<HTMLInputElement|null>(null);
-    const password2Ref = useRef<HTMLInputElement|null>(null);
+    const formRef            = useRef<HTMLFormElement|null>(null);
+    const usernameOrEmailRef = useRef<HTMLInputElement|null>(null);
+    const passwordRef        = useRef<HTMLInputElement|null>(null);
+    const password2Ref       = useRef<HTMLInputElement|null>(null);
     
-    const [enableValidation, setEnableValidation            ] = useState<boolean>(false);
-    const [username        , setUsername , usernameHandlers ] = useFieldState();
-    const [password        , setPassword , passwordHandlers ] = useFieldState();
-    const [password2       , setPassword2, password2Handlers] = useFieldState();
+    const [enableValidation, setEnableValidation] = useState<boolean>(false);
+    const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailHandlers] = useFieldState();
+    const [password        , setPassword        , passwordHandlers       ] = useFieldState();
+    const [password2       , setPassword2       , password2Handlers      ] = useFieldState();
     
     
     
@@ -346,7 +346,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // validations:
     const isUpdating              = (section === 'reset');
-    const usernameValid           = (username.length >= 1);
+    const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
     
     const passwordValidLength     = !isUpdating ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
     const passwordValidUppercase  = !isUpdating ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
@@ -485,7 +485,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         })();
     }, [resetPasswordToken, tokenVerified]);
     
-    // focus on username field when the section is 'signIn' or 'recover':
+    // focus on usernameOrEmail field when the section is 'signIn' or 'recover':
     useEffect(() => {
         // conditions:
         if (section === 'reset') return; // other than 'signIn' or 'recover' => ignore
@@ -493,7 +493,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // actions:
-        usernameRef.current?.focus();
+        usernameOrEmailRef.current?.focus();
     }, [section]);
     
     // focus on password field after successfully verified the password reset token:
@@ -524,7 +524,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // reset fields & validations:
         setEnableValidation(false);
-        setUsername('');
+        setUsernameOrEmail('');
         setPassword('');
         setPassword2('');
     }, [section]);
@@ -577,7 +577,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // attempts sign in using credentials:
         setIsBusy('credentials'); // mark as busy
-        const result = await signIn('credentials', { username, password, redirect: false });
+        const result = await signIn('credentials', { username: usernameOrEmail, password, redirect: false });
         if (!isMounted.current) return; // unmounted => abort
         
         
@@ -600,12 +600,12 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             
             
             // focus to password field:
-            passwordRef.current?.setSelectionRange(0, username.length);
+            passwordRef.current?.setSelectionRange(0, password.length);
             passwordRef.current?.focus();
         }
         else { // success
             // resets:
-            setUsername('');
+            setUsernameOrEmail('');
             setPassword('');
             
             
@@ -629,7 +629,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 // resets:
                 setEnableValidation(false);
-                setUsername('');
+                setUsernameOrEmail('');
                 setPassword('');
             } // if
         } // if
@@ -701,7 +701,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 headers : {
                     'Content-Type' : 'application/json',
                 },
-                body    : JSON.stringify({ username }),
+                body    : JSON.stringify({ username: usernameOrEmail }),
             });
             if (!response.ok) throw Error(response.statusText, { cause: response });
             const data = await response.json();
@@ -746,9 +746,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             
             
             
-            // focus to username field:
-            usernameRef.current?.setSelectionRange(0, username.length);
-            usernameRef.current?.focus();
+            // focus to usernameOrEmail field:
+            usernameOrEmailRef.current?.setSelectionRange(0, usernameOrEmail.length);
+            usernameOrEmailRef.current?.focus();
         } // try
     });
     const doReset      = useEvent(async (): Promise<void> => {
@@ -892,10 +892,10 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         email : (tokenVerified === false) ? '' : (tokenVerified?.email ?? null), // mutable value
         
-        usernameRef,             // stable ref
-        username,                // mutable value
-        usernameHandlers,        // stable ref
-        usernameValid,           // mutable value
+        usernameOrEmailRef,      // stable ref
+        usernameOrEmail,         // mutable value
+        usernameOrEmailHandlers, // stable ref
+        usernameOrEmailValid,    // mutable value
         
         passwordRef,             // stable ref
         password,                // mutable value
@@ -956,8 +956,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         // fields & validations:
         tokenVerified,
         
-        username,
-        usernameValid,
+        usernameOrEmail,
+        usernameOrEmailValid,
         
         password,
         passwordValid,

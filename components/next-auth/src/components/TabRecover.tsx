@@ -77,10 +77,10 @@ export const TabRecover = (props: TabRecoverProps) => {
         // fields & validations:
         formRef,
         
-        usernameRef,
-        username,
-        usernameHandlers,
-        usernameValid,
+        usernameOrEmailRef,
+        usernameOrEmail,
+        usernameOrEmailHandlers,
+        usernameOrEmailValid,
         
         
         
@@ -97,7 +97,7 @@ export const TabRecover = (props: TabRecoverProps) => {
         
         
         
-        (isRecoverSection ? usernameRef : undefined),
+        (isRecoverSection ? usernameOrEmailRef : undefined),
     );
     
     
@@ -170,18 +170,18 @@ export const TabRecover = (props: TabRecoverProps) => {
                     
                     
                     // values:
-                    value        : usernameOrEmailInputComponent.props.value        ?? username,
+                    value        : usernameOrEmailInputComponent.props.value        ?? usernameOrEmail,
                     
                     
                     
                     // validations:
-                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameValid,
+                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameOrEmailValid,
                     required     : usernameOrEmailInputComponent.props.required     ?? true,
                     
                     
                     
                     // handlers:
-                    ...usernameHandlers,
+                    ...usernameOrEmailHandlers,
                 },
             )}
             {/* <SendRecoverLinkButton> */}
