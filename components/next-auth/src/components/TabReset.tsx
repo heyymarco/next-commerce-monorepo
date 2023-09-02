@@ -190,7 +190,7 @@ export const TabReset = (props: TabResetProps) => {
     
     
     // validations:
-    const validationMap = {
+    const passwordValidationMap = {
         Length    : <>{passwordMinLength}-{passwordMaxLength} characters</>,
         Uppercase : !!passwordHasUppercase && <>At least one capital letter</>,
         Lowercase : !!passwordHasLowercase && <>At least one non-capital letter</>,
@@ -380,7 +380,7 @@ export const TabReset = (props: TabResetProps) => {
                     
                     
                     // children:
-                    (passwordValidationListComponent.props.children ?? Object.entries(validationMap).map(([validationType, text], index) => {
+                    (passwordValidationListComponent.props.children ?? Object.entries(passwordValidationMap).map(([validationType, text], index) => {
                         // conditions:
                         if (!text) return null; // disabled => ignore
                         
@@ -447,7 +447,7 @@ export const TabReset = (props: TabResetProps) => {
                     
                     
                     // children:
-                    (password2ValidationListComponent.props.children ?? Object.entries(validationMap).map(([validationType, text], index) => {
+                    (password2ValidationListComponent.props.children ?? Object.entries(passwordValidationMap).map(([validationType, text], index) => {
                         // conditions:
                         if (!text) return null; // disabled => ignore
                         
