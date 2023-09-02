@@ -210,9 +210,9 @@ export const usesSignInLayout = () => {
                     }),
                     ...children(signinSeparatorElm, {
                         // positions:
-                     // gridArea     : 'separator', // conditional separator => use implicit area
-                        gridColumn   : '1 / -1',
-                        alignSelf    : 'center',
+                        gridArea     : 'separator',
+                        justifySelf  : 'stretch', // stretch horizontally
+                        alignSelf    : 'center',  // center  vertically
                         
                         
                         
@@ -288,7 +288,7 @@ export const usesSignInLayout = () => {
             }),
             ...children(signUpTabElm, {
                 // layouts:
-                containerType  : 'inline-size',
+                containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
                     '"    title        title        title        title        title        title   " min-content',
                     '"  username     username     username     username     username     username  " min-content',
@@ -296,12 +296,12 @@ export const usesSignInLayout = () => {
                     '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
                     '"switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn" min-content',
-                 // '"  separator    separator    separator    separator    separator    separator " min-content', // conditional separator => use implicit area
+                    '"  separator    separator    separator    separator    separator    separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
-                justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start',   // place the excess vertical space to the end
+                justifyContent : 'stretch', // (default) stretch the content horizontally
+                alignContent   : 'start',   // (default) center  the content vertically
                 
                 
                 
@@ -310,7 +310,7 @@ export const usesSignInLayout = () => {
             }),
             ...children(signInTabElm, {
                 // layouts:
-                containerType  : 'inline-size',
+                containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
                     '"    title        title        title        title        title        title   " min-content',
                     '"  username     username     username     username     username     username  " min-content',
@@ -318,12 +318,12 @@ export const usesSignInLayout = () => {
                     '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
                     '"switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp" min-content',
-                 // '"  separator    separator    separator    separator    separator    separator " min-content', // conditional separator => use implicit area
+                    '"  separator    separator    separator    separator    separator    separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
-                justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start',   // place the excess vertical space to the end
+                justifyContent : 'stretch', // (default) stretch the content horizontally
+                alignContent   : 'start',   // (default) center  the content vertically
                 
                 
                 
@@ -340,8 +340,8 @@ export const usesSignInLayout = () => {
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
-                justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start',   // place the excess vertical space to the end
+                justifyContent : 'stretch', // (default) stretch the content horizontally
+                alignContent   : 'start',   // (default) center  the content vertically
                 
                 
                 
@@ -360,8 +360,8 @@ export const usesSignInLayout = () => {
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
-                justifyContent : 'stretch', // stretch the content horizontally
-                alignContent   : 'start',   // place the excess vertical space to the end
+                justifyContent : 'stretch', // (default) stretch the content horizontally
+                alignContent   : 'start',   // (default) center  the content vertically
                 
                 
                 
