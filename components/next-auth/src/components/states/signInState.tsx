@@ -120,7 +120,7 @@ export interface SignInState {
     isRecoverSection        : boolean
     isResetSection          : boolean
     isSignUpApplied         : boolean
-    isRecoverSent           : boolean
+    isRecoverApplied        : boolean
     isResetApplied          : boolean
     isBusy                  : BusyState
     setIsBusy               : (isBusy: BusyState) => void
@@ -205,7 +205,7 @@ const SignInStateContext = createContext<SignInState>({
     isRecoverSection        : false,
     isResetSection          : false,
     isSignUpApplied         : false,
-    isRecoverSent           : false,
+    isRecoverApplied        : false,
     isResetApplied          : false,
     isBusy                  : false,
     setIsBusy               : () => {},
@@ -328,17 +328,17 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // states:
-    const [section        , setSection        ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
-    const isSignUpSection                       = (section === 'signUp');
-    const isSignInSection                       = (section === 'signIn');
-    const isRecoverSection                      = (section === 'recover');
-    const isResetSection                        = (section === 'reset');
-    const [tokenVerified  , setTokenVerified  ] = useState<undefined|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : undefined);
-    const [isSignUpApplied, setIsSignUpApplied] = useState<boolean>(false);
-    const [isRecoverSent  , setIsRecoverSent  ] = useState<boolean>(false);
-    const [isResetApplied , setIsResetApplied ] = useState<boolean>(false);
-    const [isBusy         , setIsBusyInternal ] = useState<BusyState>(false);
-    const isMounted                             = useMountedFlag();
+    const [section         , setSection         ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
+    const isSignUpSection                         = (section === 'signUp');
+    const isSignInSection                         = (section === 'signIn');
+    const isRecoverSection                        = (section === 'recover');
+    const isResetSection                          = (section === 'reset');
+    const [tokenVerified   , setTokenVerified   ] = useState<undefined|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : undefined);
+    const [isSignUpApplied , setIsSignUpApplied ] = useState<boolean>(false);
+    const [isRecoverApplied, setIsRecoverApplied] = useState<boolean>(false);
+    const [isResetApplied  , setIsResetApplied  ] = useState<boolean>(false);
+    const [isBusy          , setIsBusyInternal  ] = useState<BusyState>(false);
+    const isMounted                               = useMountedFlag();
     
     
     
@@ -554,7 +554,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // reset request states:
-        setIsRecoverSent(false);
+        setIsRecoverApplied(false);
         setIsResetApplied(false);
         
         
@@ -752,7 +752,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             
             
             
-            setIsRecoverSent(true); // mark recoverRequest as sent
+            setIsRecoverApplied(true); // mark recoverRequest as sent
             setIsBusy(false); // unmark as busy
             
             
@@ -920,7 +920,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isRecoverSection,        // mutable value
         isResetSection,          // mutable value
         isSignUpApplied,         // mutable value
-        isRecoverSent,           // mutable value
+        isRecoverApplied,        // mutable value
         isResetApplied,          // mutable value
         isBusy,                  // mutable value
         setIsBusy,               // stable ref
@@ -1000,7 +1000,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isRecoverSection,
         isResetSection,
         isSignUpApplied,
-        isRecoverSent,
+        isRecoverApplied,
         isResetApplied,
         isBusy,
         
@@ -1043,11 +1043,11 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     !isBusy // disabled if busy
                     &&
                     (
-                        (isSignUpSection  && !isSignUpApplied) // always enabled on 'signUp' section
+                        (isSignUpSection  && !isSignUpApplied)                   // on 'signUp'  section => enabled if registration   was NOT sent
                         ||
-                        isSignInSection // always enabled on 'signIn' section
+                        isSignInSection                                          // on 'signIn'  section => always enabled
                         ||
-                        (isRecoverSection && !isRecoverSent)                     // on 'recover' section => enabled if recoverRequest was NOT sent
+                        (isRecoverSection && !isRecoverApplied)                  // on 'recover' section => enabled if recoverRequest was NOT sent
                         ||
                         (isResetSection   && !isResetApplied && !!tokenVerified) // on 'reset'   section => enabled if resetPassword  was NOT applied and token verified
                     )
