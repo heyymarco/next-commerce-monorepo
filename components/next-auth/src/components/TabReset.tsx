@@ -83,6 +83,7 @@ import {
 export interface TabResetProps {
     // components:
     resetTitleComponent                  ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    
     emailInputComponent                  ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
@@ -110,7 +111,7 @@ export const TabReset = (props: TabResetProps) => {
         password2InputComponent              = passwordInputComponent,
         resetPasswordButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
         
-        passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                       as React.ReactComponentElement<any, TooltipProps<Element>>),
+        passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                               as React.ReactComponentElement<any, TooltipProps<Element>>),
         password2TooltipComponent            = passwordTooltipComponent,
         passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                         as React.ReactComponentElement<any, ListProps<Element>>),
         password2ValidationListComponent     = passwordValidationListComponent,
@@ -270,7 +271,7 @@ export const TabReset = (props: TabResetProps) => {
                 // props:
                 {
                     // classes:
-                    className    : emailInputComponent.props.className    ?? 'username',
+                    className    : emailInputComponent.props.className    ?? 'email',
                     
                     
                     

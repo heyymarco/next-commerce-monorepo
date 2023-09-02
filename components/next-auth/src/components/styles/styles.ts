@@ -70,6 +70,7 @@ import {
     recoverTitleElm,
     resetTitleElm,
     
+    emailElm,
     usernameElm,
     passwordElm,
     password2Elm,
@@ -177,6 +178,10 @@ export const usesSignInLayout = () => {
                         
                         // appearances:
                         ...usesSignInTitleColor(),
+                    }),
+                    ...children(emailElm, {
+                        // positions:
+                        gridArea     : 'email',
                     }),
                     ...children(usernameElm, {
                         // positions:
@@ -353,7 +358,7 @@ export const usesSignInLayout = () => {
                 // layouts:
                 gridTemplate   : [[
                     '"    title        title        title        title        title        title   " min-content',
-                    '"  username     username     username     username     username     username  " min-content',
+                    '"    email        email        email        email        email        email   " min-content',
                     '"  password     password     password     password     password     password  " min-content',
                     '"  password2    password2    password2    password2    password2    password2 " min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
