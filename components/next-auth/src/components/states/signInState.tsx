@@ -119,6 +119,7 @@ export interface SignInState {
     isSignInSection         : boolean
     isRecoverSection        : boolean
     isResetSection          : boolean
+    isSignUpApplied         : boolean
     isRecoverSent           : boolean
     isResetApplied          : boolean
     isBusy                  : BusyState
@@ -203,6 +204,7 @@ const SignInStateContext = createContext<SignInState>({
     isSignInSection         : false,
     isRecoverSection        : false,
     isResetSection          : false,
+    isSignUpApplied         : false,
     isRecoverSent           : false,
     isResetApplied          : false,
     isBusy                  : false,
@@ -326,16 +328,17 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // states:
-    const [section       , setSection       ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
-    const isSignUpSection                     = (section === 'signUp');
-    const isSignInSection                     = (section === 'signIn');
-    const isRecoverSection                    = (section === 'recover');
-    const isResetSection                      = (section === 'reset');
-    const [tokenVerified , setTokenVerified ] = useState<undefined|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : undefined);
-    const [isRecoverSent , setIsRecoverSent ] = useState<boolean>(false);
-    const [isResetApplied, setIsResetApplied] = useState<boolean>(false);
-    const [isBusy        , setIsBusyInternal] = useState<BusyState>(false);
-    const isMounted                           = useMountedFlag();
+    const [section        , setSection        ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
+    const isSignUpSection                       = (section === 'signUp');
+    const isSignInSection                       = (section === 'signIn');
+    const isRecoverSection                      = (section === 'recover');
+    const isResetSection                        = (section === 'reset');
+    const [tokenVerified  , setTokenVerified  ] = useState<undefined|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : undefined);
+    const [isSignUpApplied, setIsSignUpApplied] = useState<boolean>(false);
+    const [isRecoverSent  , setIsRecoverSent  ] = useState<boolean>(false);
+    const [isResetApplied , setIsResetApplied ] = useState<boolean>(false);
+    const [isBusy         , setIsBusyInternal ] = useState<BusyState>(false);
+    const isMounted                             = useMountedFlag();
     
     
     
@@ -365,21 +368,21 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // validations:
-    const isUpdating              = (section === 'reset');
+    const isDataEntry             = ((section === 'signUp') || (section === 'reset'));
     
     const emailValid              = (/^[a-zA-Z0-9-_.!#$%&'*+/=?^`{|}~]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/).test(email);
     const usernameValid           = (username.length >= 1);
     const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
     
-    const passwordValidLength     = !isUpdating ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
-    const passwordValidUppercase  = !isUpdating ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
-    const passwordValidLowercase  = !isUpdating ? true                    : (!passwordHasLowercase || !!password.match(/[a-z]/));
+    const passwordValidLength     = !isDataEntry ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
+    const passwordValidUppercase  = !isDataEntry ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
+    const passwordValidLowercase  = !isDataEntry ? true                    : (!passwordHasLowercase || !!password.match(/[a-z]/));
     const passwordValid           = passwordValidLength && passwordValidUppercase && passwordValidLowercase;
     
-    const password2ValidLength    = !isUpdating ? (password2.length >= 1) : ((password2.length >= passwordMinLength) && (password2.length <= passwordMaxLength));
-    const password2ValidUppercase = !isUpdating ? true                    : (!passwordHasUppercase || !!password2.match(/[A-Z]/));
-    const password2ValidLowercase = !isUpdating ? true                    : (!passwordHasLowercase || !!password2.match(/[a-z]/));
-    const password2ValidMatch     = !isUpdating ? true                    : (!!password && (password2 === password));
+    const password2ValidLength    = !isDataEntry ? (password2.length >= 1) : ((password2.length >= passwordMinLength) && (password2.length <= passwordMaxLength));
+    const password2ValidUppercase = !isDataEntry ? true                    : (!passwordHasUppercase || !!password2.match(/[A-Z]/));
+    const password2ValidLowercase = !isDataEntry ? true                    : (!passwordHasLowercase || !!password2.match(/[a-z]/));
+    const password2ValidMatch     = !isDataEntry ? true                    : (!!password && (password2 === password));
     const password2Valid          = password2ValidLength && password2ValidUppercase && password2ValidLowercase && password2ValidMatch;
     
     
@@ -916,6 +919,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isSignInSection,         // mutable value
         isRecoverSection,        // mutable value
         isResetSection,          // mutable value
+        isSignUpApplied,         // mutable value
         isRecoverSent,           // mutable value
         isResetApplied,          // mutable value
         isBusy,                  // mutable value
@@ -995,6 +999,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isSignInSection,
         isRecoverSection,
         isResetSection,
+        isSignUpApplied,
         isRecoverSent,
         isResetApplied,
         isBusy,
@@ -1038,7 +1043,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     !isBusy // disabled if busy
                     &&
                     (
-                        isSignUpSection // always enabled on 'signUp' section
+                        (isSignUpSection  && !isSignUpApplied) // always enabled on 'signUp' section
                         ||
                         isSignInSection // always enabled on 'signIn' section
                         ||
