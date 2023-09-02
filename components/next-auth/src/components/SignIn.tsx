@@ -179,9 +179,10 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         recoverTitleComponent,
         resetTitleComponent,
         
+        usernameInputComponent,
         signUpButtonComponent,
         
-        usernameInputComponent,
+        usernameOrEmailInputComponent,
         passwordInputComponent,
         signInButtonComponent,
         signInWithButtonComponent,
@@ -512,7 +513,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     // components:
                     signInTitleComponent={signInTitleComponent}
                     
-                    usernameInputComponent={usernameInputComponent}
+                    usernameOrEmailInputComponent={usernameOrEmailInputComponent}
                     passwordInputComponent={passwordInputComponent}
                     signInButtonComponent={signInButtonComponent}
                     signInWithButtonComponent={signInWithButtonComponent}
@@ -541,7 +542,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     // components:
                     recoverTitleComponent={recoverTitleComponent}
                     
-                    usernameInputComponent={usernameInputComponent}
+                    usernameOrEmailInputComponent={usernameOrEmailInputComponent}
                     sendRecoverLinkButtonComponent={sendRecoverLinkButtonComponent}
                 />,
                 <GotoSignInButton />,

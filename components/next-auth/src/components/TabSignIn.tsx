@@ -76,7 +76,7 @@ export interface TabSignInProps {
     // components:
     signInTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    usernameInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
+    usernameOrEmailInputComponent     ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent            ?: React.ReactComponentElement<any, InputProps<Element>>
     signInButtonComponent             ?: ButtonComponentProps['buttonComponent']
     signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
@@ -93,7 +93,7 @@ export const TabSignIn = (props: TabSignInProps) => {
         // components:
         signInTitleComponent              = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        usernameInputComponent            = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />            as React.ReactComponentElement<any, InputProps<Element>>),
+        usernameOrEmailInputComponent     = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         passwordInputComponent            = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         signInButtonComponent             = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
         signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
@@ -138,15 +138,15 @@ export const TabSignIn = (props: TabSignInProps) => {
     
     
     // refs:
-    const mergedUsernameInputRef = useMergeRefs(
-        // preserves the original `elmRef` from `usernameInputComponent`:
-        usernameInputComponent.props.elmRef,
+    const mergedUsernameOrEmailInputRef = useMergeRefs(
+        // preserves the original `elmRef` from `usernameOrEmailInputComponent`:
+        usernameOrEmailInputComponent.props.elmRef,
         
         
         
         (isSignInSection ? usernameRef : undefined),
     );
-    const mergedPasswordInputRef = useMergeRefs(
+    const mergedPasswordInputRef        = useMergeRefs(
         // preserves the original `elmRef` from `passwordInputComponent`:
         passwordInputComponent.props.elmRef,
         
@@ -204,34 +204,34 @@ export const TabSignIn = (props: TabSignInProps) => {
                     className : signInTitleComponent.props.className ?? 'signInTitle',
                 },
             )}
-            {/* <UsernameInput> */}
-            {React.cloneElement<InputProps<Element>>(usernameInputComponent,
+            {/* <UsernameOrEmailInput> */}
+            {React.cloneElement<InputProps<Element>>(usernameOrEmailInputComponent,
                 // props:
                 {
                     // refs:
-                    elmRef       : mergedUsernameInputRef,
+                    elmRef       : mergedUsernameOrEmailInputRef,
                     
                     
                     
                     // classes:
-                    className    : usernameInputComponent.props.className    ?? 'username',
+                    className    : usernameOrEmailInputComponent.props.className    ?? 'username',
                     
                     
                     
                     // accessibilities:
-                    placeholder  : usernameInputComponent.props.placeholder  ?? 'Username or Email',
-                    autoComplete : usernameInputComponent.props.autoComplete ?? 'username',
+                    placeholder  : usernameOrEmailInputComponent.props.placeholder  ?? 'Username or Email',
+                    autoComplete : usernameOrEmailInputComponent.props.autoComplete ?? 'username',
                     
                     
                     
                     // values:
-                    value        : usernameInputComponent.props.value        ?? username,
+                    value        : usernameOrEmailInputComponent.props.value        ?? username,
                     
                     
                     
                     // validations:
-                    isValid      : usernameInputComponent.props.isValid      ?? usernameValid,
-                    required     : usernameInputComponent.props.required     ?? true,
+                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameValid,
+                    required     : usernameOrEmailInputComponent.props.required     ?? true,
                     
                     
                     

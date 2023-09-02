@@ -51,7 +51,7 @@ export interface TabRecoverProps {
     // components:
     recoverTitleComponent          ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    usernameInputComponent         ?: React.ReactComponentElement<any, InputProps<Element>>
+    usernameOrEmailInputComponent  ?: React.ReactComponentElement<any, InputProps<Element>>
     sendRecoverLinkButtonComponent ?: ButtonComponentProps['buttonComponent']
 }
 export const TabRecover = (props: TabRecoverProps) => {
@@ -60,7 +60,7 @@ export const TabRecover = (props: TabRecoverProps) => {
         // components:
         recoverTitleComponent          = (<h1>Forgot Password?</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        usernameInputComponent         = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                as React.ReactComponentElement<any, InputProps<Element>>),
+        usernameOrEmailInputComponent  = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                as React.ReactComponentElement<any, InputProps<Element>>),
         sendRecoverLinkButtonComponent = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='lock_open' />} /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
@@ -91,9 +91,9 @@ export const TabRecover = (props: TabRecoverProps) => {
     
     
     // refs:
-    const mergedUsernameInputRef = useMergeRefs(
-        // preserves the original `elmRef` from `usernameInputComponent`:
-        usernameInputComponent.props.elmRef,
+    const mergedUsernameOrEmailInputRef = useMergeRefs(
+        // preserves the original `elmRef` from `usernameOrEmailInputComponent`:
+        usernameOrEmailInputComponent.props.elmRef,
         
         
         
@@ -149,34 +149,34 @@ export const TabRecover = (props: TabRecoverProps) => {
                     className : recoverTitleComponent.props.className ?? 'recoverTitle',
                 },
             )}
-            {/* <UsernameInput> */}
-            {React.cloneElement<InputProps<Element>>(usernameInputComponent,
+            {/* <UsernameOrEmailInput> */}
+            {React.cloneElement<InputProps<Element>>(usernameOrEmailInputComponent,
                 // props:
                 {
                     // refs:
-                    elmRef       : mergedUsernameInputRef,
+                    elmRef       : mergedUsernameOrEmailInputRef,
                     
                     
                     
                     // classes:
-                    className    : usernameInputComponent.props.className    ?? 'username',
+                    className    : usernameOrEmailInputComponent.props.className    ?? 'username',
                     
                     
                     
                     // accessibilities:
-                    placeholder  : usernameInputComponent.props.placeholder  ?? 'Username or Email',
-                    autoComplete : usernameInputComponent.props.autoComplete ?? 'username',
+                    placeholder  : usernameOrEmailInputComponent.props.placeholder  ?? 'Username or Email',
+                    autoComplete : usernameOrEmailInputComponent.props.autoComplete ?? 'username',
                     
                     
                     
                     // values:
-                    value        : usernameInputComponent.props.value        ?? username,
+                    value        : usernameOrEmailInputComponent.props.value        ?? username,
                     
                     
                     
                     // validations:
-                    isValid      : usernameInputComponent.props.isValid      ?? usernameValid,
-                    required     : usernameInputComponent.props.required     ?? true,
+                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameValid,
+                    required     : usernameOrEmailInputComponent.props.required     ?? true,
                     
                     
                     
