@@ -642,6 +642,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // reset request states:
+        setIsSignUpApplied(false);
         setIsRecoverApplied(false);
         setIsResetApplied(false);
         
