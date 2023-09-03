@@ -649,6 +649,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // reset fields & validations:
         setEnableValidation(false);
+        setFullname('');
         setEmail('');
         setUsername('');
         setUsernameOrEmail('');
