@@ -6,12 +6,6 @@ import {
     default as React,
 }                           from 'react'
 
-// next-auth:
-import type {
-    // types:
-    BuiltInProviderType,
-}                           from 'next-auth/providers'
-
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -40,12 +34,6 @@ import {
     ListItem,
     ListProps,
     List,
-    CardBody,
-    
-    
-    
-    // status-components:
-    Busy,
     
     
     
@@ -63,14 +51,6 @@ import {
     // react components:
     ButtonWithBusy,
 }                           from './ButtonWithBusy.js'
-import {
-    // react components:
-    ButtonWithSignIn,
-}                           from './ButtonWithSignIn.js'
-import {
-    // react components:
-    AlternateSignInSeparator,
-}                           from './AlternateSignInSeparator.js'
 
 // internals:
 import {
@@ -99,6 +79,11 @@ export interface TabSignUpProps {
     password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
     signUpButtonComponent                ?: ButtonComponentProps['buttonComponent']
     
+    emailTooltipComponent                ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
+    emailValidationListComponent         ?: React.ReactComponentElement<any, ListProps<Element>>
+    emailValidationListItemComponent     ?: React.ReactComponentElement<any, ListItemProps<Element>>
+    emailValidationIconComponent         ?: React.ReactComponentElement<any, IconProps<Element>>
+    
     usernameTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     usernameValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     usernameValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
@@ -125,6 +110,11 @@ export const TabSignUp = (props: TabSignUpProps) => {
         password2InputComponent              = passwordInputComponent,
         signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} /> as React.ReactComponentElement<any, ButtonProps>),
         
+        emailTooltipComponent                = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
+        emailValidationListComponent         = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
+        emailValidationListItemComponent     = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
+        emailValidationIconComponent         = (<Icon<Element> size='sm' icon={undefined as any} />                                              as React.ReactComponentElement<any, IconProps<Element>>),
+        
         usernameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
         usernameValidationListComponent      = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
         usernameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
@@ -148,12 +138,10 @@ export const TabSignUp = (props: TabSignUpProps) => {
         // constraints:
         emailMinLength,
         emailMaxLength,
-        emailFormat,
         emailFormatHint,
         
         usernameMinLength,
         usernameMaxLength,
-        usernameFormat,
         usernameFormatHint,
         
         passwordMinLength,
@@ -241,6 +229,10 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     // validations:
+    const emailValidationMap = {
+        Length    : <>{emailMinLength}-{emailMaxLength} characters</>,
+        Format    : emailFormatHint,
+    };
     const usernameValidationMap = {
         Length    : <>{usernameMinLength}-{usernameMaxLength} characters</>,
         Format    : usernameFormatHint,
@@ -480,6 +472,73 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     ...password2Handlers,
                     ...password2FocusHandlers,
                 },
+            )}
+            {/* <Tooltip> */}
+            {!!emailTooltipComponent && React.cloneElement<TooltipProps<Element>>(emailTooltipComponent,
+                // props:
+                {
+                    // states:
+                    expanded   : emailTooltipComponent.props.expanded   ?? (emailFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn : emailTooltipComponent.props.floatingOn ?? emailRef,
+                },
+                
+                
+                
+                // children:
+                /* <List> */
+                React.cloneElement<ListProps<Element>>(emailValidationListComponent,
+                    // props:
+                    undefined,
+                    
+                    
+                    
+                    // children:
+                    (emailValidationListComponent.props.children ?? Object.entries(emailValidationMap).map(([validationType, text], index) => {
+                        // conditions:
+                        if (!text) return null; // disabled => ignore
+                        
+                        
+                        
+                        // fn props:
+                        const isValid = (specificValidations as any)?.[`emailValid${validationType}`] as (boolean|undefined);
+                        if (isValid === undefined) return null;
+                        
+                        
+                        
+                        // jsx:
+                        return React.cloneElement<ListItemProps<Element>>(emailValidationListItemComponent,
+                            // props:
+                            {
+                                // identifiers:
+                                key   : emailValidationListItemComponent.key         ?? index,
+                                
+                                
+                                
+                                // variants:
+                                theme : emailValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                            },
+                            
+                            
+                            
+                            // children:
+                            emailValidationListItemComponent.props.children ?? <>
+                                {React.cloneElement<IconProps<Element>>(emailValidationIconComponent,
+                                    // props:
+                                    {
+                                        // appearances:
+                                        icon : emailValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                    },
+                                )}
+                                &nbsp;
+                                {text}
+                            </>,
+                        )
+                    })),
+                ),
             )}
             {/* <Tooltip> */}
             {!!usernameTooltipComponent && React.cloneElement<TooltipProps<Element>>(usernameTooltipComponent,
