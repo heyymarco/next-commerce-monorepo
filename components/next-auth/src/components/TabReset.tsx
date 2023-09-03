@@ -170,7 +170,7 @@ export const TabReset = (props: TabResetProps) => {
         // actions:
         doReset,
     } = signInState;
-    const validation = {
+    const specificValidations = {
         passwordValidLength,
         passwordValidUppercase,
         passwordValidLowercase,
@@ -387,7 +387,7 @@ export const TabReset = (props: TabResetProps) => {
                         
                         
                         // fn props:
-                        const isValid = (validation as any)?.[`passwordValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`passwordValid${validationType}`] as (boolean|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -454,7 +454,7 @@ export const TabReset = (props: TabResetProps) => {
                         
                         
                         // fn props:
-                        const isValid = (validation as any)?.[`password2Valid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`password2Valid${validationType}`] as (boolean|undefined);
                         if (isValid === undefined) return null;
                         
                         
