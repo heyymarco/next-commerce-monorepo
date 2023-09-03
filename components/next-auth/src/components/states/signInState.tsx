@@ -100,6 +100,16 @@ export type BusyState =
     | 'reset'             // busy: reset
 export interface SignInState {
     // constraints:
+    emailMinLength          : number
+    emailMaxLength          : number
+    emailFormat             : RegExp
+    emailFormatHint         : React.ReactNode
+    
+    usernameMinLength       : number
+    usernameMaxLength       : number
+    usernameFormat          : RegExp
+    usernameFormatHint      : React.ReactNode
+    
     passwordMinLength       : number
     passwordMaxLength       : number
     passwordHasUppercase    : boolean
@@ -134,11 +144,17 @@ export interface SignInState {
     email                   : string
     emailHandlers           : FieldHandlers<HTMLInputElement>
     emailValid              : boolean
+    emailValidLength        : boolean
+    emailValidFormat        : boolean
+    emailValidNotTaken      : boolean
     
     usernameRef             : React.MutableRefObject<HTMLInputElement|null>
     username                : string
     usernameHandlers        : FieldHandlers<HTMLInputElement>
     usernameValid           : boolean
+    usernameValidLength     : boolean
+    usernameValidFormat     : boolean
+    usernameValidNotTaken   : boolean
     
     usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
     usernameOrEmail         : string
@@ -185,6 +201,16 @@ export interface SignInState {
 }
 const SignInStateContext = createContext<SignInState>({
     // constraints:
+    emailMinLength          : 0,
+    emailMaxLength          : 0,
+    emailFormat             : /./,
+    emailFormatHint         : null,
+    
+    usernameMinLength       : 0,
+    usernameMaxLength       : 0,
+    usernameFormat          : /./,
+    usernameFormatHint      : null,
+    
     passwordMinLength       : 0,
     passwordMaxLength       : 0,
     passwordHasUppercase    : false,
@@ -219,11 +245,17 @@ const SignInStateContext = createContext<SignInState>({
     email                   : '',
     emailHandlers           : { onChange: () => {} },
     emailValid              : false,
+    emailValidLength        : false,
+    emailValidFormat        : false,
+    emailValidNotTaken      : false,
     
     usernameRef             : { current: null },
     username                : '',
     usernameHandlers        : { onChange: () => {} },
     usernameValid           : false,
+    usernameValidLength     : false,
+    usernameValidFormat     : false,
+    usernameValidNotTaken   : false,
     
     usernameOrEmailRef      : { current: null },
     usernameOrEmail         : '',
@@ -360,6 +392,16 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // constraints:
+    const emailMinLength          = credentialsConfig.EMAIL_MIN_LENGTH;
+    const emailMaxLength          = credentialsConfig.EMAIL_MAX_LENGTH;
+    const emailFormat             = credentialsConfig.EMAIL_FORMAT;
+    const emailFormatHint         = credentialsConfig.EMAIL_FORMAT_HINT;
+    
+    const usernameMinLength       = credentialsConfig.USERNAME_MIN_LENGTH;
+    const usernameMaxLength       = credentialsConfig.USERNAME_MAX_LENGTH;
+    const usernameFormat          = credentialsConfig.USERNAME_FORMAT;
+    const usernameFormatHint      = credentialsConfig.USERNAME_FORMAT_HINT;
+    
     const passwordMinLength       = credentialsConfig.PASSWORD_MIN_LENGTH;
     const passwordMaxLength       = credentialsConfig.PASSWORD_MAX_LENGTH;
     const passwordHasUppercase    = credentialsConfig.PASSWORD_HAS_UPPERCASE;
@@ -370,8 +412,16 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     // validations:
     const isDataEntry             = ((section === 'signUp') || (section === 'reset'));
     
-    const emailValid              = (/^[a-zA-Z0-9-_.!#$%&'*+/=?^`{|}~]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/).test(email);
-    const usernameValid           = (username.length >= 1);
+    const emailValidLength        = !isDataEntry ? (email.length >= 1)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
+    const emailValidFormat        = !!email.match(emailFormat);
+    const emailValidNotTaken      = true;
+    const emailValid              = emailValidLength && emailValidFormat && emailValidNotTaken;
+    
+    const usernameValidLength     = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
+    const usernameValidFormat     = !isDataEntry ? true                    : !!username.match(usernameFormat);
+    const usernameValidNotTaken   = true;
+    const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidNotTaken;
+    
     const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
     
     const passwordValidLength     = !isDataEntry ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
@@ -900,6 +950,16 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     // apis:
     const signInState = useMemo<SignInState>(() => ({
         // constraints:
+        emailMinLength,          // stable value
+        emailMaxLength,          // stable value
+        emailFormat,             // stable value
+        emailFormatHint,         // stable value
+        
+        usernameMinLength,       // stable value
+        usernameMaxLength,       // stable value
+        usernameFormat,          // stable value
+        usernameFormatHint,      // stable value
+        
         passwordMinLength,       // stable value
         passwordMaxLength,       // stable value
         passwordHasUppercase,    // stable value
@@ -938,11 +998,17 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         ),                       // mutable value
         emailHandlers,           // stable ref
         emailValid,              // mutable value
+        emailValidLength,        // mutable value
+        emailValidFormat,        // mutable value
+        emailValidNotTaken,      // mutable value
         
         usernameRef,             // stable ref
         username,                // mutable value
         usernameHandlers,        // stable ref
         usernameValid,           // mutable value
+        usernameValidLength,     // mutable value
+        usernameValidFormat,     // mutable value
+        usernameValidNotTaken,   // mutable value
         
         usernameOrEmailRef,      // stable ref
         usernameOrEmail,         // mutable value
@@ -1011,9 +1077,15 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         email,
         emailValid,
+        emailValidLength,
+        emailValidFormat,
+        emailValidNotTaken,
         
         username,
         usernameValid,
+        usernameValidLength,
+        usernameValidFormat,
+        usernameValidNotTaken,
         
         usernameOrEmail,
         usernameOrEmailValid,
