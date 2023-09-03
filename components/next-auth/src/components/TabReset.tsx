@@ -72,10 +72,6 @@ import {
     // handlers:
     handlePreventSubmit,
 }                           from './utilities.js'
-import {
-    // hooks:
-    useFocusState,
-}                           from './hooks.js'
 
 
 
@@ -151,6 +147,7 @@ export const TabReset = (props: TabResetProps) => {
         passwordRef,
         password,
         passwordHandlers,
+        passwordFocused,
         passwordValid,
         passwordValidLength,
         passwordValidUppercase,
@@ -159,6 +156,7 @@ export const TabReset = (props: TabResetProps) => {
         password2Ref,
         password2,
         password2Handlers,
+        password2Focused,
         password2Valid,
         password2ValidLength,
         password2ValidUppercase,
@@ -180,12 +178,6 @@ export const TabReset = (props: TabResetProps) => {
         password2ValidLowercase,
         password2ValidMatch,
     };
-    
-    
-    
-    // states:
-    const [passwordFocused , passwordFocusHandlers ] = useFocusState<HTMLSpanElement>();
-    const [password2Focused, password2FocusHandlers] = useFocusState<HTMLSpanElement>();
     
     
     
@@ -317,7 +309,6 @@ export const TabReset = (props: TabResetProps) => {
                     
                     // handlers:
                     ...passwordHandlers,
-                    ...passwordFocusHandlers,
                 },
             )}
             {/* <PasswordInput> */}
@@ -353,7 +344,6 @@ export const TabReset = (props: TabResetProps) => {
                     
                     // handlers:
                     ...password2Handlers,
-                    ...password2FocusHandlers,
                 },
             )}
             {/* <Tooltip> */}

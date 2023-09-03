@@ -61,10 +61,6 @@ import {
     // handlers:
     handlePreventSubmit,
 }                           from './utilities.js'
-import {
-    // hooks:
-    useFocusState,
-}                           from './hooks.js'
 
 
 
@@ -179,12 +175,14 @@ export const TabSignUp = (props: TabSignUpProps) => {
         fullnameRef,
         fullname,
         fullnameHandlers,
+        fullnameFocused,
         fullnameValid,
         fullnameValidLength,
         
         emailRef,
         email,
         emailHandlers,
+        emailFocused,
         emailValid,
         emailValidLength,
         emailValidFormat,
@@ -193,6 +191,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         usernameRef,
         username,
         usernameHandlers,
+        usernameFocused,
         usernameValid,
         usernameValidLength,
         usernameValidFormat,
@@ -201,6 +200,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         passwordRef,
         password,
         passwordHandlers,
+        passwordFocused,
         passwordValid,
         passwordValidLength,
         passwordValidUppercase,
@@ -209,6 +209,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         password2Ref,
         password2,
         password2Handlers,
+        password2Focused,
         password2Valid,
         password2ValidLength,
         password2ValidUppercase,
@@ -241,15 +242,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
         password2ValidLowercase,
         password2ValidMatch,
     };
-    
-    
-    
-    // states:
-    const [fullnameFocused , fullnameFocusHandlers ] = useFocusState<HTMLSpanElement>();
-    const [emailFocused    , emailFocusHandlers    ] = useFocusState<HTMLSpanElement>();
-    const [usernameFocused , usernameFocusHandlers ] = useFocusState<HTMLSpanElement>();
-    const [passwordFocused , passwordFocusHandlers ] = useFocusState<HTMLSpanElement>();
-    const [password2Focused, password2FocusHandlers] = useFocusState<HTMLSpanElement>();
     
     
     
@@ -400,7 +392,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...fullnameHandlers,
-                    ...fullnameFocusHandlers,
                 },
             )}
             {/* <EmailInput> */}
@@ -436,7 +427,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...emailHandlers,
-                    ...emailFocusHandlers,
                 },
             )}
             {/* <UsernameInput> */}
@@ -472,7 +462,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...usernameHandlers,
-                    ...usernameFocusHandlers,
                 },
             )}
             {/* <PasswordInput> */}
@@ -508,7 +497,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...passwordHandlers,
-                    ...passwordFocusHandlers,
                 },
             )}
             {/* <PasswordInput> */}
@@ -544,7 +532,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     // handlers:
                     ...password2Handlers,
-                    ...password2FocusHandlers,
                 },
             )}
             {/* <Tooltip> */}

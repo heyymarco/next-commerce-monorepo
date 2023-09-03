@@ -146,12 +146,14 @@ export interface SignInState {
     fullnameRef             : React.MutableRefObject<HTMLInputElement|null>
     fullname                : string
     fullnameHandlers        : FieldHandlers<HTMLInputElement>
+    fullnameFocused         : boolean
     fullnameValid           : boolean
     fullnameValidLength     : boolean
     
     emailRef                : React.MutableRefObject<HTMLInputElement|null>
     email                   : string
     emailHandlers           : FieldHandlers<HTMLInputElement>
+    emailFocused            : boolean
     emailValid              : boolean
     emailValidLength        : boolean
     emailValidFormat        : boolean
@@ -160,6 +162,7 @@ export interface SignInState {
     usernameRef             : React.MutableRefObject<HTMLInputElement|null>
     username                : string
     usernameHandlers        : FieldHandlers<HTMLInputElement>
+    usernameFocused         : boolean
     usernameValid           : boolean
     usernameValidLength     : boolean
     usernameValidFormat     : boolean
@@ -168,11 +171,13 @@ export interface SignInState {
     usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
     usernameOrEmail         : string
     usernameOrEmailHandlers : FieldHandlers<HTMLInputElement>
+    usernameOrEmailFocused  : boolean
     usernameOrEmailValid    : boolean
     
     passwordRef             : React.MutableRefObject<HTMLInputElement|null>
     password                : string
     passwordHandlers        : FieldHandlers<HTMLInputElement>
+    passwordFocused         : boolean
     passwordValid           : boolean
     passwordValidLength     : boolean
     passwordValidUppercase  : boolean
@@ -181,6 +186,7 @@ export interface SignInState {
     password2Ref            : React.MutableRefObject<HTMLInputElement|null>
     password2               : string
     password2Handlers       : FieldHandlers<HTMLInputElement>
+    password2Focused        : boolean
     password2Valid          : boolean
     password2ValidLength    : boolean
     password2ValidUppercase : boolean
@@ -256,12 +262,14 @@ const SignInStateContext = createContext<SignInState>({
     fullnameRef             : { current: null },
     fullname                : '',
     fullnameHandlers        : { onChange: () => {} },
+    fullnameFocused         : false,
     fullnameValid           : false,
     fullnameValidLength     : false,
     
     emailRef                : { current: null },
     email                   : '',
     emailHandlers           : { onChange: () => {} },
+    emailFocused            : false,
     emailValid              : false,
     emailValidLength        : false,
     emailValidFormat        : false,
@@ -270,6 +278,7 @@ const SignInStateContext = createContext<SignInState>({
     usernameRef             : { current: null },
     username                : '',
     usernameHandlers        : { onChange: () => {} },
+    usernameFocused         : false,
     usernameValid           : false,
     usernameValidLength     : false,
     usernameValidFormat     : false,
@@ -278,11 +287,13 @@ const SignInStateContext = createContext<SignInState>({
     usernameOrEmailRef      : { current: null },
     usernameOrEmail         : '',
     usernameOrEmailHandlers : { onChange: () => {} },
+    usernameOrEmailFocused  : false,
     usernameOrEmailValid    : false,
     
     passwordRef             : { current: null },
     password                : '',
     passwordHandlers        : { onChange: () => {} },
+    passwordFocused         : false,
     passwordValid           : false,
     passwordValidLength     : false,
     passwordValidUppercase  : false,
@@ -291,6 +302,7 @@ const SignInStateContext = createContext<SignInState>({
     password2Ref            : { current: null },
     password2               : '',
     password2Handlers       : { onChange: () => {} },
+    password2Focused        : false,
     password2Valid          : false,
     password2ValidLength    : false,
     password2ValidUppercase : false,
@@ -402,12 +414,12 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const password2Ref       = useRef<HTMLInputElement|null>(null);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [fullname        , setFullname        , fullnameHandlers       ] = useFieldState();
-    const [email           , setEmail           , emailHandlers          ] = useFieldState();
-    const [username        , setUsername        , usernameHandlers       ] = useFieldState();
-    const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailHandlers] = useFieldState();
-    const [password        , setPassword        , passwordHandlers       ] = useFieldState();
-    const [password2       , setPassword2       , password2Handlers      ] = useFieldState();
+    const [fullname        , setFullname        , fullnameFocused       , fullnameHandlers       ] = useFieldState();
+    const [email           , setEmail           , emailFocused          , emailHandlers          ] = useFieldState();
+    const [username        , setUsername        , usernameFocused       , usernameHandlers       ] = useFieldState();
+    const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailFocused, usernameOrEmailHandlers] = useFieldState();
+    const [password        , setPassword        , passwordFocused       , passwordHandlers       ] = useFieldState();
+    const [password2       , setPassword2       , password2Focused      , password2Handlers      ] = useFieldState();
     
     
     
@@ -1022,6 +1034,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         fullnameRef,             // stable ref
         fullname,                // mutable value
         fullnameHandlers,        // stable ref
+        fullnameFocused,         // mutable value
         fullnameValid,           // mutable value
         fullnameValidLength,     // mutable value
         
@@ -1032,6 +1045,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             : email
         ),                       // mutable value
         emailHandlers,           // stable ref
+        emailFocused,            // mutable value
         emailValid,              // mutable value
         emailValidLength,        // mutable value
         emailValidFormat,        // mutable value
@@ -1040,6 +1054,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         usernameRef,             // stable ref
         username,                // mutable value
         usernameHandlers,        // stable ref
+        usernameFocused,         // mutable value
         usernameValid,           // mutable value
         usernameValidLength,     // mutable value
         usernameValidFormat,     // mutable value
@@ -1048,11 +1063,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         usernameOrEmailRef,      // stable ref
         usernameOrEmail,         // mutable value
         usernameOrEmailHandlers, // stable ref
+        usernameOrEmailFocused,  // mutable value
         usernameOrEmailValid,    // mutable value
         
         passwordRef,             // stable ref
         password,                // mutable value
         passwordHandlers,        // stable ref
+        passwordFocused,         // mutable value
         passwordValid,           // mutable value
         passwordValidLength,     // mutable value
         passwordValidUppercase,  // mutable value
@@ -1061,6 +1078,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         password2Ref,            // stable ref
         password2,               // mutable value
         password2Handlers,       // stable ref
+        password2Focused,        // mutable value
         password2Valid,          // mutable value
         password2ValidLength,    // mutable value
         password2ValidUppercase, // mutable value
@@ -1111,31 +1129,37 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         tokenVerified,
         
         fullname,
+        fullnameFocused,
         fullnameValid,
         fullnameValidLength,
         
         email,
+        emailFocused,
         emailValid,
         emailValidLength,
         emailValidFormat,
         emailValidAvailable,
         
         username,
+        usernameFocused,
         usernameValid,
         usernameValidLength,
         usernameValidFormat,
         usernameValidAvailable,
         
         usernameOrEmail,
+        usernameOrEmailFocused,
         usernameOrEmailValid,
         
         password,
+        passwordFocused,
         passwordValid,
         passwordValidLength,
         passwordValidUppercase,
         passwordValidLowercase,
         
         password2,
+        password2Focused,
         password2Valid,
         password2ValidLength,
         password2ValidUppercase,
