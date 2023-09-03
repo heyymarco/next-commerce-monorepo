@@ -100,6 +100,9 @@ export type BusyState =
     | 'reset'             // busy: reset
 export interface SignInState {
     // constraints:
+    fullnameMinLength       : number
+    fullnameMaxLength       : number
+    
     emailMinLength          : number
     emailMaxLength          : number
     emailFormat             : RegExp
@@ -139,6 +142,12 @@ export interface SignInState {
     
     // fields & validations:
     formRef                 : React.MutableRefObject<HTMLFormElement|null>
+    
+    fullnameRef             : React.MutableRefObject<HTMLInputElement|null>
+    fullname                : string
+    fullnameHandlers        : FieldHandlers<HTMLInputElement>
+    fullnameValid           : boolean
+    fullnameValidLength     : boolean
     
     emailRef                : React.MutableRefObject<HTMLInputElement|null>
     email                   : string
@@ -201,6 +210,9 @@ export interface SignInState {
 }
 const SignInStateContext = createContext<SignInState>({
     // constraints:
+    fullnameMinLength       : 0,
+    fullnameMaxLength       : 0,
+    
     emailMinLength          : 0,
     emailMaxLength          : 0,
     emailFormat             : /./,
@@ -240,6 +252,12 @@ const SignInStateContext = createContext<SignInState>({
     
     // fields & validations:
     formRef                 : { current: null },
+    
+    fullnameRef             : { current: null },
+    fullname                : '',
+    fullnameHandlers        : { onChange: () => {} },
+    fullnameValid           : false,
+    fullnameValidLength     : false,
     
     emailRef                : { current: null },
     email                   : '',
@@ -376,6 +394,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // fields:
     const formRef            = useRef<HTMLFormElement|null>(null);
+    const fullnameRef        = useRef<HTMLInputElement|null>(null);
     const emailRef           = useRef<HTMLInputElement|null>(null);
     const usernameRef        = useRef<HTMLInputElement|null>(null);
     const usernameOrEmailRef = useRef<HTMLInputElement|null>(null);
@@ -383,6 +402,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const password2Ref       = useRef<HTMLInputElement|null>(null);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
+    const [fullname        , setFullname        , fullnameHandlers       ] = useFieldState();
     const [email           , setEmail           , emailHandlers          ] = useFieldState();
     const [username        , setUsername        , usernameHandlers       ] = useFieldState();
     const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailHandlers] = useFieldState();
@@ -392,6 +412,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // constraints:
+    const fullnameMinLength       = credentialsConfig.FULLNAME_MIN_LENGTH;
+    const fullnameMaxLength       = credentialsConfig.FULLNAME_MAX_LENGTH;
+    
     const emailMinLength          = credentialsConfig.EMAIL_MIN_LENGTH;
     const emailMaxLength          = credentialsConfig.EMAIL_MAX_LENGTH;
     const emailFormat             = credentialsConfig.EMAIL_FORMAT;
@@ -411,6 +434,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // validations:
     const isDataEntry             = ((section === 'signUp') || (section === 'reset'));
+    
+    const fullnameValidLength     = !isDataEntry ? (fullname.length >= 1)  : ((fullname.length >= fullnameMinLength) && (fullname.length <= fullnameMaxLength));
+    const fullnameValid           = fullnameValidLength;
     
     const emailValidLength        = !isDataEntry ? (email.length >= 1)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
     const emailValidFormat        = !!email.match(emailFormat);
@@ -569,7 +595,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // actions:
-        emailRef.current?.focus();
+        fullnameRef.current?.focus();
     }, [section]);
     
     // focus on usernameOrEmail field when the section is 'signIn' or 'recover':
@@ -950,6 +976,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     // apis:
     const signInState = useMemo<SignInState>(() => ({
         // constraints:
+        fullnameMinLength,       // stable value
+        fullnameMaxLength,       // stable value
+        
         emailMinLength,          // stable value
         emailMaxLength,          // stable value
         emailFormat,             // stable value
@@ -989,6 +1018,12 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // fields & validations:
         formRef,                 // stable ref
+        
+        fullnameRef,             // stable ref
+        fullname,                // mutable value
+        fullnameHandlers,        // stable ref
+        fullnameValid,           // mutable value
+        fullnameValidLength,     // mutable value
         
         emailRef,                // stable ref
         email : (
@@ -1074,6 +1109,10 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // fields & validations:
         tokenVerified,
+        
+        fullname,
+        fullnameValid,
+        fullnameValidLength,
         
         email,
         emailValid,
