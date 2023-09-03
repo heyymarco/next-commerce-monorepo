@@ -99,6 +99,11 @@ export interface TabSignUpProps {
     password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
     signUpButtonComponent                ?: ButtonComponentProps['buttonComponent']
     
+    usernameTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
+    usernameValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
+    usernameValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
+    usernameValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
+    
     passwordTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     password2TooltipComponent            ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     passwordValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
@@ -120,13 +125,18 @@ export const TabSignUp = (props: TabSignUpProps) => {
         password2InputComponent              = passwordInputComponent,
         signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} /> as React.ReactComponentElement<any, ButtonProps>),
         
-        passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                               as React.ReactComponentElement<any, TooltipProps<Element>>),
+        usernameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
+        usernameValidationListComponent      = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
+        usernameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
+        usernameValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                              as React.ReactComponentElement<any, IconProps<Element>>),
+        
+        passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
         password2TooltipComponent            = passwordTooltipComponent,
-        passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                         as React.ReactComponentElement<any, ListProps<Element>>),
+        passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
         password2ValidationListComponent     = passwordValidationListComponent,
-        passwordValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                            as React.ReactComponentElement<any, ListItemProps<Element>>),
+        passwordValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
         password2ValidationListItemComponent = passwordValidationListItemComponent,
-        passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                        as React.ReactComponentElement<any, IconProps<Element>>),
+        passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                              as React.ReactComponentElement<any, IconProps<Element>>),
         password2ValidationIconComponent     = passwordValidationIconComponent,
     } = props;
     
@@ -136,6 +146,16 @@ export const TabSignUp = (props: TabSignUpProps) => {
     const signInState = useSignInState();
     const {
         // constraints:
+        emailMinLength,
+        emailMaxLength,
+        emailFormat,
+        emailFormatHint,
+        
+        usernameMinLength,
+        usernameMaxLength,
+        usernameFormat,
+        usernameFormatHint,
+        
         passwordMinLength,
         passwordMaxLength,
         passwordHasUppercase,
@@ -157,11 +177,17 @@ export const TabSignUp = (props: TabSignUpProps) => {
         email,
         emailHandlers,
         emailValid,
+        emailValidLength,
+        emailValidFormat,
+        emailValidNotTaken,
         
         usernameRef,
         username,
         usernameHandlers,
         usernameValid,
+        usernameValidLength,
+        usernameValidFormat,
+        usernameValidNotTaken,
         
         passwordRef,
         password,
@@ -185,7 +211,15 @@ export const TabSignUp = (props: TabSignUpProps) => {
         // actions:
         doSignIn,
     } = signInState;
-    const validation = {
+    const specificValidations = {
+        emailValidLength,
+        emailValidFormat,
+        emailValidNotTaken,
+        
+        usernameValidLength,
+        usernameValidFormat,
+        usernameValidNotTaken,
+        
         passwordValidLength,
         passwordValidUppercase,
         passwordValidLowercase,
@@ -207,6 +241,10 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     // validations:
+    const usernameValidationMap = {
+        Length    : <>{usernameMinLength}-{usernameMaxLength} characters</>,
+        Format    : usernameFormatHint,
+    };
     const passwordValidationMap = {
         Length    : <>{passwordMinLength}-{passwordMaxLength} characters</>,
         Uppercase : !!passwordHasUppercase && <>At least one capital letter</>,
@@ -444,6 +482,73 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 },
             )}
             {/* <Tooltip> */}
+            {!!usernameTooltipComponent && React.cloneElement<TooltipProps<Element>>(usernameTooltipComponent,
+                // props:
+                {
+                    // states:
+                    expanded   : usernameTooltipComponent.props.expanded   ?? (usernameFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn : usernameTooltipComponent.props.floatingOn ?? usernameRef,
+                },
+                
+                
+                
+                // children:
+                /* <List> */
+                React.cloneElement<ListProps<Element>>(usernameValidationListComponent,
+                    // props:
+                    undefined,
+                    
+                    
+                    
+                    // children:
+                    (usernameValidationListComponent.props.children ?? Object.entries(usernameValidationMap).map(([validationType, text], index) => {
+                        // conditions:
+                        if (!text) return null; // disabled => ignore
+                        
+                        
+                        
+                        // fn props:
+                        const isValid = (specificValidations as any)?.[`usernameValid${validationType}`] as (boolean|undefined);
+                        if (isValid === undefined) return null;
+                        
+                        
+                        
+                        // jsx:
+                        return React.cloneElement<ListItemProps<Element>>(usernameValidationListItemComponent,
+                            // props:
+                            {
+                                // identifiers:
+                                key   : usernameValidationListItemComponent.key         ?? index,
+                                
+                                
+                                
+                                // variants:
+                                theme : usernameValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                            },
+                            
+                            
+                            
+                            // children:
+                            usernameValidationListItemComponent.props.children ?? <>
+                                {React.cloneElement<IconProps<Element>>(usernameValidationIconComponent,
+                                    // props:
+                                    {
+                                        // appearances:
+                                        icon : usernameValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                    },
+                                )}
+                                &nbsp;
+                                {text}
+                            </>,
+                        )
+                    })),
+                ),
+            )}
+            {/* <Tooltip> */}
             {!!passwordTooltipComponent && React.cloneElement<TooltipProps<Element>>(passwordTooltipComponent,
                 // props:
                 {
@@ -474,7 +579,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (validation as any)?.[`passwordValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`passwordValid${validationType}`] as (boolean|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -541,7 +646,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (validation as any)?.[`password2Valid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`password2Valid${validationType}`] as (boolean|undefined);
                         if (isValid === undefined) return null;
                         
                         
