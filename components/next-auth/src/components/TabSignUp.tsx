@@ -167,7 +167,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         emailValid,
         emailValidLength,
         emailValidFormat,
-        emailValidNotTaken,
+        emailValidAvailable,
         
         usernameRef,
         username,
@@ -175,7 +175,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         usernameValid,
         usernameValidLength,
         usernameValidFormat,
-        usernameValidNotTaken,
+        usernameValidAvailable,
         
         passwordRef,
         password,
@@ -202,11 +202,11 @@ export const TabSignUp = (props: TabSignUpProps) => {
     const specificValidations = {
         emailValidLength,
         emailValidFormat,
-        emailValidNotTaken,
+        emailValidAvailable,
         
         usernameValidLength,
         usernameValidFormat,
-        usernameValidNotTaken,
+        usernameValidAvailable,
         
         passwordValidLength,
         passwordValidUppercase,
@@ -232,10 +232,12 @@ export const TabSignUp = (props: TabSignUpProps) => {
     const emailValidationMap = {
         Length    : <>{emailMinLength}-{emailMaxLength} characters</>,
         Format    : emailFormatHint,
+        Available : <>The email is available</>,
     };
     const usernameValidationMap = {
         Length    : <>{usernameMinLength}-{usernameMaxLength} characters</>,
         Format    : usernameFormatHint,
+        Available : <>The username is available</>,
     };
     const passwordValidationMap = {
         Length    : <>{passwordMinLength}-{passwordMaxLength} characters</>,

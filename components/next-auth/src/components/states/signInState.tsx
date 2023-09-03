@@ -146,7 +146,7 @@ export interface SignInState {
     emailValid              : boolean
     emailValidLength        : boolean
     emailValidFormat        : boolean
-    emailValidNotTaken      : boolean
+    emailValidAvailable     : boolean
     
     usernameRef             : React.MutableRefObject<HTMLInputElement|null>
     username                : string
@@ -154,7 +154,7 @@ export interface SignInState {
     usernameValid           : boolean
     usernameValidLength     : boolean
     usernameValidFormat     : boolean
-    usernameValidNotTaken   : boolean
+    usernameValidAvailable  : boolean
     
     usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
     usernameOrEmail         : string
@@ -247,7 +247,7 @@ const SignInStateContext = createContext<SignInState>({
     emailValid              : false,
     emailValidLength        : false,
     emailValidFormat        : false,
-    emailValidNotTaken      : false,
+    emailValidAvailable     : false,
     
     usernameRef             : { current: null },
     username                : '',
@@ -255,7 +255,7 @@ const SignInStateContext = createContext<SignInState>({
     usernameValid           : false,
     usernameValidLength     : false,
     usernameValidFormat     : false,
-    usernameValidNotTaken   : false,
+    usernameValidAvailable  : false,
     
     usernameOrEmailRef      : { current: null },
     usernameOrEmail         : '',
@@ -414,13 +414,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     const emailValidLength        = !isDataEntry ? (email.length >= 1)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
     const emailValidFormat        = !!email.match(emailFormat);
-    const emailValidNotTaken      = true;
-    const emailValid              = emailValidLength && emailValidFormat && emailValidNotTaken;
+    const emailValidAvailable     = true;
+    const emailValid              = emailValidLength && emailValidFormat && emailValidAvailable;
     
     const usernameValidLength     = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
     const usernameValidFormat     = !isDataEntry ? true                    : !!username.match(usernameFormat);
-    const usernameValidNotTaken   = true;
-    const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidNotTaken;
+    const usernameValidAvailable  = true;
+    const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidAvailable;
     
     const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
     
@@ -1000,7 +1000,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         emailValid,              // mutable value
         emailValidLength,        // mutable value
         emailValidFormat,        // mutable value
-        emailValidNotTaken,      // mutable value
+        emailValidAvailable,     // mutable value
         
         usernameRef,             // stable ref
         username,                // mutable value
@@ -1008,7 +1008,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         usernameValid,           // mutable value
         usernameValidLength,     // mutable value
         usernameValidFormat,     // mutable value
-        usernameValidNotTaken,   // mutable value
+        usernameValidAvailable,  // mutable value
         
         usernameOrEmailRef,      // stable ref
         usernameOrEmail,         // mutable value
@@ -1079,13 +1079,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         emailValid,
         emailValidLength,
         emailValidFormat,
-        emailValidNotTaken,
+        emailValidAvailable,
         
         username,
         usernameValid,
         usernameValidLength,
         usernameValidFormat,
-        usernameValidNotTaken,
+        usernameValidAvailable,
         
         usernameOrEmail,
         usernameOrEmailValid,
