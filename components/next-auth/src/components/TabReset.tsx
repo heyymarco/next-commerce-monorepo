@@ -102,7 +102,7 @@ export const TabReset = (props: TabResetProps) => {
         // components:
         resetTitleComponent                  = (<h1>Password Reset</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        emailInputComponent                  = (<InputWithLabel icon='supervisor_account' inputComponent={<EmailInput    />} />            as React.ReactComponentElement<any, InputProps<Element>>),
+        emailInputComponent                  = (<InputWithLabel icon='person'             inputComponent={<EmailInput    />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         password2InputComponent              = passwordInputComponent,
         resetPasswordButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),

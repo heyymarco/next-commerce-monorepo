@@ -106,9 +106,9 @@ export const TabSignUp = (props: TabSignUpProps) => {
         // components:
         signUpTitleComponent                 = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        fullnameInputComponent               = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput autoCapitalize='words' />} /> as React.ReactComponentElement<any, InputProps<Element>>),
+        fullnameInputComponent               = (<InputWithLabel icon='account_box'        inputComponent={<TextInput autoCapitalize='words' />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         emailInputComponent                  = (<InputWithLabel icon='alternate_email'    inputComponent={<EmailInput                       />} /> as React.ReactComponentElement<any, InputProps<Element>>),
-        usernameInputComponent               = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput                        />} /> as React.ReactComponentElement<any, InputProps<Element>>),
+        usernameInputComponent               = (<InputWithLabel icon='person'             inputComponent={<TextInput                        />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput                    />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         password2InputComponent              = passwordInputComponent,
         signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} />   as React.ReactComponentElement<any, ButtonProps>),

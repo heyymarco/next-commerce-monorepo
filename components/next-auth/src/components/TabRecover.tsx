@@ -60,7 +60,7 @@ export const TabRecover = (props: TabRecoverProps) => {
         // components:
         recoverTitleComponent          = (<h1>Forgot Password?</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        usernameOrEmailInputComponent  = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                as React.ReactComponentElement<any, InputProps<Element>>),
+        usernameOrEmailInputComponent  = (<InputWithLabel icon='person'             inputComponent={<TextInput     />} />                as React.ReactComponentElement<any, InputProps<Element>>),
         sendRecoverLinkButtonComponent = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='lock_open' />} /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
