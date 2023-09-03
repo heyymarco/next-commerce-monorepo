@@ -9,6 +9,7 @@ export const signInTitleElm     = ':where(.signInTitle)'
 export const recoverTitleElm    = ':where(.recoverTitle)'
 export const resetTitleElm      = ':where(.resetTitle)'
 
+export const fullnameElm        = ':where(.fullname)'
 export const emailElm           = ':where(.email)'
 export const usernameElm        = ':where(.username)'
 export const passwordElm        = ':where(.password)'

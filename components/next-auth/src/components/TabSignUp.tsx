@@ -73,11 +73,17 @@ export interface TabSignUpProps {
     // components:
     signUpTitleComponent                 ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
+    fullnameInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     emailInputComponent                  ?: React.ReactComponentElement<any, InputProps<Element>>
     usernameInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
     signUpButtonComponent                ?: ButtonComponentProps['buttonComponent']
+    
+    fullnameTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
+    fullnameValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
+    fullnameValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
+    fullnameValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
     
     emailTooltipComponent                ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     emailValidationListComponent         ?: React.ReactComponentElement<any, ListProps<Element>>
@@ -104,29 +110,35 @@ export const TabSignUp = (props: TabSignUpProps) => {
         // components:
         signUpTitleComponent                 = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        emailInputComponent                  = (<InputWithLabel icon='alternate_email'    inputComponent={<EmailInput    />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
-        usernameInputComponent               = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput     />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
-        passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />                  as React.ReactComponentElement<any, InputProps<Element>>),
+        fullnameInputComponent               = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput autoCapitalize='words' />} /> as React.ReactComponentElement<any, InputProps<Element>>),
+        emailInputComponent                  = (<InputWithLabel icon='alternate_email'    inputComponent={<EmailInput                       />} /> as React.ReactComponentElement<any, InputProps<Element>>),
+        usernameInputComponent               = (<InputWithLabel icon='supervisor_account' inputComponent={<TextInput                        />} /> as React.ReactComponentElement<any, InputProps<Element>>),
+        passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput                    />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         password2InputComponent              = passwordInputComponent,
-        signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} /> as React.ReactComponentElement<any, ButtonProps>),
+        signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} />   as React.ReactComponentElement<any, ButtonProps>),
         
-        emailTooltipComponent                = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
-        emailValidationListComponent         = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
-        emailValidationListItemComponent     = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
-        emailValidationIconComponent         = (<Icon<Element> size='sm' icon={undefined as any} />                                              as React.ReactComponentElement<any, IconProps<Element>>),
+        fullnameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
+        fullnameValidationListComponent      = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
+        fullnameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
+        fullnameValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
         
-        usernameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
-        usernameValidationListComponent      = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
-        usernameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
-        usernameValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                              as React.ReactComponentElement<any, IconProps<Element>>),
+        emailTooltipComponent                = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
+        emailValidationListComponent         = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
+        emailValidationListItemComponent     = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
+        emailValidationIconComponent         = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
         
-        passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                     as React.ReactComponentElement<any, TooltipProps<Element>>),
+        usernameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
+        usernameValidationListComponent      = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
+        usernameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
+        usernameValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
+        
+        passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
         password2TooltipComponent            = passwordTooltipComponent,
-        passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                               as React.ReactComponentElement<any, ListProps<Element>>),
+        passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
         password2ValidationListComponent     = passwordValidationListComponent,
-        passwordValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                  as React.ReactComponentElement<any, ListItemProps<Element>>),
+        passwordValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
         password2ValidationListItemComponent = passwordValidationListItemComponent,
-        passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                              as React.ReactComponentElement<any, IconProps<Element>>),
+        passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
         password2ValidationIconComponent     = passwordValidationIconComponent,
     } = props;
     
@@ -136,6 +148,9 @@ export const TabSignUp = (props: TabSignUpProps) => {
     const signInState = useSignInState();
     const {
         // constraints:
+        fullnameMinLength,
+        fullnameMaxLength,
+        
         emailMinLength,
         emailMaxLength,
         emailFormatHint,
@@ -160,6 +175,12 @@ export const TabSignUp = (props: TabSignUpProps) => {
         
         // fields & validations:
         formRef,
+        
+        fullnameRef,
+        fullname,
+        fullnameHandlers,
+        fullnameValid,
+        fullnameValidLength,
         
         emailRef,
         email,
@@ -200,6 +221,9 @@ export const TabSignUp = (props: TabSignUpProps) => {
         doSignIn,
     } = signInState;
     const specificValidations = {
+        fullnameValid,
+        fullnameValidLength,
+        
         emailValidLength,
         emailValidFormat,
         emailValidAvailable,
@@ -221,6 +245,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     // states:
+    const [fullnameFocused , fullnameFocusHandlers ] = useFocusState<HTMLSpanElement>();
     const [emailFocused    , emailFocusHandlers    ] = useFocusState<HTMLSpanElement>();
     const [usernameFocused , usernameFocusHandlers ] = useFocusState<HTMLSpanElement>();
     const [passwordFocused , passwordFocusHandlers ] = useFocusState<HTMLSpanElement>();
@@ -229,6 +254,9 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     // validations:
+    const fullnameValidationMap = {
+        Length    : <>{fullnameMinLength}-{fullnameMaxLength} characters</>,
+    };
     const emailValidationMap = {
         Length    : <>{emailMinLength}-{emailMaxLength} characters</>,
         Format    : emailFormatHint,
@@ -249,6 +277,14 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     
     // refs:
+    const mergedFullnameInputRef  = useMergeRefs(
+        // preserves the original `elmRef` from `fullnameInputComponent`:
+        fullnameInputComponent.props.elmRef,
+        
+        
+        
+        (isSignUpSection ? fullnameRef : undefined),
+    );
     const mergedEmailInputRef     = useMergeRefs(
         // preserves the original `elmRef` from `emailInputComponent`:
         emailInputComponent.props.elmRef,
@@ -329,6 +365,42 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 {
                     // classes:
                     className : signUpTitleComponent.props.className ?? 'signUpTitle',
+                },
+            )}
+            {/* <FullnameInput> */}
+            {React.cloneElement<InputProps<Element>>(fullnameInputComponent,
+                // props:
+                {
+                    // refs:
+                    elmRef       : mergedFullnameInputRef,
+                    
+                    
+                    
+                    // classes:
+                    className    : fullnameInputComponent.props.className    ?? 'fullname',
+                    
+                    
+                    
+                    // accessibilities:
+                    placeholder  : fullnameInputComponent.props.placeholder  ?? 'Your Name',
+                    autoComplete : fullnameInputComponent.props.autoComplete ?? 'fullname',
+                    
+                    
+                    
+                    // values:
+                    value        : fullnameInputComponent.props.value        ?? fullname,
+                    
+                    
+                    
+                    // validations:
+                    isValid      : fullnameInputComponent.props.isValid      ?? fullnameValid,
+                    required     : fullnameInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // handlers:
+                    ...fullnameHandlers,
+                    ...fullnameFocusHandlers,
                 },
             )}
             {/* <EmailInput> */}
@@ -474,6 +546,73 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     ...password2Handlers,
                     ...password2FocusHandlers,
                 },
+            )}
+            {/* <Tooltip> */}
+            {!!fullnameTooltipComponent && React.cloneElement<TooltipProps<Element>>(fullnameTooltipComponent,
+                // props:
+                {
+                    // states:
+                    expanded   : fullnameTooltipComponent.props.expanded   ?? (fullnameFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    
+                    
+                    
+                    // floatable:
+                    floatingOn : fullnameTooltipComponent.props.floatingOn ?? fullnameRef,
+                },
+                
+                
+                
+                // children:
+                /* <List> */
+                React.cloneElement<ListProps<Element>>(fullnameValidationListComponent,
+                    // props:
+                    undefined,
+                    
+                    
+                    
+                    // children:
+                    (fullnameValidationListComponent.props.children ?? Object.entries(fullnameValidationMap).map(([validationType, text], index) => {
+                        // conditions:
+                        if (!text) return null; // disabled => ignore
+                        
+                        
+                        
+                        // fn props:
+                        const isValid = (specificValidations as any)?.[`fullnameValid${validationType}`] as (boolean|undefined);
+                        if (isValid === undefined) return null;
+                        
+                        
+                        
+                        // jsx:
+                        return React.cloneElement<ListItemProps<Element>>(fullnameValidationListItemComponent,
+                            // props:
+                            {
+                                // identifiers:
+                                key   : fullnameValidationListItemComponent.key         ?? index,
+                                
+                                
+                                
+                                // variants:
+                                theme : fullnameValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                            },
+                            
+                            
+                            
+                            // children:
+                            fullnameValidationListItemComponent.props.children ?? <>
+                                {React.cloneElement<IconProps<Element>>(fullnameValidationIconComponent,
+                                    // props:
+                                    {
+                                        // appearances:
+                                        icon : fullnameValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                    },
+                                )}
+                                &nbsp;
+                                {text}
+                            </>,
+                        )
+                    })),
+                ),
             )}
             {/* <Tooltip> */}
             {!!emailTooltipComponent && React.cloneElement<TooltipProps<Element>>(emailTooltipComponent,

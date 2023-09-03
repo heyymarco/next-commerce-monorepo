@@ -70,6 +70,7 @@ import {
     recoverTitleElm,
     resetTitleElm,
     
+    fullnameElm,
     emailElm,
     usernameElm,
     passwordElm,
@@ -183,6 +184,10 @@ export const usesSignInLayout = () => {
                         // positions:
                         gridArea     : 'email',
                     }),
+                    ...children(fullnameElm, {
+                        // positions:
+                        gridArea     : 'fullname',
+                    }),
                     ...children(usernameElm, {
                         // positions:
                         gridArea     : 'username',
@@ -197,7 +202,7 @@ export const usesSignInLayout = () => {
                     }),
                     ...children(doSignUpElm, {
                         // positions:
-                        gridArea : 'actionBtn',
+                        gridArea     : 'actionBtn',
                     }),
                     ...children(doSignInElm, {
                         ...rule('.credentials', {
@@ -296,6 +301,7 @@ export const usesSignInLayout = () => {
                 containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
                     '"    title        title        title        title        title        title   " min-content',
+                    '"  fullname     fullname     fullname     fullname     fullname     fullname  " min-content',
                     '"    email        email        email        email        email        email   " min-content',
                     '"  username     username     username     username     username     username  " min-content',
                     '"  password     password     password     password     password     password  " min-content',
