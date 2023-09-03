@@ -41,6 +41,7 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
     useMountedFlag,
     
@@ -678,7 +679,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     // resets input states when the `section` changes:
     const prevSection = useRef<SignInSection>(section);
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => { // we use `useIsomorphicLayoutEffect` to quickly reset `setUserInteracted` as soon as possible, before the <Tooltip> popping in
         // conditions:
         if (prevSection.current === section) return; // no change => ignore
         prevSection.current = section; // sync
