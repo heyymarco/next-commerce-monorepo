@@ -133,6 +133,7 @@ export interface SignInState {
     isSignInSection         : boolean
     isRecoverSection        : boolean
     isResetSection          : boolean
+    tokenVerified           : null|{}|false
     isSignUpApplied         : boolean
     isRecoverApplied        : boolean
     isResetApplied          : boolean
@@ -251,6 +252,7 @@ const SignInStateContext = createContext<SignInState>({
     isSignInSection         : false,
     isRecoverSection        : false,
     isResetSection          : false,
+    tokenVerified           : null,
     isSignUpApplied         : false,
     isRecoverApplied        : false,
     isResetApplied          : false,
@@ -400,7 +402,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const isSignInSection                         = (section === 'signIn');
     const isRecoverSection                        = (section === 'recover');
     const isResetSection                          = (section === 'reset');
-    const [tokenVerified   , setTokenVerified   ] = useState<undefined|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : undefined);
+    const [tokenVerified   , setTokenVerified   ] = useState<null|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : null);
     const [isSignUpApplied , setIsSignUpApplied ] = useState<boolean>(false);
     const [isRecoverApplied, setIsRecoverApplied] = useState<boolean>(false);
     const [isResetApplied  , setIsResetApplied  ] = useState<boolean>(false);
@@ -584,9 +586,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const hasInitialized = useRef(false); // make sure the validation is never performed twice
     useEffect(() => {
         // conditions:
-        if (!resetPasswordToken)         return; // no token => nothing to reset => ignore
-        if (tokenVerified !== undefined) return; // already verified with success/failed result => ignore
-        if (hasInitialized.current)      return; // already performed => ignore
+        if (!resetPasswordToken)    return; // no token => nothing to reset => ignore
+        if (tokenVerified !== null) return; // already verified with success/failed result => ignore
+        if (hasInitialized.current) return; // already performed => ignore
         hasInitialized.current = true; // mark as performed
         
         
@@ -1068,6 +1070,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isSignInSection,         // mutable value
         isRecoverSection,        // mutable value
         isResetSection,          // mutable value
+        tokenVerified,           // mutable value
         isSignUpApplied,         // mutable value
         isRecoverApplied,        // mutable value
         isResetApplied,          // mutable value
@@ -1168,6 +1171,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isSignInSection,
         isRecoverSection,
         isResetSection,
+        tokenVerified,
         isSignUpApplied,
         isRecoverApplied,
         isResetApplied,

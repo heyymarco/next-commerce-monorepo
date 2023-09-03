@@ -134,6 +134,7 @@ export const TabReset = (props: TabResetProps) => {
         
         // states:
         isResetSection,
+        tokenVerified,
         isResetApplied,
         isBusy,
         
@@ -521,7 +522,7 @@ export const TabReset = (props: TabResetProps) => {
                 
                 
                 // children:
-                (tokenValidationModalStatusComponent.props.children ?? ((email === null) && <CardBody>
+                (tokenValidationModalStatusComponent.props.children ?? ((tokenVerified === null) && <CardBody>
                     <p>
                         <Busy />&nbsp;Validating reset password token...
                     </p>
