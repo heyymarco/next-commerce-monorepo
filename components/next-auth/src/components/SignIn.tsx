@@ -9,7 +9,6 @@ import {
     
     // hooks:
     useId,
-    useCallback,
 }                           from 'react'
 
 // cssfn:
@@ -330,7 +329,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     
     
     // nested components:
-    const SwitchSignUpButton = useCallback(() => React.cloneElement<ButtonProps>(switchSignUpButtonComponent,
+    const SwitchSignUpButton = useEvent(() => React.cloneElement<ButtonProps>(switchSignUpButtonComponent,
         // props:
         {
             // classes:
@@ -346,8 +345,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         switchSignUpButtonComponent.props.children                  ?? <>Don&apos;t have an account? <strong>SignUp</strong></>,
-    ), []);
-    const SwitchSignInButton = useCallback(() => React.cloneElement<ButtonProps>(switchSignInButtonComponent,
+    ));
+    const SwitchSignInButton = useEvent(() => React.cloneElement<ButtonProps>(switchSignInButtonComponent,
         // props:
         {
             // classes:
@@ -363,8 +362,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         switchSignInButtonComponent.props.children                  ?? <>Already have an account? <strong>SignIn</strong></>,
-    ), []);
-    const GotoSignInButton   = useCallback(() => React.cloneElement<ButtonProps>(gotoSignInButtonComponent,
+    ));
+    const GotoSignInButton   = useEvent(() => React.cloneElement<ButtonProps>(gotoSignInButtonComponent,
         // props:
         {
             // classes:
@@ -380,8 +379,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         gotoSignInButtonComponent.props.children                    ?? 'Back to Sign In',
-    ), []);
-    const GotoRecoverButton  = useCallback(() => React.cloneElement<ButtonProps>(gotoRecoverButtonComponent,
+    ));
+    const GotoRecoverButton  = useEvent(() => React.cloneElement<ButtonProps>(gotoRecoverButtonComponent,
         // props:
         {
             // classes:
@@ -397,8 +396,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         gotoRecoverButtonComponent.props.children                   ?? 'Forgot Password?',
-    ), []);
-    const GotoHomeButton     = useCallback(() => React.cloneElement<ButtonProps>(gotoHomeButtonComponent,
+    ));
+    const GotoHomeButton     = useEvent(() => React.cloneElement<ButtonProps>(gotoHomeButtonComponent,
         // props:
         {
             // classes:
@@ -414,7 +413,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         gotoHomeButtonComponent.props.children                      ?? 'Back to Home',
-    ), []);
+    ));
     
     
     
