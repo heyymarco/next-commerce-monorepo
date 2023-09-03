@@ -141,6 +141,8 @@ export interface SignInState {
     
     
     // fields & validations:
+    userInteracted          : boolean
+    
     formRef                 : React.MutableRefObject<HTMLFormElement|null>
     
     fullnameRef             : React.MutableRefObject<HTMLInputElement|null>
@@ -257,6 +259,8 @@ const SignInStateContext = createContext<SignInState>({
     
     
     // fields & validations:
+    userInteracted          : false,
+    
     formRef                 : { current: null },
     
     fullnameRef             : { current: null },
@@ -414,12 +418,52 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const password2Ref       = useRef<HTMLInputElement|null>(null);
     
     const [enableValidation, setEnableValidation] = useState<boolean>(false);
-    const [fullname        , setFullname        , fullnameFocused       , fullnameHandlers       ] = useFieldState();
-    const [email           , setEmail           , emailFocused          , emailHandlers          ] = useFieldState();
-    const [username        , setUsername        , usernameFocused       , usernameHandlers       ] = useFieldState();
-    const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailFocused, usernameOrEmailHandlers] = useFieldState();
-    const [password        , setPassword        , passwordFocused       , passwordHandlers       ] = useFieldState();
-    const [password2       , setPassword2       , password2Focused      , password2Handlers      ] = useFieldState();
+    const [userInteracted  , setUserInteracted  ] = useState<boolean>(false);
+    const ignoreFocusRef     = useRef<boolean>(false);
+    const fieldsHandleChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+        // actions:
+        setUserInteracted(true);
+    });
+    const fieldsHandleFocus  = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+        // conditions:
+        if (userInteracted        ) return; // already marked as userInteracted => ignore)
+        if (ignoreFocusRef.current) return; // only interested focusing by user (ignore by system)
+        
+        
+        
+        // actions:
+        setTimeout(() => {
+            setTimeout(() => {
+                // conditions:
+                if (!event.target.matches(':focus')) return; // focus on very brief moment => ignore
+                
+                
+                
+                // actions:
+                setUserInteracted(true);
+            }, 0);
+        }, 0);
+    });
+    const [fullname        , setFullname        , fullnameFocused       , fullnameHandlers       ] = useFieldState({ onChange: fieldsHandleChange, onFocus: fieldsHandleFocus });
+    const [email           , setEmail           , emailFocused          , emailHandlers          ] = useFieldState({ onChange: fieldsHandleChange, onFocus: fieldsHandleFocus });
+    const [username        , setUsername        , usernameFocused       , usernameHandlers       ] = useFieldState({ onChange: fieldsHandleChange, onFocus: fieldsHandleFocus });
+    const [usernameOrEmail , setUsernameOrEmail , usernameOrEmailFocused, usernameOrEmailHandlers] = useFieldState({ onChange: fieldsHandleChange, onFocus: fieldsHandleFocus });
+    const [password        , setPassword        , passwordFocused       , passwordHandlers       ] = useFieldState({ onChange: fieldsHandleChange, onFocus: fieldsHandleFocus });
+    const [password2       , setPassword2       , password2Focused      , password2Handlers      ] = useFieldState({ onChange: fieldsHandleChange, onFocus: fieldsHandleFocus });
+    
+    
+    
+    // utilities:
+    const internalSetFocus = (element: HTMLInputElement|null|undefined) => {
+        if (!element) return;
+        ignoreFocusRef.current = true;
+        element.focus();
+        setTimeout(() => {
+            setTimeout(() => {
+                ignoreFocusRef.current = false;
+            }, 0);
+        }, 0);
+    };
     
     
     
@@ -593,7 +637,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 // else {
                 //     // focus to password field:
                 //     passwordRef.current?.setSelectionRange(0, password.length);
-                //     passwordRef.current?.focus();
+                //     internalSetFocus(passwordRef.current);
                 // } // if
             } // try
         })();
@@ -607,7 +651,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // actions:
-        fullnameRef.current?.focus();
+        internalSetFocus(fullnameRef.current);
     }, [section]);
     
     // focus on usernameOrEmail field when the section is 'signIn' or 'recover':
@@ -618,7 +662,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // actions:
-        usernameOrEmailRef.current?.focus();
+        internalSetFocus(usernameOrEmailRef.current);
     }, [section]);
     
     // focus on password field after successfully verified the password reset token:
@@ -629,7 +673,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // actions:
-        passwordRef.current?.focus();
+        internalSetFocus(passwordRef.current);
     }, [tokenVerified]);
     
     // resets input states when the `section` changes:
@@ -650,6 +694,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // reset fields & validations:
         setEnableValidation(false);
+        setUserInteracted(false);
         setFullname('');
         setEmail('');
         setUsername('');
@@ -1031,6 +1076,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // fields & validations:
+        userInteracted,          // mutable value
+        
         formRef,                 // stable ref
         
         fullnameRef,             // stable ref
@@ -1128,12 +1175,14 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // fields & validations:
-        tokenVerified,
+        userInteracted,
         
         fullname,
         fullnameFocused,
         fullnameValid,
         fullnameValidLength,
+        
+        tokenVerified,
         
         email,
         emailFocused,

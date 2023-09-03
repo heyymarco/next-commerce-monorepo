@@ -170,6 +170,8 @@ export const TabSignUp = (props: TabSignUpProps) => {
         
         
         // fields & validations:
+        userInteracted,
+        
         formRef,
         
         fullnameRef,
@@ -539,7 +541,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : fullnameTooltipComponent.props.expanded   ?? (fullnameFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    expanded   : fullnameTooltipComponent.props.expanded   ?? (fullnameFocused && userInteracted && !isBusy && isSignUpSection && !isSignUpApplied),
                     
                     
                     
@@ -606,7 +608,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : emailTooltipComponent.props.expanded   ?? (emailFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    expanded   : emailTooltipComponent.props.expanded   ?? (emailFocused && userInteracted && !isBusy && isSignUpSection && !isSignUpApplied),
                     
                     
                     
@@ -673,7 +675,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : usernameTooltipComponent.props.expanded   ?? (usernameFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    expanded   : usernameTooltipComponent.props.expanded   ?? (usernameFocused && userInteracted && !isBusy && isSignUpSection && !isSignUpApplied),
                     
                     
                     
@@ -740,7 +742,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : passwordTooltipComponent.props.expanded   ?? (passwordFocused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    expanded   : passwordTooltipComponent.props.expanded   ?? (passwordFocused && userInteracted && !isBusy && isSignUpSection && !isSignUpApplied),
                     
                     
                     
@@ -807,7 +809,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : password2TooltipComponent.props.expanded   ?? (password2Focused && !isBusy && isSignUpSection && !isSignUpApplied),
+                    expanded   : password2TooltipComponent.props.expanded   ?? (password2Focused && userInteracted && !isBusy && isSignUpSection && !isSignUpApplied),
                     
                     
                     
