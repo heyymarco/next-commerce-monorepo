@@ -140,6 +140,8 @@ export const TabReset = (props: TabResetProps) => {
         
         
         // fields & validations:
+        userInteracted,
+        
         formRef,
         
         email,
@@ -351,7 +353,7 @@ export const TabReset = (props: TabResetProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : passwordTooltipComponent.props.expanded   ?? (passwordFocused && !isBusy && isResetSection && !isResetApplied),
+                    expanded   : passwordTooltipComponent.props.expanded   ?? (passwordFocused && userInteracted && !isBusy && isResetSection && !isResetApplied),
                     
                     
                     
@@ -418,7 +420,7 @@ export const TabReset = (props: TabResetProps) => {
                 // props:
                 {
                     // states:
-                    expanded   : password2TooltipComponent.props.expanded   ?? (password2Focused && !isBusy && isResetSection && !isResetApplied),
+                    expanded   : password2TooltipComponent.props.expanded   ?? (password2Focused && userInteracted && !isBusy && isResetSection && !isResetApplied),
                     
                     
                     
