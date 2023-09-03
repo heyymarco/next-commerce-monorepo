@@ -298,7 +298,6 @@ export const usesSignInLayout = () => {
             }),
             ...children(signUpTabElm, {
                 // layouts:
-                containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
                     '"    title        title        title        title        title        title   " min-content',
                     '"  fullname     fullname     fullname     fullname     fullname     fullname  " min-content',
