@@ -1,3 +1,4 @@
 export const resetPasswordPath        = 'reset';
-export const usernameAvailabilityPath = 'check-username';
-export const emailAvailabilityPath    = 'check-email';
+export const usernameValidationPath = 'check-username';
+export const emailValidationPath    = 'check-email';
+export const passwordValidationPath = 'check-password';

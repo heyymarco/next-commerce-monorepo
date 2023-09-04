@@ -165,6 +165,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         usernameMinLength,
         usernameMaxLength,
         usernameFormatHint,
+        usernameProhibitedHint,
         
         passwordMinLength,
         passwordMaxLength,
@@ -209,6 +210,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         usernameValidLength,
         usernameValidFormat,
         usernameValidAvailable,
+        usernameValidNotProhibited,
         
         passwordRef,
         password,
@@ -245,6 +247,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         usernameValidLength,
         usernameValidFormat,
         usernameValidAvailable,
+        usernameValidNotProhibited,
         
         passwordValidLength,
         passwordValidUppercase,
@@ -260,23 +263,24 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     // validations:
     const fullnameValidationMap = {
-        Length    : <>Must be {fullnameMinLength}-{fullnameMaxLength} characters.</>,
+        Length        : <>Must be {fullnameMinLength}-{fullnameMaxLength} characters.</>,
     };
     const emailValidationMap = {
-        Length    : <>Must be {emailMinLength}-{emailMaxLength} characters.</>,
-        Format    : emailFormatHint,
-        Available : <>Must have never been registered.</>,
+        Length        : <>Must be {emailMinLength}-{emailMaxLength} characters.</>,
+        Format        : emailFormatHint,
+        Available     : <>Must have never been registered.</>,
     };
     const usernameValidationMap = {
-        Length    : <>Must be {usernameMinLength}-{usernameMaxLength} characters.</>,
-        Format    : usernameFormatHint,
-        Available : <>Must have never been registered.</>,
+        Length        : <>Must be {usernameMinLength}-{usernameMaxLength} characters.</>,
+        Format        : usernameFormatHint,
+        Available     : <>Must have never been registered.</>,
+        NotProhibited : usernameProhibitedHint,
     };
     const passwordValidationMap = {
-        Length    : <>Must be {passwordMinLength}-{passwordMaxLength} characters.</>,
-        Uppercase : !!passwordHasUppercase && <>At least one capital letter.</>,
-        Lowercase : !!passwordHasLowercase && <>At least one non-capital letter.</>,
-        Match     : <>Exact match to previous password.</>,
+        Length        : <>Must be {passwordMinLength}-{passwordMaxLength} characters.</>,
+        Uppercase     : !!passwordHasUppercase && <>At least one capital letter.</>,
+        Lowercase     : !!passwordHasLowercase && <>At least one non-capital letter.</>,
+        Match         : <>Exact match to previous password.</>,
     };
     
     

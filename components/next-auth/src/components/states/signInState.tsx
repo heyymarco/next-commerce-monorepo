@@ -80,9 +80,10 @@ import {
     useFieldState,
 }                           from '../hooks.js'
 import {
-    resetPasswordPath        as defaultResetPasswordPath,
-    usernameAvailabilityPath as defaultUsernameAvailabilityPath,
-    emailAvailabilityPath    as defaultEmailAvailabilityPath,
+    resetPasswordPath      as defaultResetPasswordPath,
+    usernameValidationPath as defaultUsernameValidationPath,
+    emailValidationPath    as defaultEmailValidationPath,
+    passwordValidationPath as defaultPasswordValidationPath,
 }                           from '../../api-paths.js'
 
 // configs:
@@ -127,6 +128,7 @@ export interface SignInState {
     usernameMaxLength       : number
     usernameFormat          : RegExp
     usernameFormatHint      : React.ReactNode
+    usernameProhibitedHint  : React.ReactNode
     
     passwordMinLength       : number
     passwordMaxLength       : number
@@ -185,6 +187,7 @@ export interface SignInState {
     usernameValidLength     : boolean
     usernameValidFormat     : boolean
     usernameValidAvailable  : ValidityStatus
+    usernameValidNotProhibited : ValidityStatus
     
     usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
     usernameOrEmail         : string
@@ -246,6 +249,7 @@ const SignInStateContext = createContext<SignInState>({
     usernameMaxLength       : 0,
     usernameFormat          : /./,
     usernameFormatHint      : null,
+    usernameProhibitedHint  : null,
     
     passwordMinLength       : 0,
     passwordMaxLength       : 0,
@@ -276,80 +280,81 @@ const SignInStateContext = createContext<SignInState>({
     
     
     // fields & validations:
-    userInteracted          : false,
+    userInteracted             : false,
     
-    formRef                 : { current: null },
+    formRef                    : { current: null },
     
-    fullnameRef             : { current: null },
-    fullname                : '',
-    fullnameHandlers        : { onChange: () => {} },
-    fullnameFocused         : false,
-    fullnameValid           : false,
-    fullnameValidLength     : false,
+    fullnameRef                : { current: null },
+    fullname                   : '',
+    fullnameHandlers           : { onChange: () => {} },
+    fullnameFocused            : false,
+    fullnameValid              : false,
+    fullnameValidLength        : false,
     
-    emailRef                : { current: null },
-    email                   : '',
-    emailHandlers           : { onChange: () => {} },
-    emailFocused            : false,
-    emailValid              : 'unknown',
-    emailValidLength        : false,
-    emailValidFormat        : false,
-    emailValidAvailable     : 'unknown',
+    emailRef                   : { current: null },
+    email                      : '',
+    emailHandlers              : { onChange: () => {} },
+    emailFocused               : false,
+    emailValid                 : 'unknown',
+    emailValidLength           : false,
+    emailValidFormat           : false,
+    emailValidAvailable        : 'unknown',
     
-    usernameRef             : { current: null },
-    username                : '',
-    usernameHandlers        : { onChange: () => {} },
-    usernameFocused         : false,
-    usernameValid           : 'unknown',
-    usernameValidLength     : false,
-    usernameValidFormat     : false,
-    usernameValidAvailable  : 'unknown',
+    usernameRef                : { current: null },
+    username                   : '',
+    usernameHandlers           : { onChange: () => {} },
+    usernameFocused            : false,
+    usernameValid              : 'unknown',
+    usernameValidLength        : false,
+    usernameValidFormat        : false,
+    usernameValidAvailable     : 'unknown',
+    usernameValidNotProhibited : 'unknown',
     
-    usernameOrEmailRef      : { current: null },
-    usernameOrEmail         : '',
-    usernameOrEmailHandlers : { onChange: () => {} },
-    usernameOrEmailFocused  : false,
-    usernameOrEmailValid    : false,
+    usernameOrEmailRef         : { current: null },
+    usernameOrEmail            : '',
+    usernameOrEmailHandlers    : { onChange: () => {} },
+    usernameOrEmailFocused     : false,
+    usernameOrEmailValid       : false,
     
-    passwordRef             : { current: null },
-    password                : '',
-    passwordHandlers        : { onChange: () => {} },
-    passwordFocused         : false,
-    passwordValid           : false,
-    passwordValidLength     : false,
-    passwordValidUppercase  : false,
-    passwordValidLowercase  : false,
+    passwordRef                : { current: null },
+    password                   : '',
+    passwordHandlers           : { onChange: () => {} },
+    passwordFocused            : false,
+    passwordValid              : false,
+    passwordValidLength        : false,
+    passwordValidUppercase     : false,
+    passwordValidLowercase     : false,
     
-    password2Ref            : { current: null },
-    password2               : '',
-    password2Handlers       : { onChange: () => {} },
-    password2Focused        : false,
-    password2Valid          : false,
-    password2ValidLength    : false,
-    password2ValidUppercase : false,
-    password2ValidLowercase : false,
-    password2ValidMatch     : false,
+    password2Ref               : { current: null },
+    password2                  : '',
+    password2Handlers          : { onChange: () => {} },
+    password2Focused           : false,
+    password2Valid             : false,
+    password2ValidLength       : false,
+    password2ValidUppercase    : false,
+    password2ValidLowercase    : false,
+    password2ValidMatch        : false,
     
     
     
     // navigations:
-    gotoSignUp              : () => {},
-    gotoSignIn              : () => {},
-    gotoRecover             : () => {},
-    gotoHome                : () => {},
+    gotoSignUp                 : () => {},
+    gotoSignIn                 : () => {},
+    gotoRecover                : () => {},
+    gotoHome                   : () => {},
     
     
     
     // actions:
-    doSignIn                : async () => {},
-    doSignInWith            : async () => {},
-    doRecover               : async () => {},
-    doReset                 : async () => {},
+    doSignIn                   : async () => {},
+    doSignInWith               : async () => {},
+    doRecover                  : async () => {},
+    doReset                    : async () => {},
     
     
     
     // utilities:
-    resolveProviderName     : () => '',
+    resolveProviderName        : () => '',
 });
 export interface SignInStateProps {
     // configs:
@@ -391,9 +396,10 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const resolveProviderName = useEvent<Required<SignInStateProps>['resolveProviderName']>((oAuthProvider) => { // make a stable ref
         return (resolveProviderNameUnstable ?? defaultResolveProviderName)(oAuthProvider);
     });
-    const resetPasswordPath        = `${basePath}/${defaultResetPasswordPath}`;
-    const usernameAvailabilityPath = `${basePath}/${defaultUsernameAvailabilityPath}`;
-    const emailAvailabilityPath    = `${basePath}/${defaultEmailAvailabilityPath}`;
+    const resetPasswordPath      = `${basePath}/${defaultResetPasswordPath}`;
+    const usernameValidationPath = `${basePath}/${defaultUsernameValidationPath}`;
+    const emailValidationPath    = `${basePath}/${defaultEmailValidationPath}`;
+    const passwordValidationPath = `${basePath}/${defaultPasswordValidationPath}`;
     
     
     
@@ -499,6 +505,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const usernameMaxLength       = credentialsConfig.USERNAME_MAX_LENGTH;
     const usernameFormat          = credentialsConfig.USERNAME_FORMAT;
     const usernameFormatHint      = credentialsConfig.USERNAME_FORMAT_HINT;
+    const usernameProhibitedHint  = credentialsConfig.USERNAME_PROHIBITED_HINT;
     
     const passwordMinLength       = credentialsConfig.PASSWORD_MIN_LENGTH;
     const passwordMaxLength       = credentialsConfig.PASSWORD_MAX_LENGTH;
@@ -515,13 +522,14 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     const emailValidLength        = !isDataEntry ? (email.length >= 1)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
     const emailValidFormat        = !!email.match(emailFormat);
-    const [emailValidAvailable   , setEmailValidAvailable   ] = useState<ValidityStatus>('unknown');
+    const [emailValidAvailable       , setEmailValidAvailable       ] = useState<ValidityStatus>('unknown');
     const emailValid              = emailValidLength && emailValidFormat && emailValidAvailable;
     
     const usernameValidLength     = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
     const usernameValidFormat     = !isDataEntry ? true                    : !!username.match(usernameFormat);
-    const [usernameValidAvailable, setUsernameValidAvailable] = useState<ValidityStatus>('unknown');
-    const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidAvailable;
+    const [usernameValidAvailable    , setUsernameValidAvailable    ] = useState<ValidityStatus>('unknown');
+    const [usernameValidNotProhibited, setUsernameValidNotProhibited] = useState<ValidityStatus>('unknown');
+    const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidAvailable && usernameValidNotProhibited;
     
     const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
     
@@ -697,7 +705,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 
                 setEmailValidAvailable('loading');
-                const response = await fetch(`${emailAvailabilityPath}?email=${encodeURIComponent(email)}`, {
+                const response = await fetch(`${emailValidationPath}?email=${encodeURIComponent(email)}`, {
                     method : 'GET',
                     signal : abortController.signal,
                 });
@@ -763,7 +771,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 
                 setUsernameValidAvailable('loading');
-                const response = await fetch(`${usernameAvailabilityPath}?username=${encodeURIComponent(username)}`, {
+                const response = await fetch(`${usernameValidationPath}?username=${encodeURIComponent(username)}`, {
                     method : 'GET',
                     signal : abortController.signal,
                 });
@@ -783,6 +791,72 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             catch { // catch any errors
                 // save the failure:
                 if (!abortController.signal.aborted) setUsernameValidAvailable('error');
+            } // try
+        })();
+        
+        
+        
+        // cleanups:
+        return () => {
+            abortController.abort();
+        };
+    }, [isSignUpSection, username, usernameValidLength, usernameValidFormat]);
+    
+    // validate username not_prohibited:
+    useEffect(() => {
+        // conditions:
+        if (
+            !isSignUpSection
+            ||
+            !username
+            ||
+            !usernameValidLength
+            ||
+            !usernameValidFormat
+        ) {
+            setUsernameValidNotProhibited('unknown');
+            return;
+        } // if
+        
+        
+        
+        // actions:
+        const abortController = new AbortController();
+        (async () => {
+            // attempts validate username not_prohibited:
+            try {
+                // delay a brief moment, waiting for the user typing:
+                setUsernameValidNotProhibited('unknown');
+                await new Promise<void>((resolved) => {
+                    setTimeout(() => {
+                        resolved();
+                    }, 500);
+                });
+                if (abortController.signal.aborted) return;
+                
+                
+                
+                setUsernameValidNotProhibited('loading');
+                const response = await fetch(`${usernameValidationPath}?username=${encodeURIComponent(username)}`, {
+                    method : 'PUT',
+                    signal : abortController.signal,
+                });
+                if (!response.ok) throw Error();
+                const data = await response.json();
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // success
+                
+                
+                
+                // save the success:
+                if (!abortController.signal.aborted) setUsernameValidNotProhibited(!!data.ok);
+            }
+            catch { // catch any errors
+                // save the failure:
+                if (!abortController.signal.aborted) setUsernameValidNotProhibited('error');
             } // try
         })();
         
@@ -1186,126 +1260,128 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     // apis:
     const signInState = useMemo<SignInState>(() => ({
         // constraints:
-        fullnameMinLength,       // stable value
-        fullnameMaxLength,       // stable value
+        fullnameMinLength,          // stable value
+        fullnameMaxLength,          // stable value
         
-        emailMinLength,          // stable value
-        emailMaxLength,          // stable value
-        emailFormat,             // stable value
-        emailFormatHint,         // stable value
+        emailMinLength,             // stable value
+        emailMaxLength,             // stable value
+        emailFormat,                // stable value
+        emailFormatHint,            // stable value
         
-        usernameMinLength,       // stable value
-        usernameMaxLength,       // stable value
-        usernameFormat,          // stable value
-        usernameFormatHint,      // stable value
+        usernameMinLength,          // stable value
+        usernameMaxLength,          // stable value
+        usernameFormat,             // stable value
+        usernameFormatHint,         // stable value
+        usernameProhibitedHint,     // stable value
         
-        passwordMinLength,       // stable value
-        passwordMaxLength,       // stable value
-        passwordHasUppercase,    // stable value
-        passwordHasLowercase,    // stable value
+        passwordMinLength,          // stable value
+        passwordMaxLength,          // stable value
+        passwordHasUppercase,       // stable value
+        passwordHasLowercase,       // stable value
         
         
         
         // data:
-        callbackUrl,             // mutable value
-        resetPasswordToken,      // mutable value
+        callbackUrl,                // mutable value
+        resetPasswordToken,         // mutable value
         
         
         
         // states:
-        section,                 // mutable value
-        isSignUpSection,         // mutable value
-        isSignInSection,         // mutable value
-        isRecoverSection,        // mutable value
-        isResetSection,          // mutable value
-        tokenVerified,           // mutable value
-        isSignUpApplied,         // mutable value
-        isRecoverApplied,        // mutable value
-        isResetApplied,          // mutable value
-        isBusy,                  // mutable value
-        setIsBusy,               // stable ref
+        section,                    // mutable value
+        isSignUpSection,            // mutable value
+        isSignInSection,            // mutable value
+        isRecoverSection,           // mutable value
+        isResetSection,             // mutable value
+        tokenVerified,              // mutable value
+        isSignUpApplied,            // mutable value
+        isRecoverApplied,           // mutable value
+        isResetApplied,             // mutable value
+        isBusy,                     // mutable value
+        setIsBusy,                  // stable ref
         
         
         
         // fields & validations:
-        userInteracted,          // mutable value
+        userInteracted,             // mutable value
         
-        formRef,                 // stable ref
+        formRef,                    // stable ref
         
-        fullnameRef,             // stable ref
-        fullname,                // mutable value
-        fullnameHandlers,        // stable ref
-        fullnameFocused,         // mutable value
-        fullnameValid,           // mutable value
-        fullnameValidLength,     // mutable value
+        fullnameRef,                // stable ref
+        fullname,                   // mutable value
+        fullnameHandlers,           // stable ref
+        fullnameFocused,            // mutable value
+        fullnameValid,              // mutable value
+        fullnameValidLength,        // mutable value
         
-        emailRef,                // stable ref
+        emailRef,                   // stable ref
         email : (
             isResetSection
             ? (tokenVerified === false) ? '' : (tokenVerified?.email ?? '')
             : email
-        ),                       // mutable value
-        emailHandlers,           // stable ref
-        emailFocused,            // mutable value
-        emailValid,              // mutable value
-        emailValidLength,        // mutable value
-        emailValidFormat,        // mutable value
-        emailValidAvailable,     // mutable value
+        ),                          // mutable value
+        emailHandlers,              // stable ref
+        emailFocused,               // mutable value
+        emailValid,                 // mutable value
+        emailValidLength,           // mutable value
+        emailValidFormat,           // mutable value
+        emailValidAvailable,        // mutable value
         
-        usernameRef,             // stable ref
-        username,                // mutable value
-        usernameHandlers,        // stable ref
-        usernameFocused,         // mutable value
-        usernameValid,           // mutable value
-        usernameValidLength,     // mutable value
-        usernameValidFormat,     // mutable value
-        usernameValidAvailable,  // mutable value
+        usernameRef,                // stable ref
+        username,                   // mutable value
+        usernameHandlers,           // stable ref
+        usernameFocused,            // mutable value
+        usernameValid,              // mutable value
+        usernameValidLength,        // mutable value
+        usernameValidFormat,        // mutable value
+        usernameValidAvailable,     // mutable value
+        usernameValidNotProhibited, // mutable value
         
-        usernameOrEmailRef,      // stable ref
-        usernameOrEmail,         // mutable value
-        usernameOrEmailHandlers, // stable ref
-        usernameOrEmailFocused,  // mutable value
-        usernameOrEmailValid,    // mutable value
+        usernameOrEmailRef,         // stable ref
+        usernameOrEmail,            // mutable value
+        usernameOrEmailHandlers,    // stable ref
+        usernameOrEmailFocused,     // mutable value
+        usernameOrEmailValid,       // mutable value
         
-        passwordRef,             // stable ref
-        password,                // mutable value
-        passwordHandlers,        // stable ref
-        passwordFocused,         // mutable value
-        passwordValid,           // mutable value
-        passwordValidLength,     // mutable value
-        passwordValidUppercase,  // mutable value
-        passwordValidLowercase,  // mutable value
+        passwordRef,                // stable ref
+        password,                   // mutable value
+        passwordHandlers,           // stable ref
+        passwordFocused,            // mutable value
+        passwordValid,              // mutable value
+        passwordValidLength,        // mutable value
+        passwordValidUppercase,     // mutable value
+        passwordValidLowercase,     // mutable value
         
-        password2Ref,            // stable ref
-        password2,               // mutable value
-        password2Handlers,       // stable ref
-        password2Focused,        // mutable value
-        password2Valid,          // mutable value
-        password2ValidLength,    // mutable value
-        password2ValidUppercase, // mutable value
-        password2ValidLowercase, // mutable value
-        password2ValidMatch,     // mutable value
+        password2Ref,               // stable ref
+        password2,                  // mutable value
+        password2Handlers,          // stable ref
+        password2Focused,           // mutable value
+        password2Valid,             // mutable value
+        password2ValidLength,       // mutable value
+        password2ValidUppercase,    // mutable value
+        password2ValidLowercase,    // mutable value
+        password2ValidMatch,        // mutable value
         
         
         
         // navigations:
-        gotoSignUp,              // stable ref
-        gotoSignIn,              // stable ref
-        gotoRecover,             // stable ref
-        gotoHome,                // stable ref
+        gotoSignUp,                 // stable ref
+        gotoSignIn,                 // stable ref
+        gotoRecover,                // stable ref
+        gotoHome,                   // stable ref
         
         
         
         // actions:
-        doSignIn,                // stable ref
-        doSignInWith,            // stable ref
-        doRecover,               // stable ref
-        doReset,                 // stable ref
+        doSignIn,                   // stable ref
+        doSignInWith,               // stable ref
+        doRecover,                  // stable ref
+        doReset,                    // stable ref
         
         
         
         // utilities:
-        resolveProviderName,     // stable ref
+        resolveProviderName,        // stable ref
     }), [
         // data:
         callbackUrl,
@@ -1350,6 +1426,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         usernameValidLength,
         usernameValidFormat,
         usernameValidAvailable,
+        usernameValidNotProhibited,
         
         usernameOrEmail,
         usernameOrEmailFocused,

@@ -87,9 +87,10 @@ import type {
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
 import {
-    resetPasswordPath        as defaultResetPasswordPath,
-    usernameAvailabilityPath as defaultUsernameAvailabilityPath,
-    emailAvailabilityPath    as defaultEmailAvailabilityPath,
+    resetPasswordPath      as defaultResetPasswordPath,
+    usernameValidationPath as defaultUsernameValidationPath,
+    emailValidationPath    as defaultEmailValidationPath,
+    passwordValidationPath as defaultPasswordValidationPath,
 }                           from './api-paths.js'
 
 
@@ -314,7 +315,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     //#region custom handlers
     // general_implementation custom handlers:
-    const requestPasswordResetRouteHandler      = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const requestPasswordResetRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
         if (req.method !== 'POST')                 return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -441,7 +442,7 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    const validatePasswordResetRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const validatePasswordResetRouteHandler      = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
         if (req.method !== 'GET')                  return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -499,7 +500,7 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    const applyPasswordResetRouteHandler        = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const applyPasswordResetRouteHandler         = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
         if (req.method !== 'PATCH')                return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -583,7 +584,7 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    const checkEmailAvailabilityRouteHandler    = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const checkEmailAvailabilityRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
         if (req.method !== 'GET')                  return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -656,7 +657,7 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    const checkUsernameAvailabilityRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const checkUsernameAvailabilityRouteHandler  = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
         if (req.method !== 'GET')                  return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -729,19 +730,154 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
+    const checkUsernameNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // filters the request type:
+        if (req.method !== 'PUT')                  return false; // ignore
+        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        
+        
+        
+        // TODO: remove slow network simulator:
+        await new Promise<void>((resolved) => {
+            setTimeout(() => {
+                resolved();
+            }, 2000);
+        });
+        
+        
+        
+        // validate the request parameter(s):
+        const {
+            username,
+        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        if ((typeof(username) !== 'string') || !username) {
+            return NextResponse.json({
+                error: 'The required username is not provided.',
+            }, { status: 400 }); // handled with error
+        } // if
+        const usernameMinLength = credentialsConfig.USERNAME_MIN_LENGTH;
+        if ((typeof(usernameMinLength) === 'number') && Number.isFinite(usernameMinLength) && (username.length < usernameMinLength)) {
+            return NextResponse.json({
+                error: `The username is too short. Minimum is ${usernameMinLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        const usernameMaxLength = credentialsConfig.USERNAME_MAX_LENGTH;
+        if ((typeof(usernameMaxLength) === 'number') && Number.isFinite(usernameMaxLength) && (username.length > usernameMaxLength)) {
+            return NextResponse.json({
+                error: `The username is too long. Maximum is ${usernameMaxLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        if (!username.match(credentialsConfig.USERNAME_FORMAT)) {
+            return NextResponse.json({
+                error: `The username is not well formatted.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        
+        
+        
+        if (((): boolean => {
+            for (const prohibited of credentialsConfig.USERNAME_PROHIBITED) {
+                if (prohibited instanceof RegExp) {
+                    if (prohibited.test(username)) return true; // prohibited word found
+                }
+                else {
+                    if (prohibited === username  ) return true; // prohibited word found
+                } // if
+            } // for
+            
+            return false; // all checks passed, no prohibited word was found
+        })()) {
+            return NextResponse.json({
+                error: `The username "${username}" is prohibited.`,
+            }); // handled with success
+        } // if
+        
+        
+        
+        return NextResponse.json({
+            ok       : true,
+            message  : `The username "${username}" can be used.`,
+        }); // handled with success
+    };
+    const checkPasswordNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // filters the request type:
+        if (req.method !== 'PUT')                  return false; // ignore
+        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        
+        
+        
+        // TODO: remove slow network simulator:
+        await new Promise<void>((resolved) => {
+            setTimeout(() => {
+                resolved();
+            }, 2000);
+        });
+        
+        
+        
+        // validate the request parameter(s):
+        const {
+            password,
+        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        if ((typeof(password) !== 'string') || !password) {
+            return NextResponse.json({
+                error: 'The required password is not provided.',
+            }, { status: 400 }); // handled with error
+        } // if
+        const passwordMinLength = credentialsConfig.PASSWORD_MIN_LENGTH;
+        if ((typeof(passwordMinLength) === 'number') && Number.isFinite(passwordMinLength) && (password.length < passwordMinLength)) {
+            return NextResponse.json({
+                error: `The password is too short. Minimum is ${passwordMinLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        const passwordMaxLength = credentialsConfig.PASSWORD_MAX_LENGTH;
+        if ((typeof(passwordMaxLength) === 'number') && Number.isFinite(passwordMaxLength) && (password.length > passwordMaxLength)) {
+            return NextResponse.json({
+                error: `The password is too long. Maximum is ${passwordMaxLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        
+        
+        
+        if (((): boolean => {
+            for (const prohibited of credentialsConfig.PASSWORD_PROHIBITED) {
+                if (prohibited instanceof RegExp) {
+                    if (prohibited.test(password)) return true; // prohibited word found
+                }
+                else {
+                    if (prohibited === password  ) return true; // prohibited word found
+                } // if
+            } // for
+            
+            return false; // all checks passed, no prohibited word was found
+        })()) {
+            return NextResponse.json({
+                error: `The password "${password}" is prohibited.`,
+            }); // handled with success
+        } // if
+        
+        
+        
+        return NextResponse.json({
+            ok       : true,
+            message  : `The password "${password}" can be used.`,
+        }); // handled with success
+    };
     
     // specific next-js /app custom handlers:
     interface CustomRouteHandlerOptions {
-        resetPasswordPath        ?: string
-        usernameAvailabilityPath ?: string
-        emailAvailabilityPath    ?: string
+        resetPasswordPath      ?: string
+        usernameValidationPath ?: string
+        emailValidationPath    ?: string
+        passwordValidationPath ?: string
     }
-    const customRouteHandler                    = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
+    const customRouteHandler                     = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
         // options:
         const {
-            resetPasswordPath        = defaultResetPasswordPath,
-            usernameAvailabilityPath = defaultUsernameAvailabilityPath,
-            emailAvailabilityPath    = defaultEmailAvailabilityPath,
+            resetPasswordPath      = defaultResetPasswordPath,
+            usernameValidationPath = defaultUsernameValidationPath,
+            emailValidationPath    = defaultEmailValidationPath,
+            passwordValidationPath = defaultPasswordValidationPath,
         } = options ?? {};
         
         
@@ -753,14 +889,18 @@ If the problem still persists, please contact our technical support.`,
             ||
             await applyPasswordResetRouteHandler(req, context, resetPasswordPath)
             ||
-            await checkEmailAvailabilityRouteHandler(req, context, emailAvailabilityPath)
+            await checkEmailAvailabilityRouteHandler(req, context, emailValidationPath)
             ||
-            await checkUsernameAvailabilityRouteHandler(req, context, usernameAvailabilityPath)
+            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
+            ||
+            await checkUsernameNotProhibitedRouteHandler(req, context, usernameValidationPath)
+            ||
+            await checkPasswordNotProhibitedRouteHandler(req, context, passwordValidationPath)
         );
     };
     
     // specific next-js /pages custom handlers:
-    const customApiHandler                      = async (req: NextApiRequest, res: NextApiResponse  , options?: CustomRouteHandlerOptions): Promise<boolean> => {
+    const customApiHandler                       = async (req: NextApiRequest, res: NextApiResponse  , options?: CustomRouteHandlerOptions): Promise<boolean> => {
         const customRouteResponse = await customRouteHandler(
             new Request(new URL(req.url ?? '/', 'https://localhost').href, {
                 method : req.method,
