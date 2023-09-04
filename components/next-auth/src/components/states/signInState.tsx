@@ -79,6 +79,11 @@ import {
     FieldHandlers,
     useFieldState,
 }                           from '../hooks.js'
+import {
+    resetPasswordPath        as defaultResetPasswordPath,
+    usernameAvailabilityPath as defaultUsernameAvailabilityPath,
+    emailAvailabilityPath    as defaultEmailAvailabilityPath,
+}                           from '../../api-paths.js'
 
 // configs:
 import type {
@@ -386,9 +391,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const resolveProviderName = useEvent<Required<SignInStateProps>['resolveProviderName']>((oAuthProvider) => { // make a stable ref
         return (resolveProviderNameUnstable ?? defaultResolveProviderName)(oAuthProvider);
     });
-    const resetPasswordPath        = `${basePath}/reset`;
-    const emailAvailabilityPath    = `${basePath}/check-email`;
-    const usernameAvailabilityPath = `${basePath}/check-username`;
+    const resetPasswordPath        = `${basePath}/${defaultResetPasswordPath}`;
+    const emailAvailabilityPath    = `${basePath}/${defaultUsernameAvailabilityPath}`;
+    const usernameAvailabilityPath = `${basePath}/${defaultEmailAvailabilityPath}`;
     
     
     

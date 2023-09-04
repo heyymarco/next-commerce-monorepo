@@ -86,6 +86,11 @@ import type {
 import type {
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
+import {
+    resetPasswordPath        as defaultResetPasswordPath,
+    usernameAvailabilityPath as defaultUsernameAvailabilityPath,
+    emailAvailabilityPath    as defaultEmailAvailabilityPath,
+}                           from './api-paths.js'
 
 
 
@@ -734,9 +739,9 @@ If the problem still persists, please contact our technical support.`,
     const customRouteHandler                    = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
         // options:
         const {
-            resetPasswordPath        = 'reset',
-            usernameAvailabilityPath = 'check-username',
-            emailAvailabilityPath    = 'check-email',
+            resetPasswordPath        = defaultResetPasswordPath,
+            usernameAvailabilityPath = defaultUsernameAvailabilityPath,
+            emailAvailabilityPath    = defaultEmailAvailabilityPath,
         } = options ?? {};
         
         
