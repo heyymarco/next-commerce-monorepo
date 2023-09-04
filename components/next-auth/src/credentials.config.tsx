@@ -88,5 +88,5 @@ export const defaultCredentialsConfig: CredentialsConfig = {
         '12345',
         'aaa',
     ],
-    PASSWORD_PROHIBITED_HINT : <>Must not contain prohibited words.</>,
+    PASSWORD_PROHIBITED_HINT : <>Must not using common passwords.</>,
 };

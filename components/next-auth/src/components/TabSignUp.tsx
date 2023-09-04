@@ -171,6 +171,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         passwordMaxLength,
         passwordHasUppercase,
         passwordHasLowercase,
+        passwordProhibitedHint,
         
         
         
@@ -220,6 +221,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         passwordValidLength,
         passwordValidUppercase,
         passwordValidLowercase,
+        passwordValidNotProhibited,
         
         password2Ref,
         password2,
@@ -252,6 +254,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         passwordValidLength,
         passwordValidUppercase,
         passwordValidLowercase,
+        passwordValidNotProhibited,
         
         password2ValidLength,
         password2ValidUppercase,
@@ -281,6 +284,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         Uppercase     : !!passwordHasUppercase && <>At least one capital letter.</>,
         Lowercase     : !!passwordHasLowercase && <>At least one non-capital letter.</>,
         Match         : <>Exact match to previous password.</>,
+        NotProhibited : passwordProhibitedHint,
     };
     
     

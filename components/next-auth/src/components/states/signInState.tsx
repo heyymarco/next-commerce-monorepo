@@ -116,166 +116,169 @@ export type ValidityStatus =
 // contexts:
 export interface SignInState {
     // constraints:
-    fullnameMinLength       : number
-    fullnameMaxLength       : number
+    fullnameMinLength          : number
+    fullnameMaxLength          : number
     
-    emailMinLength          : number
-    emailMaxLength          : number
-    emailFormat             : RegExp
-    emailFormatHint         : React.ReactNode
+    emailMinLength             : number
+    emailMaxLength             : number
+    emailFormat                : RegExp
+    emailFormatHint            : React.ReactNode
     
-    usernameMinLength       : number
-    usernameMaxLength       : number
-    usernameFormat          : RegExp
-    usernameFormatHint      : React.ReactNode
-    usernameProhibitedHint  : React.ReactNode
+    usernameMinLength          : number
+    usernameMaxLength          : number
+    usernameFormat             : RegExp
+    usernameFormatHint         : React.ReactNode
+    usernameProhibitedHint     : React.ReactNode
     
-    passwordMinLength       : number
-    passwordMaxLength       : number
-    passwordHasUppercase    : boolean
-    passwordHasLowercase    : boolean
+    passwordMinLength          : number
+    passwordMaxLength          : number
+    passwordHasUppercase       : boolean
+    passwordHasLowercase       : boolean
+    passwordProhibitedHint     : React.ReactNode
     
     
     
     // data:
-    callbackUrl             : string|null
-    resetPasswordToken      : string|null
+    callbackUrl                : string|null
+    resetPasswordToken         : string|null
     
     
     
     // states:
-    section                 : SignInSection
-    isSignUpSection         : boolean
-    isSignInSection         : boolean
-    isRecoverSection        : boolean
-    isResetSection          : boolean
-    tokenVerified           : null|{}|false
-    isSignUpApplied         : boolean
-    isRecoverApplied        : boolean
-    isResetApplied          : boolean
-    isBusy                  : BusyState
-    setIsBusy               : (isBusy: BusyState) => void
+    section                    : SignInSection
+    isSignUpSection            : boolean
+    isSignInSection            : boolean
+    isRecoverSection           : boolean
+    isResetSection             : boolean
+    tokenVerified              : null|{}|false
+    isSignUpApplied            : boolean
+    isRecoverApplied           : boolean
+    isResetApplied             : boolean
+    isBusy                     : BusyState
+    setIsBusy                  : (isBusy: BusyState) => void
     
     
     
     // fields & validations:
-    userInteracted          : boolean
+    userInteracted             : boolean
     
-    formRef                 : React.MutableRefObject<HTMLFormElement|null>
+    formRef                    : React.MutableRefObject<HTMLFormElement|null>
     
-    fullnameRef             : React.MutableRefObject<HTMLInputElement|null>
-    fullname                : string
-    fullnameHandlers        : FieldHandlers<HTMLInputElement>
-    fullnameFocused         : boolean
-    fullnameValid           : boolean
-    fullnameValidLength     : boolean
+    fullnameRef                : React.MutableRefObject<HTMLInputElement|null>
+    fullname                   : string
+    fullnameHandlers           : FieldHandlers<HTMLInputElement>
+    fullnameFocused            : boolean
+    fullnameValid              : boolean
+    fullnameValidLength        : boolean
     
-    emailRef                : React.MutableRefObject<HTMLInputElement|null>
-    email                   : string
-    emailHandlers           : FieldHandlers<HTMLInputElement>
-    emailFocused            : boolean
-    emailValid              : ValidityStatus
-    emailValidLength        : boolean
-    emailValidFormat        : boolean
-    emailValidAvailable     : ValidityStatus
+    emailRef                   : React.MutableRefObject<HTMLInputElement|null>
+    email                      : string
+    emailHandlers              : FieldHandlers<HTMLInputElement>
+    emailFocused               : boolean
+    emailValid                 : ValidityStatus
+    emailValidLength           : boolean
+    emailValidFormat           : boolean
+    emailValidAvailable        : ValidityStatus
     
-    usernameRef             : React.MutableRefObject<HTMLInputElement|null>
-    username                : string
-    usernameHandlers        : FieldHandlers<HTMLInputElement>
-    usernameFocused         : boolean
-    usernameValid           : ValidityStatus
-    usernameValidLength     : boolean
-    usernameValidFormat     : boolean
-    usernameValidAvailable  : ValidityStatus
+    usernameRef                : React.MutableRefObject<HTMLInputElement|null>
+    username                   : string
+    usernameHandlers           : FieldHandlers<HTMLInputElement>
+    usernameFocused            : boolean
+    usernameValid              : ValidityStatus
+    usernameValidLength        : boolean
+    usernameValidFormat        : boolean
+    usernameValidAvailable     : ValidityStatus
     usernameValidNotProhibited : ValidityStatus
     
-    usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
-    usernameOrEmail         : string
-    usernameOrEmailHandlers : FieldHandlers<HTMLInputElement>
-    usernameOrEmailFocused  : boolean
-    usernameOrEmailValid    : boolean
+    usernameOrEmailRef         : React.MutableRefObject<HTMLInputElement|null>
+    usernameOrEmail            : string
+    usernameOrEmailHandlers    : FieldHandlers<HTMLInputElement>
+    usernameOrEmailFocused     : boolean
+    usernameOrEmailValid       : boolean
     
-    passwordRef             : React.MutableRefObject<HTMLInputElement|null>
-    password                : string
-    passwordHandlers        : FieldHandlers<HTMLInputElement>
-    passwordFocused         : boolean
-    passwordValid           : boolean
-    passwordValidLength     : boolean
-    passwordValidUppercase  : boolean
-    passwordValidLowercase  : boolean
+    passwordRef                : React.MutableRefObject<HTMLInputElement|null>
+    password                   : string
+    passwordHandlers           : FieldHandlers<HTMLInputElement>
+    passwordFocused            : boolean
+    passwordValid              : ValidityStatus
+    passwordValidLength        : boolean
+    passwordValidUppercase     : boolean
+    passwordValidLowercase     : boolean
+    passwordValidNotProhibited : ValidityStatus
     
-    password2Ref            : React.MutableRefObject<HTMLInputElement|null>
-    password2               : string
-    password2Handlers       : FieldHandlers<HTMLInputElement>
-    password2Focused        : boolean
-    password2Valid          : boolean
-    password2ValidLength    : boolean
-    password2ValidUppercase : boolean
-    password2ValidLowercase : boolean
-    password2ValidMatch     : boolean
+    password2Ref               : React.MutableRefObject<HTMLInputElement|null>
+    password2                  : string
+    password2Handlers          : FieldHandlers<HTMLInputElement>
+    password2Focused           : boolean
+    password2Valid             : boolean
+    password2ValidLength       : boolean
+    password2ValidUppercase    : boolean
+    password2ValidLowercase    : boolean
+    password2ValidMatch        : boolean
     
     
     
     // navigations:
-    gotoSignUp              : () => void
-    gotoSignIn              : () => void
-    gotoRecover             : () => void
-    gotoHome                : () => void
+    gotoSignUp                 : () => void
+    gotoSignIn                 : () => void
+    gotoRecover                : () => void
+    gotoHome                   : () => void
     
     
     
     // actions:
-    doSignIn                : () => Promise<void>
-    doSignInWith            : (providerType: BuiltInProviderType) => Promise<void>
-    doRecover               : () => Promise<void>
-    doReset                 : () => Promise<void>
+    doSignIn                   : () => Promise<void>
+    doSignInWith               : (providerType: BuiltInProviderType) => Promise<void>
+    doRecover                  : () => Promise<void>
+    doReset                    : () => Promise<void>
     
     
     
     // utilities:
-    resolveProviderName     : (oAuthProvider: BuiltInProviderType) => string
+    resolveProviderName        : (oAuthProvider: BuiltInProviderType) => string
 }
 const SignInStateContext = createContext<SignInState>({
     // constraints:
-    fullnameMinLength       : 0,
-    fullnameMaxLength       : 0,
+    fullnameMinLength          : 0,
+    fullnameMaxLength          : 0,
     
-    emailMinLength          : 0,
-    emailMaxLength          : 0,
-    emailFormat             : /./,
-    emailFormatHint         : null,
+    emailMinLength             : 0,
+    emailMaxLength             : 0,
+    emailFormat                : /./,
+    emailFormatHint            : null,
     
-    usernameMinLength       : 0,
-    usernameMaxLength       : 0,
-    usernameFormat          : /./,
-    usernameFormatHint      : null,
-    usernameProhibitedHint  : null,
+    usernameMinLength          : 0,
+    usernameMaxLength          : 0,
+    usernameFormat             : /./,
+    usernameFormatHint         : null,
+    usernameProhibitedHint     : null,
     
-    passwordMinLength       : 0,
-    passwordMaxLength       : 0,
-    passwordHasUppercase    : false,
-    passwordHasLowercase    : false,
+    passwordMinLength          : 0,
+    passwordMaxLength          : 0,
+    passwordHasUppercase       : false,
+    passwordHasLowercase       : false,
+    passwordProhibitedHint     : null,
     
     
     
     // data:
-    callbackUrl             : null,
-    resetPasswordToken      : null,
+    callbackUrl                : null,
+    resetPasswordToken         : null,
     
     
     
     // states:
-    section                 : 'signIn',
-    isSignUpSection         : false,
-    isSignInSection         : false,
-    isRecoverSection        : false,
-    isResetSection          : false,
-    tokenVerified           : null,
-    isSignUpApplied         : false,
-    isRecoverApplied        : false,
-    isResetApplied          : false,
-    isBusy                  : false,
-    setIsBusy               : () => {},
+    section                    : 'signIn',
+    isSignUpSection            : false,
+    isSignInSection            : false,
+    isRecoverSection           : false,
+    isResetSection             : false,
+    tokenVerified              : null,
+    isSignUpApplied            : false,
+    isRecoverApplied           : false,
+    isResetApplied             : false,
+    isBusy                     : false,
+    setIsBusy                  : () => {},
     
     
     
@@ -324,6 +327,7 @@ const SignInStateContext = createContext<SignInState>({
     passwordValidLength        : false,
     passwordValidUppercase     : false,
     passwordValidLowercase     : false,
+    passwordValidNotProhibited : 'unknown',
     
     password2Ref               : { current: null },
     password2                  : '',
@@ -511,6 +515,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const passwordMaxLength       = credentialsConfig.PASSWORD_MAX_LENGTH;
     const passwordHasUppercase    = credentialsConfig.PASSWORD_HAS_UPPERCASE;
     const passwordHasLowercase    = credentialsConfig.PASSWORD_HAS_LOWERCASE;
+    const passwordProhibitedHint  = credentialsConfig.PASSWORD_PROHIBITED_HINT;
     
     
     
@@ -536,7 +541,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const passwordValidLength     = !isDataEntry ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
     const passwordValidUppercase  = !isDataEntry ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
     const passwordValidLowercase  = !isDataEntry ? true                    : (!passwordHasLowercase || !!password.match(/[a-z]/));
-    const passwordValid           = passwordValidLength && passwordValidUppercase && passwordValidLowercase;
+    const [passwordValidNotProhibited, setPasswordValidNotProhibited] = useState<ValidityStatus>('unknown');
+    const passwordValid           = passwordValidLength && passwordValidUppercase && passwordValidLowercase && passwordValidNotProhibited;
     
     const password2ValidLength    = !isDataEntry ? (password2.length >= 1) : ((password2.length >= passwordMinLength) && (password2.length <= passwordMaxLength));
     const password2ValidUppercase = !isDataEntry ? true                    : (!passwordHasUppercase || !!password2.match(/[A-Z]/));
@@ -867,6 +873,70 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             abortController.abort();
         };
     }, [isSignUpSection, username, usernameValidLength, usernameValidFormat]);
+    
+    // validate password not_prohibited:
+    useEffect(() => {
+        // conditions:
+        if (
+            !isSignUpSection
+            ||
+            !password
+            ||
+            !passwordValidLength
+        ) {
+            setPasswordValidNotProhibited('unknown');
+            return;
+        } // if
+        
+        
+        
+        // actions:
+        const abortController = new AbortController();
+        (async () => {
+            // attempts validate password not_prohibited:
+            try {
+                // delay a brief moment, waiting for the user typing:
+                setPasswordValidNotProhibited('unknown');
+                await new Promise<void>((resolved) => {
+                    setTimeout(() => {
+                        resolved();
+                    }, 500);
+                });
+                if (abortController.signal.aborted) return;
+                
+                
+                
+                setPasswordValidNotProhibited('loading');
+                const response = await fetch(`${passwordValidationPath}?password=${encodeURIComponent(password)}`, {
+                    method : 'PUT',
+                    signal : abortController.signal,
+                });
+                if (!response.ok) throw Error();
+                const data = await response.json();
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // success
+                
+                
+                
+                // save the success:
+                if (!abortController.signal.aborted) setPasswordValidNotProhibited(!!data.ok);
+            }
+            catch { // catch any errors
+                // save the failure:
+                if (!abortController.signal.aborted) setPasswordValidNotProhibited('error');
+            } // try
+        })();
+        
+        
+        
+        // cleanups:
+        return () => {
+            abortController.abort();
+        };
+    }, [isSignUpSection, password, passwordValidLength]);
     
     // focus on email field when the section is 'signUp':
     useEffect(() => {
@@ -1278,6 +1348,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         passwordMaxLength,          // stable value
         passwordHasUppercase,       // stable value
         passwordHasLowercase,       // stable value
+        passwordProhibitedHint,     // stable value
         
         
         
@@ -1351,6 +1422,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         passwordValidLength,        // mutable value
         passwordValidUppercase,     // mutable value
         passwordValidLowercase,     // mutable value
+        passwordValidNotProhibited, // mutable value
         
         password2Ref,               // stable ref
         password2,                  // mutable value
@@ -1438,6 +1510,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         passwordValidLength,
         passwordValidUppercase,
         passwordValidLowercase,
+        passwordValidNotProhibited,
         
         password2,
         password2Focused,
