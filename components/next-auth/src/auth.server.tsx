@@ -633,7 +633,7 @@ If the problem still persists, please contact our technical support.`,
             if (!result) {
                 return NextResponse.json({
                     error: `The email "${email}" is already taken.`,
-                }, { status: 404 }); // handled with error
+                }); // handled with success
             } // if
             
             
@@ -706,7 +706,7 @@ If the problem still persists, please contact our technical support.`,
             if (!result) {
                 return NextResponse.json({
                     error: `The username "${username}" is already taken.`,
-                }, { status: 404 }); // handled with error
+                }); // handled with success
             } // if
             
             

@@ -197,10 +197,10 @@ export const TabReset = (props: TabResetProps) => {
     
     // validations:
     const passwordValidationMap = {
-        Length    : <>{passwordMinLength}-{passwordMaxLength} characters</>,
-        Uppercase : !!passwordHasUppercase && <>At least one capital letter</>,
-        Lowercase : !!passwordHasLowercase && <>At least one non-capital letter</>,
-        Match     : <>Exact match to previous password</>,
+        Length    : <>Must be {passwordMinLength}-{passwordMaxLength} characters.</>,
+        Uppercase : !!passwordHasUppercase && <>At least one capital letter.</>,
+        Lowercase : !!passwordHasLowercase && <>At least one non-capital letter.</>,
+        Match     : <>Exact match to previous password.</>,
     };
     
     

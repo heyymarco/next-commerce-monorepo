@@ -40,7 +40,7 @@ export const defaultCredentialsConfig: CredentialsConfig = {
     EMAIL_MIN_LENGTH       : 5,
     EMAIL_MAX_LENGTH       : 50,
     EMAIL_FORMAT           : /^[a-zA-Z0-9-_.!#$%&'*+/=?^`{|}~]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/,
-    EMAIL_FORMAT_HINT      : <>Invalid common email format.</>,
+    EMAIL_FORMAT_HINT      : <>Must be a common email format.</>,
     
     
     

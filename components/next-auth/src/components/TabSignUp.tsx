@@ -260,23 +260,23 @@ export const TabSignUp = (props: TabSignUpProps) => {
     
     // validations:
     const fullnameValidationMap = {
-        Length    : <>{fullnameMinLength}-{fullnameMaxLength} characters</>,
+        Length    : <>Must be {fullnameMinLength}-{fullnameMaxLength} characters.</>,
     };
     const emailValidationMap = {
-        Length    : <>{emailMinLength}-{emailMaxLength} characters</>,
+        Length    : <>Must be {emailMinLength}-{emailMaxLength} characters.</>,
         Format    : emailFormatHint,
-        Available : <>The email is available</>,
+        Available : <>Must have never been registered.</>,
     };
     const usernameValidationMap = {
-        Length    : <>{usernameMinLength}-{usernameMaxLength} characters</>,
+        Length    : <>Must be {usernameMinLength}-{usernameMaxLength} characters.</>,
         Format    : usernameFormatHint,
-        Available : <>The username is available</>,
+        Available : <>Must have never been registered.</>,
     };
     const passwordValidationMap = {
-        Length    : <>{passwordMinLength}-{passwordMaxLength} characters</>,
-        Uppercase : !!passwordHasUppercase && <>At least one capital letter</>,
-        Lowercase : !!passwordHasLowercase && <>At least one non-capital letter</>,
-        Match     : <>Exact match to previous password</>,
+        Length    : <>Must be {passwordMinLength}-{passwordMaxLength} characters.</>,
+        Uppercase : !!passwordHasUppercase && <>At least one capital letter.</>,
+        Lowercase : !!passwordHasLowercase && <>At least one non-capital letter.</>,
+        Match     : <>Exact match to previous password.</>,
     };
     
     
