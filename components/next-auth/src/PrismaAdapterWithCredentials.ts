@@ -444,7 +444,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 select : {
                     id : true,
                 },
-            }))
+            }));
         },
         checkEmailAvailability     : async (email              : string                          ) => {
             return !(await prisma.user.findUnique({
@@ -454,7 +454,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 select : {
                     id : true,
                 },
-            }))
+            }));
         },
     };
 };
