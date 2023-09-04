@@ -265,7 +265,7 @@ export const TabSignIn = (props: TabSignInProps) => {
                     
                     
                     // validations:
-                    isValid      : passwordInputComponent.props.isValid      ?? passwordValid,
+                    isValid      : passwordInputComponent.props.isValid      ?? (passwordValid === true),
                     required     : passwordInputComponent.props.required     ?? true,
                     
                     

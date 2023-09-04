@@ -73,6 +73,8 @@ import {
     invalidSelector,
     getAuthErrorDescription,
     resolveProviderName as defaultResolveProviderName,
+    
+    isClientError,
 }                           from '../utilities.js'
 import {
     // hooks:
@@ -715,8 +717,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     method : 'GET',
                     signal : abortController.signal,
                 });
-                if (!response.ok) throw Error();
-                const data = await response.json();
+                if (!response.ok) throw Error(response.statusText, { cause: response });
                 if (!isMounted.current) return; // unmounted => abort
                 
                 
@@ -726,11 +727,11 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 
                 // save the success:
-                if (!abortController.signal.aborted) setEmailValidAvailable(!!data.ok);
+                if (!abortController.signal.aborted) setEmailValidAvailable(true);
             }
-            catch { // catch any errors
+            catch (error) {
                 // save the failure:
-                if (!abortController.signal.aborted) setEmailValidAvailable('error');
+                if (!abortController.signal.aborted) setEmailValidAvailable(isClientError(error) ? false : 'error');
             } // try
         })();
         
@@ -781,8 +782,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     method : 'GET',
                     signal : abortController.signal,
                 });
-                if (!response.ok) throw Error();
-                const data = await response.json();
+                if (!response.ok) throw Error(response.statusText, { cause: response });
                 if (!isMounted.current) return; // unmounted => abort
                 
                 
@@ -792,11 +792,11 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 
                 // save the success:
-                if (!abortController.signal.aborted) setUsernameValidAvailable(!!data.ok);
+                if (!abortController.signal.aborted) setUsernameValidAvailable(true);
             }
-            catch { // catch any errors
+            catch (error) {
                 // save the failure:
-                if (!abortController.signal.aborted) setUsernameValidAvailable('error');
+                if (!abortController.signal.aborted) setUsernameValidAvailable(isClientError(error) ? false : 'error');
             } // try
         })();
         
@@ -847,8 +847,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     method : 'PUT',
                     signal : abortController.signal,
                 });
-                if (!response.ok) throw Error();
-                const data = await response.json();
+                if (!response.ok) throw Error(response.statusText, { cause: response });
                 if (!isMounted.current) return; // unmounted => abort
                 
                 
@@ -858,11 +857,11 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 
                 // save the success:
-                if (!abortController.signal.aborted) setUsernameValidNotProhibited(!!data.ok);
+                if (!abortController.signal.aborted) setUsernameValidNotProhibited(true);
             }
-            catch { // catch any errors
+            catch (error) {
                 // save the failure:
-                if (!abortController.signal.aborted) setUsernameValidNotProhibited('error');
+                if (!abortController.signal.aborted) setUsernameValidNotProhibited(isClientError(error) ? false : 'error');
             } // try
         })();
         
@@ -878,7 +877,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     useEffect(() => {
         // conditions:
         if (
-            !isSignUpSection
+            (!isSignUpSection && !isResetSection)
             ||
             !password
             ||
@@ -911,8 +910,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     method : 'PUT',
                     signal : abortController.signal,
                 });
-                if (!response.ok) throw Error();
-                const data = await response.json();
+                if (!response.ok) throw Error(response.statusText, { cause: response });
                 if (!isMounted.current) return; // unmounted => abort
                 
                 
@@ -922,11 +920,11 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 
                 
                 // save the success:
-                if (!abortController.signal.aborted) setPasswordValidNotProhibited(!!data.ok);
+                if (!abortController.signal.aborted) setPasswordValidNotProhibited(true);
             }
-            catch { // catch any errors
+            catch (error) {
                 // save the failure:
-                if (!abortController.signal.aborted) setPasswordValidNotProhibited('error');
+                if (!abortController.signal.aborted) setPasswordValidNotProhibited(isClientError(error) ? false : 'error');
             } // try
         })();
         

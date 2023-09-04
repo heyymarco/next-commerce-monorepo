@@ -91,6 +91,7 @@ import {
     usernameValidationPath as defaultUsernameValidationPath,
     emailValidationPath    as defaultEmailValidationPath,
     passwordValidationPath as defaultPasswordValidationPath,
+    registerPath           as defaultRegisterPath,
 }                           from './api-paths.js'
 
 
@@ -586,8 +587,10 @@ If the problem still persists, please contact our technical support.`,
     };
     const checkEmailAvailabilityRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'GET')                  return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (path) {
+            if (req.method !== 'GET')                  return false; // ignore
+            if (context.params.nextauth?.[0] !== path) return false; // ignore
+        } // if
         
         
         
@@ -634,7 +637,7 @@ If the problem still persists, please contact our technical support.`,
             if (!result) {
                 return NextResponse.json({
                     error: `The email "${email}" is already taken.`,
-                }); // handled with success
+                }, { status: 409 }); // handled with error
             } // if
             
             
@@ -659,8 +662,10 @@ If the problem still persists, please contact our technical support.`,
     };
     const checkUsernameAvailabilityRouteHandler  = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'GET')                  return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (path) {
+            if (req.method !== 'GET')                  return false; // ignore
+            if (context.params.nextauth?.[0] !== path) return false; // ignore
+        } // if
         
         
         
@@ -707,7 +712,7 @@ If the problem still persists, please contact our technical support.`,
             if (!result) {
                 return NextResponse.json({
                     error: `The username "${username}" is already taken.`,
-                }); // handled with success
+                }, { status: 409 }); // handled with error
             } // if
             
             
@@ -732,8 +737,10 @@ If the problem still persists, please contact our technical support.`,
     };
     const checkUsernameNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'PUT')                  return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (path) {
+            if (req.method !== 'PUT')                  return false; // ignore
+            if (context.params.nextauth?.[0] !== path) return false; // ignore
+        } // if
         
         
         
@@ -789,7 +796,7 @@ If the problem still persists, please contact our technical support.`,
         })()) {
             return NextResponse.json({
                 error: `The username "${username}" is prohibited.`,
-            }); // handled with success
+            }, { status: 409 }); // handled with error
         } // if
         
         
@@ -801,8 +808,10 @@ If the problem still persists, please contact our technical support.`,
     };
     const checkPasswordNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
-        if (req.method !== 'PUT')                  return false; // ignore
-        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        if (path) {
+            if (req.method !== 'PUT')                  return false; // ignore
+            if (context.params.nextauth?.[0] !== path) return false; // ignore
+        } // if
         
         
         
@@ -853,7 +862,7 @@ If the problem still persists, please contact our technical support.`,
         })()) {
             return NextResponse.json({
                 error: `The password "${password}" is prohibited.`,
-            }); // handled with success
+            }, { status: 409 }); // handled with error
         } // if
         
         
