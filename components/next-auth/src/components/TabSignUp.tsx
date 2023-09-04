@@ -54,10 +54,21 @@ import {
 
 // internals:
 import {
+    // types:
+    ValidityStatus,
+    
+    
+    
     // states:
     useSignInState,
 }                           from './states/signInState.js'
 import {
+    // utilities:
+    getValidityTheme,
+    getValidityIcon,
+    
+    
+    
     // handlers:
     handlePreventSubmit,
 }                           from './utilities.js'
@@ -457,7 +468,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // validations:
-                    isValid      : usernameInputComponent.props.isValid      ?? usernameValid,
+                    isValid      : usernameInputComponent.props.isValid      ?? (usernameValid === true),
                     required     : usernameInputComponent.props.required     ?? true,
                     
                     
@@ -567,7 +578,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`fullnameValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`fullnameValid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -582,7 +593,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                 
                                 
                                 // variants:
-                                theme : fullnameValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : fullnameValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -593,7 +604,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : fullnameValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : fullnameValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;
@@ -634,7 +645,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`emailValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`emailValid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -649,7 +660,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                 
                                 
                                 // variants:
-                                theme : emailValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : emailValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -660,7 +671,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : emailValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : emailValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;
@@ -701,7 +712,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`usernameValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`usernameValid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -716,7 +727,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                 
                                 
                                 // variants:
-                                theme : usernameValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : usernameValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -727,7 +738,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : usernameValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : usernameValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;
@@ -768,7 +779,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`passwordValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`passwordValid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -783,7 +794,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                 
                                 
                                 // variants:
-                                theme : passwordValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : passwordValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -794,7 +805,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : passwordValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : passwordValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;
@@ -835,7 +846,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`password2Valid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`password2Valid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -850,7 +861,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                 
                                 
                                 // variants:
-                                theme : password2ValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : password2ValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -861,7 +872,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : password2ValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : password2ValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;

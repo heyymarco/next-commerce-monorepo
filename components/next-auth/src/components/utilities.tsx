@@ -12,6 +12,18 @@ import type {
     BuiltInProviderType,
 }                           from 'next-auth/providers'
 
+// reusable-ui core:
+import type {
+    // color options of UI:
+    ThemeName,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
+// reusable-ui components:
+import type {
+    // simple-components:
+    IconProps,
+}                           from '@reusable-ui/components'      // a set of official Reusable-UI components
+
 
 
 // utilities:
@@ -50,6 +62,24 @@ export const getAuthErrorDescription = (errorCode: string): React.ReactNode => {
 
 export const resolveProviderName = (oAuthProvider: BuiltInProviderType): string => {
     return oAuthProvider.replace(/((?:^| )[a-z])/g, (found) => found.toUpperCase())
+};
+
+export const getValidityTheme = (isValid: boolean|'unknown'|'loading'|'error'|undefined): ThemeName => {
+    switch (isValid) {
+        case true      : return 'success';
+        case false     : return 'danger';
+        case 'unknown' : return 'danger';
+        default        : return 'secondary';
+    } // switch
+};
+export const getValidityIcon  = (isValid: boolean|'unknown'|'loading'|'error'|undefined): IconProps['icon'] => {
+    switch (isValid) {
+        case true      : return 'check';
+        case false     : return 'error_outline';
+        case 'loading' : return 'busy';
+        case 'unknown' : return 'error_outline';
+        default        : return 'help_outline';
+    } // switch
 };
 
 

@@ -87,7 +87,7 @@ import type {
 
 
 
-// contexts:
+// types:
 export type SignInSection =
     | 'signUp'
     | 'signIn'
@@ -99,6 +99,15 @@ export type BusyState =
     | BuiltInProviderType // busy: login with ...
     | 'recover'           // busy: recover
     | 'reset'             // busy: reset
+export type ValidityStatus =
+    |boolean
+    |'unknown'
+    |'loading'
+    |'error'
+
+
+
+// contexts:
 export interface SignInState {
     // constraints:
     fullnameMinLength       : number
@@ -167,10 +176,10 @@ export interface SignInState {
     username                : string
     usernameHandlers        : FieldHandlers<HTMLInputElement>
     usernameFocused         : boolean
-    usernameValid           : boolean
+    usernameValid           : ValidityStatus
     usernameValidLength     : boolean
     usernameValidFormat     : boolean
-    usernameValidAvailable  : boolean
+    usernameValidAvailable  : ValidityStatus
     
     usernameOrEmailRef      : React.MutableRefObject<HTMLInputElement|null>
     usernameOrEmail         : string
@@ -377,7 +386,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const resolveProviderName = useEvent<Required<SignInStateProps>['resolveProviderName']>((oAuthProvider) => { // make a stable ref
         return (resolveProviderNameUnstable ?? defaultResolveProviderName)(oAuthProvider);
     });
-    const resetPath           = `${basePath}/reset`;
+    const resetPasswordPath        = `${basePath}/reset`;
+    const usernameAvailabilityPath = `${basePath}/check-username`;
     
     
     
@@ -504,7 +514,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     const usernameValidLength     = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
     const usernameValidFormat     = !isDataEntry ? true                    : !!username.match(usernameFormat);
-    const usernameValidAvailable  = true;
+    const [usernameValidAvailable, setUsernameValidAvailable] = useState<ValidityStatus>('unknown');
     const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidAvailable;
     
     const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
@@ -597,7 +607,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         (async () => {
             // attempts validate password reset:
             try {
-                const response = await fetch(`${resetPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`, {
+                const response = await fetch(`${resetPasswordPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`, {
                     method : 'GET',
                 });
                 if (!response.ok) throw Error(response.statusText, { cause: response });
@@ -645,6 +655,71 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             } // try
         })();
     }, [resetPasswordToken, tokenVerified]);
+    
+    // validate username availability:
+    useEffect(() => {
+        // conditions:
+        if (
+            !isSignUpSection
+            ||
+            !username
+            ||
+            !usernameValidLength
+            ||
+            !usernameValidFormat
+        ) {
+            setUsernameValidAvailable('unknown');
+            return;
+        } // if
+        
+        
+        
+        // actions:
+        const abortController = new AbortController();
+        (async () => {
+            // attempts validate username availability:
+            try {
+                // delay a brief moment, waiting for the user typing:
+                await new Promise<void>((resolved) => {
+                    setTimeout(() => {
+                        resolved();
+                    }, 500);
+                });
+                if (abortController.signal.aborted) return;
+                
+                
+                
+                setUsernameValidAvailable('loading');
+                const response = await fetch(`${usernameAvailabilityPath}?username=${encodeURIComponent(username)}`, {
+                    method : 'GET',
+                    signal : abortController.signal,
+                });
+                if (!response.ok) throw Error();
+                const data = await response.json();
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // success
+                
+                
+                
+                // save the success:
+                if (!abortController.signal.aborted) setUsernameValidAvailable(!!data.ok);
+            }
+            catch { // catch any errors
+                // save the failure:
+                if (!abortController.signal.aborted) setUsernameValidAvailable('error');
+            } // try
+        })();
+        
+        
+        
+        // cleanups:
+        return () => {
+            abortController.abort();
+        };
+    }, [isSignUpSection, username, usernameValidLength, usernameValidFormat]);
     
     // focus on email field when the section is 'signUp':
     useEffect(() => {
@@ -873,7 +948,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         // attempts request recover password:
         setIsBusy('recover'); // mark as busy
         try {
-            const response = await fetch(resetPath, {
+            const response = await fetch(resetPasswordPath, {
                 method  : 'POST',
                 headers : {
                     'Content-Type' : 'application/json',
@@ -956,7 +1031,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         // attempts apply password reset:
         setIsBusy('reset'); // mark as busy
         try {
-            const response = await fetch(resetPath, {
+            const response = await fetch(resetPasswordPath, {
                 method  : 'PATCH',
                 headers : {
                     'Content-Type' : 'application/json',

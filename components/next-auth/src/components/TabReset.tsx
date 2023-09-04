@@ -65,10 +65,21 @@ import {
 
 // internals:
 import {
+    // types:
+    ValidityStatus,
+    
+    
+    
     // states:
     useSignInState,
 }                           from './states/signInState.js'
 import {
+    // utilities:
+    getValidityTheme,
+    getValidityIcon,
+    
+    
+    
     // handlers:
     handlePreventSubmit,
 }                           from './utilities.js'
@@ -380,7 +391,7 @@ export const TabReset = (props: TabResetProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`passwordValid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`passwordValid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -395,7 +406,7 @@ export const TabReset = (props: TabResetProps) => {
                                 
                                 
                                 // variants:
-                                theme : passwordValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : passwordValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -406,7 +417,7 @@ export const TabReset = (props: TabResetProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : passwordValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : passwordValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;
@@ -447,7 +458,7 @@ export const TabReset = (props: TabResetProps) => {
                         
                         
                         // fn props:
-                        const isValid = (specificValidations as any)?.[`password2Valid${validationType}`] as (boolean|undefined);
+                        const isValid = (specificValidations as any)?.[`password2Valid${validationType}`] as (ValidityStatus|undefined);
                         if (isValid === undefined) return null;
                         
                         
@@ -462,7 +473,7 @@ export const TabReset = (props: TabResetProps) => {
                                 
                                 
                                 // variants:
-                                theme : password2ValidationListItemComponent.props.theme ?? (isValid ? 'success' : 'danger'),
+                                theme : password2ValidationListItemComponent.props.theme ?? getValidityTheme(isValid),
                             },
                             
                             
@@ -473,7 +484,7 @@ export const TabReset = (props: TabResetProps) => {
                                     // props:
                                     {
                                         // appearances:
-                                        icon : password2ValidationIconComponent.props.icon ?? (isValid ? 'check' : 'error_outline'),
+                                        icon : password2ValidationIconComponent.props.icon ?? getValidityIcon(isValid),
                                     },
                                 )}
                                 &nbsp;
