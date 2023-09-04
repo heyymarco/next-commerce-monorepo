@@ -77,7 +77,7 @@ export const getValidityIcon  = (isValid: boolean|'unknown'|'loading'|'error'|un
         case true      : return 'check';
         case false     : return 'error_outline';
         case 'loading' : return 'busy';
-        case 'unknown' : return 'error_outline';
+        case 'unknown' : return 'help_outline';
         default        : return 'help_outline';
     } // switch
 };

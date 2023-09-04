@@ -167,10 +167,10 @@ export interface SignInState {
     email                   : string
     emailHandlers           : FieldHandlers<HTMLInputElement>
     emailFocused            : boolean
-    emailValid              : boolean
+    emailValid              : ValidityStatus
     emailValidLength        : boolean
     emailValidFormat        : boolean
-    emailValidAvailable     : boolean
+    emailValidAvailable     : ValidityStatus
     
     usernameRef             : React.MutableRefObject<HTMLInputElement|null>
     username                : string
@@ -286,19 +286,19 @@ const SignInStateContext = createContext<SignInState>({
     email                   : '',
     emailHandlers           : { onChange: () => {} },
     emailFocused            : false,
-    emailValid              : false,
+    emailValid              : 'unknown',
     emailValidLength        : false,
     emailValidFormat        : false,
-    emailValidAvailable     : false,
+    emailValidAvailable     : 'unknown',
     
     usernameRef             : { current: null },
     username                : '',
     usernameHandlers        : { onChange: () => {} },
     usernameFocused         : false,
-    usernameValid           : false,
+    usernameValid           : 'unknown',
     usernameValidLength     : false,
     usernameValidFormat     : false,
-    usernameValidAvailable  : false,
+    usernameValidAvailable  : 'unknown',
     
     usernameOrEmailRef      : { current: null },
     usernameOrEmail         : '',
@@ -387,6 +387,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         return (resolveProviderNameUnstable ?? defaultResolveProviderName)(oAuthProvider);
     });
     const resetPasswordPath        = `${basePath}/reset`;
+    const emailAvailabilityPath    = `${basePath}/check-email`;
     const usernameAvailabilityPath = `${basePath}/check-username`;
     
     
@@ -509,7 +510,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     const emailValidLength        = !isDataEntry ? (email.length >= 1)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
     const emailValidFormat        = !!email.match(emailFormat);
-    const emailValidAvailable     = true;
+    const [emailValidAvailable   , setEmailValidAvailable   ] = useState<ValidityStatus>('unknown');
     const emailValid              = emailValidLength && emailValidFormat && emailValidAvailable;
     
     const usernameValidLength     = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
@@ -656,6 +657,72 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         })();
     }, [resetPasswordToken, tokenVerified]);
     
+    // validate email availability:
+    useEffect(() => {
+        // conditions:
+        if (
+            !isSignUpSection
+            ||
+            !email
+            ||
+            !emailValidLength
+            ||
+            !emailValidFormat
+        ) {
+            setEmailValidAvailable('unknown');
+            return;
+        } // if
+        
+        
+        
+        // actions:
+        const abortController = new AbortController();
+        (async () => {
+            // attempts validate email availability:
+            try {
+                // delay a brief moment, waiting for the user typing:
+                setEmailValidAvailable('unknown');
+                await new Promise<void>((resolved) => {
+                    setTimeout(() => {
+                        resolved();
+                    }, 500);
+                });
+                if (abortController.signal.aborted) return;
+                
+                
+                
+                setEmailValidAvailable('loading');
+                const response = await fetch(`${emailAvailabilityPath}?email=${encodeURIComponent(email)}`, {
+                    method : 'GET',
+                    signal : abortController.signal,
+                });
+                if (!response.ok) throw Error();
+                const data = await response.json();
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // success
+                
+                
+                
+                // save the success:
+                if (!abortController.signal.aborted) setEmailValidAvailable(!!data.ok);
+            }
+            catch { // catch any errors
+                // save the failure:
+                if (!abortController.signal.aborted) setEmailValidAvailable('error');
+            } // try
+        })();
+        
+        
+        
+        // cleanups:
+        return () => {
+            abortController.abort();
+        };
+    }, [isSignUpSection, email, emailValidLength, emailValidFormat]);
+    
     // validate username availability:
     useEffect(() => {
         // conditions:
@@ -680,6 +747,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             // attempts validate username availability:
             try {
                 // delay a brief moment, waiting for the user typing:
+                setUsernameValidAvailable('unknown');
                 await new Promise<void>((resolved) => {
                     setTimeout(() => {
                         resolved();

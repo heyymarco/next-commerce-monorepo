@@ -316,7 +316,7 @@ export const TabReset = (props: TabResetProps) => {
                     
                     
                     // validations:
-                    isValid      : passwordInputComponent.props.isValid      ?? passwordValid,
+                    isValid      : passwordInputComponent.props.isValid      ?? (passwordValid === true),
                     required     : passwordInputComponent.props.required     ?? true,
                     
                     
@@ -351,7 +351,7 @@ export const TabReset = (props: TabResetProps) => {
                     
                     
                     // validations:
-                    isValid      : password2InputComponent.props.isValid      ?? password2Valid,
+                    isValid      : password2InputComponent.props.isValid      ?? (password2Valid === true),
                     required     : password2InputComponent.props.required     ?? true,
                     
                     

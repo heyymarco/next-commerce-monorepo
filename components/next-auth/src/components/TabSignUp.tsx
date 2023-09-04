@@ -398,7 +398,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // validations:
-                    isValid      : fullnameInputComponent.props.isValid      ?? fullnameValid,
+                    isValid      : fullnameInputComponent.props.isValid      ?? (fullnameValid === true),
                     required     : fullnameInputComponent.props.required     ?? true,
                     
                     
@@ -433,7 +433,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // validations:
-                    isValid      : emailInputComponent.props.isValid      ?? emailValid,
+                    isValid      : emailInputComponent.props.isValid      ?? (emailValid === true),
                     required     : emailInputComponent.props.required     ?? true,
                     
                     
@@ -503,7 +503,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // validations:
-                    isValid      : passwordInputComponent.props.isValid      ?? passwordValid,
+                    isValid      : passwordInputComponent.props.isValid      ?? (passwordValid === true),
                     required     : passwordInputComponent.props.required     ?? true,
                     
                     
@@ -538,7 +538,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                     
                     
                     // validations:
-                    isValid      : password2InputComponent.props.isValid      ?? password2Valid,
+                    isValid      : password2InputComponent.props.isValid      ?? (password2Valid === true),
                     required     : password2InputComponent.props.required     ?? true,
                     
                     

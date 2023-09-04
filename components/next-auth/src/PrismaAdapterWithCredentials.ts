@@ -72,6 +72,7 @@ export interface AdapterWithCredentials
     getRoleByUserEmail         : (userEmail          : string                                                               ) => Awaitable<AdapterRole|null>
     
     checkUsernameAvailability  : (username           : string                                                               ) => Awaitable<boolean>
+    checkEmailAvailability     : (email              : string                                                               ) => Awaitable<boolean>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
@@ -439,6 +440,16 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             return !(await prisma.credentials.findUnique({
                 where  : {
                     username : username,
+                },
+                select : {
+                    id : true,
+                },
+            }))
+        },
+        checkEmailAvailability     : async (email              : string                          ) => {
+            return !(await prisma.user.findUnique({
+                where  : {
+                    email : email,
                 },
                 select : {
                     id : true,

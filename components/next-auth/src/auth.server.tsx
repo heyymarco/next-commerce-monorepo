@@ -578,6 +578,79 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
+    const checkEmailAvailabilityRouteHandler    = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // filters the request type:
+        if (req.method !== 'GET')                  return false; // ignore
+        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        
+        
+        
+        // TODO: remove slow network simulator:
+        await new Promise<void>((resolved) => {
+            setTimeout(() => {
+                resolved();
+            }, 2000);
+        });
+        
+        
+        
+        // validate the request parameter(s):
+        const {
+            email,
+        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        if ((typeof(email) !== 'string') || !email) {
+            return NextResponse.json({
+                error: 'The required email is not provided.',
+            }, { status: 400 }); // handled with error
+        } // if
+        const emailMinLength = credentialsConfig.EMAIL_MIN_LENGTH;
+        if ((typeof(emailMinLength) === 'number') && Number.isFinite(emailMinLength) && (email.length < emailMinLength)) {
+            return NextResponse.json({
+                error: `The email is too short. Minimum is ${emailMinLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        const emailMaxLength = credentialsConfig.EMAIL_MAX_LENGTH;
+        if ((typeof(emailMaxLength) === 'number') && Number.isFinite(emailMaxLength) && (email.length > emailMaxLength)) {
+            return NextResponse.json({
+                error: `The email is too long. Maximum is ${emailMaxLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        if (!email.match(credentialsConfig.EMAIL_FORMAT)) {
+            return NextResponse.json({
+                error: `The email is not well formatted.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        
+        
+        
+        try {
+            const result = await adapter.checkEmailAvailability(email);
+            if (!result) {
+                return NextResponse.json({
+                    error: `The email "${email}" is already taken.`,
+                }, { status: 404 }); // handled with error
+            } // if
+            
+            
+            
+            return NextResponse.json({
+                ok       : true,
+                message  : `The email "${email}" can be used.`,
+            }); // handled with success
+        }
+        catch (error: any) {
+            return NextResponse.json({
+                error:
+`Oops, there was an error for checking email availability.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
+            }, { status: 500 }); // handled with error
+        } // try
+    };
     const checkUsernameAvailabilityRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // filters the request type:
         if (req.method !== 'GET')                  return false; // ignore
@@ -656,12 +729,14 @@ If the problem still persists, please contact our technical support.`,
     interface CustomRouteHandlerOptions {
         resetPasswordPath        ?: string
         usernameAvailabilityPath ?: string
+        emailAvailabilityPath    ?: string
     }
     const customRouteHandler                    = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
         // options:
         const {
             resetPasswordPath        = 'reset',
             usernameAvailabilityPath = 'check-username',
+            emailAvailabilityPath    = 'check-email',
         } = options ?? {};
         
         
@@ -672,6 +747,8 @@ If the problem still persists, please contact our technical support.`,
             await validatePasswordResetRouteHandler(req, context, resetPasswordPath)
             ||
             await applyPasswordResetRouteHandler(req, context, resetPasswordPath)
+            ||
+            await checkEmailAvailabilityRouteHandler(req, context, emailAvailabilityPath)
             ||
             await checkUsernameAvailabilityRouteHandler(req, context, usernameAvailabilityPath)
         );
