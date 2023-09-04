@@ -392,8 +392,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         return (resolveProviderNameUnstable ?? defaultResolveProviderName)(oAuthProvider);
     });
     const resetPasswordPath        = `${basePath}/${defaultResetPasswordPath}`;
-    const emailAvailabilityPath    = `${basePath}/${defaultUsernameAvailabilityPath}`;
-    const usernameAvailabilityPath = `${basePath}/${defaultEmailAvailabilityPath}`;
+    const usernameAvailabilityPath = `${basePath}/${defaultUsernameAvailabilityPath}`;
+    const emailAvailabilityPath    = `${basePath}/${defaultEmailAvailabilityPath}`;
     
     
     
