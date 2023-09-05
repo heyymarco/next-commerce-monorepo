@@ -533,16 +533,16 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     const emailValidLength           = !isDataEntry ? (email.length >= 5)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
     const emailValidFormat           = !!email.match(emailFormat);
-    const [emailValidAvailableSub       , setEmailValidAvailable       ] = useState<ValidityStatus>('unknown');
-    const emailValidAvailable        = !isDataEntry ? true                    : emailValidAvailableSub;
+    const [emailValidAvailableRaw       , setEmailValidAvailable       ] = useState<ValidityStatus>('unknown');
+    const emailValidAvailable        = !isDataEntry ? true                    : emailValidAvailableRaw;
     const emailValid                 = emailValidLength && emailValidFormat && emailValidAvailable;
     
     const usernameValidLength        = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
     const usernameValidFormat        = !isDataEntry ? true                    : !!username.match(usernameFormat);
-    const [usernameValidAvailableSub    , setUsernameValidAvailable    ] = useState<ValidityStatus>('unknown');
-    const usernameValidAvailable     = !isDataEntry ? true                    : usernameValidAvailableSub;
-    const [usernameValidNotProhibitedSub, setUsernameValidNotProhibited] = useState<ValidityStatus>('unknown');
-    const usernameValidNotProhibited = !isDataEntry ? true                    : usernameValidNotProhibitedSub;
+    const [usernameValidAvailableRaw    , setUsernameValidAvailable    ] = useState<ValidityStatus>('unknown');
+    const usernameValidAvailable     = !isDataEntry ? true                    : usernameValidAvailableRaw;
+    const [usernameValidNotProhibitedRaw, setUsernameValidNotProhibited] = useState<ValidityStatus>('unknown');
+    const usernameValidNotProhibited = !isDataEntry ? true                    : usernameValidNotProhibitedRaw;
     const usernameValid              = usernameValidLength && usernameValidFormat && usernameValidAvailable && usernameValidNotProhibited;
     
     const usernameOrEmailValid       = (usernameOrEmail.length >= 1);
@@ -550,8 +550,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const passwordValidLength        = !isDataEntry ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
     const passwordValidUppercase     = !isDataEntry ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
     const passwordValidLowercase     = !isDataEntry ? true                    : (!passwordHasLowercase || !!password.match(/[a-z]/));
-    const [passwordValidNotProhibitedSub, setPasswordValidNotProhibited] = useState<ValidityStatus>('unknown');
-    const passwordValidNotProhibited = !isDataEntry ? true                    : passwordValidNotProhibitedSub;
+    const [passwordValidNotProhibitedRaw, setPasswordValidNotProhibited] = useState<ValidityStatus>('unknown');
+    const passwordValidNotProhibited = !isDataEntry ? true                    : passwordValidNotProhibitedRaw;
     const passwordValid              = passwordValidLength && passwordValidUppercase && passwordValidLowercase && passwordValidNotProhibited;
     
     const password2ValidLength       = !isDataEntry ? (password2.length >= 1) : ((password2.length >= passwordMinLength) && (password2.length <= passwordMaxLength));
