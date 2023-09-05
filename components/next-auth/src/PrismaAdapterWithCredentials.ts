@@ -73,12 +73,14 @@ export interface AdapterWithCredentials
     
     checkUsernameAvailability  : (username           : string                                                               ) => Awaitable<boolean>
     checkEmailAvailability     : (email              : string                                                               ) => Awaitable<boolean>
+    
+    registerUser               : (fullname: string, email : string, username: string, password: string                      ) => Awaitable<string>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
         ...PrismaAdapter(prisma),
         
-        validateCredentials        : async (credentials                                 , options) => {
+        validateCredentials        : async (credentials                         , options) => {
             // options:
             const {
                 now                 = new Date(),
@@ -211,7 +213,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 return restUser;
             });
         },
-        createResetPasswordToken   : async (usernameOrEmail                             , options) => {
+        createResetPasswordToken   : async (usernameOrEmail                     , options) => {
             // options:
             const {
                 now = new Date(),
@@ -301,7 +303,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 user,
             };
         },
-        validateResetPasswordToken : async (resetPasswordToken: string                  , options) => {
+        validateResetPasswordToken : async (resetPasswordToken                  , options) => {
             // options:
             const {
                 now = new Date(),
@@ -333,7 +335,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 username : user.credentials?.username || null,
             };
         },
-        applyResetPasswordToken    : async (resetPasswordToken: string, password: string, options) => {
+        applyResetPasswordToken    : async (resetPasswordToken, password: string, options) => {
             // options:
             const {
                 now = new Date(),
@@ -405,7 +407,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             });
         },
         
-        getRoleByUserId            : async (userId             : string                          ) => {
+        getRoleByUserId            : async (userId                                       ) => {
             if (!('role' in prisma)) return null;
             
             const user = await prisma.user.findUnique({
@@ -420,7 +422,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             // @ts-ignore
             return user?.role ?? null;
         },
-        getRoleByUserEmail         : async (userEmail          : string                          ) => {
+        getRoleByUserEmail         : async (userEmail                                    ) => {
             if (!('role' in prisma)) return null;
             
             const user = await prisma.user.findUnique({
@@ -436,7 +438,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             return user?.role ?? null;
         },
         
-        checkUsernameAvailability  : async (username           : string                          ) => {
+        checkUsernameAvailability  : async (username                                     ) => {
             return !(await prisma.credentials.findUnique({
                 where  : {
                     username : username,
@@ -446,7 +448,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 },
             }));
         },
-        checkEmailAvailability     : async (email              : string                          ) => {
+        checkEmailAvailability     : async (email                                        ) => {
             return !(await prisma.user.findUnique({
                 where  : {
                     email : email,
@@ -455,6 +457,40 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                     id : true,
                 },
             }));
+        },
+        
+        registerUser               : async (fullname, email, username, password          ) => {
+            // generate the hashed password:
+            const hashedPassword = await bcrypt.hash(password, 10);
+            
+            
+            
+            const data = {
+                name          : fullname,
+                email         : email,
+                emailVerified : null,
+                credentials   : {
+                    create    : {
+                        failuresAttemps : null,
+                        lockedAt        : null,
+                        
+                        username        : username,
+                        password        : hashedPassword,
+                    },
+                },
+            };
+            const user = await prisma.user.upsert({
+                where  : {
+                    email         : email,
+                    emailVerified : null,
+                },
+                create : data,
+                update : data,
+                select : {
+                    id : true,
+                },
+            });
+            return user.id;
         },
     };
 };

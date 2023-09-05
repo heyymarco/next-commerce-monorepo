@@ -87,12 +87,33 @@ import type {
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
 import {
+    signUpPath             as defaultSignUpPath,
     resetPasswordPath      as defaultResetPasswordPath,
     usernameValidationPath as defaultUsernameValidationPath,
     emailValidationPath    as defaultEmailValidationPath,
     passwordValidationPath as defaultPasswordValidationPath,
-    registerPath           as defaultRegisterPath,
 }                           from './api-paths.js'
+
+
+
+// utilities:
+const dataKey = Symbol();
+const getRequestData = async (req: Request): Promise<any> => {
+    switch (req.method) {
+        case 'GET'   :
+        case 'PUT'   :
+            return Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        
+        case 'POST'  :
+        case 'PATCH' : {
+            if (dataKey in req) return req[dataKey];
+            
+            const data = await req.json();
+            (req as any)[dataKey] = data;
+            return data;
+        }
+    } // switch
+};
 
 
 
@@ -326,7 +347,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         // validate the request parameter(s):
         const {
             username,
-        } = await req.json();
+        } = await getRequestData(req);
         if ((typeof(username) !== 'string') || !username) {
             return NextResponse.json({
                 error: 'The required username or email is not provided.',
@@ -453,7 +474,7 @@ If the problem still persists, please contact our technical support.`,
         // validate the request parameter(s):
         const {
             resetPasswordToken,
-        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        } = await getRequestData(req);
         if ((typeof(resetPasswordToken) !== 'string') || !resetPasswordToken) {
             return NextResponse.json({
                 error: 'The required reset password token is not provided.',
@@ -512,7 +533,7 @@ If the problem still persists, please contact our technical support.`,
         const {
             resetPasswordToken,
             password,
-        } = await req.json();
+        } = await getRequestData(req);
         if ((typeof(resetPasswordToken) !== 'string') || !resetPasswordToken) {
             return NextResponse.json({
                 error: 'The required reset password token is not provided.',
@@ -594,19 +615,10 @@ If the problem still persists, please contact our technical support.`,
         
         
         
-        // TODO: remove slow network simulator:
-        await new Promise<void>((resolved) => {
-            setTimeout(() => {
-                resolved();
-            }, 2000);
-        });
-        
-        
-        
         // validate the request parameter(s):
         const {
             email,
-        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        } = await getRequestData(req);
         if ((typeof(email) !== 'string') || !email) {
             return NextResponse.json({
                 error: 'The required email is not provided.',
@@ -669,19 +681,10 @@ If the problem still persists, please contact our technical support.`,
         
         
         
-        // TODO: remove slow network simulator:
-        await new Promise<void>((resolved) => {
-            setTimeout(() => {
-                resolved();
-            }, 2000);
-        });
-        
-        
-        
         // validate the request parameter(s):
         const {
             username,
-        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        } = await getRequestData(req);
         if ((typeof(username) !== 'string') || !username) {
             return NextResponse.json({
                 error: 'The required username is not provided.',
@@ -744,19 +747,10 @@ If the problem still persists, please contact our technical support.`,
         
         
         
-        // TODO: remove slow network simulator:
-        await new Promise<void>((resolved) => {
-            setTimeout(() => {
-                resolved();
-            }, 2000);
-        });
-        
-        
-        
         // validate the request parameter(s):
         const {
             username,
-        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        } = await getRequestData(req);
         if ((typeof(username) !== 'string') || !username) {
             return NextResponse.json({
                 error: 'The required username is not provided.',
@@ -815,19 +809,10 @@ If the problem still persists, please contact our technical support.`,
         
         
         
-        // TODO: remove slow network simulator:
-        await new Promise<void>((resolved) => {
-            setTimeout(() => {
-                resolved();
-            }, 2000);
-        });
-        
-        
-        
         // validate the request parameter(s):
         const {
             password,
-        } = Object.fromEntries(new URL(req.url, 'https://localhost/').searchParams.entries());
+        } = await getRequestData(req);
         if ((typeof(password) !== 'string') || !password) {
             return NextResponse.json({
                 error: 'The required password is not provided.',
@@ -872,6 +857,58 @@ If the problem still persists, please contact our technical support.`,
             message  : `The password "${password}" can be used.`,
         }); // handled with success
     };
+    const signUpRouteHandler                     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // filters the request type:
+        if (req.method !== 'POST')                 return false; // ignore
+        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        
+        
+        
+        // validate the request parameter(s):
+        const validation1 = await checkEmailAvailabilityRouteHandler(req, context, '');
+        if (validation1 && !validation1.ok) return validation1;
+        
+        const validation2 = await checkUsernameAvailabilityRouteHandler(req, context, '');
+        if (validation2 && !validation2.ok) return validation2;
+        
+        const validation3 = await checkUsernameNotProhibitedRouteHandler(req, context, '');
+        if (validation3 && !validation3.ok) return validation3;
+        
+        const validation4 = await checkPasswordNotProhibitedRouteHandler(req, context, '');
+        if (validation4 && !validation4.ok) return validation4;
+        
+        const {
+            fullname,
+            email,
+            username,
+            password,
+        } = await getRequestData(req);
+        
+        
+        
+        try {
+            await adapter.registerUser(fullname, email, username, password);
+            
+            
+            
+            return NextResponse.json({
+                ok       : true,
+                message  : 'The account has been successfully created. Now you can sign in with the new username and password.',
+            }); // handled with success
+        }
+        catch (error: any) {
+            return NextResponse.json({
+                error:
+`Oops, there was an error for resetting your password.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
+            }, { status: 500 }); // handled with error
+        } // try
+    };
     
     // specific next-js /app custom handlers:
     interface CustomRouteHandlerOptions {
@@ -879,6 +916,7 @@ If the problem still persists, please contact our technical support.`,
         usernameValidationPath ?: string
         emailValidationPath    ?: string
         passwordValidationPath ?: string
+        signUpPath           ?: string
     }
     const customRouteHandler                     = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
         // options:
@@ -887,6 +925,7 @@ If the problem still persists, please contact our technical support.`,
             usernameValidationPath = defaultUsernameValidationPath,
             emailValidationPath    = defaultEmailValidationPath,
             passwordValidationPath = defaultPasswordValidationPath,
+            signUpPath           = defaultSignUpPath,
         } = options ?? {};
         
         
@@ -905,6 +944,8 @@ If the problem still persists, please contact our technical support.`,
             await checkUsernameNotProhibitedRouteHandler(req, context, usernameValidationPath)
             ||
             await checkPasswordNotProhibitedRouteHandler(req, context, passwordValidationPath)
+            ||
+            await signUpRouteHandler(req, context, signUpPath)
         );
     };
     

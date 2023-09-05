@@ -236,7 +236,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         
         
         // actions:
-        doSignIn,
+        doSignUp,
     } = signInState;
     const specificValidations = {
         fullnameValid,
@@ -342,7 +342,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
         
         
         // actions:
-        doSignIn();
+        doSignUp();
     });
     const signUpButtonHandleClick         = useMergeEvents(
         // preserves the original `onClick` from `signUpButtonComponent`:

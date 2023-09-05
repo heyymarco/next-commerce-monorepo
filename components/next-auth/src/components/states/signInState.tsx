@@ -86,6 +86,7 @@ import {
     usernameValidationPath as defaultUsernameValidationPath,
     emailValidationPath    as defaultEmailValidationPath,
     passwordValidationPath as defaultPasswordValidationPath,
+    signUpPath             as defaultSignUpPath,
 }                           from '../../api-paths.js'
 
 // configs:
@@ -229,6 +230,7 @@ export interface SignInState {
     
     
     // actions:
+    doSignUp                   : () => Promise<void>
     doSignIn                   : () => Promise<void>
     doSignInWith               : (providerType: BuiltInProviderType) => Promise<void>
     doRecover                  : () => Promise<void>
@@ -352,6 +354,7 @@ const SignInStateContext = createContext<SignInState>({
     
     
     // actions:
+    doSignUp                   : async () => {},
     doSignIn                   : async () => {},
     doSignInWith               : async () => {},
     doRecover                  : async () => {},
@@ -406,6 +409,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const usernameValidationPath = `${basePath}/${defaultUsernameValidationPath}`;
     const emailValidationPath    = `${basePath}/${defaultEmailValidationPath}`;
     const passwordValidationPath = `${basePath}/${defaultPasswordValidationPath}`;
+    const signUpPath             = `${basePath}/${defaultSignUpPath}`;
     
     
     
@@ -425,17 +429,17 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // states:
-    const [section         , setSection         ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
-    const isSignUpSection                         = (section === 'signUp');
-    const isSignInSection                         = (section === 'signIn');
-    const isRecoverSection                        = (section === 'recover');
-    const isResetSection                          = (section === 'reset');
-    const [tokenVerified   , setTokenVerified   ] = useState<null|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : null);
-    const [isSignUpApplied , setIsSignUpApplied ] = useState<boolean>(false);
-    const [isRecoverApplied, setIsRecoverApplied] = useState<boolean>(false);
-    const [isResetApplied  , setIsResetApplied  ] = useState<boolean>(false);
-    const [isBusy          , setIsBusyInternal  ] = useState<BusyState>(false);
-    const isMounted                               = useMountedFlag();
+    const [section          , setSection          ] = useState<SignInSection>(!!resetPasswordTokenRef.current ? 'reset' : 'signIn');
+    const isSignUpSection                           = (section === 'signUp');
+    const isSignInSection                           = (section === 'signIn');
+    const isRecoverSection                          = (section === 'recover');
+    const isResetSection                            = (section === 'reset');
+    const [tokenVerified    , setTokenVerified    ] = useState<null|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : null);
+    const [isSignUpApplied  , setIsSignUpApplied  ] = useState<boolean>(false);
+    const [isRecoverApplied , setIsRecoverApplied ] = useState<boolean>(false);
+    const [isResetApplied   , setIsResetApplied   ] = useState<boolean>(false);
+    const [isBusy           , setIsBusyInternal   ] = useState<BusyState>(false);
+    const isMounted                                 = useMountedFlag();
     
     
     
@@ -499,58 +503,62 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // constraints:
-    const fullnameMinLength       = credentialsConfig.FULLNAME_MIN_LENGTH;
-    const fullnameMaxLength       = credentialsConfig.FULLNAME_MAX_LENGTH;
+    const fullnameMinLength          = credentialsConfig.FULLNAME_MIN_LENGTH;
+    const fullnameMaxLength          = credentialsConfig.FULLNAME_MAX_LENGTH;
     
-    const emailMinLength          = credentialsConfig.EMAIL_MIN_LENGTH;
-    const emailMaxLength          = credentialsConfig.EMAIL_MAX_LENGTH;
-    const emailFormat             = credentialsConfig.EMAIL_FORMAT;
-    const emailFormatHint         = credentialsConfig.EMAIL_FORMAT_HINT;
+    const emailMinLength             = credentialsConfig.EMAIL_MIN_LENGTH;
+    const emailMaxLength             = credentialsConfig.EMAIL_MAX_LENGTH;
+    const emailFormat                = credentialsConfig.EMAIL_FORMAT;
+    const emailFormatHint            = credentialsConfig.EMAIL_FORMAT_HINT;
     
-    const usernameMinLength       = credentialsConfig.USERNAME_MIN_LENGTH;
-    const usernameMaxLength       = credentialsConfig.USERNAME_MAX_LENGTH;
-    const usernameFormat          = credentialsConfig.USERNAME_FORMAT;
-    const usernameFormatHint      = credentialsConfig.USERNAME_FORMAT_HINT;
-    const usernameProhibitedHint  = credentialsConfig.USERNAME_PROHIBITED_HINT;
+    const usernameMinLength          = credentialsConfig.USERNAME_MIN_LENGTH;
+    const usernameMaxLength          = credentialsConfig.USERNAME_MAX_LENGTH;
+    const usernameFormat             = credentialsConfig.USERNAME_FORMAT;
+    const usernameFormatHint         = credentialsConfig.USERNAME_FORMAT_HINT;
+    const usernameProhibitedHint     = credentialsConfig.USERNAME_PROHIBITED_HINT;
     
-    const passwordMinLength       = credentialsConfig.PASSWORD_MIN_LENGTH;
-    const passwordMaxLength       = credentialsConfig.PASSWORD_MAX_LENGTH;
-    const passwordHasUppercase    = credentialsConfig.PASSWORD_HAS_UPPERCASE;
-    const passwordHasLowercase    = credentialsConfig.PASSWORD_HAS_LOWERCASE;
-    const passwordProhibitedHint  = credentialsConfig.PASSWORD_PROHIBITED_HINT;
+    const passwordMinLength          = credentialsConfig.PASSWORD_MIN_LENGTH;
+    const passwordMaxLength          = credentialsConfig.PASSWORD_MAX_LENGTH;
+    const passwordHasUppercase       = credentialsConfig.PASSWORD_HAS_UPPERCASE;
+    const passwordHasLowercase       = credentialsConfig.PASSWORD_HAS_LOWERCASE;
+    const passwordProhibitedHint     = credentialsConfig.PASSWORD_PROHIBITED_HINT;
     
     
     
     // validations:
-    const isDataEntry             = ((section === 'signUp') || (section === 'reset'));
+    const isDataEntry                = ((section === 'signUp') || (section === 'reset'));
     
-    const fullnameValidLength     = !isDataEntry ? (fullname.length >= 1)  : ((fullname.length >= fullnameMinLength) && (fullname.length <= fullnameMaxLength));
-    const fullnameValid           = fullnameValidLength;
+    const fullnameValidLength        = !isDataEntry ? (fullname.length >= 1)  : ((fullname.length >= fullnameMinLength) && (fullname.length <= fullnameMaxLength));
+    const fullnameValid              = fullnameValidLength;
     
-    const emailValidLength        = !isDataEntry ? (email.length >= 1)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
-    const emailValidFormat        = !!email.match(emailFormat);
-    const [emailValidAvailable       , setEmailValidAvailable       ] = useState<ValidityStatus>('unknown');
-    const emailValid              = emailValidLength && emailValidFormat && emailValidAvailable;
+    const emailValidLength           = !isDataEntry ? (email.length >= 5)  : ((email.length >= emailMinLength) && (email.length <= emailMaxLength));
+    const emailValidFormat           = !!email.match(emailFormat);
+    const [emailValidAvailableSub       , setEmailValidAvailable       ] = useState<ValidityStatus>('unknown');
+    const emailValidAvailable        = !isDataEntry ? true                    : emailValidAvailableSub;
+    const emailValid                 = emailValidLength && emailValidFormat && emailValidAvailable;
     
-    const usernameValidLength     = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
-    const usernameValidFormat     = !isDataEntry ? true                    : !!username.match(usernameFormat);
-    const [usernameValidAvailable    , setUsernameValidAvailable    ] = useState<ValidityStatus>('unknown');
-    const [usernameValidNotProhibited, setUsernameValidNotProhibited] = useState<ValidityStatus>('unknown');
-    const usernameValid           = usernameValidLength && usernameValidFormat && usernameValidAvailable && usernameValidNotProhibited;
+    const usernameValidLength        = !isDataEntry ? (username.length >= 1)  : ((username.length >= usernameMinLength) && (username.length <= usernameMaxLength));
+    const usernameValidFormat        = !isDataEntry ? true                    : !!username.match(usernameFormat);
+    const [usernameValidAvailableSub    , setUsernameValidAvailable    ] = useState<ValidityStatus>('unknown');
+    const usernameValidAvailable     = !isDataEntry ? true                    : usernameValidAvailableSub;
+    const [usernameValidNotProhibitedSub, setUsernameValidNotProhibited] = useState<ValidityStatus>('unknown');
+    const usernameValidNotProhibited = !isDataEntry ? true                    : usernameValidNotProhibitedSub;
+    const usernameValid              = usernameValidLength && usernameValidFormat && usernameValidAvailable && usernameValidNotProhibited;
     
-    const usernameOrEmailValid    = (usernameOrEmail.length >= 1);
+    const usernameOrEmailValid       = (usernameOrEmail.length >= 1);
     
-    const passwordValidLength     = !isDataEntry ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
-    const passwordValidUppercase  = !isDataEntry ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
-    const passwordValidLowercase  = !isDataEntry ? true                    : (!passwordHasLowercase || !!password.match(/[a-z]/));
-    const [passwordValidNotProhibited, setPasswordValidNotProhibited] = useState<ValidityStatus>('unknown');
-    const passwordValid           = passwordValidLength && passwordValidUppercase && passwordValidLowercase && passwordValidNotProhibited;
+    const passwordValidLength        = !isDataEntry ? (password.length >= 1)  : ((password.length >= passwordMinLength) && (password.length <= passwordMaxLength));
+    const passwordValidUppercase     = !isDataEntry ? true                    : (!passwordHasUppercase || !!password.match(/[A-Z]/));
+    const passwordValidLowercase     = !isDataEntry ? true                    : (!passwordHasLowercase || !!password.match(/[a-z]/));
+    const [passwordValidNotProhibitedSub, setPasswordValidNotProhibited] = useState<ValidityStatus>('unknown');
+    const passwordValidNotProhibited = !isDataEntry ? true                    : passwordValidNotProhibitedSub;
+    const passwordValid              = passwordValidLength && passwordValidUppercase && passwordValidLowercase && passwordValidNotProhibited;
     
-    const password2ValidLength    = !isDataEntry ? (password2.length >= 1) : ((password2.length >= passwordMinLength) && (password2.length <= passwordMaxLength));
-    const password2ValidUppercase = !isDataEntry ? true                    : (!passwordHasUppercase || !!password2.match(/[A-Z]/));
-    const password2ValidLowercase = !isDataEntry ? true                    : (!passwordHasLowercase || !!password2.match(/[a-z]/));
-    const password2ValidMatch     = !isDataEntry ? true                    : (!!password && (password2 === password));
-    const password2Valid          = password2ValidLength && password2ValidUppercase && password2ValidLowercase && password2ValidMatch;
+    const password2ValidLength       = !isDataEntry ? (password2.length >= 1) : ((password2.length >= passwordMinLength) && (password2.length <= passwordMaxLength));
+    const password2ValidUppercase    = !isDataEntry ? true                    : (!passwordHasUppercase || !!password2.match(/[A-Z]/));
+    const password2ValidLowercase    = !isDataEntry ? true                    : (!passwordHasLowercase || !!password2.match(/[a-z]/));
+    const password2ValidMatch        = !isDataEntry ? true                    : (!!password && (password2 === password));
+    const password2Valid             = password2ValidLength && password2ValidUppercase && password2ValidLowercase && password2ValidMatch;
     
     
     
@@ -1017,6 +1025,110 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         router.push(homepagePath);
     });
     
+    const doSignUp     = useEvent(async (): Promise<void> => {
+        // conditions:
+        if (signInState.isBusy) return; // ignore when busy /* instant update without waiting for (slow|delayed) re-render */
+        
+        
+        
+        // validate:
+        // enable validation and *wait* until the next re-render of validation_enabled before we're going to `querySelectorAll()`:
+        setEnableValidation(true);
+        await new Promise<void>((resolve) => { // wait for a validation state applied
+            setTimeout(() => {
+                setTimeout(() => {
+                    resolve();
+                }, 0);
+            }, 0);
+        });
+        if (!isMounted.current) return; // unmounted => abort
+        const fieldErrors = formRef?.current?.querySelectorAll?.(invalidSelector);
+        if (fieldErrors?.length) { // there is an/some invalid field
+            showMessageFieldError(fieldErrors);
+            return;
+        } // if
+        
+        
+        
+        // attempts apply signUp:
+        setIsBusy('signUp'); // mark as busy
+        try {
+            const response = await fetch(signUpPath, {
+                method  : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                },
+                body    : JSON.stringify({ fullname, email, username, password }),
+            });
+            if (!response.ok) throw Error(response.statusText, { cause: response });
+            const data = await response.json();
+            if (!isMounted.current) return; // unmounted => abort
+            
+            
+            
+            // success
+            
+            
+            
+            setIsSignUpApplied(true); // mark signUp as applied
+            setIsBusy(false); // unmark as busy
+            
+            
+            
+            // resets:
+            setEnableValidation(false);
+            setPassword('');
+            setPassword2('');
+            
+            
+            
+            // report the success:
+            await showMessageSuccess(
+                <p>
+                    {data.message ?? 'The account has been successfully created. Now you can sign in with the new username and password.'}
+                </p>
+            );
+            if (!isMounted.current) return; // unmounted => abort
+            
+            
+            
+            // redirect to sign in tab:
+            gotoSignIn();
+        }
+        catch (error: any) { // error
+            setIsBusy(false); // unmark as busy
+            
+            
+            
+            // resets:
+            setEnableValidation(false);
+            
+            
+            
+            // report the failure:
+            await showMessageFetchError(error);
+            if (!isMounted.current) return; // unmounted => abort
+            
+            
+            
+            const isRequestError = (
+                // axios'  error request:
+                !!error.request
+                ||
+                // fetch's error request:
+                (error instanceof TypeError)
+            );
+            if (!isRequestError) {
+                // redirect to sign in tab:
+                gotoSignIn();
+            }
+            else {
+                // focus to fullname field:
+                fullnameRef.current?.setSelectionRange(0, fullname.length);
+                fullnameRef.current?.focus();
+            } // if
+        } // try
+    });
     const doSignIn     = useEvent(async (): Promise<void> => {
         // conditions:
         if (signInState.isBusy) return; // ignore when busy /* instant update without waiting for (slow|delayed) re-render */
@@ -1443,6 +1555,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         
         // actions:
+        doSignUp,                   // stable ref
         doSignIn,                   // stable ref
         doSignInWith,               // stable ref
         doRecover,                  // stable ref
