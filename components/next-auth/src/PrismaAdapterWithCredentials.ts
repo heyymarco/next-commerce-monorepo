@@ -493,7 +493,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
         registerUser               : async (fullname, email, username, password          ) => {
             // normalizations:
             username = username.toLowerCase();
-            email = email.toLowerCase();
+            email    = email.toLowerCase();
             
             
             
