@@ -144,7 +144,6 @@ export const InputFields = (props: InputFieldsProps) => {
     
     
     // states:
-    const signInState = useSignInState();
     const {
         // constraints:
         fullnameMinLength,
@@ -220,7 +219,7 @@ export const InputFields = (props: InputFieldsProps) => {
         password2ValidUppercase,
         password2ValidLowercase,
         password2ValidMatch,
-    } = signInState;
+    } = useSignInState();
     const specificValidations = {
         fullnameValid,
         fullnameValidLength,
