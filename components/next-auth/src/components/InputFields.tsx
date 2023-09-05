@@ -71,33 +71,33 @@ export interface InputFieldsProps {
     
     // components:
     fullnameInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
-    emailInputComponent                  ?: React.ReactComponentElement<any, InputProps<Element>>
-    usernameInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
-    passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
-    password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
-    
     fullnameTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     fullnameValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     fullnameValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
     fullnameValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
     
+    emailInputComponent                  ?: React.ReactComponentElement<any, InputProps<Element>>
     emailTooltipComponent                ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     emailValidationListComponent         ?: React.ReactComponentElement<any, ListProps<Element>>
     emailValidationListItemComponent     ?: React.ReactComponentElement<any, ListItemProps<Element>>
     emailValidationIconComponent         ?: React.ReactComponentElement<any, IconProps<Element>>
     
+    usernameInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     usernameTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     usernameValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
     usernameValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
     usernameValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
     
+    passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
-    password2TooltipComponent            ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     passwordValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
-    password2ValidationListComponent     ?: React.ReactComponentElement<any, ListProps<Element>>
     passwordValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
-    password2ValidationListItemComponent ?: React.ReactComponentElement<any, ListItemProps<Element>>
     passwordValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
+    
+    password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
+    password2TooltipComponent            ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
+    password2ValidationListComponent     ?: React.ReactComponentElement<any, ListProps<Element>>
+    password2ValidationListItemComponent ?: React.ReactComponentElement<any, ListItemProps<Element>>
     password2ValidationIconComponent     ?: React.ReactComponentElement<any, IconProps<Element>>
 }
 export const InputFields = (props: InputFieldsProps) => {
@@ -111,33 +111,33 @@ export const InputFields = (props: InputFieldsProps) => {
         
         // components:
         fullnameInputComponent               = (<InputWithLabel icon='account_box'        inputComponent={<TextInput autoCapitalize='words' />} /> as React.ReactComponentElement<any, InputProps<Element>>),
-        emailInputComponent                  = (<InputWithLabel icon='alternate_email'    inputComponent={<EmailInput                       />} /> as React.ReactComponentElement<any, InputProps<Element>>),
-        usernameInputComponent               = (<InputWithLabel icon='person'             inputComponent={<TextInput                        />} /> as React.ReactComponentElement<any, InputProps<Element>>),
-        passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput                    />} /> as React.ReactComponentElement<any, InputProps<Element>>),
-        password2InputComponent              = passwordInputComponent,
-        
         fullnameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
         fullnameValidationListComponent      = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
         fullnameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
         fullnameValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
         
+        emailInputComponent                  = (<InputWithLabel icon='alternate_email'    inputComponent={<EmailInput                       />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         emailTooltipComponent                = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
         emailValidationListComponent         = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
         emailValidationListItemComponent     = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
         emailValidationIconComponent         = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
         
+        usernameInputComponent               = (<InputWithLabel icon='person'             inputComponent={<TextInput                        />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         usernameTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
         usernameValidationListComponent      = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
         usernameValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
         usernameValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
         
+        passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput                    />} /> as React.ReactComponentElement<any, InputProps<Element>>),
         passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                                       as React.ReactComponentElement<any, TooltipProps<Element>>),
-        password2TooltipComponent            = passwordTooltipComponent,
         passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                                 as React.ReactComponentElement<any, ListProps<Element>>),
-        password2ValidationListComponent     = passwordValidationListComponent,
         passwordValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                                    as React.ReactComponentElement<any, ListItemProps<Element>>),
-        password2ValidationListItemComponent = passwordValidationListItemComponent,
         passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                                as React.ReactComponentElement<any, IconProps<Element>>),
+        
+        password2InputComponent              = passwordInputComponent,
+        password2TooltipComponent            = passwordTooltipComponent,
+        password2ValidationListComponent     = passwordValidationListComponent,
+        password2ValidationListItemComponent = passwordValidationListItemComponent,
         password2ValidationIconComponent     = passwordValidationIconComponent,
     } = props;
     
