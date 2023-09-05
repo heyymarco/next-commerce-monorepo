@@ -95,6 +95,10 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 username : usernameOrEmailRaw,
                 password,
             } = credentials;
+            
+            
+            
+            // normalizations:
             const usernameOrEmail = usernameOrEmailRaw.toLowerCase();
             
             
