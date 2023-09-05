@@ -92,9 +92,10 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             // credentials:
             const {
-                username : usernameOrEmail,
+                username : usernameOrEmailRaw,
                 password,
             } = credentials;
+            const usernameOrEmail = usernameOrEmailRaw.toLowerCase();
             
             
             
@@ -220,6 +221,11 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 resetLimitInHours,
                 emailResetMaxAge = 24,
             } = options ?? {};
+            
+            
+            
+            // normalizations:
+            usernameOrEmail = usernameOrEmail.toLowerCase();
             
             
             
@@ -423,8 +429,17 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             return user?.role ?? null;
         },
         getRoleByUserEmail         : async (userEmail                                    ) => {
+            // conditions:
             if (!('role' in prisma)) return null;
             
+            
+            
+            // normalizations:
+            userEmail = userEmail.toLowerCase();
+            
+            
+            
+            // database query:
             const user = await prisma.user.findUnique({
                 where  : {
                     email : userEmail,
@@ -439,6 +454,12 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
         },
         
         checkUsernameAvailability  : async (username                                     ) => {
+            // normalizations:
+            username = username.toLowerCase();
+            
+            
+            
+            // database query:
             return !(await prisma.credentials.findUnique({
                 where  : {
                     username : username,
@@ -449,6 +470,12 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             }));
         },
         checkEmailAvailability     : async (email                                        ) => {
+            // normalizations:
+            email = email.toLowerCase();
+            
+            
+            
+            // database query:
             return !(await prisma.user.findUnique({
                 where  : {
                     email : email,
@@ -460,6 +487,13 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
         },
         
         registerUser               : async (fullname, email, username, password          ) => {
+            // normalizations:
+            username = username.toLowerCase();
+            email = email.toLowerCase();
+            
+            
+            
+            // database query:
             // generate the hashed password:
             const hashedPassword = await bcrypt.hash(password, 10);
             
