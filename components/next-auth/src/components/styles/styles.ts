@@ -267,12 +267,12 @@ export const usesSignInLayout = () => {
                 }),
                 ...children(switchSignUpElm, {
                     // positions:
-                    gridArea         : 'switchSignUp',
+                    gridArea         : 'switch',
                     justifySelf      : 'center',
                 }),
                 ...children(switchSignInElm, {
                     // positions:
-                    gridArea         : 'switchSignIn',
+                    gridArea         : 'switch',
                     justifySelf      : 'center',
                 }),
                 ...children(gotoSignInElm, {
@@ -306,7 +306,7 @@ export const usesSignInLayout = () => {
                     '"  password     password     password     password     password     password  " min-content',
                     '"  password2    password2    password2    password2    password2    password2 " min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
-                    '"switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn" min-content',
+                    '"   switch       switch       switch       switch       switch       switch   " min-content',
                     '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
@@ -327,7 +327,7 @@ export const usesSignInLayout = () => {
                     '"  username     username     username     username     username     username  " min-content',
                     '"  password     password     password     password     password     password  " min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
-                    '"switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp" min-content',
+                    '"   switch       switch       switch       switch       switch       switch   " min-content',
                     '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  separator    separator    separator    separator    separator    separator " min-content',
                     '/',
