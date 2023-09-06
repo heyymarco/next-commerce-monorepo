@@ -92,16 +92,17 @@ export interface TabResetProps {
     resetTitleComponent                  ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
     emailInputComponent                  ?: React.ReactComponentElement<any, InputProps<Element>>
-    passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
-    password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
     
+    passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
-    password2TooltipComponent            ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     passwordValidationListComponent      ?: React.ReactComponentElement<any, ListProps<Element>>
-    password2ValidationListComponent     ?: React.ReactComponentElement<any, ListProps<Element>>
     passwordValidationListItemComponent  ?: React.ReactComponentElement<any, ListItemProps<Element>>
-    password2ValidationListItemComponent ?: React.ReactComponentElement<any, ListItemProps<Element>>
     passwordValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
+    
+    password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
+    password2TooltipComponent            ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
+    password2ValidationListComponent     ?: React.ReactComponentElement<any, ListProps<Element>>
+    password2ValidationListItemComponent ?: React.ReactComponentElement<any, ListItemProps<Element>>
     password2ValidationIconComponent     ?: React.ReactComponentElement<any, IconProps<Element>>
     
     resetPasswordButtonComponent         ?: ButtonComponentProps['buttonComponent']
@@ -115,16 +116,17 @@ export const TabReset = (props: TabResetProps) => {
         resetTitleComponent                  = (<h1>Password Reset</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
         emailInputComponent                  = (<InputWithLabel icon='person'             inputComponent={<EmailInput    />} />            as React.ReactComponentElement<any, InputProps<Element>>),
-        passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
-        password2InputComponent              = passwordInputComponent,
         
+        passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                               as React.ReactComponentElement<any, TooltipProps<Element>>),
-        password2TooltipComponent            = passwordTooltipComponent,
         passwordValidationListComponent      = (<List<Element> listStyle='flat' />                                                         as React.ReactComponentElement<any, ListProps<Element>>),
-        password2ValidationListComponent     = passwordValidationListComponent,
         passwordValidationListItemComponent  = (<ListItem<Element> size='sm' outlined={true} />                                            as React.ReactComponentElement<any, ListItemProps<Element>>),
-        password2ValidationListItemComponent = passwordValidationListItemComponent,
         passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                        as React.ReactComponentElement<any, IconProps<Element>>),
+        
+        password2InputComponent              = passwordInputComponent,
+        password2TooltipComponent            = passwordTooltipComponent,
+        password2ValidationListComponent     = passwordValidationListComponent,
+        password2ValidationListItemComponent = passwordValidationListItemComponent,
         password2ValidationIconComponent     = passwordValidationIconComponent,
         
         resetPasswordButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
