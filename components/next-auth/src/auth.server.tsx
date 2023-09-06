@@ -272,9 +272,11 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 if ((account !== null) && (!('emailVerified' in user) || (user.emailVerified === null))) {
                     // login with oAuth is also intrinsically verifies the email:
+                    const now = new Date();
                     await adapter.markUserEmailAsVerified(user.id, {
-                        now : new Date(),
+                        now : now,
                     });
+                    (user as any).emailVerified = now; // update the data
                 } // if
                 
                 
@@ -315,7 +317,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     user: dbUser,
                 } = params;
                 
-                
+                console.log('USER :', dbUser);
                 
                 // assigning userRole(s):
                 const sessionUser = session.user;
@@ -380,7 +382,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             // create a new resetPasswordToken:
             const now    = new Date();
             const result = await adapter.createResetPasswordToken(username, {
-                now,
+                now               : now,
                 resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS  ?? 0.25),
                 emailResetMaxAge  : (authConfig.EMAIL_RESET_MAX_AGE ?? 24),
             });
