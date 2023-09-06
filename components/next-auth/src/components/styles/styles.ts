@@ -308,7 +308,6 @@ export const usesSignInLayout = () => {
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
                     '"switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn" min-content',
                     '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
-                    '"  separator    separator    separator    separator    separator    separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
