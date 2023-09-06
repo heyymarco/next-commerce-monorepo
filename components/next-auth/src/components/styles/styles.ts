@@ -299,15 +299,15 @@ export const usesSignInLayout = () => {
             ...children(signUpTabElm, {
                 // layouts:
                 gridTemplate   : [[
-                    '"    title        title        title        title        title        title   " min-content',
-                    '"  fullname     fullname     fullname     fullname     fullname     fullname  " min-content',
-                    '"    email        email        email        email        email        email   " min-content',
-                    '"  username     username     username     username     username     username  " min-content',
-                    '"  password     password     password     password     password     password  " min-content',
-                    '"  password2    password2    password2    password2    password2    password2 " min-content',
-                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
-                    '"   switch       switch       switch       switch       switch       switch   " min-content',
-                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
+                    '"   title       title       title       title       title       title   " min-content',
+                    '"  fullname    fullname    fullname    fullname    fullname    fullname " min-content',
+                    '"   email       email       email       email       email       email   " min-content',
+                    '"  username    username    username    username    username    username " min-content',
+                    '" password    password    password    password    password    password  " min-content',
+                    '" password2   password2   password2   password2   password2   password2 " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '"   switch      switch      switch      switch      switch      switch  " min-content',
+                    '"  gotoHome    gotoHome    gotoHome  gotoRecover gotoRecover gotoRecover" min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
@@ -323,13 +323,13 @@ export const usesSignInLayout = () => {
                 // layouts:
                 containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
-                    '"    title        title        title        title        title        title   " min-content',
-                    '"  username     username     username     username     username     username  " min-content',
-                    '"  password     password     password     password     password     password  " min-content',
-                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
-                    '"   switch       switch       switch       switch       switch       switch   " min-content',
-                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
-                    '"  separator    separator    separator    separator    separator    separator " min-content',
+                    '"   title       title       title       title       title       title   " min-content',
+                    '"  username    username    username    username    username    username " min-content',
+                    '" password    password    password    password    password    password  " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '"   switch      switch      switch      switch      switch      switch  " min-content',
+                    '"  gotoHome    gotoHome    gotoHome  gotoRecover gotoRecover gotoRecover" min-content',
+                    '" separator   separator   separator   separator   separator   separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
@@ -344,10 +344,10 @@ export const usesSignInLayout = () => {
             ...children(recoverTabElm, {
                 // layouts:
                 gridTemplate   : [[
-                    '"    title        title        title        title        title        title   " min-content',
-                    '"  username     username     username     username     username     username  " min-content',
-                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
-                    '" gotoSignIn   gotoSignIn   gotoSignIn  ............ ............ ............" min-content',
+                    '"   title       title       title       title       title       title   " min-content',
+                    '"  username    username    username    username    username    username " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '" gotoSignIn  gotoSignIn  gotoSignIn ........... ........... ..........." min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
@@ -362,12 +362,12 @@ export const usesSignInLayout = () => {
             ...children(resetTabElm, {
                 // layouts:
                 gridTemplate   : [[
-                    '"    title        title        title        title        title        title   " min-content',
-                    '"    email        email        email        email        email        email   " min-content',
-                    '"  password     password     password     password     password     password  " min-content',
-                    '"  password2    password2    password2    password2    password2    password2 " min-content',
-                    '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
-                    '" gotoSignIn   gotoSignIn   gotoSignIn  ............ ............ ............" min-content',
+                    '"   title       title       title       title       title       title   " min-content',
+                    '"   email       email       email       email       email       email   " min-content',
+                    '" password    password    password    password    password    password  " min-content',
+                    '" password2   password2   password2   password2   password2   password2 " min-content',
+                    '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                    '" gotoSignIn  gotoSignIn  gotoSignIn ........... ........... ..........." min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
