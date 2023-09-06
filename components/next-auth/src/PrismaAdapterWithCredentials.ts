@@ -369,7 +369,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             // an atomic transaction of [`find user id by resetPasswordToken`, `delete current resetPasswordToken record`, `create/update user's credentials`]:
             return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
                 // find the related user id by given resetPasswordToken:
-                const {id: userId} = await prismaTransaction.user.findFirst({
+                const user = await prismaTransaction.user.findFirst({
                     where  : {
                         resetPasswordToken : {
                             token        : resetPasswordToken,
@@ -380,12 +380,17 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                     },
                     select : {
                         id               : true, // required: for id key
+                        emailVerified    : true, // required: for marking user's email has verified
                     },
-                }) ?? {};
-                if (userId === undefined) {
+                });
+                if (!user) { // there is no user with related resetPasswordToken
                     // report the error:
                     return false;
                 } // if
+                const {
+                    id: userId,
+                    emailVerified,
+                } = user;
                 
                 
                 
@@ -417,6 +422,20 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                         id       : true,
                     },
                 });
+                
+                
+                
+                // resetting password is also intrinsically verifies the email:
+                if (emailVerified === null) {
+                    await prismaTransaction.user.update({
+                        where  : {
+                            id   : userId,
+                        },
+                        data   : {
+                            emailVerified : now,
+                        },
+                    });
+                } // if
                 
                 
                 
