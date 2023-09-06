@@ -61,6 +61,11 @@ import {
 
 // react components:
 export interface FieldEmailProps {
+    // accessibilities:
+    emailReadOnly                        ?: boolean
+    
+    
+    
     // states:
     isActiveSection                       : boolean
     isActionApplied                       : boolean
@@ -77,6 +82,11 @@ export interface FieldEmailProps {
 export const FieldEmail = (props: FieldEmailProps) => {
     // rest props:
     const {
+        // accessibilities:
+        emailReadOnly                        = false,
+        
+        
+        
         // states:
         isActiveSection,
         isActionApplied,
@@ -166,6 +176,7 @@ export const FieldEmail = (props: FieldEmailProps) => {
                     
                     
                     // accessibilities:
+                    readOnly     : emailInputComponent.props.readOnly     ?? emailReadOnly,
                     placeholder  : emailInputComponent.props.placeholder  ?? 'Email',
                     autoComplete : emailInputComponent.props.autoComplete ?? 'email',
                     

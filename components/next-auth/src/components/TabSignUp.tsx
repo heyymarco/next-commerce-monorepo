@@ -69,7 +69,7 @@ export interface TabSignUpProps
     extends
         // components:
         Omit<FieldFullnameProps,  'isActiveSection'|'isActionApplied'>,
-        Omit<FieldEmailProps,     'isActiveSection'|'isActionApplied'>,
+        Omit<FieldEmailProps,     'isActiveSection'|'isActionApplied'|'emailReadOnly'>,
         Omit<FieldUsernameProps,  'isActiveSection'|'isActionApplied'>,
         Omit<FieldPasswordProps,  'isActiveSection'|'isActionApplied'>,
         Omit<FieldPassword2Props, 'isActiveSection'|'isActionApplied'>
