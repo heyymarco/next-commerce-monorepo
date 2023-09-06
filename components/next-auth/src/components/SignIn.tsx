@@ -168,42 +168,58 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         recoverTabPanelComponent    = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         resetTabPanelComponent      = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),
         
-        switchSignUpButtonComponent = (<ButtonIcon icon='account_box' buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
-        switchSignInButtonComponent = (<ButtonIcon icon='login'       buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
-        gotoSignInButtonComponent   = (<ButtonIcon icon='arrow_back'  buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
-        gotoRecoverButtonComponent  = (<ButtonIcon icon='help_center' buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
-        gotoHomeButtonComponent     = (<ButtonIcon icon='home'        buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
-        
         signUpTitleComponent,
         signInTitleComponent,
         recoverTitleComponent,
         resetTitleComponent,
         
+        fullnameInputComponent,
+        fullnameTooltipComponent,
+        fullnameValidationListComponent,
+        fullnameValidationListItemComponent,
+        fullnameValidationIconComponent,
+        
         emailInputComponent,
+        emailTooltipComponent,
+        emailValidationListComponent,
+        emailValidationListItemComponent,
+        emailValidationIconComponent,
+        
         usernameInputComponent,
-        passwordInputComponent,
-        password2InputComponent,
-        signUpButtonComponent,
+        usernameTooltipComponent,
+        usernameValidationListComponent,
+        usernameValidationListItemComponent,
+        usernameValidationIconComponent,
         
         usernameOrEmailInputComponent,
-        signInButtonComponent,
-        signInWithButtonComponent,
-        alternateSignInSeparatorComponent,
         
-        sendRecoverLinkButtonComponent,
-        
-        resetPasswordButtonComponent,
-        
+        passwordInputComponent,
         passwordTooltipComponent,
-        password2TooltipComponent,
         passwordValidationListComponent,
-        password2ValidationListComponent,
         passwordValidationListItemComponent,
-        password2ValidationListItemComponent,
         passwordValidationIconComponent,
+        
+        password2InputComponent,
+        password2TooltipComponent,
+        password2ValidationListComponent,
+        password2ValidationListItemComponent,
         password2ValidationIconComponent,
         
+        signUpButtonComponent,
+        signInButtonComponent,
+        signInWithButtonComponent,
+        sendRecoverLinkButtonComponent,
+        resetPasswordButtonComponent,
+        
+        alternateSignInSeparatorComponent,
+        
         tokenValidationModalStatusComponent,
+        
+        switchSignUpButtonComponent = (<ButtonIcon icon='account_box' buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
+        switchSignInButtonComponent = (<ButtonIcon icon='login'       buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
+        gotoSignInButtonComponent   = (<ButtonIcon icon='arrow_back'  buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
+        gotoRecoverButtonComponent  = (<ButtonIcon icon='help_center' buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
+        gotoHomeButtonComponent     = (<ButtonIcon icon='home'        buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
     ...restBasicProps} = props;
     
     
@@ -482,10 +498,36 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     // components:
                     signUpTitleComponent={signUpTitleComponent}
                     
+                    fullnameInputComponent={fullnameInputComponent}
+                    fullnameTooltipComponent={fullnameTooltipComponent}
+                    fullnameValidationListComponent={fullnameValidationListComponent}
+                    fullnameValidationListItemComponent={fullnameValidationListItemComponent}
+                    fullnameValidationIconComponent={fullnameValidationIconComponent}
+                    
                     emailInputComponent={emailInputComponent}
+                    emailTooltipComponent={emailTooltipComponent}
+                    emailValidationListComponent={emailValidationListComponent}
+                    emailValidationListItemComponent={emailValidationListItemComponent}
+                    emailValidationIconComponent={emailValidationIconComponent}
+                    
                     usernameInputComponent={usernameInputComponent}
+                    usernameTooltipComponent={usernameTooltipComponent}
+                    usernameValidationListComponent={usernameValidationListComponent}
+                    usernameValidationListItemComponent={usernameValidationListItemComponent}
+                    usernameValidationIconComponent={usernameValidationIconComponent}
+                    
                     passwordInputComponent={passwordInputComponent}
+                    passwordTooltipComponent={passwordTooltipComponent}
+                    passwordValidationListComponent={passwordValidationListComponent}
+                    passwordValidationListItemComponent={passwordValidationListItemComponent}
+                    passwordValidationIconComponent={passwordValidationIconComponent}
+                    
                     password2InputComponent={password2InputComponent}
+                    password2TooltipComponent={password2TooltipComponent}
+                    password2ValidationListComponent={password2ValidationListComponent}
+                    password2ValidationListItemComponent={password2ValidationListItemComponent}
+                    password2ValidationIconComponent={password2ValidationIconComponent}
+                    
                     signUpButtonComponent={signUpButtonComponent}
                 />,
                 <SwitchSignInButton />,
@@ -516,9 +558,12 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     signInTitleComponent={signInTitleComponent}
                     
                     usernameOrEmailInputComponent={usernameOrEmailInputComponent}
+                    
                     passwordInputComponent={passwordInputComponent}
+                    
                     signInButtonComponent={signInButtonComponent}
                     signInWithButtonComponent={signInWithButtonComponent}
+                    
                     alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                 />,
                 (!!signUpEnable && <SwitchSignUpButton />),
@@ -545,6 +590,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     recoverTitleComponent={recoverTitleComponent}
                     
                     usernameOrEmailInputComponent={usernameOrEmailInputComponent}
+                    
                     sendRecoverLinkButtonComponent={sendRecoverLinkButtonComponent}
                 />,
                 <GotoSignInButton />,
@@ -569,18 +615,20 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     resetTitleComponent={resetTitleComponent}
                     
                     emailInputComponent={emailInputComponent}
-                    passwordInputComponent={passwordInputComponent}
-                    password2InputComponent={password2InputComponent}
-                    resetPasswordButtonComponent={resetPasswordButtonComponent}
                     
+                    passwordInputComponent={passwordInputComponent}
                     passwordTooltipComponent={passwordTooltipComponent}
-                    password2TooltipComponent={password2TooltipComponent}
                     passwordValidationListComponent={passwordValidationListComponent}
-                    password2ValidationListComponent={password2ValidationListComponent}
                     passwordValidationListItemComponent={passwordValidationListItemComponent}
-                    password2ValidationListItemComponent={password2ValidationListItemComponent}
                     passwordValidationIconComponent={passwordValidationIconComponent}
+                    
+                    password2InputComponent={password2InputComponent}
+                    password2TooltipComponent={password2TooltipComponent}
+                    password2ValidationListComponent={password2ValidationListComponent}
+                    password2ValidationListItemComponent={password2ValidationListItemComponent}
                     password2ValidationIconComponent={password2ValidationIconComponent}
+                    
+                    resetPasswordButtonComponent={resetPasswordButtonComponent}
                     
                     tokenValidationModalStatusComponent={tokenValidationModalStatusComponent}
                 />,

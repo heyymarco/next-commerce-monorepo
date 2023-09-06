@@ -84,8 +84,9 @@ export interface TabSignInProps
     signInTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
     signInButtonComponent             ?: ButtonComponentProps['buttonComponent']
-    alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
     signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
+    
+    alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
 }
 export const TabSignIn = (props: TabSignInProps) => {
     // rest props:
@@ -103,8 +104,9 @@ export const TabSignIn = (props: TabSignInProps) => {
         passwordInputComponent,
         
         signInButtonComponent             = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
-        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
         signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
+        
+        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
     } = props;
     
     
