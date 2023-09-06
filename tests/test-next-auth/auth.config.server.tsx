@@ -20,22 +20,23 @@ export const authConfig : AuthConfig = {
     
     
     
-    USER_SIGNUP_ENABLE                : true,
+    USER_SIGNUP_ENABLE                 : true,
     
     
     
-    USER_SIGNIN_FAILURE_MAX_ATTEMPS   : 5    /* times */,
-    USER_SIGNIN_FAILURE_LOCK_DURATION : 0.25 /* hours */,
+    USER_SIGNIN_REQUIRE_EMAIL_VERIFIED : true,
+    USER_SIGNIN_FAILURE_MAX_ATTEMPS    : 5    /* times */,
+    USER_SIGNIN_FAILURE_LOCK_DURATION  : 0.25 /* hours */,
     
     
     
-    SESSION_MAX_AGE                   : 24   /* hours */,
-    SESSION_UPDATE_AGE                : 6    /* hours */,
+    SESSION_MAX_AGE                    : 24   /* hours */,
+    SESSION_UPDATE_AGE                 : 6    /* hours */,
     
     
     
-    EMAIL_RESET_SUBJECT               : 'Password Reset Request',
-    EMAIL_RESET_MESSAGE               : <>
+    EMAIL_RESET_SUBJECT                : 'Password Reset Request',
+    EMAIL_RESET_MESSAGE                : <>
         <p>
             Hi <User.Name />.
         </p>
@@ -64,12 +65,12 @@ export const authConfig : AuthConfig = {
             If you did not make this request then please ignore this email.
         </p>
     </>,
-    EMAIL_RESET_LIMITS                : 0.25 /* hours */,
-    EMAIL_RESET_MAX_AGE               : 24   /* hours */,
+    EMAIL_RESET_LIMITS                 : 0.25 /* hours */,
+    EMAIL_RESET_MAX_AGE                : 24   /* hours */,
     
     
     
-    oAuthProviders                    : [
+    oAuthProviders                     : [
         GoogleProvider({
             clientId     : process.env.GOOGLE_ID        ?? '',
             clientSecret : process.env.GOOGLE_SECRET    ?? '',

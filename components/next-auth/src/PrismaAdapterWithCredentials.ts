@@ -41,9 +41,10 @@ export interface ResetPasswordTokenData {
 
 // options:
 export interface ValidateCredentialsOptions {
-    now                 ?: Date
-    failureMaxAttemps   ?: number|null
-    failureLockDuration ?: number
+    now                  ?: Date
+    requireEmailVerified ?: boolean
+    failureMaxAttemps    ?: number|null
+    failureLockDuration  ?: number
 }
 export interface CreateResetPasswordTokenOptions {
     now                 ?: Date
@@ -63,7 +64,7 @@ export interface AdapterWithCredentials
     extends
         Adapter
 {
-    validateCredentials        : (credentials        : Credentials             , options?: ValidateCredentialsOptions       ) => Awaitable<AdapterUser|Date|null>
+    validateCredentials        : (credentials        : Credentials             , options?: ValidateCredentialsOptions       ) => Awaitable<AdapterUser|false|Date|null>
     createResetPasswordToken   : (usernameOrEmail    : string                  , options?: CreateResetPasswordTokenOptions  ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
     validateResetPasswordToken : (resetPasswordToken : string                  , options?: ValidateResetPasswordTokenOptions) => Awaitable<ResetPasswordTokenData|null>
     applyResetPasswordToken    : (resetPasswordToken : string, password: string, options?: ApplyResetPasswordTokenOptions   ) => Awaitable<boolean>
@@ -83,9 +84,10 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
         validateCredentials        : async (credentials                         , options) => {
             // options:
             const {
-                now                 = new Date(),
-                failureMaxAttemps   = null,
-                failureLockDuration = 0.25,
+                now                  = new Date(),
+                requireEmailVerified = true,
+                failureMaxAttemps    = null,
+                failureLockDuration  = 0.25,
             } = options ?? {};
             
             
@@ -105,7 +107,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             // a database transaction for preventing multiple bulk login for bypassing failureMaxAttemps (forced to be a sequential operation):
             // an atomic transaction of [`find user's credentials by username (or email)`, `update the failuresAttemps & lockedAt`]:
-            return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => {
+            return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => {
                 const userWithCredentials = await prismaTransaction.user.findFirst({
                     where  :
                         usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
@@ -135,8 +137,14 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 // remove credentials property to increase security strength:
                 const {
                     credentials : expectedCredentials,
-                    ...restUser
-                } = userWithCredentials;
+                ...restUser} = userWithCredentials;
+                
+                
+                
+                // check if user's email was verified:
+                if (requireEmailVerified) {
+                    if (restUser.emailVerified === null) return false;
+                } // if
                 
                 
                 

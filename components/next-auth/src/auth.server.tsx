@@ -205,8 +205,12 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                             failureLockDuration : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION ?? 0.25),
                         });
                         if (result === null) return null;
+                        if (result === false) {
+                            console.log('EMAIL UNVERIFIED', result);
+                            throw Error(`Your email has not been verified. Please activate your account by clicking on the link sent to your email.`);
+                        }
                         if (result instanceof Date) {
-                            console.log('LOGIN LOCKED IN', result);
+                            console.log('LOGIN LOCKED', result);
                             throw Error(`Your account is locked due to too many login attempts. Please try again ${moment(now).to(result)}.`);
                         }
                         return result;
