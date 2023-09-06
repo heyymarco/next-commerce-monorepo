@@ -273,32 +273,35 @@ export const usesSignInLayout = () => {
                 ...children(switchSignUpElm, {
                     // positions:
                     gridArea         : 'switch',
-                    justifySelf      : 'center',
+                    justifySelf      : 'center', // center horizontally
                 }),
                 ...children(switchSignInElm, {
                     // positions:
                     gridArea         : 'switch',
-                    justifySelf      : 'center',
+                    justifySelf      : 'center', // center horizontally
                 }),
                 ...children(gotoSignInElm, {
                     // positions:
                     gridArea         : 'gotoSignIn',
+                    justifySelf      : 'center', // center horizontally
                     ...ifContainerWidthAtLeast('sm', {
-                        justifySelf  : 'start',
+                        justifySelf  : 'start', // place most left
                     }),
                 }),
                 ...children(gotoRecoverElm, {
                     // positions:
                     gridArea         : 'gotoRecover',
+                    justifySelf      : 'center', // center horizontally
                     ...ifContainerWidthAtLeast('sm', {
-                        justifySelf  : 'end',
+                        justifySelf  : 'end', // place most right
                     }),
                 }),
                 ...children(gotoHomeElm, {
                     // positions:
                     gridArea         : 'gotoHome',
+                    justifySelf      : 'center', // center horizontally
                     ...ifContainerWidthAtLeast('sm', {
-                        justifySelf  : 'start',
+                        justifySelf  : 'start', // place most left
                     }),
                 }),
                 
