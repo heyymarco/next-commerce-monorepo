@@ -76,6 +76,7 @@ export interface TabSignUpProps
 {
     // components:
     signUpTitleComponent                 ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    
     signUpButtonComponent                ?: ButtonComponentProps['buttonComponent']
 }
 export const TabSignUp = (props: TabSignUpProps) => {
@@ -83,7 +84,6 @@ export const TabSignUp = (props: TabSignUpProps) => {
     const {
         // components:
         signUpTitleComponent                 = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
-        signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} />   as React.ReactComponentElement<any, ButtonProps>),
         
         fullnameInputComponent,
         fullnameTooltipComponent,
@@ -114,6 +114,8 @@ export const TabSignUp = (props: TabSignUpProps) => {
         password2ValidationListComponent,
         password2ValidationListItemComponent,
         password2ValidationIconComponent,
+        
+        signUpButtonComponent                = (<ButtonWithBusy busyType='signUp'         buttonComponent={<ButtonIcon icon='account_box' />} />   as React.ReactComponentElement<any, ButtonProps>),
     } = props;
     
     

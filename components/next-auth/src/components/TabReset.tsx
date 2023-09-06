@@ -94,7 +94,6 @@ export interface TabResetProps {
     emailInputComponent                  ?: React.ReactComponentElement<any, InputProps<Element>>
     passwordInputComponent               ?: React.ReactComponentElement<any, InputProps<Element>>
     password2InputComponent              ?: React.ReactComponentElement<any, InputProps<Element>>
-    resetPasswordButtonComponent         ?: ButtonComponentProps['buttonComponent']
     
     passwordTooltipComponent             ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
     password2TooltipComponent            ?: React.ReactComponentElement<any, TooltipProps<Element>>|null
@@ -104,6 +103,8 @@ export interface TabResetProps {
     password2ValidationListItemComponent ?: React.ReactComponentElement<any, ListItemProps<Element>>
     passwordValidationIconComponent      ?: React.ReactComponentElement<any, IconProps<Element>>
     password2ValidationIconComponent     ?: React.ReactComponentElement<any, IconProps<Element>>
+    
+    resetPasswordButtonComponent         ?: ButtonComponentProps['buttonComponent']
     
     tokenValidationModalStatusComponent  ?: React.ReactComponentElement<any, ModalStatusProps<Element>>|null
 }
@@ -116,7 +117,6 @@ export const TabReset = (props: TabResetProps) => {
         emailInputComponent                  = (<InputWithLabel icon='person'             inputComponent={<EmailInput    />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         passwordInputComponent               = (<InputWithLabel icon='lock'               inputComponent={<PasswordInput />} />            as React.ReactComponentElement<any, InputProps<Element>>),
         password2InputComponent              = passwordInputComponent,
-        resetPasswordButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
         
         passwordTooltipComponent             = (<Tooltip<Element> theme='warning' floatingPlacement='top' />                               as React.ReactComponentElement<any, TooltipProps<Element>>),
         password2TooltipComponent            = passwordTooltipComponent,
@@ -126,6 +126,8 @@ export const TabReset = (props: TabResetProps) => {
         password2ValidationListItemComponent = passwordValidationListItemComponent,
         passwordValidationIconComponent      = (<Icon<Element> size='sm' icon={undefined as any} />                                        as React.ReactComponentElement<any, IconProps<Element>>),
         password2ValidationIconComponent     = passwordValidationIconComponent,
+        
+        resetPasswordButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
         
         tokenValidationModalStatusComponent  = (<ModalStatus<Element> theme='primary' />                                                   as React.ReactComponentElement<any, ModalStatusProps<Element>>),
     } = props;
