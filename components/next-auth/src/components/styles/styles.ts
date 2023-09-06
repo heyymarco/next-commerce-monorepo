@@ -151,6 +151,11 @@ export const usesSignInLayout = () => {
         // layouts:
         ...usesContentLayout(),
         ...style({
+            // layouts:
+            containerType  : 'inline-size', // responsive container
+            
+            
+            
             // children:
             ...children([signUpTabElm, signInTabElm, recoverTabElm, resetTabElm], {
                 // layouts:
@@ -278,17 +283,23 @@ export const usesSignInLayout = () => {
                 ...children(gotoSignInElm, {
                     // positions:
                     gridArea         : 'gotoSignIn',
-                    justifySelf      : 'start',
+                    ...ifContainerWidthAtLeast('sm', {
+                        justifySelf  : 'start',
+                    }),
                 }),
                 ...children(gotoRecoverElm, {
                     // positions:
                     gridArea         : 'gotoRecover',
-                    justifySelf      : 'end',
+                    ...ifContainerWidthAtLeast('sm', {
+                        justifySelf  : 'end',
+                    }),
                 }),
                 ...children(gotoHomeElm, {
                     // positions:
                     gridArea         : 'gotoHome',
-                    justifySelf      : 'start',
+                    ...ifContainerWidthAtLeast('sm', {
+                        justifySelf  : 'start',
+                    }),
                 }),
                 
                 
@@ -307,10 +318,39 @@ export const usesSignInLayout = () => {
                     '" password2   password2   password2   password2   password2   password2 " min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
                     '"   switch      switch      switch      switch      switch      switch  " min-content',
-                    '"  gotoHome    gotoHome    gotoHome  gotoRecover gotoRecover gotoRecover" min-content',
+                    '"  gotoHome    gotoHome    gotoHome    gotoHome    gotoHome    gotoHome " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                ...ifContainerWidthAtLeast('sm', {
+                    gridTemplate   : [[
+                        '"   title       title       title       title       title       title   " min-content',
+                        '"  fullname    fullname    fullname    fullname    fullname    fullname " min-content',
+                        '"   email       email       email       email       email       email   " min-content',
+                        '"  username    username    username    username    username    username " min-content',
+                        '" password    password    password    password    password    password  " min-content',
+                        '" password2   password2   password2   password2   password2   password2 " min-content',
+                        '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                        '"   switch      switch      switch      switch      switch      switch  " min-content',
+                        '"  gotoHome    gotoHome    gotoHome  ........... ........... ..........." min-content',
+                        '/',
+                        '1fr 1fr 1fr 1fr 1fr 1fr'
+                    ]],
+                }),
+                ...ifContainerWidthAtLeast('md', {
+                    gridTemplate   : [[
+                        '"   title       title       title       title       title       title   " min-content',
+                        '"  fullname    fullname    fullname    fullname    fullname    fullname " min-content',
+                        '"   email       email       email       email       email       email   " min-content',
+                        '"  username    username    username    username    username    username " min-content',
+                        '" password    password    password    password    password    password  " min-content',
+                        '" password2   password2   password2   password2   password2   password2 " min-content',
+                        '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                        '"  gotoHome    gotoHome     switch      switch   ........... ..........." min-content',
+                        '/',
+                        '1fr 1fr 1fr 1fr 1fr 1fr'
+                    ]],
+                }),
                 justifyContent : 'stretch', // (default) stretch the content horizontally
                 alignContent   : 'start',   // (default) center  the content vertically
                 
@@ -321,18 +361,43 @@ export const usesSignInLayout = () => {
             }),
             ...children(signInTabElm, {
                 // layouts:
-                containerType  : 'inline-size', // responsive container
                 gridTemplate   : [[
                     '"   title       title       title       title       title       title   " min-content',
                     '"  username    username    username    username    username    username " min-content',
                     '" password    password    password    password    password    password  " min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
                     '"   switch      switch      switch      switch      switch      switch  " min-content',
-                    '"  gotoHome    gotoHome    gotoHome  gotoRecover gotoRecover gotoRecover" min-content',
+                    '"gotoRecover gotoRecover gotoRecover gotoRecover gotoRecover gotoRecover" min-content',
+                    '"  gotoHome    gotoHome    gotoHome    gotoHome    gotoHome    gotoHome " min-content',
                     '" separator   separator   separator   separator   separator   separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                ...ifContainerWidthAtLeast('sm', {
+                    gridTemplate   : [[
+                        '"   title       title       title       title       title       title   " min-content',
+                        '"  username    username    username    username    username    username " min-content',
+                        '" password    password    password    password    password    password  " min-content',
+                        '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                        '"   switch      switch      switch      switch      switch      switch  " min-content',
+                        '"  gotoHome    gotoHome    gotoHome  gotoRecover gotoRecover gotoRecover" min-content',
+                        '" separator   separator   separator   separator   separator   separator " min-content',
+                        '/',
+                        '1fr 1fr 1fr 1fr 1fr 1fr'
+                    ]],
+                }),
+                ...ifContainerWidthAtLeast('md', {
+                    gridTemplate   : [[
+                        '"   title       title       title       title       title       title   " min-content',
+                        '"  username    username    username    username    username    username " min-content',
+                        '" password    password    password    password    password    password  " min-content',
+                        '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                        '"  gotoHome    gotoHome     switch      switch   gotoRecover gotoRecover" min-content',
+                        '" separator   separator   separator   separator   separator   separator " min-content',
+                        '/',
+                        '1fr 1fr 1fr 1fr 1fr 1fr'
+                    ]],
+                }),
                 justifyContent : 'stretch', // (default) stretch the content horizontally
                 alignContent   : 'start',   // (default) center  the content vertically
                 
@@ -347,10 +412,20 @@ export const usesSignInLayout = () => {
                     '"   title       title       title       title       title       title   " min-content',
                     '"  username    username    username    username    username    username " min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '" gotoSignIn  gotoSignIn  gotoSignIn ........... ........... ..........." min-content',
+                    '" gotoSignIn  gotoSignIn  gotoSignIn  gotoSignIn  gotoSignIn  gotoSignIn" min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                ...ifContainerWidthAtLeast('sm', {
+                    gridTemplate   : [[
+                        '"   title       title       title       title       title       title   " min-content',
+                        '"  username    username    username    username    username    username " min-content',
+                        '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                        '" gotoSignIn  gotoSignIn  gotoSignIn ........... ........... ..........." min-content',
+                        '/',
+                        '1fr 1fr 1fr 1fr 1fr 1fr'
+                    ]],
+                }),
                 justifyContent : 'stretch', // (default) stretch the content horizontally
                 alignContent   : 'start',   // (default) center  the content vertically
                 
@@ -367,10 +442,22 @@ export const usesSignInLayout = () => {
                     '" password    password    password    password    password    password  " min-content',
                     '" password2   password2   password2   password2   password2   password2 " min-content',
                     '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
-                    '" gotoSignIn  gotoSignIn  gotoSignIn ........... ........... ..........." min-content',
+                    '" gotoSignIn  gotoSignIn  gotoSignIn  gotoSignIn  gotoSignIn  gotoSignIn" min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
                 ]],
+                ...ifContainerWidthAtLeast('sm', {
+                    gridTemplate   : [[
+                        '"   title       title       title       title       title       title   " min-content',
+                        '"   email       email       email       email       email       email   " min-content',
+                        '" password    password    password    password    password    password  " min-content',
+                        '" password2   password2   password2   password2   password2   password2 " min-content',
+                        '" actionBtn   actionBtn   actionBtn   actionBtn   actionBtn   actionBtn " min-content',
+                        '" gotoSignIn  gotoSignIn  gotoSignIn ........... ........... ..........." min-content',
+                        '/',
+                        '1fr 1fr 1fr 1fr 1fr 1fr'
+                    ]],
+                }),
                 justifyContent : 'stretch', // (default) stretch the content horizontally
                 alignContent   : 'start',   // (default) center  the content vertically
                 
