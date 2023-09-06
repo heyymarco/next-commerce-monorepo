@@ -235,6 +235,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 const {
                     user,
+                    account,
                 } = params;
                 
                 
@@ -265,6 +266,15 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     // const dbUser : AdapterUser = user;
+                } // if
+                
+                
+                
+                if ((account !== null) && (!('emailVerified' in user) || (user.emailVerified === null))) {
+                    // login with oAuth is also intrinsically verifies the email:
+                    await adapter.markUserEmailAsVerified(user.id, {
+                        now : new Date(),
+                    });
                 } // if
                 
                 

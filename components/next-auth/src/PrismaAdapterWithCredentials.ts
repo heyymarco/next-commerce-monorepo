@@ -57,6 +57,9 @@ export interface ValidateResetPasswordTokenOptions {
 export interface ApplyResetPasswordTokenOptions {
     now                 ?: Date
 }
+export interface MarkUserEmailAsVerifiedOptions {
+    now                 ?: Date
+}
 
 
 
@@ -76,6 +79,7 @@ export interface AdapterWithCredentials
     checkEmailAvailability     : (email              : string                                                               ) => Awaitable<boolean>
     
     registerUser               : (fullname: string, email : string, username: string, password: string                      ) => Awaitable<string>
+    markUserEmailAsVerified    : (userId             : string                  , options?: MarkUserEmailAsVerifiedOptions   ) => Awaitable<void>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
@@ -556,6 +560,23 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 },
             });
             return user.id;
+        },
+        markUserEmailAsVerified    : async (userId                              , options) => {
+            // options:
+            const {
+                now = new Date(),
+            } = options ?? {};
+            
+            
+            
+            await prisma.user.update({
+                where  : {
+                    id   : userId,
+                },
+                data   : {
+                    emailVerified : now,
+                },
+            });
         },
     };
 };
