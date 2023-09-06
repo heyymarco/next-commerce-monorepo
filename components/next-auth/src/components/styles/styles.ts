@@ -305,9 +305,9 @@ export const usesSignInLayout = () => {
                     '"  username     username     username     username     username     username  " min-content',
                     '"  password     password     password     password     password     password  " min-content',
                     '"  password2    password2    password2    password2    password2    password2 " min-content',
-                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
                     '"switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn switchSignIn" min-content',
+                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  separator    separator    separator    separator    separator    separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
@@ -327,9 +327,9 @@ export const usesSignInLayout = () => {
                     '"    title        title        title        title        title        title   " min-content',
                     '"  username     username     username     username     username     username  " min-content',
                     '"  password     password     password     password     password     password  " min-content',
-                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  actionBtn    actionBtn    actionBtn    actionBtn    actionBtn    actionBtn " min-content',
                     '"switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp switchSignUp" min-content',
+                    '"  gotoHome     gotoHome     gotoHome    gotoRecover  gotoRecover  gotoRecover" min-content',
                     '"  separator    separator    separator    separator    separator    separator " min-content',
                     '/',
                     '1fr 1fr 1fr 1fr 1fr 1fr'
