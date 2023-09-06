@@ -68,10 +68,10 @@ import {
 export interface TabSignUpProps
     extends
         // components:
-        Omit<FieldFullnameProps,  'isActiveSection'|'isActionApplied'>,
-        Omit<FieldEmailProps,     'isActiveSection'|'isActionApplied'|'emailReadOnly'>,
-        Omit<FieldUsernameProps,  'isActiveSection'|'isActionApplied'>,
-        Omit<FieldPasswordProps,  'isActiveSection'|'isActionApplied'>,
+        Omit<FieldFullnameProps , 'isActiveSection'|'isActionApplied'>,
+        Omit<FieldEmailProps    , 'isActiveSection'|'isActionApplied'|'emailReadOnly'>,
+        Omit<FieldUsernameProps , 'isActiveSection'|'isActionApplied'>,
+        Omit<FieldPasswordProps , 'isActiveSection'|'isActionApplied'|'isPasswordEntry'>,
         Omit<FieldPassword2Props, 'isActiveSection'|'isActionApplied'>
 {
     // components:

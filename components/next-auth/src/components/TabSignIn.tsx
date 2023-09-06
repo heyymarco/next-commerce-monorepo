@@ -73,7 +73,7 @@ export interface TabSignInProps
     extends
         // components:
         Omit<FieldUsernameOrEmailProps,  'isActiveSection'|'isActionApplied'>,
-        Omit<FieldPasswordProps       ,  'isActiveSection'|'isActionApplied'>
+        Omit<FieldPasswordProps       , 'isActiveSection'|'isActionApplied'|'isPasswordEntry'>
 {
     // auths:
     providers                         ?: BuiltInProviderType[]
@@ -192,6 +192,11 @@ export const TabSignIn = (props: TabSignInProps) => {
             />
             
             <FieldPassword
+                // behaviors:
+                isPasswordEntry={false}
+                
+                
+                
                 // states:
                 isActiveSection={isSignInSection}
                 isActionApplied={false}

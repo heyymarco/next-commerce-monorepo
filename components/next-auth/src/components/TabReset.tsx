@@ -74,8 +74,8 @@ import {
 export interface TabResetProps
     extends
         // components:
-        Omit<FieldEmailProps,     'isActiveSection'|'isActionApplied'|'emailReadOnly'>,
-        Omit<FieldPasswordProps,  'isActiveSection'|'isActionApplied'>,
+        Omit<FieldEmailProps    , 'isActiveSection'|'isActionApplied'|'emailReadOnly'>,
+        Omit<FieldPasswordProps , 'isActiveSection'|'isActionApplied'|'isPasswordEntry'>,
         Omit<FieldPassword2Props, 'isActiveSection'|'isActionApplied'>
 {
     // components:

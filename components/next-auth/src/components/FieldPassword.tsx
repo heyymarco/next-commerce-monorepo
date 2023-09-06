@@ -61,6 +61,11 @@ import {
 
 // react components:
 export interface FieldPasswordProps {
+    // behaviors:
+    isPasswordEntry                      ?: boolean
+    
+    
+    
     // states:
     isActiveSection                       : boolean
     isActionApplied                       : boolean
@@ -77,6 +82,11 @@ export interface FieldPasswordProps {
 export const FieldPassword = (props: FieldPasswordProps) => {
     // rest props:
     const {
+        // behaviors:
+        isPasswordEntry = true,
+        
+        
+        
         // states:
         isActiveSection,
         isActionApplied,
@@ -172,8 +182,8 @@ export const FieldPassword = (props: FieldPasswordProps) => {
                     
                     
                     // accessibilities:
-                    placeholder  : passwordInputComponent.props.placeholder  ?? 'New Password',
-                    autoComplete : passwordInputComponent.props.autoComplete ?? 'new-password',
+                    placeholder  : passwordInputComponent.props.placeholder  ?? (isPasswordEntry ? 'New Password' : 'Password'),
+                    autoComplete : passwordInputComponent.props.autoComplete ?? (isPasswordEntry ? 'new-password' : 'password'),
                     
                     
                     
