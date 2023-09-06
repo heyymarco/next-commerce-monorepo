@@ -11,7 +11,6 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
-    useMergeRefs,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -20,19 +19,18 @@ import {
     ButtonProps,
     ButtonComponentProps,
     ButtonIcon,
-    InputProps,
-    TextInput,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
 import {
     // react components:
-    InputWithLabel,
-}                           from './InputWithLabel.js'
-import {
-    // react components:
     ButtonWithBusy,
 }                           from './ButtonWithBusy.js'
+import {
+    // react components:
+    FieldUsernameOrEmailProps,
+    FieldUsernameOrEmail,
+}                           from './FieldUsernameOrEmail.js'
 
 // internals:
 import {
@@ -47,11 +45,13 @@ import {
 
 
 // react components:
-export interface TabRecoverProps {
+export interface TabRecoverProps
+    extends
+        // components:
+        Omit<FieldUsernameOrEmailProps,  'isActiveSection'|'isActionApplied'>
+{
     // components:
     recoverTitleComponent          ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
-    
-    usernameOrEmailInputComponent  ?: React.ReactComponentElement<any, InputProps<Element>>
     
     sendRecoverLinkButtonComponent ?: ButtonComponentProps['buttonComponent']
 }
@@ -61,7 +61,7 @@ export const TabRecover = (props: TabRecoverProps) => {
         // components:
         recoverTitleComponent          = (<h1>Forgot Password?</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        usernameOrEmailInputComponent  = (<InputWithLabel icon='person'             inputComponent={<TextInput     />} />                as React.ReactComponentElement<any, InputProps<Element>>),
+        usernameOrEmailInputComponent,
         
         sendRecoverLinkButtonComponent = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='lock_open' />} /> as React.ReactComponentElement<any, ButtonProps>),
     } = props;
@@ -69,7 +69,6 @@ export const TabRecover = (props: TabRecoverProps) => {
     
     
     // states:
-    const signInState = useSignInState();
     const {
         // states:
         isRecoverSection,
@@ -79,28 +78,11 @@ export const TabRecover = (props: TabRecoverProps) => {
         // fields & validations:
         formRef,
         
-        usernameOrEmailRef,
-        usernameOrEmail,
-        usernameOrEmailHandlers,
-        usernameOrEmailValid,
-        
         
         
         // actions:
         doRecover,
-    } = signInState;
-    
-    
-    
-    // refs:
-    const mergedUsernameOrEmailInputRef = useMergeRefs(
-        // preserves the original `elmRef` from `usernameOrEmailInputComponent`:
-        usernameOrEmailInputComponent.props.elmRef,
-        
-        
-        
-        (isRecoverSection ? usernameOrEmailRef : undefined),
-    );
+    } = useSignInState();
     
     
     
@@ -151,41 +133,17 @@ export const TabRecover = (props: TabRecoverProps) => {
                     className : recoverTitleComponent.props.className ?? 'recoverTitle',
                 },
             )}
-            {/* <UsernameOrEmailInput> */}
-            {React.cloneElement<InputProps<Element>>(usernameOrEmailInputComponent,
-                // props:
-                {
-                    // refs:
-                    elmRef       : mergedUsernameOrEmailInputRef,
-                    
-                    
-                    
-                    // classes:
-                    className    : usernameOrEmailInputComponent.props.className    ?? 'username',
-                    
-                    
-                    
-                    // accessibilities:
-                    placeholder  : usernameOrEmailInputComponent.props.placeholder  ?? 'Username or Email',
-                    autoComplete : usernameOrEmailInputComponent.props.autoComplete ?? 'username',
-                    
-                    
-                    
-                    // values:
-                    value        : usernameOrEmailInputComponent.props.value        ?? usernameOrEmail,
-                    
-                    
-                    
-                    // validations:
-                    isValid      : usernameOrEmailInputComponent.props.isValid      ?? usernameOrEmailValid,
-                    required     : usernameOrEmailInputComponent.props.required     ?? true,
-                    
-                    
-                    
-                    // handlers:
-                    ...usernameOrEmailHandlers,
-                },
-            )}
+            
+            <FieldUsernameOrEmail
+                // states:
+                isActiveSection={isRecoverSection}
+                
+                
+                
+                // components:
+                usernameOrEmailInputComponent={usernameOrEmailInputComponent}
+            />
+            
             {/* <SendRecoverLinkButton> */}
             {React.cloneElement<ButtonProps>(sendRecoverLinkButtonComponent,
                 // props:
