@@ -60,6 +60,15 @@ export interface ApplyResetPasswordTokenOptions {
 export interface MarkUserEmailAsVerifiedOptions {
     now                 ?: Date
 }
+export interface CreateEmailConfirmationTokenOptions {
+    now                 ?: Date
+}
+export interface ApplyEmailConfirmationTokenOptions {
+    now                 ?: Date
+}
+export interface ApplyEmailConfirmationTokenOptions {
+    now                 ?: Date
+}
 
 
 
@@ -67,25 +76,26 @@ export interface AdapterWithCredentials
     extends
         Adapter
 {
-    validateCredentials        : (credentials        : Credentials             , options?: ValidateCredentialsOptions       ) => Awaitable<AdapterUser|false|Date|null>
-    createResetPasswordToken   : (usernameOrEmail    : string                  , options?: CreateResetPasswordTokenOptions  ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
-    validateResetPasswordToken : (resetPasswordToken : string                  , options?: ValidateResetPasswordTokenOptions) => Awaitable<ResetPasswordTokenData|null>
-    applyResetPasswordToken    : (resetPasswordToken : string, password: string, options?: ApplyResetPasswordTokenOptions   ) => Awaitable<boolean>
+    validateCredentials          : (credentials            : Credentials             , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
+    createResetPasswordToken     : (usernameOrEmail        : string                  , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    validateResetPasswordToken   : (resetPasswordToken     : string                  , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ResetPasswordTokenData|null>
+    applyResetPasswordToken      : (resetPasswordToken     : string, password: string, options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
     
-    getRoleByUserId            : (userId             : string                                                               ) => Awaitable<AdapterRole|null>
-    getRoleByUserEmail         : (userEmail          : string                                                               ) => Awaitable<AdapterRole|null>
+    getRoleByUserId              : (userId                 : string                                                                ) => Awaitable<AdapterRole|null>
+    getRoleByUserEmail           : (userEmail              : string                                                                ) => Awaitable<AdapterRole|null>
     
-    checkUsernameAvailability  : (username           : string                                                               ) => Awaitable<boolean>
-    checkEmailAvailability     : (email              : string                                                               ) => Awaitable<boolean>
+    checkUsernameAvailability    : (username               : string                                                                ) => Awaitable<boolean>
+    checkEmailAvailability       : (email                  : string                                                                ) => Awaitable<boolean>
     
-    registerUser               : (fullname: string, email : string, username: string, password: string                      ) => Awaitable<string>
-    markUserEmailAsVerified    : (userId             : string                  , options?: MarkUserEmailAsVerifiedOptions   ) => Awaitable<void>
+    registerUser                 : (fullname: string, email : string, username: string, password: string                           ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
+    markUserEmailAsVerified      : (userId                 : string                  , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
+    applyEmailConfirmationToken  : (emailConfirmationToken : string                  , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
         ...PrismaAdapter(prisma),
         
-        validateCredentials        : async (credentials                         , options) => {
+        validateCredentials          : async (credentials                         , options) => {
             // options:
             const {
                 now                  = new Date(),
@@ -230,7 +240,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 return restUser;
             });
         },
-        createResetPasswordToken   : async (usernameOrEmail                     , options) => {
+        createResetPasswordToken     : async (usernameOrEmail                     , options) => {
             // options:
             const {
                 now = new Date(),
@@ -325,7 +335,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 user,
             };
         },
-        validateResetPasswordToken : async (resetPasswordToken                  , options) => {
+        validateResetPasswordToken   : async (resetPasswordToken                  , options) => {
             // options:
             const {
                 now = new Date(),
@@ -357,7 +367,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 username : user.credentials?.username || null,
             };
         },
-        applyResetPasswordToken    : async (resetPasswordToken, password: string, options) => {
+        applyResetPasswordToken      : async (resetPasswordToken, password: string, options) => {
             // options:
             const {
                 now = new Date(),
@@ -448,7 +458,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             });
         },
         
-        getRoleByUserId            : async (userId                                       ) => {
+        getRoleByUserId              : async (userId                                       ) => {
             if (!('role' in prisma)) return null;
             
             const user = await prisma.user.findUnique({
@@ -463,7 +473,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             // @ts-ignore
             return user?.role ?? null;
         },
-        getRoleByUserEmail         : async (userEmail                                    ) => {
+        getRoleByUserEmail           : async (userEmail                                    ) => {
             // conditions:
             if (!('role' in prisma)) return null;
             
@@ -488,7 +498,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             return user?.role ?? null;
         },
         
-        checkUsernameAvailability  : async (username                                     ) => {
+        checkUsernameAvailability    : async (username                                     ) => {
             // normalizations:
             username = username.toLowerCase();
             
@@ -504,7 +514,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 },
             }));
         },
-        checkEmailAvailability     : async (email                                        ) => {
+        checkEmailAvailability       : async (email                                        ) => {
             // normalizations:
             email = email.toLowerCase();
             
@@ -521,7 +531,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             }));
         },
         
-        registerUser               : async (fullname, email, username, password          ) => {
+        registerUser                 : async (fullname, email, username, password          ) => {
             // normalizations:
             username = username.toLowerCase();
             email    = email.toLowerCase();
@@ -534,34 +544,88 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             
             
-            const data = {
-                name          : fullname,
-                email         : email,
-                emailVerified : null,
-                credentials   : {
-                    create    : {
-                        failuresAttemps : null,
-                        lockedAt        : null,
-                        
-                        username        : username,
-                        password        : hashedPassword,
+            // generate the emailConfirmationToken data:
+            const emailConfirmationToken = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
+            
+            
+            
+            // an atomic transaction of [`create/update User`, `create/update Credentials`, `create/update EmailConfirmationToken`]:
+            return prisma.$transaction(async (prismaTransaction): Promise<{ userId: string, emailConfirmationToken: string }> => {
+                // create/update User:
+                const userData = {
+                    name          : fullname, // signIn friendly name
+                    email         : email,    // signIn password
+                    
+                    emailVerified : null,     // reset
+                };
+                const { id: userId } = await prismaTransaction.user.upsert({
+                    where  : {
+                        email         : email,
+                        emailVerified : null,
                     },
-                },
-            };
-            const user = await prisma.user.upsert({
-                where  : {
-                    email         : email,
-                    emailVerified : null,
-                },
-                create : data,
-                update : data,
-                select : {
-                    id : true,
-                },
+                    create : userData,
+                    update : userData,
+                    select : {
+                        id : true,
+                    },
+                });
+                
+                
+                
+                // create/update Credentials:
+                const credentialsData = {
+                    failuresAttemps : null, // reset
+                    lockedAt        : null, // reset
+                    
+                    username        : username,       // signIn username
+                    password        : hashedPassword, // signIn password
+                };
+                await prismaTransaction.credentials.upsert({
+                    where  : {
+                        userId : userId,
+                    },
+                    create : {
+                        userId : userId,
+                        
+                        ...credentialsData,
+                    },
+                    update : {
+                        ...credentialsData,
+                    },
+                    select : {
+                        id : true,
+                    },
+                });
+                
+                
+                
+                // create/update EmailConfirmationToken:
+                await prismaTransaction.emailConfirmationToken.upsert({
+                    where  : {
+                        userId : userId,
+                    },
+                    create : {
+                        userId : userId,
+                        
+                        token  : emailConfirmationToken,
+                    },
+                    update : {
+                        token  : emailConfirmationToken,
+                    },
+                    select : {
+                        id : true,
+                    },
+                });
+                
+                
+                
+                return {
+                    userId,
+                    emailConfirmationToken,
+                };
             });
-            return user.id;
         },
-        markUserEmailAsVerified    : async (userId                              , options) => {
+        markUserEmailAsVerified      : async (userId                              , options) => {
             // options:
             const {
                 now = new Date(),
@@ -576,6 +640,70 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 data   : {
                     emailVerified : now,
                 },
+            });
+        },
+        applyEmailConfirmationToken  : async (emailConfirmationToken              , options) => {
+            // options:
+            const {
+                now = new Date(),
+            } = options ?? {};
+            
+            
+            
+            // an atomic transaction of [`find user id by emailConfirmationToken`, `delete current emailConfirmationToken record`, `update user's emailVerified field`]:
+            // find the related user id by given emailConfirmationToken:
+            return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
+                // find the related user id by given emailConfirmationToken:
+                const user = await prismaTransaction.user.findFirst({
+                    where  : {
+                        emailConfirmationToken : {
+                            token        : emailConfirmationToken,
+                        },
+                    },
+                    select : {
+                        id               : true, // required: for id key
+                        emailVerified    : true, // required: for marking user's email has verified
+                    },
+                });
+                if (!user) { // there is no user with related emailConfirmationToken
+                    // report the error:
+                    return false;
+                } // if
+                const {
+                    id: userId,
+                    emailVerified,
+                } = user;
+                
+                
+                
+                // delete the current emailConfirmationToken record so it cannot be re-use again:
+                await prismaTransaction.emailConfirmationToken.delete({
+                    where  : {
+                        userId : userId,
+                    },
+                    select : {
+                        id     : true,
+                    },
+                });
+                
+                
+                
+                // update user's emailVerified field (if not already verified):
+                if (emailVerified === null) {
+                    prismaTransaction.user.update({
+                        where  : {
+                            id : userId,
+                        },
+                        data   : {
+                            emailVerified : now,
+                        },
+                    })
+                } // if
+                
+                
+                
+                // report the success:
+                return true;
             });
         },
     };

@@ -10,8 +10,14 @@ import FacebookProvider         from 'next-auth/providers/facebook'
 import InstagramProvider        from 'next-auth/providers/instagram'
 import TwitterProvider          from 'next-auth/providers/twitter'
 
-import { AuthConfig }           from '@heymarco/next-auth/server'
-import { ResetPassword, User }  from '@heymarco/next-auth/templates'
+import type {
+    AuthConfig,
+}                               from '@heymarco/next-auth/server'
+import {
+    User,
+    EmailConfirmation,
+    ResetPassword,
+}                               from '@heymarco/next-auth/templates'
 
 
 
@@ -21,6 +27,34 @@ export const authConfig : AuthConfig = {
     
     
     USER_SIGNUP_ENABLE                 : true,
+    
+    EMAIL_SIGNUP_SUBJECT               : `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
+    EMAIL_SIGNUP_MESSAGE               : <>
+        <p>
+            Hi <User.Name />.
+        </p>
+        <p>
+            You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
+        </p>
+        <p>
+            In order to sign in to our website,
+            you need to confirm your email address by clicking on the link below:
+            <br />
+            <EmailConfirmation.Link>
+                Confirm Your Email
+            </EmailConfirmation.Link>
+        </p>
+        <p>
+            Or copy and paste the URL into your browser:
+            <br />
+            <u>
+                <EmailConfirmation.Url />
+            </u>
+        </p>
+        <p>
+            If you did not signed up on our website then please ignore this email.
+        </p>
+    </>,
     
     
     

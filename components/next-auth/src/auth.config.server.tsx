@@ -16,6 +16,10 @@ import TwitterProvider      from 'next-auth/providers/twitter'
 // templates:
 import {
     // react components:
+    EmailConfirmation,
+}                           from './templates/EmailConfirmation.js'
+import {
+    // react components:
     User,
 }                           from './templates/User.js'
 import {
@@ -31,6 +35,9 @@ export interface AuthConfig {
     
     
     USER_SIGNUP_ENABLE                 : boolean
+    
+    EMAIL_SIGNUP_SUBJECT               : string
+    EMAIL_SIGNUP_MESSAGE               : React.ReactNode
     
     
     
@@ -60,6 +67,34 @@ export const defaultAuthConfig : AuthConfig = {
     
     
     USER_SIGNUP_ENABLE                 : true,
+    
+    EMAIL_SIGNUP_SUBJECT               : `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
+    EMAIL_SIGNUP_MESSAGE               : <>
+        <p>
+            Hi <User.Name />.
+        </p>
+        <p>
+            You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
+        </p>
+        <p>
+            In order to sign in to our website,
+            you need to confirm your email address by clicking on the link below:
+            <br />
+            <EmailConfirmation.Link>
+                Confirm Your Email
+            </EmailConfirmation.Link>
+        </p>
+        <p>
+            Or copy and paste the URL into your browser:
+            <br />
+            <u>
+                <EmailConfirmation.Url />
+            </u>
+        </p>
+        <p>
+            If you did not signed up on our website then please ignore this email.
+        </p>
+    </>,
     
     
     

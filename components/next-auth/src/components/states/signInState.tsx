@@ -672,7 +672,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     // fetch's error request:
                     (error instanceof TypeError)
                 );
-                if (!isRequestError) {
+                if (isRequestError) {
                     // redirect to sign in tab:
                     gotoSignIn();
                 } // if
@@ -1085,7 +1085,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             // report the success:
             await showMessageSuccess(
                 <p>
-                    {data.message ?? 'The account has been successfully created. Now you can sign in with the new username and password.'}
+                    {data.message ?? 'Your account has been successfully created. Now you can sign in with the new username and password.'}
                 </p>
             );
             if (!isMounted.current) return; // unmounted => abort
@@ -1118,7 +1118,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 // fetch's error request:
                 (error instanceof TypeError)
             );
-            if (!isRequestError) {
+            if (isRequestError) {
                 // redirect to sign in tab:
                 gotoSignIn();
             }
@@ -1423,7 +1423,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                 // fetch's error request:
                 (error instanceof TypeError)
             );
-            if (!isRequestError) {
+            if (isRequestError) {
                 // redirect to sign in tab:
                 gotoSignIn();
             }
