@@ -17,6 +17,7 @@ export default function Home() {
                 credentialsConfig={credentialsConfig}
                 providers={loginProviders}
                 signUpEnable={true}
+                defaultCallbackUrl='/?welcome'
             />
         </Container>
     )

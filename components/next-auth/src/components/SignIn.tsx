@@ -157,6 +157,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // pages:
         homepagePath        : _homepagePath,        // remove
+        defaultCallbackUrl  : _defaultCallbackUrl,  // remove
         
         
         

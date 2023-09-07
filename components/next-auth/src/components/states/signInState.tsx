@@ -380,6 +380,7 @@ export interface SignInStateProps {
     
     // pages:
     homepagePath        ?: string
+    defaultCallbackUrl  ?: string|null
 }
 export const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) => {
     // rest props:
@@ -397,6 +398,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         
         // pages:
         homepagePath        = '/',
+        defaultCallbackUrl  = null,
         
         
         
@@ -422,7 +424,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // data:
-    const callbackUrlRef        = useRef<string|null>(searchParams?.get('callbackUrl'       ) || null);
+    const callbackUrlRef        = useRef<string|null>(searchParams?.get('callbackUrl'       ) || defaultCallbackUrl);
     const callbackUrl           = callbackUrlRef.current;
     const resetPasswordTokenRef = useRef<string|null>(searchParams?.get('resetPasswordToken') || null);
     const resetPasswordToken    = resetPasswordTokenRef.current;
