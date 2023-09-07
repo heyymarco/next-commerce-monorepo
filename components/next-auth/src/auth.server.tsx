@@ -196,17 +196,18 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     try {
                         const now    = new Date();
                         const result = await adapter.validateCredentials(credentials, {
-                            now                 : now,
-                            failureMaxAttemps   : (authConfig.USER_SIGNIN_FAILURE_MAX_ATTEMPS   ?? null),
-                            failureLockDuration : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION ?? 0.25),
+                            now                  : now,
+                            requireEmailVerified : (authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED ?? false),
+                            failureMaxAttemps    : (authConfig.USER_SIGNIN_FAILURE_MAX_ATTEMPS    ?? null),
+                            failureLockDuration  : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION  ?? 0.25),
                         });
                         if (result === null) return null;
                         if (result === false) {
-                            console.log('EMAIL UNVERIFIED', result);
+                            console.log('EMAIL UNVERIFIED', result); // TODO: remove log
                             throw Error(`Your email has not been verified. Please activate your account by clicking on the link sent to your email.`);
                         }
                         if (result instanceof Date) {
-                            console.log('LOGIN LOCKED', result);
+                            console.log('LOGIN LOCKED', result); // TODO: remove log
                             throw Error(`Your account is locked due to too many login attempts. Please try again ${moment(now).to(result)}.`);
                         }
                         return result;
@@ -266,13 +267,22 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 
                 
-                if ((account !== null) && (!('emailVerified' in user) || (user.emailVerified === null))) {
-                    // login with oAuth is also intrinsically verifies the email:
-                    const now = new Date();
-                    await adapter.markUserEmailAsVerified(user.id, {
-                        now : now,
-                    });
-                    (user as any).emailVerified = now; // update the data
+                if ((account?.type === 'oauth') && (!('emailVerified' in user) || (user.emailVerified === null))) {
+                    const markUserEmailAsVerified = async () => {
+                        // login with oAuth is also intrinsically verifies the email:
+                        const now = new Date();
+                        await adapter.markUserEmailAsVerified(user.id, {
+                            now : now,
+                        });
+                        (user as any).emailVerified = now; // update the data
+                    };
+                    if (!('emailVerified' in user)) {
+                        // no update: the `User` record is not yet created
+                    }
+                    else {
+                        // immediately update:
+                        await markUserEmailAsVerified();
+                    } // if
                 } // if
                 
                 
@@ -313,7 +323,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     user: dbUser,
                 } = params;
                 
-                console.log('USER :', dbUser);
+                
                 
                 // assigning userRole(s):
                 const sessionUser = session.user;
@@ -473,7 +483,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         }
         catch (error: any) {
             // report the failure:
-            console.log('send email failed: ', error); // TODO: remove log
+            console.log(error); // TODO: remove log
             return NextResponse.json({
                 error:
 `Oops, there was an error while resetting your password.
@@ -912,7 +922,7 @@ If the problem still persists, please contact our technical support.`,
             const {
                 emailConfirmationToken,
             } = await adapter.registerUser(fullname, email, username, password, {
-                createEmailConfirmationToken : authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED,
+                requireEmailVerified : (authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED ?? false),
             });
             
             
@@ -992,7 +1002,7 @@ If the problem still persists, please contact our technical support.`,
             }, { status: !emailConfirmationToken ? 200 : 201 }); // handled with success
         }
         catch (error: any) {
-            console.log(error);
+            console.log(error); // TODO: remove log
             return NextResponse.json({
                 error:
 `Oops, there was an error while registering your account.

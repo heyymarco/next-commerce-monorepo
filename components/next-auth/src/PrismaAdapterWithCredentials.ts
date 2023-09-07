@@ -41,30 +41,30 @@ export interface ResetPasswordTokenData {
 
 // options:
 export interface ValidateCredentialsOptions {
-    now                          ?: Date
-    requireEmailVerified         ?: boolean
-    failureMaxAttemps            ?: number|null
-    failureLockDuration          ?: number
+    now                  ?: Date
+    requireEmailVerified ?: boolean
+    failureMaxAttemps    ?: number|null
+    failureLockDuration  ?: number
 }
 export interface CreateResetPasswordTokenOptions {
-    now                          ?: Date
-    resetLimitInHours            ?: number
-    emailResetMaxAge             ?: number
+    now                  ?: Date
+    resetLimitInHours    ?: number
+    emailResetMaxAge     ?: number
 }
 export interface ValidateResetPasswordTokenOptions {
-    now                          ?: Date
+    now                  ?: Date
 }
 export interface ApplyResetPasswordTokenOptions {
-    now                          ?: Date
+    now                  ?: Date
 }
 export interface RegisterUserOptions {
-    createEmailConfirmationToken ?: boolean
+    requireEmailVerified ?: boolean
 }
 export interface MarkUserEmailAsVerifiedOptions {
-    now                          ?: Date
+    now                  ?: Date
 }
 export interface ApplyEmailConfirmationTokenOptions {
-    now                          ?: Date
+    now                  ?: Date
 }
 
 
@@ -531,7 +531,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
         registerUser                 : async (fullname, email, username, password , options) => {
             // options:
             const {
-                createEmailConfirmationToken = false,
+                requireEmailVerified = false,
             } = options ?? {};
             
             
@@ -549,7 +549,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             
             // generate the emailConfirmationToken data:
-            const emailConfirmationToken = createEmailConfirmationToken ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : '';
+            const emailConfirmationToken = requireEmailVerified ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : '';
             
             
             
@@ -604,7 +604,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 
                 
                 // create/update EmailConfirmationToken:
-                if (createEmailConfirmationToken) {
+                if (emailConfirmationToken) {
                     await prismaTransaction.emailConfirmationToken.upsert({
                         where  : {
                             userId : userId,
