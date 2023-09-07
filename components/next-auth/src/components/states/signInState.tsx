@@ -64,6 +64,7 @@ import {
     
     
     // utility-components:
+    paragraphify,
     useDialogMessage,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
@@ -1084,9 +1085,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             
             // report the success:
             await showMessageSuccess(
-                <p>
-                    {data.message ?? 'Your account has been successfully created. Now you can sign in with the new username and password.'}
-                </p>
+                data.message
+                ? paragraphify(data.message)
+                : (
+                    <p>
+                        Your account has been successfully created. Now you can sign in with the new username and password.
+                    </p>
+                )
             );
             if (!isMounted.current) return; // unmounted => abort
             
@@ -1299,9 +1304,26 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             
             // report the success:
             await showMessageSuccess(
-                <p>
-                    {data.message ?? 'A password reset link sent to your email. Please check your inbox in a moment.'}
-                </p>
+                data.message
+                ? paragraphify(data.message)
+                : (
+                    (response.status === 201)
+                    ? (
+                        <>
+                            <p>
+                                Your account has been successfully created.
+                            </p>
+                            <p>
+                                We have sent a confirmation link to your email to activate your account. Please check your inbox in a moment.
+                            </p>
+                        </>
+                    )
+                    : (
+                        <p>
+                            A password reset link sent to your email. Please check your inbox in a moment.
+                        </p>
+                    )
+                )
             );
             if (!isMounted.current) return; // unmounted => abort
             
@@ -1389,9 +1411,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             
             // report the success:
             await showMessageSuccess(
-                <p>
-                    {data.message ?? 'The password has been successfully changed. Now you can sign in with the new password.'}
-                </p>
+                data.message
+                ? paragraphify(data.message)
+                : (
+                    <p>
+                        The password has been successfully changed. Now you can sign in with the new password.
+                    </p>
+                )
             );
             if (!isMounted.current) return; // unmounted => abort
             
