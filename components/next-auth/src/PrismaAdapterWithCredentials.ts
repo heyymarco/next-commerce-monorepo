@@ -41,33 +41,30 @@ export interface ResetPasswordTokenData {
 
 // options:
 export interface ValidateCredentialsOptions {
-    now                  ?: Date
-    requireEmailVerified ?: boolean
-    failureMaxAttemps    ?: number|null
-    failureLockDuration  ?: number
+    now                          ?: Date
+    requireEmailVerified         ?: boolean
+    failureMaxAttemps            ?: number|null
+    failureLockDuration          ?: number
 }
 export interface CreateResetPasswordTokenOptions {
-    now                 ?: Date
-    resetLimitInHours   ?: number
-    emailResetMaxAge    ?: number
+    now                          ?: Date
+    resetLimitInHours            ?: number
+    emailResetMaxAge             ?: number
 }
 export interface ValidateResetPasswordTokenOptions {
-    now                 ?: Date
+    now                          ?: Date
 }
 export interface ApplyResetPasswordTokenOptions {
-    now                 ?: Date
+    now                          ?: Date
+}
+export interface RegisterUserOptions {
+    createEmailConfirmationToken ?: boolean
 }
 export interface MarkUserEmailAsVerifiedOptions {
-    now                 ?: Date
-}
-export interface CreateEmailConfirmationTokenOptions {
-    now                 ?: Date
+    now                          ?: Date
 }
 export interface ApplyEmailConfirmationTokenOptions {
-    now                 ?: Date
-}
-export interface ApplyEmailConfirmationTokenOptions {
-    now                 ?: Date
+    now                          ?: Date
 }
 
 
@@ -76,20 +73,20 @@ export interface AdapterWithCredentials
     extends
         Adapter
 {
-    validateCredentials          : (credentials            : Credentials             , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
-    createResetPasswordToken     : (usernameOrEmail        : string                  , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
-    validateResetPasswordToken   : (resetPasswordToken     : string                  , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ResetPasswordTokenData|null>
-    applyResetPasswordToken      : (resetPasswordToken     : string, password: string, options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
+    validateCredentials          : (credentials            : Credentials                                , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
+    createResetPasswordToken     : (usernameOrEmail        : string                                     , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    validateResetPasswordToken   : (resetPasswordToken     : string                                     , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ResetPasswordTokenData|null>
+    applyResetPasswordToken      : (resetPasswordToken     : string, password: string                   , options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
     
-    getRoleByUserId              : (userId                 : string                                                                ) => Awaitable<AdapterRole|null>
-    getRoleByUserEmail           : (userEmail              : string                                                                ) => Awaitable<AdapterRole|null>
+    getRoleByUserId              : (userId                 : string                                                                                   ) => Awaitable<AdapterRole|null>
+    getRoleByUserEmail           : (userEmail              : string                                                                                   ) => Awaitable<AdapterRole|null>
     
-    checkUsernameAvailability    : (username               : string                                                                ) => Awaitable<boolean>
-    checkEmailAvailability       : (email                  : string                                                                ) => Awaitable<boolean>
+    checkUsernameAvailability    : (username               : string                                                                                   ) => Awaitable<boolean>
+    checkEmailAvailability       : (email                  : string                                                                                   ) => Awaitable<boolean>
     
-    registerUser                 : (fullname: string, email : string, username: string, password: string                           ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
-    markUserEmailAsVerified      : (userId                 : string                  , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
-    applyEmailConfirmationToken  : (emailConfirmationToken : string                  , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
+    registerUser                 : (fullname: string, email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
+    markUserEmailAsVerified      : (userId                 : string                                     , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
+    applyEmailConfirmationToken  : (emailConfirmationToken : string                                     , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
 }
 export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithCredentials => {
     return {
@@ -531,7 +528,14 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             }));
         },
         
-        registerUser                 : async (fullname, email, username, password          ) => {
+        registerUser                 : async (fullname, email, username, password , options) => {
+            // options:
+            const {
+                createEmailConfirmationToken = false,
+            } = options ?? {};
+            
+            
+            
             // normalizations:
             username = username.toLowerCase();
             email    = email.toLowerCase();
@@ -545,7 +549,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             
             // generate the emailConfirmationToken data:
-            const emailConfirmationToken = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
+            const emailConfirmationToken = createEmailConfirmationToken ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : '';
             
             
             
@@ -600,22 +604,24 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 
                 
                 // create/update EmailConfirmationToken:
-                await prismaTransaction.emailConfirmationToken.upsert({
-                    where  : {
-                        userId : userId,
-                    },
-                    create : {
-                        userId : userId,
-                        
-                        token  : emailConfirmationToken,
-                    },
-                    update : {
-                        token  : emailConfirmationToken,
-                    },
-                    select : {
-                        id : true,
-                    },
-                });
+                if (createEmailConfirmationToken) {
+                    await prismaTransaction.emailConfirmationToken.upsert({
+                        where  : {
+                            userId : userId,
+                        },
+                        create : {
+                            userId : userId,
+                            
+                            token  : emailConfirmationToken,
+                        },
+                        update : {
+                            token  : emailConfirmationToken,
+                        },
+                        select : {
+                            id : true,
+                        },
+                    });
+                } // if
                 
                 
                 

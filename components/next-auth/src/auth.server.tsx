@@ -476,7 +476,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             console.log('send email failed: ', error); // TODO: remove log
             return NextResponse.json({
                 error:
-`Oops, there was an error for resetting your password.
+`Oops, there was an error while resetting your password.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
@@ -534,7 +534,7 @@ If the problem still persists, please contact our technical support.`,
             // report the failure:
             return NextResponse.json({
                 error:
-`Oops, there was an error for validating your token.
+`Oops, there was an error while validating your token.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
@@ -618,7 +618,7 @@ If the problem still persists, please contact our technical support.`,
         catch (error: any) {
             return NextResponse.json({
                 error:
-`Oops, there was an error for resetting your password.
+`Oops, there was an error while resetting your password.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
@@ -684,7 +684,7 @@ If the problem still persists, please contact our technical support.`,
         catch (error: any) {
             return NextResponse.json({
                 error:
-`Oops, there was an error for checking email availability.
+`Oops, there was an error while checking email availability.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
@@ -750,7 +750,7 @@ If the problem still persists, please contact our technical support.`,
         catch (error: any) {
             return NextResponse.json({
                 error:
-`Oops, there was an error for checking username availability.
+`Oops, there was an error while checking username availability.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
@@ -911,84 +911,91 @@ If the problem still persists, please contact our technical support.`,
         try {
             const {
                 emailConfirmationToken,
-            } = await adapter.registerUser(fullname, email, username, password);
-            
-            
-            
-            // generate a link to a page for confirming email:
-            const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
-            
-            
-            
-            // send a link of emailConfirmationToken to the user's email:
-            const { renderToStaticMarkup } = await import('react-dom/server');
-            const transporter = nodemailer.createTransport({
-                host     :  process.env.EMAIL_SIGNUP_SERVER_HOST ?? '',
-                port     : Number.parseInt(process.env.EMAIL_SIGNUP_SERVER_PORT ?? '465'),
-                secure   : (process.env.EMAIL_SIGNUP_SERVER_SECURE === 'true'),
-                auth     : {
-                    user :  process.env.EMAIL_SIGNUP_SERVER_USERNAME,
-                    pass :  process.env.EMAIL_SIGNUP_SERVER_PASSWORD,
-                },
+            } = await adapter.registerUser(fullname, email, username, password, {
+                createEmailConfirmationToken : authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED,
             });
-            await transporter.sendMail({
-                from    : process.env.EMAIL_SIGNUP_FROM, // sender address
-                to      : email, // list of receivers
-                subject : authConfig.EMAIL_SIGNUP_SUBJECT ?? `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
-                html    : renderToStaticMarkup(
-                    <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
-                        <UserContextProvider model={{
-                            name  : fullname,
-                            email : email,
-                        }}>
-                            {
-                                authConfig.EMAIL_SIGNUP_MESSAGE
-                                ??
-                                <>
-                                    <p>
-                                        Hi <TemplateUser.Name />.
-                                    </p>
-                                    <p>
-                                        You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
-                                    </p>
-                                    <p>
-                                        In order to sign in to our website,
-                                        you need to confirm your email address by clicking on the link below:
-                                        <br />
-                                        <EmailConfirmation.Link>
-                                            Confirm Your Email
-                                        </EmailConfirmation.Link>
-                                    </p>
-                                    <p>
-                                        Or copy and paste the URL into your browser:
-                                        <br />
-                                        <u>
-                                            <EmailConfirmation.Url />
-                                        </u>
-                                    </p>
-                                    <p>
-                                        If you did not signed up on our website then please ignore this email.
-                                    </p>
-                                </>
-                            }
-                        </UserContextProvider>
-                    </EmailConfirmationContextProvider>
-                ),
-            });
-            transporter.close();
+            
+            
+            if (emailConfirmationToken) {
+                // generate a link to a page for confirming email:
+                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
+                
+                
+                
+                // send a link of emailConfirmationToken to the user's email:
+                const { renderToStaticMarkup } = await import('react-dom/server');
+                const transporter = nodemailer.createTransport({
+                    host     :  process.env.EMAIL_SIGNUP_SERVER_HOST ?? '',
+                    port     : Number.parseInt(process.env.EMAIL_SIGNUP_SERVER_PORT ?? '465'),
+                    secure   : (process.env.EMAIL_SIGNUP_SERVER_SECURE === 'true'),
+                    auth     : {
+                        user :  process.env.EMAIL_SIGNUP_SERVER_USERNAME,
+                        pass :  process.env.EMAIL_SIGNUP_SERVER_PASSWORD,
+                    },
+                });
+                await transporter.sendMail({
+                    from    : process.env.EMAIL_SIGNUP_FROM, // sender address
+                    to      : email, // list of receivers
+                    subject : authConfig.EMAIL_SIGNUP_SUBJECT ?? `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
+                    html    : renderToStaticMarkup(
+                        <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
+                            <UserContextProvider model={{
+                                name  : fullname,
+                                email : email,
+                            }}>
+                                {
+                                    authConfig.EMAIL_SIGNUP_MESSAGE
+                                    ??
+                                    <>
+                                        <p>
+                                            Hi <TemplateUser.Name />.
+                                        </p>
+                                        <p>
+                                            You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
+                                        </p>
+                                        <p>
+                                            In order to sign in to our website,
+                                            you need to confirm your email address by clicking on the link below:
+                                            <br />
+                                            <EmailConfirmation.Link>
+                                                Confirm Your Email
+                                            </EmailConfirmation.Link>
+                                        </p>
+                                        <p>
+                                            Or copy and paste the URL into your browser:
+                                            <br />
+                                            <u>
+                                                <EmailConfirmation.Url />
+                                            </u>
+                                        </p>
+                                        <p>
+                                            If you did not signed up on our website then please ignore this email.
+                                        </p>
+                                    </>
+                                }
+                            </UserContextProvider>
+                        </EmailConfirmationContextProvider>
+                    ),
+                });
+                transporter.close();
+            } // if
             
             
             
             return NextResponse.json({
                 ok       : true,
-                message  : 'Your account has been successfully created. Now you can sign in with the new username and password.',
-            }); // handled with success
+                message  :
+                    !emailConfirmationToken
+                    ? 'Your account has been successfully created. Now you can sign in with the new username and password.'
+                    : 'Your account has been successfully created.\n\nWe have sent a confirmation link to your email to activate your account. Please check your email in a moment.'
+                ,
+            }, { status: !emailConfirmationToken ? 200 : 201 }); // handled with success
         }
         catch (error: any) {
             console.log(error);
             return NextResponse.json({
                 error:
-`Oops, there was an error for resetting your password.
+`Oops, there was an error while registering your account.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
