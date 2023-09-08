@@ -696,14 +696,14 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 
                 // update user's emailVerified field (if not already verified):
                 if (emailVerified === null) {
-                    prismaTransaction.user.update({
+                    await prismaTransaction.user.update({
                         where  : {
                             id : userId,
                         },
                         data   : {
                             emailVerified : now,
                         },
-                    })
+                    });
                 } // if
                 
                 
