@@ -243,14 +243,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     
-                    // if sign up is disabled => refuse any registration:
-                    const envUserSignupEnable = process.env.USER_SIGNUP_ENABLE ?? '';
-                    const    userSignupEnable = (
-                        !!envUserSignupEnable
-                        ? (envUserSignupEnable === 'true')
-                        : authConfig.USER_SIGNUP_ENABLE
-                    );
-                    if (!userSignupEnable) return false;
+                    if (!(authConfig.USER_SIGNUP_ENABLE ?? true)) return false;
                     
                     
                     
