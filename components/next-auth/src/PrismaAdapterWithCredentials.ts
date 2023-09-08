@@ -456,6 +456,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
         },
         
         getRoleByUserId              : async (userId                                       ) => {
+            // conditions:
             if (!('role' in prisma)) return null;
             
             const user = await prisma.user.findUnique({
@@ -549,7 +550,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             
             // generate the emailConfirmationToken data:
-            const emailConfirmationToken = requireEmailVerified ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : '';
+            const emailConfirmationToken = (requireEmailVerified && ('emailConfirmationToken' in prisma)) ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : '';
             
             
             
@@ -605,6 +606,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 
                 // create/update EmailConfirmationToken:
                 if (emailConfirmationToken) {
+                    // @ts-ignore
                     await prismaTransaction.emailConfirmationToken.upsert({
                         where  : {
                             userId : userId,
@@ -656,12 +658,18 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
             
             
             
+            // conditions:
+            if (!('emailConfirmationToken' in prisma)) return false;
+            
+            
+            
             // an atomic transaction of [`find user id by emailConfirmationToken`, `delete current emailConfirmationToken record`, `update user's emailVerified field`]:
             // find the related user id by given emailConfirmationToken:
             return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
                 // find the related user id by given emailConfirmationToken:
                 const user = await prismaTransaction.user.findFirst({
                     where  : {
+                        // @ts-ignore
                         emailConfirmationToken : {
                             token        : emailConfirmationToken,
                         },
@@ -683,6 +691,7 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 
                 
                 // delete the current emailConfirmationToken record so it cannot be re-use again:
+                // @ts-ignore
                 await prismaTransaction.emailConfirmationToken.delete({
                     where  : {
                         userId : userId,
