@@ -30,6 +30,22 @@ import {
     ButtonProps,
     ButtonComponentProps,
     ButtonIcon,
+    
+    
+    
+    // layout-components:
+    CardBody,
+    
+    
+    
+    // status-components:
+    Busy,
+    
+    
+    
+    // utility-components:
+    ModalStatusProps,
+    ModalStatus,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
@@ -76,17 +92,19 @@ export interface TabSignInProps
         Omit<FieldPasswordProps       , 'isActiveSection'|'isActionApplied'|'isPasswordEntry'>
 {
     // auths:
-    providers                         ?: BuiltInProviderType[]
+    providers                           ?: BuiltInProviderType[]
     
     
     
     // components:
-    signInTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    signInTitleComponent                ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    signInButtonComponent             ?: ButtonComponentProps['buttonComponent']
-    signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
+    signInButtonComponent               ?: ButtonComponentProps['buttonComponent']
+    signInWithButtonComponent           ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
     
-    alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
+    alternateSignInSeparatorComponent   ?: React.ReactComponentElement<any, GenericProps<Element>>
+    
+    emailValidationModalStatusComponent ?: React.ReactComponentElement<any, ModalStatusProps<Element>>|null
 }
 export const TabSignIn = (props: TabSignInProps) => {
     // rest props:
@@ -97,16 +115,18 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         
         // components:
-        signInTitleComponent              = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
+        signInTitleComponent                = (<h1>Sign In</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
         usernameOrEmailInputComponent,
         
         passwordInputComponent,
         
-        signInButtonComponent             = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
-        signInWithButtonComponent         = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
+        signInButtonComponent               = (<ButtonWithBusy busyType='credentials'    buttonComponent={<ButtonIcon icon='login' />} /> as React.ReactComponentElement<any, ButtonProps>),
+        signInWithButtonComponent           = (((oAuthProvider: BuiltInProviderType) => <ButtonWithBusy busyType={oAuthProvider} buttonComponent={<ButtonIcon icon={oAuthProvider} />} />) as Required<TabSignInProps>['signInWithButtonComponent']),
         
-        alternateSignInSeparatorComponent = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
+        alternateSignInSeparatorComponent   = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
+        
+        emailValidationModalStatusComponent = (<ModalStatus<Element> theme='primary' />                                                   as React.ReactComponentElement<any, ModalStatusProps<Element>>),
     } = props;
     
     
@@ -115,6 +135,7 @@ export const TabSignIn = (props: TabSignInProps) => {
     const {
         // states:
         isSignInSection,
+        emailVerified,
         
         
         
@@ -306,6 +327,29 @@ export const TabSignIn = (props: TabSignInProps) => {
                     })}
                 </div>
             </>}
+            
+            {/* <ModalStatus> */}
+            {!!emailValidationModalStatusComponent && React.cloneElement<ModalStatusProps<Element>>(emailValidationModalStatusComponent,
+                // props:
+                {
+                    // accessibilities:
+                    inheritEnabled : emailValidationModalStatusComponent.props.inheritEnabled ?? false,
+                    
+                    
+                    
+                    // global stackable:
+                    viewport       : emailValidationModalStatusComponent.props.viewport       ?? formRef,
+                },
+                
+                
+                
+                // children:
+                (emailValidationModalStatusComponent.props.children ?? ((emailVerified === null) && <CardBody>
+                    <p>
+                        <Busy />&nbsp;Validating email confirmation token...
+                    </p>
+                </CardBody>)),
+            )}
         </form>
     );
 };
