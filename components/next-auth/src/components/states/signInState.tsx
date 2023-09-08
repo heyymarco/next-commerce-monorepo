@@ -88,6 +88,7 @@ import {
     emailValidationPath    as defaultEmailValidationPath,
     passwordValidationPath as defaultPasswordValidationPath,
     signUpPath             as defaultSignUpPath,
+    emailConfirmationPath  as defaultEmailConfirmationPath,
 }                           from '../../api-paths.js'
 
 // configs:
@@ -145,6 +146,7 @@ export interface SignInState {
     // data:
     callbackUrl                : string|null
     resetPasswordToken         : string|null
+    emailConfirmationToken     : string|null
     
     
     
@@ -155,6 +157,7 @@ export interface SignInState {
     isRecoverSection           : boolean
     isResetSection             : boolean
     tokenVerified              : null|{}|false
+    emailVerified              : null|boolean
     isSignUpApplied            : boolean
     isRecoverApplied           : boolean
     isResetApplied             : boolean
@@ -269,6 +272,7 @@ const SignInStateContext = createContext<SignInState>({
     // data:
     callbackUrl                : null,
     resetPasswordToken         : null,
+    emailConfirmationToken     : null,
     
     
     
@@ -279,6 +283,7 @@ const SignInStateContext = createContext<SignInState>({
     isRecoverSection           : false,
     isResetSection             : false,
     tokenVerified              : null,
+    emailVerified              : null,
     isSignUpApplied            : false,
     isRecoverApplied           : false,
     isResetApplied             : false,
@@ -413,6 +418,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const emailValidationPath    = `${basePath}/${defaultEmailValidationPath}`;
     const passwordValidationPath = `${basePath}/${defaultPasswordValidationPath}`;
     const signUpPath             = `${basePath}/${defaultSignUpPath}`;
+    const emailConfirmationPath  = `${basePath}/${defaultEmailConfirmationPath}`;
     
     
     
@@ -424,10 +430,12 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     
     
     // data:
-    const callbackUrlRef        = useRef<string|null>(searchParams?.get('callbackUrl'       ) || defaultCallbackUrl);
-    const callbackUrl           = callbackUrlRef.current;
-    const resetPasswordTokenRef = useRef<string|null>(searchParams?.get('resetPasswordToken') || null);
-    const resetPasswordToken    = resetPasswordTokenRef.current;
+    const callbackUrlRef            = useRef<string|null>(searchParams?.get('callbackUrl'       ) || defaultCallbackUrl);
+    const callbackUrl               = callbackUrlRef.current;
+    const resetPasswordTokenRef     = useRef<string|null>(searchParams?.get('resetPasswordToken') || null);
+    const resetPasswordToken        = resetPasswordTokenRef.current;
+    const emailConfirmationTokenRef = useRef<string|null>(searchParams?.get('emailConfirmationToken') || null);
+    const emailConfirmationToken    = emailConfirmationTokenRef.current;
     
     
     
@@ -438,6 +446,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     const isRecoverSection                          = (section === 'recover');
     const isResetSection                            = (section === 'reset');
     const [tokenVerified    , setTokenVerified    ] = useState<null|{ email: string, username: string|null }|false>(!resetPasswordToken ? false : null);
+    const [emailVerified    , setEmailVerified    ] = useState<null|boolean>(!emailConfirmationToken ? false : null);
     const [isSignUpApplied  , setIsSignUpApplied  ] = useState<boolean>(false);
     const [isRecoverApplied , setIsRecoverApplied ] = useState<boolean>(false);
     const [isResetApplied   , setIsResetApplied   ] = useState<boolean>(false);
@@ -600,6 +609,8 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             !searchParams?.get('callbackUrl')
             &&
             !searchParams?.get('resetPasswordToken')
+            &&
+            !searchParams?.get('emailConfirmationToken')
         ) return; // no queryString(s) passed => nothing to remove => ignore
         
         
@@ -617,6 +628,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             // remove `?resetPasswordToken=***` on browser's url:
             newSearchParams.delete('resetPasswordToken');
             
+            // remove `?emailConfirmationToken=***` on browser's url:
+            newSearchParams.delete('emailConfirmationToken');
+            
             // update browser's url:
             router.replace(`${pathName}${!!newSearchParams.size ? `?${newSearchParams}` : ''}`, { scroll: false });
         }
@@ -626,19 +640,19 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
     }, [pathName]);
     
     // validate password reset token at startup:
-    const hasInitialized = useRef(false); // make sure the validation is never performed twice
+    const hasResetPasswordTokenInitialized = useRef(false); // make sure the validation is never performed twice
     useEffect(() => {
         // conditions:
-        if (!resetPasswordToken)    return; // no token => nothing to reset => ignore
-        if (tokenVerified !== null) return; // already verified with success/failed result => ignore
-        if (hasInitialized.current) return; // already performed => ignore
-        hasInitialized.current = true; // mark as performed
+        if (!resetPasswordToken)                      return; // no token => nothing to reset => ignore
+        if (tokenVerified !== null)                   return; // already verified with success/failed result => ignore
+        if (hasResetPasswordTokenInitialized.current) return; // already performed => ignore
+        hasResetPasswordTokenInitialized.current = true;      // mark as performed
         
         
         
         // actions:
         (async () => {
-            // attempts validate password reset:
+            // attempts validate password reset token:
             try {
                 const response = await fetch(`${resetPasswordPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`, {
                     method : 'GET',
@@ -688,6 +702,67 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             } // try
         })();
     }, [resetPasswordToken, tokenVerified]);
+    
+    // validate email confirmation token at startup:
+    const hasEmailConfirmationTokenInitialized = useRef(false); // make sure the validation is never performed twice
+    useEffect(() => {
+        // conditions:
+        if (!emailConfirmationToken)                      return; // no token => nothing to confirm => ignore
+        if (emailVerified !== null)                       return; // already verified with success/failed result => ignore
+        if (hasEmailConfirmationTokenInitialized.current) return; // already performed => ignore
+        hasEmailConfirmationTokenInitialized.current = true;      // mark as performed
+        
+        
+        
+        // actions:
+        (async () => {
+            // attempts validate email confirmation token:
+            try {
+                const response = await fetch(emailConfirmationPath, {
+                    method  : 'PATCH',
+                    headers : {
+                        'Content-Type' : 'application/json',
+                    },
+                    body    : JSON.stringify({ emailConfirmationToken }),
+                });
+                if (!response.ok) throw Error(response.statusText, { cause: response });
+                const data = await response.json();
+                if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // success
+                
+                
+                
+                // save the success:
+                setEmailVerified(true);
+                
+                
+                
+                // report the success:
+                showMessageSuccess(
+                    data.message
+                    ? paragraphify(data.message)
+                    : (
+                        <p>
+                            Your email has been successfully confirmed. Now you can sign in with your username (or email) and password.
+                        </p>
+                    )
+                );
+            }
+            catch (error: any) { // error
+                // save the failure:
+                setEmailVerified(false);
+                
+                
+                
+                // report the failure:
+                await showMessageFetchError(error);
+                if (!isMounted.current) return; // unmounted => abort
+            } // try
+        })();
+    }, [emailConfirmationToken, emailVerified]);
     
     // validate email availability:
     useEffect(() => {
@@ -979,6 +1054,17 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         // actions:
         internalSetFocus(passwordRef.current);
     }, [tokenVerified]);
+    
+    // focus on usernameOrEmail field after successfully verified the email confirmation token:
+    useEffect(() => {
+        // conditions:
+        if (!emailVerified) return; // NOT verified with success result => ignore
+        
+        
+        
+        // actions:
+        internalSetFocus(usernameOrEmailRef.current);
+    }, [emailVerified]);
     
     // resets input states when the `section` changes:
     const prevSection = useRef<SignInSection>(section);
@@ -1493,6 +1579,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         // data:
         callbackUrl,                // mutable value
         resetPasswordToken,         // mutable value
+        emailConfirmationToken,     // mutable value
         
         
         
@@ -1503,6 +1590,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isRecoverSection,           // mutable value
         isResetSection,             // mutable value
         tokenVerified,              // mutable value
+        emailVerified,              // mutable value
         isSignUpApplied,            // mutable value
         isRecoverApplied,           // mutable value
         isResetApplied,             // mutable value
@@ -1597,6 +1685,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         // data:
         callbackUrl,
         resetPasswordToken,
+        emailConfirmationToken,
         
         
         
@@ -1607,6 +1696,7 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         isRecoverSection,
         isResetSection,
         tokenVerified,
+        emailVerified,
         isSignUpApplied,
         isRecoverApplied,
         isResetApplied,
@@ -1621,8 +1711,6 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
         fullnameFocused,
         fullnameValid,
         fullnameValidLength,
-        
-        tokenVerified,
         
         email,
         emailFocused,
@@ -1671,13 +1759,13 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
                     !isBusy // disabled if busy
                     &&
                     (
-                        (isSignUpSection  && !isSignUpApplied)                   // on 'signUp'  section => enabled if registration   was NOT sent
+                        (isSignUpSection  && !isSignUpApplied)                                      // on 'signUp'  section => enabled if registration   was NOT sent
                         ||
-                        isSignInSection                                          // on 'signIn'  section => always enabled
+                        (isSignInSection  && (!emailConfirmationToken || (emailVerified !== null))) // on 'signIn'  section => enabled if no emailConfirmationToken -or- email has verified (success or failed)
                         ||
-                        (isRecoverSection && !isRecoverApplied)                  // on 'recover' section => enabled if recoverRequest was NOT sent
+                        (isRecoverSection && !isRecoverApplied)                                     // on 'recover' section => enabled if recoverRequest was NOT sent
                         ||
-                        (isResetSection   && !isResetApplied && !!tokenVerified) // on 'reset'   section => enabled if resetPassword  was NOT applied and token verified
+                        (isResetSection   && !isResetApplied && !!tokenVerified)                    // on 'reset'   section => enabled if resetPassword  was NOT applied and token verified
                     )
                 }
             >

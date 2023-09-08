@@ -100,6 +100,7 @@ import {
     usernameValidationPath as defaultUsernameValidationPath,
     emailValidationPath    as defaultEmailValidationPath,
     passwordValidationPath as defaultPasswordValidationPath,
+    emailConfirmationPath  as defaultEmailConfirmationPath,
 }                           from './api-paths.js'
 
 
@@ -1015,6 +1016,60 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
+    const applyEmailConfirmationRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // filters the request type:
+        if (req.method !== 'PATCH')                return false; // ignore
+        if (context.params.nextauth?.[0] !== path) return false; // ignore
+        
+        
+        
+        // validate the request parameter(s):
+        const {
+            emailConfirmationToken,
+        } = await getRequestData(req);
+        if ((typeof(emailConfirmationToken) !== 'string') || !emailConfirmationToken) {
+            return NextResponse.json({
+                error: 'The required email confirmation token is not provided.',
+            }, { status: 400 }); // handled with error
+        } // if
+        if (emailConfirmationToken.length > 50) { // prevents of DDOS attack
+            return NextResponse.json({
+                error: 'The email confirmation token is too long.',
+            }, { status: 400 }); // handled with error
+        } // if
+        
+        
+        
+        try {
+            const result = await adapter.applyEmailConfirmationToken(emailConfirmationToken, {
+                now : new Date(),
+            });
+            if (!result) {
+                return NextResponse.json({
+                    error: 'The email confirmation token is invalid or expired.',
+                }, { status: 404 }); // handled with error
+            } // if
+            
+            
+            
+            return NextResponse.json({
+                ok       : true,
+                message  : 'Your email has been successfully confirmed. Now you can sign in with your username (or email) and password.',
+            }); // handled with success
+        }
+        catch (error: any) {
+            return NextResponse.json({
+                error:
+`Oops, there was an error while confirming your token.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
+            }, { status: 500 }); // handled with error
+        } // try
+    };
     
     // specific next-js /app custom handlers:
     interface CustomRouteHandlerOptions {
@@ -1022,7 +1077,8 @@ If the problem still persists, please contact our technical support.`,
         usernameValidationPath ?: string
         emailValidationPath    ?: string
         passwordValidationPath ?: string
-        signUpPath           ?: string
+        signUpPath             ?: string
+        emailConfirmationPath  ?: string
     }
     const customRouteHandler                     = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
         // options:
@@ -1031,7 +1087,8 @@ If the problem still persists, please contact our technical support.`,
             usernameValidationPath = defaultUsernameValidationPath,
             emailValidationPath    = defaultEmailValidationPath,
             passwordValidationPath = defaultPasswordValidationPath,
-            signUpPath           = defaultSignUpPath,
+            signUpPath             = defaultSignUpPath,
+            emailConfirmationPath  = defaultEmailConfirmationPath,
         } = options ?? {};
         
         
@@ -1052,6 +1109,8 @@ If the problem still persists, please contact our technical support.`,
             await checkPasswordNotProhibitedRouteHandler(req, context, passwordValidationPath)
             ||
             await signUpRouteHandler(req, context, signUpPath)
+            ||
+            await applyEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
         );
     };
     
