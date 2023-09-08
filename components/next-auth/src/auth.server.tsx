@@ -477,7 +477,6 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         }
         catch (error: any) {
             // report the failure:
-            console.log(error); // TODO: remove log
             return NextResponse.json({
                 error:
 `Oops, there was an error while resetting your password.
@@ -996,7 +995,6 @@ If the problem still persists, please contact our technical support.`,
             }, { status: !emailConfirmationToken ? 200 : 201 }); // handled with success
         }
         catch (error: any) {
-            console.log(error); // TODO: remove log
             return NextResponse.json({
                 error:
 `Oops, there was an error while registering your account.
