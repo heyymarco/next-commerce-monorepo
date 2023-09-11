@@ -1178,7 +1178,7 @@ If the problem still persists, please contact our technical support.`,
                         //     httpOnly     : true,
                         //     sameSite     : 'lax',
                         // });
-                        sessionCookie = `${cookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`;
+                        sessionCookie = `${cookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly;${isSecureCookie ? ' Secure;' : '' } SameSite=Lax`;
                     } // if
                     
                     
