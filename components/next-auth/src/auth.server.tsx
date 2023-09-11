@@ -1168,15 +1168,17 @@ If the problem still persists, please contact our technical support.`,
                         
                         
                         
+                        const isSecureCookie = process.env.NEXTAUTH_URL?.startsWith?.('https://') ?? !!process.env.VERCEL;
+                        const cookieName     = `${isSecureCookie ? '__Secure-' : ''}next-auth.session-token`;
                         // create the sessionToken record into cookie:
                         // const cookies = new Cookies(req as any, contextOrRes as any);
-                        // cookies.set('next-auth.session-token', sessionToken, {
+                        // cookies.set(cookieName, sessionToken, {
                         //     path         : '/',
                         //     expires      : sessionExpiry,
                         //     httpOnly     : true,
                         //     sameSite     : 'lax',
                         // });
-                        sessionCookie = `next-auth.session-token=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`;
+                        sessionCookie = `${cookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly; SameSite=Lax`;
                     } // if
                     
                     
