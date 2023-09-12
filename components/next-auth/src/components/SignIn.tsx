@@ -48,6 +48,11 @@ import {
     TabPanel,
     TabProps,
     Tab,
+    
+    
+    
+    // utility-components:
+    VisuallyHidden,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
@@ -125,7 +130,7 @@ export interface SignInProps<TElement extends Element = HTMLElement>
     switchSignInButtonComponent  ?: ButtonComponentProps['buttonComponent']
     gotoSignInButtonComponent    ?: ButtonComponentProps['buttonComponent']
     gotoRecoverButtonComponent   ?: ButtonComponentProps['buttonComponent']
-    gotoHomeButtonComponent      ?: ButtonComponentProps['buttonComponent']
+    gotoHomeButtonComponent      ?: ButtonComponentProps['buttonComponent']|null
 }
 const SignIn         = <TElement extends Element = HTMLElement>(props: SignInProps<TElement>) => {
     return (
@@ -336,7 +341,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     });
     const gotoHomeButtonHandleClick             = useMergeEvents(
         // preserves the original `onClick` from `gotoHomeButtonComponent`:
-        gotoHomeButtonComponent.props.onClick,
+        gotoHomeButtonComponent?.props.onClick,
         
         
         
@@ -415,7 +420,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         // children:
         gotoRecoverButtonComponent.props.children                   ?? 'Forgot Password?',
     ));
-    const GotoHomeButton     = useEvent(() => React.cloneElement<ButtonProps>(gotoHomeButtonComponent,
+    const GotoHomeButton     = useEvent(() => gotoHomeButtonComponent ? React.cloneElement<ButtonProps>(gotoHomeButtonComponent,
         // props:
         {
             // classes:
@@ -431,7 +436,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         gotoHomeButtonComponent.props.children                      ?? 'Back to Home',
-    ));
+    ) : <VisuallyHidden className='gotoHome visually-hidden' />);
     
     
     
@@ -570,7 +575,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     
                     emailValidationModalStatusComponent={emailValidationModalStatusComponent}
                 />,
-                (!!signUpEnable && <SwitchSignUpButton />),
+                (!!signUpEnable ? <SwitchSignUpButton /> : <VisuallyHidden className='switchSignUp visually-hidden' />),
                 <GotoRecoverButton />,
                 <GotoHomeButton />,
             ),

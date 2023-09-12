@@ -304,6 +304,9 @@ export const usesSignInLayout = () => {
                         justifySelf  : 'start', // place most left
                     }),
                 }),
+                ...children('.visually-hidden', {
+                    position: [['static'], '!important'],
+                }, { specificityWeight: 2 }),
                 
                 
                 
