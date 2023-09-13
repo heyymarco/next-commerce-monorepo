@@ -98,6 +98,12 @@ import type {
 
 
 
+// hooks:
+
+// states:
+
+//#region signInState
+
 // types:
 export type SignInSection =
     | 'signUp'
@@ -245,6 +251,7 @@ export interface SignInState {
     // utilities:
     resolveProviderName        : (oAuthProvider: BuiltInProviderType) => string
 }
+
 const SignInStateContext = createContext<SignInState>({
     // constraints:
     fullnameMinLength          : 0,
@@ -371,6 +378,15 @@ const SignInStateContext = createContext<SignInState>({
     // utilities:
     resolveProviderName        : () => '',
 });
+SignInStateContext.displayName  = 'SignInState';
+
+export const useSignInState = (): SignInState => {
+    return useContext(SignInStateContext);
+}
+
+
+
+// react components:
 export interface SignInStateProps {
     // configs:
     credentialsConfig    : CredentialsConfig
@@ -387,7 +403,7 @@ export interface SignInStateProps {
     homepagePath        ?: string
     defaultCallbackUrl  ?: string|null
 }
-export const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) => {
+const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) => {
     // rest props:
     const {
         // configs:
@@ -1778,7 +1794,9 @@ export const SignInStateProvider = (props: React.PropsWithChildren<SignInStatePr
             </AccessibilityProvider>
         </SignInStateContext.Provider>
     );
-}
-export const useSignInState = (): SignInState => {
-    return useContext(SignInStateContext);
 };
+export {
+    SignInStateProvider,
+    SignInStateProvider as default,
+}
+//#endregion signInState
