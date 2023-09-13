@@ -183,6 +183,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                                     failuresAttemps : null, // clear the failure_counter
                                     lockedAt        : null, // clear the lock_date constraint
                                 },
+                                select : {
+                                    id : true,
+                                },
                             });
                             expectedCredentials.failuresAttemps = null; // reset this variable too
                         } // if
@@ -204,6 +207,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                                 data   : {
                                     failuresAttemps : null, // clear the failure_counter
                                 },
+                                select : {
+                                    id : true,
+                                },
                             });
                         } // if
                     }
@@ -223,6 +229,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                                         ? undefined // do not lock now, the user still have a/some chance(s) to retry
                                         : now       // lock now, too many retries
                                     ),
+                                },
+                                select : {
+                                    id : true,
                                 },
                             });
                             if (isLocked) return new Date(/* since: */ now.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert to milliseconds */)); // the credentials is has been locked
@@ -445,6 +454,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                         data   : {
                             emailVerified : now,
                         },
+                        select : {
+                            id       : true,
+                        },
                     });
                 } // if
                 
@@ -648,6 +660,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                 data   : {
                     emailVerified : now,
                 },
+                select : {
+                    id : true,
+                },
             });
         },
         applyEmailConfirmationToken  : async (emailConfirmationToken              , options) => {
@@ -711,6 +726,9 @@ export const PrismaAdapterWithCredentials = (prisma: PrismaClient): AdapterWithC
                         },
                         data   : {
                             emailVerified : now,
+                        },
+                        select : {
+                            id     : true,
                         },
                     });
                 } // if
