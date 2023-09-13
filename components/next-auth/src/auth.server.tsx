@@ -1230,6 +1230,7 @@ If the problem still persists, please contact our technical support.`,
         customRouteHandler,
         customApiHandler,
         nextAuthHandler,
+        authOptions,
     };
 };
 
@@ -1238,11 +1239,12 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
     const {
         customRouteHandler,
         nextAuthHandler,
+        authOptions,
     } = createNextAuthHandler(options);
     
     
     
-    return async (req: NextRequest, context: NextAuthRouteContext): Promise<Response> => {
+    const authRouteHandler = async (req: NextRequest, context: NextAuthRouteContext): Promise<Response> => {
         // responses HEAD request as success:
         if(req.method === 'HEAD') return new Response(null, { status: 200 });
         
@@ -1269,6 +1271,8 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
         
         return await nextAuthHandler(req, context, isCredentialsCallback);
     };
+    authRouteHandler.authOptions = authOptions;
+    return authRouteHandler;
 };
 
 // specific next-js /pages auth handlers:
@@ -1276,11 +1280,12 @@ export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
     const {
         customApiHandler,
         nextAuthHandler,
+        authOptions,
     } = createNextAuthHandler(options);
     
     
     
-    return async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+    const authApiHandler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
         // responses HEAD request as success:
         if(req.method === 'HEAD') return res.status(200).send(null);
         
@@ -1306,4 +1311,6 @@ export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
         
         await nextAuthHandler(req, res, isCredentialsCallback);
     };
+    authApiHandler.authOptions = authOptions;
+    return authApiHandler;
 };
