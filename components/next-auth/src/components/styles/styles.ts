@@ -77,8 +77,8 @@ import {
     password2Elm,
     doSignUpElm,
     doSignInElm,
-    doRecover,
-    doReset,
+    doRecoverElm,
+    doResetElm,
     
     signinSeparatorElm,
     
@@ -215,11 +215,11 @@ export const usesSignInLayout = () => {
                             gridArea : 'actionBtn',
                         }),
                     }),
-                    ...children(doRecover, {
+                    ...children(doRecoverElm, {
                         // positions:
                         gridArea     : 'actionBtn',
                     }),
-                    ...children(doReset, {
+                    ...children(doResetElm, {
                         // positions:
                         gridArea     : 'actionBtn',
                     }),

@@ -1,6 +1,6 @@
 export *            from './states/signInState.js'
 
-export *            from './styles/elements.js'
+// export *            from './styles/elements.js' // not implicitly exported
 export *            from './styles/config.js'
 export *            from './styles/styles.js'
 export *            from './styles/alternateSignInSeparatorStyles.js'

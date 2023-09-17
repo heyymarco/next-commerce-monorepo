@@ -16,8 +16,8 @@ export const passwordElm        = ':where(.password)'
 export const password2Elm       = ':where(.password2)'
 export const doSignUpElm        = ':where(.doSignUp)'
 export const doSignInElm        = ':where(.doSignIn)'
-export const doRecover          = ':where(.doRecover)'
-export const doReset            = ':where(.doReset)'
+export const doRecoverElm       = ':where(.doRecover)'
+export const doResetElm         = ':where(.doReset)'
 
 export const signinSeparatorElm = ':where(.signinSeparator)'
 
