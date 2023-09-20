@@ -82,7 +82,15 @@ export interface ImageProps<TElement extends Element = HTMLElement>
         >
 {
     // appearances:
-    src ?: NextImageProps['src'], // changed to optional
+    src                 ?: NextImageProps['src'], // changed to optional
+    
+    
+    
+    // components:
+    imageComponent      ?: React.ReactComponentElement<any, NextImageProps>
+    noImageComponent    ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    busyComponent       ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    errorImageComponent ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
 }
 const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElement>) => {
     // styles:
@@ -98,8 +106,8 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         loader,
         width,
         height,
-        sizes = (width !== undefined) ? `${width}px` : undefined, // a hack for fixing auto_image_size problem when no using [sizes] prop (using [width] & [height] props)
-        fill  = !width && !height,
+        sizes               = (width !== undefined) ? `${width}px` : undefined, // a hack for fixing auto_image_size problem when no using [sizes] prop (using [width] & [height] props)
+        fill                = !width && !height,
         placeholder,
         blurDataURL,
         
@@ -135,6 +143,15 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         
         
         
+        // components:
+        // @ts-ignore
+        imageComponent      = (<NextImage                          /> as React.ReactComponentElement<any, NextImageProps>),
+        noImageComponent    = (<Icon icon='image'        size='lg' /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        busyComponent       = (<Busy                     size='lg' /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        errorImageComponent = (<Icon icon='broken_image' size='lg' /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        
+        
+        
         // handlers:
         onLoad,
         onLoadCapture,
@@ -146,13 +163,13 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     
     
     // states:
-    const [isLoaded, setIsLoaded] = useState<boolean|undefined>((): false|undefined => {
+    const [isLoaded, setIsLoaded] = useState<boolean|null>((): false|null => {
         const realSrc = getRealSrc(src);
         /*
             * no image  => show error indicator.
             * has image => show loading indicator => then onLoadingComplete => true => show the image
         */
-        return !realSrc ? false : undefined;
+        return !realSrc ? false : null;
     });
     
     
@@ -176,7 +193,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             * no image  => show error indicator.
             * has image => show loading indicator => then onLoadingComplete => true => show the image
             */
-            !realSrc ? false : undefined
+            !realSrc ? false : null
         );
     }, [src]);
     
@@ -227,66 +244,87 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            {src && (isLoaded !== false) && <NextImage
-                // appearances:
-                alt={alt}
-                src={src}
-                loader={loader}
-                width={width}
-                height={height}
-                sizes={sizes}
-                fill={fill}
-                placeholder={placeholder}
-                blurDataURL={blurDataURL}
-                
-                
-                
-                // behaviors:
-                loading={loading}
-                priority={priority}
-                quality={quality}
-                unoptimized={unoptimized}
-                
-                
-                
-                // <img>:
-                crossOrigin={crossOrigin}
-                decoding={decoding}
-                referrerPolicy={referrerPolicy}
-                useMap={useMap}
-                
-                
-                
-                // deprecated:
-                // @ts-ignore
-                layout={layout}
-                // @ts-ignore
-                objectFit={objectFit}
-                // @ts-ignore
-                objectPosition={objectPosition}
-                // @ts-ignore
-                lazyBoundary={lazyBoundary}
-                // @ts-ignore
-                lazyRoot={lazyRoot}
-                
-                
-                
-                // handlers:
-                onLoad={onLoad}
-                onLoadCapture={onLoadCapture}
-                onError={handleError}
-                onErrorCapture={onErrorCapture}
-                onLoadingComplete={handleLoadingComplete}
-            />}
+            {(!!src) && (isLoaded !== false) && React.cloneElement<NextImageProps>(imageComponent,
+                // props:
+                {
+                    // appearances:
+                    alt               : alt,
+                    src               : src,
+                    loader            : loader,
+                    width             : width,
+                    height            : height,
+                    sizes             : sizes,
+                    fill              : fill,
+                    placeholder       : placeholder,
+                    blurDataURL       : blurDataURL,
+                    
+                    
+                    
+                    // behaviors:
+                    loading           : loading,
+                    priority          : priority,
+                    quality           : quality,
+                    unoptimized       : unoptimized,
+                    
+                    
+                    
+                    // <img>:
+                    crossOrigin       : crossOrigin,
+                    decoding          : decoding,
+                    referrerPolicy    : referrerPolicy,
+                    useMap            : useMap,
+                    
+                    
+                    
+                    // deprecated:
+                    // @ts-ignore
+                    layout            : layout,
+                    // @ts-ignore
+                    objectFit         : objectFit,
+                    // @ts-ignore
+                    objectPosition    : objectPosition,
+                    // @ts-ignore
+                    lazyBoundary      : lazyBoundary,
+                    // @ts-ignore
+                    lazyRoot          : lazyRoot,
+                    
+                    
+                    
+                    // handlers:
+                    onLoad            : onLoad,
+                    onLoadCapture     : onLoadCapture,
+                    onError           : handleError,
+                    onErrorCapture    : onErrorCapture,
+                    onLoadingComplete : handleLoadingComplete,
+                },
+            )}
             
             {/* no image => show default image: */}
-            {(!src) && <Icon className='status' icon='image' theme='primary' size='lg' />}
+            {( !src) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
+                // props:
+                {
+                    // classes:
+                    className : noImageComponent.props.className    ?? 'status',
+                },
+            )}
             
             {/* loading: */}
-            {(isLoaded === undefined) && <Busy className='status' theme='primary' size='lg' />}
+            {(isLoaded === null ) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(busyComponent,
+                // props:
+                {
+                    // classes:
+                    className : busyComponent.props.className       ?? 'status',
+                },
+            )}
             
             {/* error: */}
-            {(isLoaded === false    ) && <Icon className='status' icon='broken_image' theme='primary' size='lg' />}
+            {(isLoaded === false) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(errorImageComponent,
+                // props:
+                {
+                    // classes:
+                    className : errorImageComponent.props.className ?? 'status',
+                },
+            )}
         </Generic>
     );
 }
