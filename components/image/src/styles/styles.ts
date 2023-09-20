@@ -50,9 +50,9 @@ export const usesImageLayout = () => {
             // layouts:
             display            : 'inline-grid', // use *inline* grid, so the blocking behavior is similar to native <img>
             gridTemplate       : [[
-                '"image" 1fr',
+                '"image" auto',
                 '/',
-                '1fr'
+                'auto'
             ]],
             justifyItems       : 'center', // default center the items horizontally
             alignItems         : 'center', // default center the items vertically
@@ -91,7 +91,7 @@ export const usesImageLayout = () => {
             }),
             ...children(':where(.status)', {
                 // positions:
-                zIndex         : 99, // should be on top of <Image>
+                zIndex         : 1, // placed on the top of <Image>
                 
                 
                 
