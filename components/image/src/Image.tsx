@@ -43,6 +43,7 @@ const NextImage : typeof nextImageCommonJs.default = (nextImageCommonJs.default 
 export const useImageStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles.js')
 , { id: 'm91zb0019e', specificityWeight: 0 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+import './styles/styles.js';
 
 
 
@@ -226,15 +227,6 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
         >
-            {/* no image => show default image: */}
-            {(!src) && <Icon className='status' icon='image' theme='primary' size='lg' />}
-            
-            {/* loading: */}
-            {(isLoaded === undefined) && <Busy className='status' theme='primary' size='lg' />}
-            
-            {/* error: */}
-            {(isLoaded === false    ) && <Icon className='status' icon='broken_image' theme='primary' size='lg' />}
-            
             {src && (isLoaded !== false) && <NextImage
                 // appearances:
                 alt={alt}
@@ -286,6 +278,15 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
                 onErrorCapture={onErrorCapture}
                 onLoadingComplete={handleLoadingComplete}
             />}
+            
+            {/* no image => show default image: */}
+            {(!src) && <Icon className='status' icon='image' theme='primary' size='lg' />}
+            
+            {/* loading: */}
+            {(isLoaded === undefined) && <Busy className='status' theme='primary' size='lg' />}
+            
+            {/* error: */}
+            {(isLoaded === false    ) && <Icon className='status' icon='broken_image' theme='primary' size='lg' />}
         </Generic>
     );
 }

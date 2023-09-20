@@ -43,43 +43,46 @@ export const usesImageLayout = () => {
         // layouts:
         ...style({
             // positions:
-            position       : 'relative', // suppress <NextImage>'s warning message
+            position           : 'relative', // suppress <NextImage>'s warning message
             
             
             
             // layouts:
-            display        : 'inline-flex', // make an inline element like <img>
-            flexDirection  : 'column',      // we'll manipulate the <img> height
-            justifyContent : 'center',
-            alignItems     : 'center',
+            display            : 'inline-grid', // use *inline* grid, so the blocking behavior is similar to native <img>
+            gridTemplate       : [[
+                '"image" 1fr',
+                '/',
+                '1fr'
+            ]],
+            justifyItems       : 'center', // default center the items horizontally
+            alignItems         : 'center', // default center the items vertically
+            justifyContent     : 'center', // center the whole image horizontally
+            alignContent       : 'center', // center the whole image vertically
             
             
             
-            // sizes:
-            width          : 'fit-content', // follows the <img> width
+            // scrolls:
+            overflow           : 'hidden', // a fix for chrome
             
             
             
             // children:
+            ...children([':where(img)', ':where(.status)'], {
+                // positions:
+                gridArea : 'image',
+            }),
             ...children(':where(img)', {
                 // positions:
-                // position   : 'absolute',              // fill the <figure> BUT can't take space
-                position   : ['relative', '!important'], // fill the <figure> AND can take space // !important : to override <NextImage>'s position
-                
-                
-                
-                // appearances:
-                // visibility : 'visible', // override Site.global // not needed anymore
+                // position    : 'absolute',                 // fill the <figure> BUT can't take space
+                position       : ['relative', '!important'], // fill the <figure> AND can take space // !important : to override <NextImage>'s position
                 
                 
                 
                 // sizes:
-                flex      : [[1, 1, 'auto']],        // growable, shrinkable, initial from <img>'s height
-                width     : ['unset', '!important'], // remove <NextImage>'s width
-                height    : ['unset', '!important'], // remove <NextImage>'s height
-                maxWidth  : '100%',
-                maxHeight : '100%',
-                minHeight : 0,
+                minInlineSize  : 0,      // starts growing from 0px up to justifySelf
+                minBlockSize   : 0,      // starts growing from 0px up to alignSelf
+                maxInlineSize  : '100%', // do not overflow the <parent>
+                maxBlockSize   : '100%', // do not overflow the <parent>
                 
                 
                 
@@ -88,13 +91,12 @@ export const usesImageLayout = () => {
             }),
             ...children(':where(.status)', {
                 // positions:
-                position   : 'absolute',
-                zIndex     : 99,
+                zIndex         : 99, // should be on top of <Image>
                 
                 
                 
                 // typos:
-                fontSize   : '2rem',
+                fontSize       : '2rem',
             }),
         }),
     });

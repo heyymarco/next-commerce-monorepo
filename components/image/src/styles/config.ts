@@ -15,7 +15,6 @@ import {
 export const [images, imageValues, cssImageConfig] = cssConfig(() => {
     return {
         // appearances:
-        // default to contain (no image part is loss):
-        objectFit : 'contain'   as CssKnownProps['objectFit'],
+        objectFit : 'fill'      as CssKnownProps['objectFit'],
     };
 }, { prefix: 'img' });
