@@ -54,10 +54,10 @@ export const usesImageLayout = () => {
                 '/',
                 'auto'
             ]],
-            justifyItems       : 'center', // default center the items horizontally
-            alignItems         : 'center', // default center the items vertically
-            justifyContent     : 'center', // center the whole image horizontally
-            alignContent       : 'center', // center the whole image vertically
+            justifyItems       : 'center',  // default center the items horizontally
+            alignItems         : 'center',  // default center the items vertically
+            justifyContent     : 'stretch', // fill the whole <figure> horizontally (if the <figure> size is set manually)
+            alignContent       : 'stretch', // fill the whole <figure> vertically   (if the <figure> size is set manually)
             
             
             
