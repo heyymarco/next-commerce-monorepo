@@ -309,7 +309,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             )}
             
             {/* loading: */}
-            {(isLoaded === null ) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(busyComponent,
+            {(!!src) && (isLoaded === null ) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(busyComponent,
                 // props:
                 {
                     // classes:
@@ -318,7 +318,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             )}
             
             {/* error: */}
-            {(isLoaded === false) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(errorImageComponent,
+            {(!!src) && (isLoaded === false) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(errorImageComponent,
                 // props:
                 {
                     // classes:
