@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/next-auth",
-  "version": "6.3.1",
+  "version": "6.3.2",
   "description": "A complete authentication solution for web applications.",
   "keywords": [
     "login",
@@ -31,7 +31,9 @@
     "./templates": "./dist/templates.js",
     "./templates.js": "./dist/templates.js",
     "./elements": "./dist/components/styles/elements.js",
-    "./elements.js": "./dist/components/styles/elements.js"
+    "./elements.js": "./dist/components/styles/elements.js",
+    "./utilities": "./dist/components/utilities.js",
+    "./utilities.js": "./dist/components/utilities.js"
   },
   "sideEffects": false,
   "publishConfig": {

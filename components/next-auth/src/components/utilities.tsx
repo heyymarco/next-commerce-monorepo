@@ -83,7 +83,11 @@ export const getValidityIcon  = (isValid: boolean|'unknown'|'loading'|'error'|un
 };
 
 export const isClientError = (fetchError: any): boolean => {
-    const errorCode = fetchError?.cause?.status;
+    const errorCode = (
+        fetchError?.status
+        ??
+        fetchError?.cause?.status
+    );
     if (typeof(errorCode) !== 'number') return false;
     return (errorCode >= 400) && (errorCode <= 499);
 };
