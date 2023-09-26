@@ -8,6 +8,7 @@ import {
 import {
     // react helper hooks:
     useMergeRefs,
+    useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -37,6 +38,11 @@ export interface InputWithLabelProps<TElement extends Element = HTMLSpanElement>
 {
     // appearances:
     icon            : IconProps<Element>['icon']
+    
+    
+    
+    // accessibilities:
+    title          ?: string
     
     
     
@@ -91,6 +97,11 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
         
         
         
+        // accessibilities:
+        title,
+        
+        
+        
         // components:
         inputComponent = (<Input<TElement>  /> as React.ReactComponentElement<any, InputProps<TElement>>),
         groupComponent = (<Group            /> as React.ReactComponentElement<any, GroupProps<Element>>),
@@ -109,6 +120,29 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
         
         // preserves the original `elmRef` from `props`:
         elmRef,
+    );
+    
+    
+    
+    // classes:
+    const allClasses     = [
+        ...(inputComponent.props.className ?? '').split(' '),
+        ...(inputComponent.props.classes   ?? []),
+    ];
+    const isSolidOrFluid = allClasses.includes('solid') || allClasses.includes('fluid');
+    const mergedClasses  = useMergeClasses(
+        // preserves the original `classes` from `inputComponent`:
+        inputComponent.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
+        props.classes,
+        
+        
+        
+        // classes:
+        (isSolidOrFluid ? null : 'fluid'), // defaults to 'fluid'
     );
     
     
@@ -159,6 +193,11 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
             {
                 // classes:
                 className : labelComponent.props.className ?? 'solid',
+                
+                
+                
+                // accessibilities:
+                title     : labelComponent.props.title     ?? title,
             },
             
             
@@ -184,7 +223,12 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
                 
                 
                 // refs:
-                elmRef : mergedElmRef,
+                elmRef  : mergedElmRef,
+                
+                
+                
+                // classes:
+                classes : mergedClasses,
             },
         ),
     );
