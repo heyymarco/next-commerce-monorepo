@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useMergeRefs,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // simple-components:
@@ -47,7 +53,13 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
     // rest props:
     const {
         // refs:
+        elmRef,
         outerRef,
+        
+        
+        
+        // identifiers:
+        id,
         
         
         
@@ -56,8 +68,12 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
         
         
         
-        // styles:
-        style,
+        // variants:
+        size,
+        theme,
+        gradient,
+        outlined,
+        mild,
         
         
         
@@ -70,12 +86,30 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
         
         
         
+        // styles:
+        style,
+        
+        
+        
         // components:
         inputComponent = (<Input<TElement>  /> as React.ReactComponentElement<any, InputProps<TElement>>),
         groupComponent = (<Group            /> as React.ReactComponentElement<any, GroupProps<Element>>),
         labelComponent = (<Label            /> as React.ReactComponentElement<any, LabelProps<Element>>),
         iconComponent  = (<Icon icon={icon} /> as React.ReactComponentElement<any, IconProps<Element>>),
     ...restInputProps} = props;
+    
+    
+    
+    // refs:
+    const mergedElmRef = useMergeRefs(
+        // preserves the original `elmRef` from `inputComponent`:
+        inputComponent.props.elmRef,
+        
+        
+        
+        // preserves the original `elmRef` from `props`:
+        elmRef,
+    );
     
     
     
@@ -89,8 +123,17 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
             
             
             
-            // styles:
-            style,
+            // identifiers:
+            id,
+            
+            
+            
+            // variants:
+            size,
+            theme,
+            gradient,
+            outlined,
+            mild,
             
             
             
@@ -100,6 +143,11 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
             variantClasses,
             stateClasses,
             className,
+            
+            
+            
+            // styles:
+            style,
         },
         
         
@@ -132,6 +180,11 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
                 // other props:
                 ...restInputProps,
                 ...inputComponent.props, // overwrites restInputProps (if any conflics)
+                
+                
+                
+                // refs:
+                elmRef : mergedElmRef,
             },
         ),
     );
