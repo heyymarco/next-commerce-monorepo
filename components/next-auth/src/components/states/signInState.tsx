@@ -36,6 +36,7 @@ import type {
 import {
     // apis:
     signIn,
+    useSession,
 }                           from 'next-auth/react'
 
 // reusable-ui core:
@@ -468,6 +469,11 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     const [isResetApplied   , setIsResetApplied   ] = useState<boolean>(false);
     const [isBusy           , setIsBusyInternal   ] = useState<BusyState>(false);
     const isMounted                                 = useMountedFlag();
+    
+    
+    
+    // sessions:
+    const { status: sessionStatus } = useSession();
     
     
     
@@ -1108,6 +1114,30 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         setPassword('');
         setPassword2('');
     }, [section]);
+    
+    const prevSessionStatusRef = useRef<typeof sessionStatus>(sessionStatus);
+    useEffect(() => {
+        // conditions:
+        if (prevSessionStatusRef.current === sessionStatus) return; // no change => ignore
+        const prevSessionStatus = prevSessionStatusRef.current;     // save the prev value before syncing
+        prevSessionStatusRef.current = sessionStatus;               // sync
+        
+        
+        
+        /*
+            refresh signIn page from already have signed in:
+            'loading'         => 'authenticated'
+            
+            after clicking doSignIn button and successfully signed in:
+            'unauthenticated' => 'authenticated' (already redirected by doSignIn button)
+        */
+        // transition from 'loading' => 'authenticated' => redirect to origin page:
+        if ((prevSessionStatus === 'loading') && (sessionStatus === 'authenticated')) {
+            if (callbackUrl) {
+                router.replace(callbackUrl);
+            } // if
+        } // if
+    }, [sessionStatus]);
     
     
     
