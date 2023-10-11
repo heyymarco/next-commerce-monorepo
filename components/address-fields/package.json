@@ -22,8 +22,8 @@
     "@cssfn/core": "^3.2.0",
     "@cssfn/cssfn-react": "^3.2.0",
     "@heymarco/editable-button": "^3.2.0",
-    "@reusable-ui/components": "^6.3.0",
-    "@reusable-ui/core": "^6.3.0",
+    "@reusable-ui/components": "^6.5.0",
+    "@reusable-ui/core": "^6.5.0",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {

@@ -19,7 +19,7 @@
   "author": "heyymarco",
   "license": "ISC",
   "dependencies": {
-    "@reusable-ui/components": "^6.3.0",
+    "@reusable-ui/components": "^6.5.0",
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {
