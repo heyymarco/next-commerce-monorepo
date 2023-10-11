@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/address-fields",
-  "version": "3.2.0",
+  "version": "6.5.0",
   "description": "",
   "main": "dist/AddressFields.js",
   "types": "dist/AddressFields.d.ts",

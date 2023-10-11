@@ -1,6 +1,6 @@
 {
   "name": "test-image",
-  "version": "0.1.0",
+  "version": "6.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,6 @@
   },
   "dependencies": {
     "@cssfn/cssfn-dom": "^3.2.0",
-    "@heymarco/image": "^3.2.0"
+    "@heymarco/image": "^6.5.0"
   }
 }

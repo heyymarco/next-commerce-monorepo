@@ -1,6 +1,6 @@
 {
   "name": "test-next-auth",
-  "version": "0.1.0",
+  "version": "6.5.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@cssfn/cssfn-dom": "^3.2.0",
-    "@heymarco/next-auth": "^6.2.0",
+    "@heymarco/next-auth": "^6.5.0",
     "@prisma/client": "^5.2.0",
     "@reusable-ui/components": "^6.5.0",
     "next-auth": "^4.23.1"
