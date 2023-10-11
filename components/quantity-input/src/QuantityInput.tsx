@@ -29,6 +29,12 @@ import {
     useMergeRefs,
     useMergeClasses,
     useScheduleTriggerEvent,
+    
+    
+    
+    // an accessibility management system:
+    usePropAccessibility,
+    AccessibilityProvider,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -158,6 +164,13 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
         childrenAfterInput,
         childrenAfterButton,
     ...restInputProps} = props;
+    
+    
+    
+    // accessibilities:
+    const propAccess = usePropAccessibility(props);
+    const {enabled: propEnabled, readOnly: propReadOnly} = propAccess;
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
     
     
     
@@ -323,6 +336,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     const handleChangeInternal      = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
+        if (isDisabledOrReadOnly)   return; // control is disabled or readOnly => no response required
         
         
         
@@ -349,6 +363,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     const handleDecreaseInternal    = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
+        if (isDisabledOrReadOnly)   return; // control is disabled or readOnly => no response required
         
         
         
@@ -367,6 +382,7 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     const handleIncreaseInternal    = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
+        if (isDisabledOrReadOnly)   return; // control is disabled or readOnly => no response required
         
         
         
@@ -387,126 +403,128 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
     
     // jsx:
     return (
-        <Group<TElement>
-            // refs:
-            outerRef={outerRef}
-            
-            
-            
-            // identifiers:
-            id={id}
-            
-            
-            
-            // variants:
-            size={size}
-            theme={theme}
-            gradient={gradient}
-            outlined={outlined}
-            mild={mild}
-            
-            
-            
-            // classes:
-            mainClass={mainClass}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
-        >
-            {childrenBeforeButton}
-            
-            {/* <Button> */}
-            {React.cloneElement<ButtonProps>(decreaseButtonComponent,
-                // props:
-                {
-                    // classes:
-                    classes      : decreaseButtonClasses,
-                    
-                    
-                    
-                    // accessibilities:
-                    title        : decreaseButtonComponent.props.title   ?? 'decrease quantity',
-                    enabled      : decreaseButtonComponent.props.enabled ?? ((valueRef.current === null) || (valueRef.current > minFn)),
-                    
-                    
-                    
-                    // handlers:
-                    onClick      : handleDecreaseButtonClick,
-                },
-            )}
-            
-            {childrenBeforeInput}
-            
-            {/* <Input> */}
-            {React.cloneElement<InputProps<TElement>>(inputComponent,
-                // props:
-                {
-                    // rest props:
-                    ...restInputProps,
-                    
-                    
-                    
-                    // refs:
-                    elmRef       : mergedInputRef,
-                    
-                    
-                    
-                    // classes:
-                    classes      : inputClasses,
-                    
-                    
-                    
-                    // values:
-                 // defaultValue : inputComponent.props.defaultValue ?? defaultValueFn   ?? '', // fully controllable, no defaultValue
-                    value        : inputComponent.props.value        ?? valueRef.current ?? '', // fully controllable
-                    onChange     : handleChange,
-                    
-                    
-                    
-                    // validations:
-                    required     : inputComponent.props.required,
-                    
-                    min          : inputComponent.props.min  ?? (negativeFn ? maxFn : minFn),
-                    max          : inputComponent.props.max  ?? (negativeFn ? minFn : maxFn),
-                    step         : inputComponent.props.step ?? stepFn,
-                    
-                    
-                    
-                    // formats:
-                    type         : inputComponent.props.type ?? 'number',
-                },
-            )}
-            
-            {childrenAfterInput}
-            
-            {/* <Button> */}
-            {React.cloneElement<ButtonProps>(increaseButtonComponent,
-                // props:
-                {
-                    // classes:
-                    classes      : increaseButtonClasses,
-                    
-                    
-                    
-                    // accessibilities:
-                    title        : increaseButtonComponent.props.title   ?? 'increase quantity',
-                    enabled      : increaseButtonComponent.props.enabled ?? ((valueRef.current === null) || (valueRef.current < maxFn)),
-                    
-                    
-                    
-                    // handlers:
-                    onClick      : handleIncreaseButtonClick,
-                },
-            )}
-            
-            {childrenAfterButton}
-        </Group>
+        <AccessibilityProvider {...propAccess}>
+            <Group<TElement>
+                // refs:
+                outerRef={outerRef}
+                
+                
+                
+                // identifiers:
+                id={id}
+                
+                
+                
+                // variants:
+                size={size}
+                theme={theme}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
+                
+                
+                
+                // classes:
+                mainClass={mainClass}
+                classes={classes}
+                variantClasses={variantClasses}
+                stateClasses={stateClasses}
+                className={className}
+                
+                
+                
+                // styles:
+                style={style}
+            >
+                {childrenBeforeButton}
+                
+                {/* <Button> */}
+                {React.cloneElement<ButtonProps>(decreaseButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        classes      : decreaseButtonClasses,
+                        
+                        
+                        
+                        // accessibilities:
+                        title        : decreaseButtonComponent.props.title   ?? 'decrease quantity',
+                        enabled      : decreaseButtonComponent.props.enabled ?? (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current > minFn))),
+                        
+                        
+                        
+                        // handlers:
+                        onClick      : handleDecreaseButtonClick,
+                    },
+                )}
+                
+                {childrenBeforeInput}
+                
+                {/* <Input> */}
+                {React.cloneElement<InputProps<TElement>>(inputComponent,
+                    // props:
+                    {
+                        // rest props:
+                        ...restInputProps,
+                        
+                        
+                        
+                        // refs:
+                        elmRef       : mergedInputRef,
+                        
+                        
+                        
+                        // classes:
+                        classes      : inputClasses,
+                        
+                        
+                        
+                        // values:
+                    // defaultValue : inputComponent.props.defaultValue ?? defaultValueFn   ?? '', // fully controllable, no defaultValue
+                        value        : inputComponent.props.value        ?? valueRef.current ?? '', // fully controllable
+                        onChange     : handleChange,
+                        
+                        
+                        
+                        // validations:
+                        required     : inputComponent.props.required,
+                        
+                        min          : inputComponent.props.min  ?? (negativeFn ? maxFn : minFn),
+                        max          : inputComponent.props.max  ?? (negativeFn ? minFn : maxFn),
+                        step         : inputComponent.props.step ?? stepFn,
+                        
+                        
+                        
+                        // formats:
+                        type         : inputComponent.props.type ?? 'number',
+                    },
+                )}
+                
+                {childrenAfterInput}
+                
+                {/* <Button> */}
+                {React.cloneElement<ButtonProps>(increaseButtonComponent,
+                    // props:
+                    {
+                        // classes:
+                        classes      : increaseButtonClasses,
+                        
+                        
+                        
+                        // accessibilities:
+                        title        : increaseButtonComponent.props.title   ?? 'increase quantity',
+                        enabled      : increaseButtonComponent.props.enabled ?? (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current < maxFn))),
+                        
+                        
+                        
+                        // handlers:
+                        onClick      : handleIncreaseButtonClick,
+                    },
+                )}
+                
+                {childrenAfterButton}
+            </Group>
+        </AccessibilityProvider>
     );
 };
 export {
