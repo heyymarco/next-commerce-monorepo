@@ -6,6 +6,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useMergeRefs,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // simple-components:
@@ -77,7 +83,29 @@ const ButtonWithBusy = (props: ButtonWithBusyProps): JSX.Element|null => {
     
     // fn props:
     const isBusyType = !busyType ? isBusy : (isBusy === busyType);
-    const icon       = (buttonComponent?.props as ButtonIconProps|undefined)?.icon
+    const icon       = (buttonComponent?.props as ButtonIconProps|undefined)?.icon;
+    
+    
+    
+    // refs:
+    const mergedElmRef   = useMergeRefs(
+        // preserves the original `elmRef` from `buttonComponent`:
+        buttonComponent.props.elmRef,
+        
+        
+        
+        // preserves the original `elmRef` from `props`:
+        props.elmRef,
+    );
+    const mergedOuterRef = useMergeRefs(
+        // preserves the original `outerRef` from `buttonComponent`:
+        buttonComponent.props.outerRef,
+        
+        
+        
+        // preserves the original `outerRef` from `props`:
+        props.outerRef,
+    );
     
     
     
@@ -92,8 +120,14 @@ const ButtonWithBusy = (props: ButtonWithBusyProps): JSX.Element|null => {
             
             
             
+            // refs:
+            elmRef   : mergedElmRef,
+            outerRef : mergedOuterRef,
+            
+            
+            
             // appearances:
-            icon : !icon ? undefined : (isBusyType ? iconBusy : icon),
+            icon     : !icon ? undefined : (isBusyType ? iconBusy : icon),
         },
     );
 };

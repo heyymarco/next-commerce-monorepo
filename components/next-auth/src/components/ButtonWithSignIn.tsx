@@ -17,6 +17,7 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
+    useMergeRefs,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -66,6 +67,28 @@ const ButtonWithSignIn = (props: ButtonWithSignInProps): JSX.Element|null => {
     
     
     
+    // refs:
+    const mergedElmRef   = useMergeRefs(
+        // preserves the original `elmRef` from `buttonComponent`:
+        buttonComponent.props.elmRef,
+        
+        
+        
+        // preserves the original `elmRef` from `props`:
+        props.elmRef,
+    );
+    const mergedOuterRef = useMergeRefs(
+        // preserves the original `outerRef` from `buttonComponent`:
+        buttonComponent.props.outerRef,
+        
+        
+        
+        // preserves the original `outerRef` from `props`:
+        props.outerRef,
+    );
+    
+    
+    
     // handlers:
     const handleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
@@ -105,8 +128,14 @@ const ButtonWithSignIn = (props: ButtonWithSignInProps): JSX.Element|null => {
             
             
             
+            // refs:
+            elmRef   : mergedElmRef,
+            outerRef : mergedOuterRef,
+            
+            
+            
             // handlers:
-            onClick : handleClick,
+            onClick  : handleClick,
         },
     );
 };
