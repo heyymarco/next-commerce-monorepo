@@ -20,6 +20,8 @@ import {
     // simple-components:
     Icon,
     Label,
+    EditableButton,
+    ButtonIcon,
     TextInput,
     TelInput,
     
@@ -43,12 +45,6 @@ import {
     // utility-components:
     VisuallyHidden,
 }                           from '@reusable-ui/components'  // a set of official Reusable-UI components
-
-// heymarco components:
-import {
-    // react components:
-    EditableButton,
-}                           from '@heymarco/editable-button'
 
 // redux:
 import type {
@@ -176,7 +172,28 @@ const AddressFields = (props: AddressFieldsProps) => {
                 </Label>
                 <DropdownListButton
                     buttonChildren={selectedCountry?.name ?? 'Country'}
-                    buttonComponent={<EditableButton isValid={!!selectedCountry} assertiveFocusable={true} />}
+                    buttonComponent={
+                        <EditableButton
+                            // accessibilities:
+                            assertiveFocusable={true}
+                            
+                            
+                            
+                            // validations:
+                            isValid={!!selectedCountry}
+                            
+                            
+                            
+                            // components:
+                            buttonComponent={
+                                <ButtonIcon
+                                    // appearances:
+                                    icon='dropdown'
+                                    iconPosition='end'
+                                />
+                            }
+                        />
+                    }
                     
                     theme='primary'
                     mild={true}
