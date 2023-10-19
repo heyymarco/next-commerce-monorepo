@@ -178,7 +178,6 @@ export const FieldEmail = (props: FieldEmailProps) => {
                     // accessibilities:
                     readOnly     : emailInputComponent.props.readOnly     ?? emailReadOnly,
                     placeholder  : emailInputComponent.props.placeholder  ?? 'Email',
-                    autoComplete : emailInputComponent.props.autoComplete ?? 'email',
                     
                     
                     
@@ -190,6 +189,11 @@ export const FieldEmail = (props: FieldEmailProps) => {
                     // validations:
                     isValid      : emailInputComponent.props.isValid      ?? (emailValid === true),
                     required     : emailInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // formats:
+                    autoComplete : emailInputComponent.props.autoComplete ?? 'email',
                     
                     
                     

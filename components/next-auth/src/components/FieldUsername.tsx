@@ -171,7 +171,6 @@ export const FieldUsername = (props: FieldUsernameProps) => {
                     
                     // accessibilities:
                     placeholder  : usernameInputComponent.props.placeholder  ?? 'Username',
-                    autoComplete : usernameInputComponent.props.autoComplete ?? 'username',
                     
                     
                     
@@ -183,6 +182,11 @@ export const FieldUsername = (props: FieldUsernameProps) => {
                     // validations:
                     isValid      : usernameInputComponent.props.isValid      ?? (usernameValid === true),
                     required     : usernameInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // formats:
+                    autoComplete : usernameInputComponent.props.autoComplete ?? 'username',
                     
                     
                     

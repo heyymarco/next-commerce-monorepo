@@ -99,7 +99,6 @@ export const FieldUsernameOrEmail = (props: FieldUsernameOrEmailProps) => {
                     
                     // accessibilities:
                     placeholder  : usernameOrEmailInputComponent.props.placeholder  ?? 'Username or Email',
-                    autoComplete : usernameOrEmailInputComponent.props.autoComplete ?? 'username',
                     
                     
                     
@@ -111,6 +110,11 @@ export const FieldUsernameOrEmail = (props: FieldUsernameOrEmailProps) => {
                     // validations:
                     isValid      : usernameOrEmailInputComponent.props.isValid      ?? (usernameOrEmailValid === true),
                     required     : usernameOrEmailInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // formats:
+                    autoComplete : usernameOrEmailInputComponent.props.autoComplete ?? 'username',
                     
                     
                     

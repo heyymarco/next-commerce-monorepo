@@ -161,7 +161,6 @@ export const FieldFullname = (props: FieldFullnameProps) => {
                     
                     // accessibilities:
                     placeholder  : fullnameInputComponent.props.placeholder  ?? 'Your Name',
-                    autoComplete : fullnameInputComponent.props.autoComplete ?? 'fullname',
                     
                     
                     
@@ -173,6 +172,11 @@ export const FieldFullname = (props: FieldFullnameProps) => {
                     // validations:
                     isValid      : fullnameInputComponent.props.isValid      ?? (fullnameValid === true),
                     required     : fullnameInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // formats:
+                    autoComplete : fullnameInputComponent.props.autoComplete ?? 'fullname',
                     
                     
                     

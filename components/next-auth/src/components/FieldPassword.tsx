@@ -183,7 +183,6 @@ export const FieldPassword = (props: FieldPasswordProps) => {
                     
                     // accessibilities:
                     placeholder  : passwordInputComponent.props.placeholder  ?? (isPasswordEntry ? 'New Password' : 'Password'),
-                    autoComplete : passwordInputComponent.props.autoComplete ?? (isPasswordEntry ? 'new-password' : 'password'),
                     
                     
                     
@@ -195,6 +194,11 @@ export const FieldPassword = (props: FieldPasswordProps) => {
                     // validations:
                     isValid      : passwordInputComponent.props.isValid      ?? (passwordValid === true),
                     required     : passwordInputComponent.props.required     ?? true,
+                    
+                    
+                    
+                    // formats:
+                    autoComplete : passwordInputComponent.props.autoComplete ?? (isPasswordEntry ? 'new-password' : 'password'),
                     
                     
                     

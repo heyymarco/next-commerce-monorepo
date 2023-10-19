@@ -169,7 +169,6 @@ export interface SignInState {
     isRecoverApplied           : boolean
     isResetApplied             : boolean
     isBusy                     : BusyState
-    setIsBusy                  : (isBusy: BusyState) => void
     
     
     
@@ -253,6 +252,7 @@ export interface SignInState {
     resolveProviderName        : (oAuthProvider: BuiltInProviderType) => string
 }
 
+const noopHandler : FieldHandlers<HTMLInputElement> = { onChange: () => {} };
 const SignInStateContext = createContext<SignInState>({
     // constraints:
     fullnameMinLength          : 0,
@@ -296,7 +296,6 @@ const SignInStateContext = createContext<SignInState>({
     isRecoverApplied           : false,
     isResetApplied             : false,
     isBusy                     : false,
-    setIsBusy                  : () => {},
     
     
     
@@ -307,14 +306,14 @@ const SignInStateContext = createContext<SignInState>({
     
     fullnameRef                : { current: null },
     fullname                   : '',
-    fullnameHandlers           : { onChange: () => {} },
+    fullnameHandlers           : noopHandler,
     fullnameFocused            : false,
     fullnameValid              : false,
     fullnameValidLength        : false,
     
     emailRef                   : { current: null },
     email                      : '',
-    emailHandlers              : { onChange: () => {} },
+    emailHandlers              : noopHandler,
     emailFocused               : false,
     emailValid                 : 'unknown',
     emailValidLength           : false,
@@ -323,7 +322,7 @@ const SignInStateContext = createContext<SignInState>({
     
     usernameRef                : { current: null },
     username                   : '',
-    usernameHandlers           : { onChange: () => {} },
+    usernameHandlers           : noopHandler,
     usernameFocused            : false,
     usernameValid              : 'unknown',
     usernameValidLength        : false,
@@ -333,13 +332,13 @@ const SignInStateContext = createContext<SignInState>({
     
     usernameOrEmailRef         : { current: null },
     usernameOrEmail            : '',
-    usernameOrEmailHandlers    : { onChange: () => {} },
+    usernameOrEmailHandlers    : noopHandler,
     usernameOrEmailFocused     : false,
     usernameOrEmailValid       : false,
     
     passwordRef                : { current: null },
     password                   : '',
-    passwordHandlers           : { onChange: () => {} },
+    passwordHandlers           : noopHandler,
     passwordFocused            : false,
     passwordValid              : false,
     passwordValidLength        : false,
@@ -349,7 +348,7 @@ const SignInStateContext = createContext<SignInState>({
     
     password2Ref               : { current: null },
     password2                  : '',
-    password2Handlers          : { onChange: () => {} },
+    password2Handlers          : noopHandler,
     password2Focused           : false,
     password2Valid             : false,
     password2ValidLength       : false,
@@ -1641,7 +1640,6 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         isRecoverApplied,           // mutable value
         isResetApplied,             // mutable value
         isBusy,                     // mutable value
-        setIsBusy,                  // stable ref
         
         
         
