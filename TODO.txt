@@ -1,9 +1,3 @@
-rename SignInState          to SignInContext
-rename EmailConfirmationApi to EmailConfirmation
-rename ResetPasswordApi     to ResetPassword
-add    UserContext          (extends AdapterUser)
-rename IArticleContext      to ArticleContext
-
 add inputWithLabelComponent
 implement <InputWithLabel> to <AddressFields>
 [@heymarco/next-auth] implement loginErrorAttemps
