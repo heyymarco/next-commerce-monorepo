@@ -421,51 +421,55 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     pass :  process.env.EMAIL_RESET_SERVER_PASSWORD,
                 },
             });
-            await transporter.sendMail({
-                from    : process.env.EMAIL_RESET_FROM, // sender address
-                to      : user.email, // list of receivers
-                subject : authConfig.EMAIL_RESET_SUBJECT ?? 'Password Reset Request',
-                html    : renderToStaticMarkup(
-                    <ResetPasswordContextProvider url={resetLinkUrl}>
-                        <UserContextProvider model={user}>
-                            {
-                                authConfig.EMAIL_RESET_MESSAGE
-                                ??
-                                <>
-                                    <p>
-                                        Hi <TemplateUser.Name />.
-                                    </p>
-                                    <p>
-                                        <strong>
-                                            Forgot your password?
-                                        </strong>
-                                        <br />
-                                        We received a request to reset the password for your account.
-                                    </p>
-                                    <p>
-                                        To reset your password, click on the link below:
-                                        <br />
-                                        <ResetPassword.Link>
-                                            Reset Password
-                                        </ResetPassword.Link>
-                                    </p>
-                                    <p>
-                                        Or copy and paste the URL into your browser:
-                                        <br />
-                                        <u>
-                                            <ResetPassword.Url />
-                                        </u>
-                                    </p>
-                                    <p>
-                                        If you did not make this request then please ignore this email.
-                                    </p>
-                                </>
-                            }
-                        </UserContextProvider>
-                    </ResetPasswordContextProvider>
-                ),
-            });
-            transporter.close();
+            try {
+                await transporter.sendMail({
+                    from    : process.env.EMAIL_RESET_FROM, // sender address
+                    to      : user.email, // list of receivers
+                    subject : authConfig.EMAIL_RESET_SUBJECT ?? 'Password Reset Request',
+                    html    : renderToStaticMarkup(
+                        <ResetPasswordContextProvider url={resetLinkUrl}>
+                            <UserContextProvider model={user}>
+                                {
+                                    authConfig.EMAIL_RESET_MESSAGE
+                                    ??
+                                    <>
+                                        <p>
+                                            Hi <TemplateUser.Name />.
+                                        </p>
+                                        <p>
+                                            <strong>
+                                                Forgot your password?
+                                            </strong>
+                                            <br />
+                                            We received a request to reset the password for your account.
+                                        </p>
+                                        <p>
+                                            To reset your password, click on the link below:
+                                            <br />
+                                            <ResetPassword.Link>
+                                                Reset Password
+                                            </ResetPassword.Link>
+                                        </p>
+                                        <p>
+                                            Or copy and paste the URL into your browser:
+                                            <br />
+                                            <u>
+                                                <ResetPassword.Url />
+                                            </u>
+                                        </p>
+                                        <p>
+                                            If you did not make this request then please ignore this email.
+                                        </p>
+                                    </>
+                                }
+                            </UserContextProvider>
+                        </ResetPasswordContextProvider>
+                    ),
+                });
+            }
+            finally {
+                transporter.close();
+            } // try
             
             
             
@@ -936,51 +940,55 @@ If the problem still persists, please contact our technical support.`,
                         pass :  process.env.EMAIL_SIGNUP_SERVER_PASSWORD,
                     },
                 });
-                await transporter.sendMail({
-                    from    : process.env.EMAIL_SIGNUP_FROM, // sender address
-                    to      : email, // list of receivers
-                    subject : authConfig.EMAIL_SIGNUP_SUBJECT ?? `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
-                    html    : renderToStaticMarkup(
-                        <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
-                            <UserContextProvider model={{
-                                name  : fullname,
-                                email : email,
-                            }}>
-                                {
-                                    authConfig.EMAIL_SIGNUP_MESSAGE
-                                    ??
-                                    <>
-                                        <p>
-                                            Hi <TemplateUser.Name />.
-                                        </p>
-                                        <p>
-                                            You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
-                                        </p>
-                                        <p>
-                                            In order to sign in to our website,
-                                            you need to confirm your email address by clicking on the link below:
-                                            <br />
-                                            <EmailConfirmation.Link>
-                                                Confirm Your Email
-                                            </EmailConfirmation.Link>
-                                        </p>
-                                        <p>
-                                            Or copy and paste the URL into your browser:
-                                            <br />
-                                            <u>
-                                                <EmailConfirmation.Url />
-                                            </u>
-                                        </p>
-                                        <p>
-                                            If you did not signed up on our website then please ignore this email.
-                                        </p>
-                                    </>
-                                }
-                            </UserContextProvider>
-                        </EmailConfirmationContextProvider>
-                    ),
-                });
-                transporter.close();
+                try {
+                    await transporter.sendMail({
+                        from    : process.env.EMAIL_SIGNUP_FROM, // sender address
+                        to      : email, // list of receivers
+                        subject : authConfig.EMAIL_SIGNUP_SUBJECT ?? `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
+                        html    : renderToStaticMarkup(
+                            <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
+                                <UserContextProvider model={{
+                                    name  : fullname,
+                                    email : email,
+                                }}>
+                                    {
+                                        authConfig.EMAIL_SIGNUP_MESSAGE
+                                        ??
+                                        <>
+                                            <p>
+                                                Hi <TemplateUser.Name />.
+                                            </p>
+                                            <p>
+                                                You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
+                                            </p>
+                                            <p>
+                                                In order to sign in to our website,
+                                                you need to confirm your email address by clicking on the link below:
+                                                <br />
+                                                <EmailConfirmation.Link>
+                                                    Confirm Your Email
+                                                </EmailConfirmation.Link>
+                                            </p>
+                                            <p>
+                                                Or copy and paste the URL into your browser:
+                                                <br />
+                                                <u>
+                                                    <EmailConfirmation.Url />
+                                                </u>
+                                            </p>
+                                            <p>
+                                                If you did not signed up on our website then please ignore this email.
+                                            </p>
+                                        </>
+                                    }
+                                </UserContextProvider>
+                            </EmailConfirmationContextProvider>
+                        ),
+                    });
+                }
+                finally {
+                    transporter.close();
+                } // try
             } // if
             
             
