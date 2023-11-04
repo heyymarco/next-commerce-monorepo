@@ -425,7 +425,15 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 await transporter.sendMail({
                     from    : process.env.EMAIL_RESET_FROM, // sender address
                     to      : user.email, // list of receivers
-                    subject : authConfig.EMAIL_RESET_SUBJECT ?? 'Password Reset Request',
+                    subject : renderToStaticMarkup(
+                        <ResetPasswordContextProvider url={resetLinkUrl}>
+                            <UserContextProvider model={user}>
+                                {
+                                    authConfig.EMAIL_RESET_SUBJECT ?? <>Password Reset Request</>
+                                }
+                            </UserContextProvider>
+                        </ResetPasswordContextProvider>
+                    ),
                     html    : renderToStaticMarkup(
                         <ResetPasswordContextProvider url={resetLinkUrl}>
                             <UserContextProvider model={user}>
@@ -944,7 +952,18 @@ If the problem still persists, please contact our technical support.`,
                     await transporter.sendMail({
                         from    : process.env.EMAIL_SIGNUP_FROM, // sender address
                         to      : email, // list of receivers
-                        subject : authConfig.EMAIL_SIGNUP_SUBJECT ?? `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
+                        subject : renderToStaticMarkup(
+                            <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
+                                <UserContextProvider model={{
+                                    name  : fullname,
+                                    email : email,
+                                }}>
+                                    {
+                                        authConfig.EMAIL_SIGNUP_SUBJECT ?? <>Your Account Registration at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}</>
+                                    }
+                                </UserContextProvider>
+                            </EmailConfirmationContextProvider>
+                        ),
                         html    : renderToStaticMarkup(
                             <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
                                 <UserContextProvider model={{
