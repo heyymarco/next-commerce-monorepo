@@ -440,7 +440,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                                 {
                                     authConfig.EMAIL_RESET_MESSAGE
                                     ??
-                                    <>
+                                    <article>
                                         <p>
                                             Hi <TemplateUser.Name />.
                                         </p>
@@ -468,7 +468,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                                         <p>
                                             If you did not make this request then please ignore this email.
                                         </p>
-                                    </>
+                                    </article>
                                 }
                             </UserContextProvider>
                         </ResetPasswordContextProvider>
@@ -973,7 +973,7 @@ If the problem still persists, please contact our technical support.`,
                                     {
                                         authConfig.EMAIL_SIGNUP_MESSAGE
                                         ??
-                                        <>
+                                        <article>
                                             <p>
                                                 Hi <TemplateUser.Name />.
                                             </p>
@@ -998,7 +998,7 @@ If the problem still persists, please contact our technical support.`,
                                             <p>
                                                 If you did not signed up on our website then please ignore this email.
                                             </p>
-                                        </>
+                                        </article>
                                     }
                                 </UserContextProvider>
                             </EmailConfirmationContextProvider>
