@@ -433,7 +433,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                                 }
                             </UserContextProvider>
                         </ResetPasswordContextProvider>
-                    ),
+                    ).replace(/[\r\n\t]+/g, ' ').trim(),
                     html    : renderToStaticMarkup(
                         <ResetPasswordContextProvider url={resetLinkUrl}>
                             <UserContextProvider model={user}>
@@ -963,7 +963,7 @@ If the problem still persists, please contact our technical support.`,
                                     }
                                 </UserContextProvider>
                             </EmailConfirmationContextProvider>
-                        ),
+                        ).replace(/[\r\n\t]+/g, ' ').trim(),
                         html    : renderToStaticMarkup(
                             <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
                                 <UserContextProvider model={{
