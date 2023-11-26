@@ -126,16 +126,6 @@ export const usesSignInTitleColor = () => {
             
             // foregrounds:
             foreg     : backgroundVars.altBackgColor,
-            
-            
-            
-            // spacings:
-            margin    : '0px', // kill <h1> auto margin
-            
-            
-            
-            // typos:
-            textAlign : 'center',
         }),
         
         
@@ -184,6 +174,16 @@ export const usesSignInLayout = () => {
                         
                         // appearances:
                         ...usesSignInTitleColor(),
+                        
+                        
+                        
+                        // spacings:
+                        margin    : '0px', // kill <h1> auto margin
+                        
+                        
+                        
+                        // typos:
+                        textAlign : 'center',
                     }),
                     ...children(emailElm, {
                         // positions:
