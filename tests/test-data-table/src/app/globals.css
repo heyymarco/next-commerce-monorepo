@@ -1,5 +1,8 @@
-:is(td, th, tr, thead, tbody, tfoot):hover {
+:is(td, th, tr):hover {
     background: green !important;
+}
+:is(thead, tbody, tfoot):hover {
+    background: blue !important;
 }
 .hidden {
     visibility: hidden;
