@@ -371,8 +371,9 @@ export const usesDataTableLayout = () => {
         orientationInlineSelector : null, // never  => the <table> is never  stacked in horizontal
         orientationBlockSelector  : '&',  // always => the <table> is always stacked in vertical
         itemsSelector             : ':nth-child(n)', // select <thead>, <tfoot>, <tbody>, and <foreign-elm>
-        swapFirstItem             : true,
+        // swapFirstItem             : true,
     });
+    
     const {groupableRule: groupGroupableRule} = usesGroupable({
         orientationInlineSelector : null, // never  => the <thead>, <tbody>, <tfoot> are never  stacked in horizontal
         orientationBlockSelector  : '&',  // always => the <thead>, <tbody>, <tfoot> are always stacked in vertical
@@ -383,7 +384,13 @@ export const usesDataTableLayout = () => {
         orientationBlockSelector  : '&',  // always => the <thead>, <tbody>, <tfoot> are always stacked in vertical
         itemsSelector             : ':nth-child(n)', // select <tr> and <foreign-elm>
     });
+    
     const {groupableRule: rowGroupableRule} = usesGroupable({
+        orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
+        orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    const {separatorRule: cellSeparatorRule} = usesGroupable({
         orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
         orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
         itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
@@ -398,6 +405,9 @@ export const usesDataTableLayout = () => {
             ...groupGroupableRule(), // make a nicely rounded corners for <thead>, <tfoot>, <tbody>
             ...children(trElm, {
                 ...rowGroupableRule(), // make a nicely rounded corners for <tr>
+                ...children([tdElm, thElm], {
+                    ...cellSeparatorRule(), // make a nicely rounded corners for <td>, <th>
+                }),
             }),
         }),
         
@@ -435,11 +445,11 @@ export const usesDataTableLayout = () => {
                     
                     
                     // children:
-                    ...children(['td', 'th'], {
+                    ...children([tdElm, thElm], {
                         // layouts:
                         ...usesDataTableCellLayout(),
                     }),
-                    ...children('td', {
+                    ...children(tdElm, {
                         // layouts:
                         ...usesDataTableDataLayout(),
                     }),
@@ -454,7 +464,7 @@ export const usesDataTableLayout = () => {
                 // children:
                 ...children(trElm, {
                     // children:
-                    ...children('th', {
+                    ...children(thElm, {
                         // layouts:
                         ...usesDataTableTitleLayout(),
                     }),
@@ -477,7 +487,7 @@ export const usesDataTableLayout = () => {
                 // children:
                 ...children(trElm, {
                     // children:
-                    ...children('th', {
+                    ...children(thElm, {
                         // layouts:
                         ...usesDataTableLabelLayout(),
                     }),
