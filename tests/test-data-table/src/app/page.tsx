@@ -103,6 +103,55 @@ export default function Home() {
                         </tr>
                     </DataTableBody>
                 </DataTable>
+                
+                <hr />
+                
+                <DataTable theme='primary'>
+                    <DataTableHeader>
+                        <tr className="tr hidden">
+                            <th className="th hidden">
+                                Test Table
+                            </th>
+                        </tr>
+                    </DataTableHeader>
+                    <DataTableBody>
+                        <tr className="tr hidden">
+                            <th className="th hidden">
+                                hello
+                            </th>
+                            <td className="td hidden">
+                                world
+                            </td>
+                        </tr>
+                        <tr className="tr hidden">
+                            <th className="th hidden">
+                                hello
+                            </th>
+                            <td className="td hidden">
+                                world
+                            </td>
+                        </tr>
+                        <tr className="tr hidden">
+                            <td className="td hidden">
+                                hello
+                            </td>
+                            <td className="td hidden">
+                                world
+                            </td>
+                        </tr>
+                        <tr className="tr hidden">
+                            <td className="td hidden">
+                                hello
+                            </td>
+                            <td className="td hidden">
+                                world
+                            </td>
+                            <td className="td hidden">
+                                X
+                            </td>
+                        </tr>
+                    </DataTableBody>
+                </DataTable>
             </div>
         </main>
     )
