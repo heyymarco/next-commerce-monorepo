@@ -1,0 +1,3 @@
+:is(td, th):hover {
+    background: green !important;
+}
