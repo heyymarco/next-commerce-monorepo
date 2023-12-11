@@ -21,7 +21,7 @@ export default function Home() {
                             <th className="th">
                                 hello
                             </th>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
                         </tr>
@@ -29,26 +29,26 @@ export default function Home() {
                             <th className="th">
                                 hello
                             </th>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <td>
+                            <td className="td">
                                 hello
                             </td>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <td>
+                            <td className="td">
                                 hello
                             </td>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
-                            <td>
+                            <td className="td">
                                 X
                             </td>
                         </tr>
@@ -70,7 +70,7 @@ export default function Home() {
                             <th className="th">
                                 hello
                             </th>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
                         </tr>
@@ -78,26 +78,26 @@ export default function Home() {
                             <th className="th">
                                 hello
                             </th>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <td>
+                            <td className="td">
                                 hello
                             </td>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <td>
+                            <td className="td">
                                 hello
                             </td>
-                            <td>
+                            <td className="td">
                                 world
                             </td>
-                            <td>
+                            <td className="td">
                                 X
                             </td>
                         </tr>
