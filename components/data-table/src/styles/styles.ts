@@ -193,7 +193,7 @@ export const usesDataTableCellLayout    = () => {
     
     return style({
         // layouts:
-        ...usesIndicatorLayout(),
+        // ...usesIndicatorLayout(),
         
         
         
@@ -420,27 +420,6 @@ export const usesDataTableLayout = () => {
             
             
             
-            // borders:
-            ...children(['&', theadElm, tfootElm, tbodyElm], {
-                // features:
-                ...borderRule(), // must be placed at the last // dedicated border stroke for each <DataTable> & <DataTableGroup>(s), so each borderRule can be turn on/off indepenently, eg: `dataTableStyle='flush'`
-            }),
-            ...children([theadElm, tfootElm, tbodyElm], {
-                ...children(trElm, {
-                    // features:
-                    ...borderRule(), // must be placed at the last // dedicated border stroke for each <DataTable> & <DataTableGroup>(s), so each borderRule can be turn on/off indepenently, eg: `dataTableStyle='flush'`
-                }),
-            }),
-            
-            
-            
-            // animations:
-            boxShadow         : animationVars.boxShadow,
-            filter            : animationVars.filter,
-            anim              : animationVars.anim,
-            
-            
-            
             // children:
             ...children([theadElm, tfootElm, tbodyElm], {
                 // layouts:
@@ -556,6 +535,23 @@ export const usesDataTableLayout = () => {
                     }),
                 }),
             }),
+            ...children(['&', theadElm, tfootElm, tbodyElm], {
+                // features:
+                ...borderRule(), // must be placed at the last // dedicated border stroke for each <DataTable> & <DataTableGroup>(s), so each borderRule can be turn on/off indepenently, eg: `dataTableStyle='flush'`
+            }),
+            ...children([theadElm, tfootElm, tbodyElm], {
+                ...children(trElm, {
+                    // features:
+                    ...borderRule(), // must be placed at the last // dedicated border stroke for each <DataTable> & <DataTableGroup>(s), so each borderRule can be turn on/off indepenently, eg: `dataTableStyle='flush'`
+                }),
+            }),
+            
+            
+            
+            // animations:
+            boxShadow         : animationVars.boxShadow,
+            filter            : animationVars.filter,
+            anim              : animationVars.anim,
         }),
         
         
