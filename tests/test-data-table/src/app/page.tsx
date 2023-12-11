@@ -57,47 +57,47 @@ export default function Home() {
                 
                 <hr />
                 
-                <DataTable theme='success' dataTableStyle='flush'>
+                <DataTable theme='primary'>
                     <DataTableHeader>
                         <tr className="tr">
-                            <th className="th">
+                            <th className="th hidden">
                                 Test Table
                             </th>
                         </tr>
                     </DataTableHeader>
                     <DataTableBody>
                         <tr className="tr">
-                            <th className="th">
+                            <th className="th hidden">
                                 hello
                             </th>
-                            <td className="td">
+                            <td className="td hidden">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <th className="th">
+                            <th className="th hidden">
                                 hello
                             </th>
-                            <td className="td">
+                            <td className="td hidden">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <td className="td">
+                            <td className="td hidden">
                                 hello
                             </td>
-                            <td className="td">
+                            <td className="td hidden">
                                 world
                             </td>
                         </tr>
                         <tr className="tr">
-                            <td className="td">
+                            <td className="td hidden">
                                 hello
                             </td>
-                            <td className="td">
+                            <td className="td hidden">
                                 world
                             </td>
-                            <td className="td">
+                            <td className="td hidden">
                                 X
                             </td>
                         </tr>

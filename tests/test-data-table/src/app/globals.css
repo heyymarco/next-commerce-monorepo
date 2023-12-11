@@ -1,3 +1,6 @@
-:is(td, th):hover {
+:is(td, th, tr):hover {
     background: green !important;
+}
+:is(td, th).hidden {
+    visibility: hidden;
 }
