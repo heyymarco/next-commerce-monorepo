@@ -427,20 +427,10 @@ export const usesDataTableLayout = () => {
                 
                 
                 
-                // borders:
-                ...groupSeparatorRule(), // turns the current border as separator between <DataTableGroup>(s)
-                
-                
-                
                 // children:
                 ...children(trElm, {
                     // layouts:
                     ...usesDataTableRowLayout(),
-                    
-                    
-                    
-                    // borders:
-                    ...rowSeparatorRule(), // turns the current border as separator between <DataTableGroup>(s)
                     
                     
                     
@@ -533,6 +523,18 @@ export const usesDataTableLayout = () => {
                         borderEndStartRadius   : borderVars.borderEndStartRadius,
                         borderEndEndRadius     : borderVars.borderEndEndRadius,
                     }),
+                }),
+            }),
+            ...children([theadElm, tfootElm, tbodyElm], {
+                // borders:
+                ...groupSeparatorRule(), // turns the current border as separator between <DataTableGroup>(s)
+                
+                
+                
+                // children:
+                ...children(trElm, {
+                    // borders:
+                    ...rowSeparatorRule(), // turns the current border as separator between <DataTableGroup>(s)
                 }),
             }),
             ...children(['&', theadElm, tfootElm, tbodyElm], {
