@@ -198,7 +198,7 @@ export const usesDataTableCellLayout    = () => {
         
         
         // borders:
-        ...inheritBorderFromParent(),
+        // ...inheritBorderFromParent(),
         
         
         
@@ -516,7 +516,7 @@ export const usesDataTableLayout = () => {
                     borderEndEndRadius     : borderVars.borderEndEndRadius,
                     ...children([tdElm, thElm], {
                         // borders:
-                        border                 : borderVars.border,
+                        // border                 : borderVars.border, // no border for cell(s)
                      // borderRadius           : borderVars.borderRadius,
                         borderStartStartRadius : borderVars.borderStartStartRadius,
                         borderStartEndRadius   : borderVars.borderStartEndRadius,
