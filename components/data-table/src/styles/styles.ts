@@ -302,7 +302,7 @@ export const usesDataTableLayout = () => {
         orientationInlineSelector : null, // never  => the <table> is never  stacked in horizontal
         orientationBlockSelector  : '&',  // always => the <table> is always stacked in vertical
         itemsSelector             : ':nth-child(n)', // select <thead>, <tfoot>, <tbody>, and <foreign-elm>
-        // swapFirstItem             : true,
+        swapFirstItem             : true, // avoids the first separator being filtered by `captionFilter`
     });
     
     const {groupableRule: groupGroupableRule} = usesGroupable({
