@@ -336,9 +336,6 @@ export const usesDataTableLayout = () => {
             ...groupGroupableRule(), // make a nicely rounded corners for <thead>, <tfoot>, <tbody>
             ...children(trElm, {
                 ...rowGroupableRule(), // make a nicely rounded corners for <tr>
-                ...children([tdElm, thElm], {
-                    ...cellSeparatorRule(), // make a nicely rounded corners for <td>, <th>
-                }),
             }),
         }),
         
@@ -476,6 +473,14 @@ export const usesDataTableLayout = () => {
                 ...children(trElm, {
                     // borders:
                     ...rowSeparatorRule(), // turns the current border as separator between <DataTableGroup>(s)
+                    
+                    
+                    
+                    // children:
+                    ...children([tdElm, thElm], {
+                        // borders:
+                        ...cellSeparatorRule(), // turns the current border as separator between <td>|<th>(s)
+                    }),
                 }),
             }),
             ...children(['&', theadElm, tfootElm, tbodyElm], {
