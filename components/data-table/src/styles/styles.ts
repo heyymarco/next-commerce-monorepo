@@ -448,13 +448,13 @@ export const usesDataTableLayout = () => {
                     ...children([tdElm, thElm], {
                         // layouts:
                         ...usesDataTableCellLayout(),
-                    }),
+                    }, { performGrouping: false }), // the order is important, do not grouping
                     ...children(tdElm, {
                         // layouts:
                         ...usesDataTableDataLayout(),
-                    }),
+                    }, { performGrouping: false }), // the order is important, do not grouping
                 }),
-            }),
+            }, { performGrouping: false }), // the order is important, do not grouping
             ...children([theadElm, tfootElm], {
                 // layouts:
                 ...usesDataTableCaptionLayout(),
@@ -469,15 +469,15 @@ export const usesDataTableLayout = () => {
                         ...usesDataTableTitleLayout(),
                     }),
                 }),
-            }),
+            }, { performGrouping: false }), // the order is important, do not grouping
             ...children(theadElm, {
                 // layouts:
                 ...usesDataTableHeaderLayout(),
-            }),
+            }, { performGrouping: false }), // the order is important, do not grouping
             ...children(tfootElm, {
                 // layouts:
                 ...usesDataTableFooterLayout(),
-            }),
+            }, { performGrouping: false }), // the order is important, do not grouping
             ...children(tbodyElm, {
                 // layouts:
                 ...usesDataTableBodyLayout(),
@@ -492,7 +492,7 @@ export const usesDataTableLayout = () => {
                         ...usesDataTableLabelLayout(),
                     }),
                 }),
-            }),
+            }, { performGrouping: false }), // the order is important, do not grouping
             
             
             
