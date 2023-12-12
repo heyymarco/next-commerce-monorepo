@@ -134,6 +134,21 @@ export const usesDataTableGroupLayout   = () => {
         
         // customize:
         ...usesCssProps(usesPrefixedProps(dataTables, 'group')), // apply config's cssProps starting with group***
+        
+        
+        
+        // animations:
+        ...style({
+            transition : [
+                // original:
+                [dataTables.groupTransition],
+                
+                // overwrites:
+                
+                // borders:
+                ['border-width', '0s'], // does not support transition on border width, because we use it to make a separator
+            ],
+        }),
     });
 };
 export const usesDataTableCaptionLayout = () => {
@@ -177,6 +192,21 @@ export const usesDataTableRowLayout     = () => {
         ...usesCssProps(usesPrefixedProps(dataTables, 'row')), // apply config's cssProps starting with row***
         ...style({
             rowGap : undefined, // exclusion for rowGap
+        }),
+        
+        
+        
+        // animations:
+        ...style({
+            transition : [
+                // original:
+                [dataTables.rowTransition],
+                
+                // overwrites:
+                
+                // borders:
+                ['border-width', '0s'], // does not support transition on border width, because we use it to make a separator
+            ],
         }),
     });
 };
@@ -224,6 +254,21 @@ export const usesDataTableCellLayout    = () => {
             
             // customize:
             ...usesCssProps(usesPrefixedProps(dataTables, 'cell')), // apply config's cssProps starting with cell***
+            
+            
+            
+            // animations:
+            ...style({
+                transition : [
+                    // original:
+                    [dataTables.cellTransition],
+                    
+                    // overwrites:
+                    
+                    // borders:
+                    ['border-width', '0s'], // does not support transition on border width, because we use it to make a separator
+                ],
+            }),
         }),
     });
 };

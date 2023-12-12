@@ -49,6 +49,8 @@ export const [dataTables, dataTableValues, cssDataTableConfig] = cssConfig(() =>
         // animations:
         transition          : basics.transition                                 as CssKnownProps['transition'    ],
         groupTransition     : basics.transition                                 as CssKnownProps['transition'    ],
+        rowTransition       : basics.transition                                 as CssKnownProps['transition'    ],
+        cellTransition      : basics.transition                                 as CssKnownProps['transition'    ],
         
         
         
