@@ -25,17 +25,6 @@ import {
     
     
     
-    // background stuff of UI:
-    usesBackground,
-    
-    
-    
-    // foreground (text color) stuff of UI:
-    usesForeground,
-    
-    
-    
-    
     usesBorder,
     
     
@@ -55,10 +44,6 @@ import {
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
-import {
-    // configs:
-    basics,
-}                           from '@reusable-ui/basic'           // a base component
 import {
     // styles:
     onIndicatorStylesChange,
@@ -115,6 +100,19 @@ const inheritBorderFromParent = () => {
         /*
         [borderVars.borderRadius ] // independent for each <DataTableGroup>
         */
+    });
+};
+const noBorderStroke = () => {
+    // dependencies:
+    
+    // features:
+    const {borderVars} = usesBorder();
+    
+    
+    
+    return style({
+        // borders:
+        [borderVars.borderWidth] : '0px',
     });
 };
 
@@ -183,22 +181,15 @@ export const usesDataTableRowLayout     = () => {
     });
 };
 export const usesDataTableCellLayout    = () => {
-    // dependencies:
-    
-    // features:
-    const {backgroundRule, backgroundVars} = usesBackground(basics);
-    const {foregroundRule, foregroundVars} = usesForeground(basics);
-    
-    
-    
     return style({
         // layouts:
-        // ...usesIndicatorLayout(),
+        ...usesIndicatorLayout(),
         
         
         
         // borders:
-        // ...inheritBorderFromParent(),
+        ...inheritBorderFromParent(),
+        ...noBorderStroke(),
         
         
         
@@ -231,38 +222,9 @@ export const usesDataTableCellLayout    = () => {
             
             
             
-            // accessibilities:
-            ...rule(['&::selection', '& ::selection'], { // ::selection on self and descendants
-                // backgrounds:
-                backg : backgroundVars.altBackgColor,
-                
-                
-                
-                // foregrounds:
-                foreg : foregroundVars.altForeg,
-            }),
-            
-            
-            
-            // backgrounds:
-            backg     : backgroundVars.backgColor,
-            
-            
-            
-            // foregrounds:
-            foreg     : foregroundVars.foreg,
-            
-            
-            
             // customize:
             ...usesCssProps(usesPrefixedProps(dataTables, 'cell')), // apply config's cssProps starting with cell***
         }),
-        
-        
-        
-        // features:
-        ...backgroundRule(), // must be placed at the last
-        ...foregroundRule(), // must be placed at the last
     });
 };
 export const usesDataTableDataLayout    = () => {
@@ -294,38 +256,7 @@ export const usesDataTableDataLayout    = () => {
     });
 };
 export const usesDataTableTitleLayout   = () => {
-    // dependencies:
-    
-    // features:
-    const {backgroundVars} = usesBackground();
-    const {foregroundVars} = usesForeground();
-    
-    
-    
     return style({
-        // accessibilities:
-        ...rule(['&::selection', '& ::selection'], { // ::selection on self and descendants
-            // backgrounds:
-            backg : backgroundVars.backgColor,
-            
-            
-            
-            // foregrounds:
-            foreg : foregroundVars.foreg,
-        }),
-        
-        
-        
-        // backgrounds:
-        backg     : backgroundVars.altBackgColor,
-        
-        
-        
-        // foregrounds:
-        foreg     : foregroundVars.altForeg,
-        
-        
-        
         // customize:
         ...usesCssProps(usesPrefixedProps(dataTables, 'title')), // apply config's cssProps starting with title***
     });
