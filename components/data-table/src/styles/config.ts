@@ -25,6 +25,10 @@ import {
     // configs:
     basics,
 }                           from '@reusable-ui/basic'           // a base component
+import {
+    // configs:
+    cards,
+}                           from '@reusable-ui/card'            // a flexible and extensible content container, with optional header and footer
 
 
 
@@ -68,10 +72,7 @@ export const [dataTables, dataTableValues, cssDataTableConfig] = cssConfig(() =>
         
         
         // captions:
-        captionFilter       : [[
-            'brightness(70%)',
-            'contrast(140%)',
-        ]]                                                                      as CssKnownProps['filter'        ],
+        captionFilter       : cards.captionFilter                               as CssKnownProps['filter'        ],
     };
     
     
