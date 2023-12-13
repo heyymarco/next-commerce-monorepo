@@ -13,7 +13,6 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
-    useMergeEvents,
     useMergeClasses,
     
     
@@ -63,27 +62,6 @@ const _defaultBodySemanticRole   : SemanticRole = 'rowgroup' // uses [role="rowg
 export const useDataTableStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles/styles.js')
 , { id: 'gdc4frgwbi' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-
-
-
-// handlers:
-export const handleAnimationEndForward : React.AnimationEventHandler<Element> = (event) => {
-    /**
-     * because the `usesDataTableLayout` is neither inherit from `usesIndicatorLayout` nor applies `anim: ...`,
-     * so the `onAnimationEnd` will __never__ triggered directly (non_bubbled).
-     * 
-     * the `useDisableable() => handleAnimationEnd` only perform non_bubbled `onAnimationEnd`.
-     * 
-     * thus we need to trigger `onAnimationEnd` at <DataTable> level by forwarding `onAnimationEnd` bubbled from <DataTableHeader>|<DataTableBody>|<DataTableFooter>.
-     * 
-     * <DataTable>
-     *     <DataTable(Header|Body|Footer) onAnimationEnd={...} />
-     * </DataTable>
-     */
-    if ((event.target as Element)?.parentElement === event.currentTarget) {
-        event.currentTarget.dispatchEvent(new AnimationEvent('animationend', { animationName: event.animationName, bubbles: true, composed: true }));
-    } // if
-};
 
 
 
@@ -280,19 +258,6 @@ const DataTable = <TElement extends Element = HTMLElement>(props: DataTableProps
     
     
     
-    // handlers:
-    const handleAnimationEnd = useMergeEvents(
-        // preserves the original `onAnimationEnd`:
-        props.onAnimationEnd,
-        
-        
-        
-        // hack:
-        handleAnimationEndForward,
-    );
-    
-    
-    
     // jsx:
     return (
         <Indicator<TElement>
@@ -310,11 +275,6 @@ const DataTable = <TElement extends Element = HTMLElement>(props: DataTableProps
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
             variantClasses={variantClasses}
-            
-            
-            
-            // handlers:
-            onAnimationEnd={handleAnimationEnd}
         />
     );
 };
