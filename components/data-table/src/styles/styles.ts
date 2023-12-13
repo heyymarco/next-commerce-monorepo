@@ -22,6 +22,7 @@ import {
 import {
     // a responsive management system:
     ifScreenWidthAtLeast,
+    ifScreenWidthSmallerThan,
     
     
     
@@ -361,14 +362,24 @@ export const usesDataTableLayout = () => {
         itemsSelector             : ':nth-child(n)', // select <tr> and <foreign-elm>
     });
     
-    const {groupableRule: rowGroupableRule} = usesGroupable({
+    const {groupableRule: rowGroupableInlineRule} = usesGroupable({
         orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
         orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
         itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
     });
-    const {separatorRule: cellSeparatorRule} = usesGroupable({
+    const {separatorRule: cellSeparatorInlineRule} = usesGroupable({
         orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
         orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    const {groupableRule: rowGroupableBlockRule} = usesGroupable({
+        orientationInlineSelector : null, // never  => the <tr> is never  stacked in horizontal
+        orientationBlockSelector  : '&',  // always => the <tr> is always stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    const {separatorRule: cellSeparatorBlockRule} = usesGroupable({
+        orientationInlineSelector : null, // never  => the <tr> is never  stacked in horizontal
+        orientationBlockSelector  : '&',  // always => the <tr> is always stacked in vertical
         itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
     });
     
@@ -380,7 +391,12 @@ export const usesDataTableLayout = () => {
         ...children([theadElm, tfootElm, tbodyElm], {
             ...groupGroupableRule(), // make a nicely rounded corners for <thead>, <tfoot>, <tbody>
             ...children(trElm, {
-                ...rowGroupableRule(), // make a nicely rounded corners for <tr>
+                ...ifScreenWidthSmallerThan('sm', {
+                    ...rowGroupableBlockRule(),  // make a nicely rounded corners for <tr>
+                }),
+                ...ifScreenWidthAtLeast('sm', {
+                    ...rowGroupableInlineRule(), // make a nicely rounded corners for <tr>
+                }),
             }),
         }),
         
@@ -524,7 +540,12 @@ export const usesDataTableLayout = () => {
                     // children:
                     ...children([tdElm, thElm], {
                         // borders:
-                        ...cellSeparatorRule(), // turns the current border as separator between <td>|<th>(s)
+                        ...ifScreenWidthSmallerThan('sm', {
+                            ...cellSeparatorBlockRule(),  // turns the current border as separator between <td>|<th>(s)
+                        }),
+                        ...ifScreenWidthAtLeast('sm', {
+                            ...cellSeparatorInlineRule(), // turns the current border as separator between <td>|<th>(s)
+                        }),
                     }),
                 }),
             }),
