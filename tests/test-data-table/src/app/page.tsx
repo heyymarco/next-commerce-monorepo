@@ -30,26 +30,26 @@ export default function Home() {
                         </tr>
                         <tr className="tr">
                             <th className="th">
-                                hello
+                                hellohaa
                             </th>
                             <td className="td">
-                                world
+                                world world
                             </td>
                         </tr>
                         <tr className="tr">
                             <td className="td">
-                                hello
+                                hey
                             </td>
                             <td className="td">
-                                world
+                                wd
                             </td>
                         </tr>
                         <tr className="tr">
                             <td className="td">
-                                hello
+                                hola hello
                             </td>
                             <td className="td">
-                                world
+                                world world world
                             </td>
                             <td className="td">
                                 X

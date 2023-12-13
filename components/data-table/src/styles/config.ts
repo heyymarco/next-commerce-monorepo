@@ -70,6 +70,7 @@ export const [dataTables, dataTableValues, cssDataTableConfig] = cssConfig(() =>
         cellOverflowWrap    : 'break-word'                                      as CssKnownProps['overflowWrap'  ], // prevents a long word from breaking DataTable layout
         titleFontWeight     : typos.fontWeightSemibold                          as CssKnownProps['fontWeight'    ],
         titleJustifyContent : 'center'                                          as CssKnownProps['justifyContent'],
+        labelFontWeight     : typos.fontWeightSemibold                          as CssKnownProps['fontWeight'    ],
         
         
         
