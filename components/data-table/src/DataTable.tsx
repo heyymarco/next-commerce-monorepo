@@ -263,7 +263,7 @@ export interface DataTableProps<TElement extends Element = HTMLTableElement, TEx
     // children:
     children   ?: React.ReactNode
 }
-const DataTable                       = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
+const DataTable                       = <TElement extends Element = HTMLTableElement, TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>(props: DataTableProps<TElement, TExpandedChangeEvent>): JSX.Element|null => {
     // fn props:
     const breakpoint    = props.breakpoint;
     const mediaMinWidth = breakpoint ? breakpoints[breakpoint] : undefined;
@@ -289,7 +289,7 @@ const DataTable                       = <TElement extends Element = HTMLTableEle
         <DataTableWithResponsiveProvider {...props} />
     );
 };
-const DataTableWithWindowResponsive   = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement> & { mediaMinWidth : number }): JSX.Element|null => {
+const DataTableWithWindowResponsive   = <TElement extends Element = HTMLTableElement, TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>(props: DataTableProps<TElement, TExpandedChangeEvent> & { mediaMinWidth : number }): JSX.Element|null => {
     // rest props:
     const {
         mediaMinWidth,
@@ -311,7 +311,7 @@ const DataTableWithWindowResponsive   = <TElement extends Element = HTMLTableEle
         </WindowResponsive>
     );
 };
-const DataTableWithResponsiveProvider = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
+const DataTableWithResponsiveProvider = <TElement extends Element = HTMLTableElement, TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>(props: DataTableProps<TElement, TExpandedChangeEvent>): JSX.Element|null => {
     // handlers:
     const handleResponsiveChildren = useCallback<ResponsiveChildrenHandler<boolean>>((currentFallback) =>
         <DataTableImplementation {...props} expanded={currentFallback} />
@@ -326,7 +326,7 @@ const DataTableWithResponsiveProvider = <TElement extends Element = HTMLTableEle
         </ResponsiveProvider>
     );
 };
-const DataTableImplementation         = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
+const DataTableImplementation         = <TElement extends Element = HTMLTableElement, TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>(props: DataTableProps<TElement, TExpandedChangeEvent>): JSX.Element|null => {
     // styles:
     const styleSheet       = useDataTableStyleSheet();
     
@@ -405,7 +405,7 @@ export {
 
 
 
-export interface DataTableComponentProps<TElement extends Element = HTMLTableElement>
+export interface DataTableComponentProps<TElement extends Element = HTMLTableElement, TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>
 {
     // refs:
     dataTableRef         ?: React.Ref<TElement> // setter ref
@@ -413,11 +413,11 @@ export interface DataTableComponentProps<TElement extends Element = HTMLTableEle
     
     
     // variants:
-    dataTableStyle       ?: DataTableProps<TElement>['dataTableStyle']
+    dataTableStyle       ?: DataTableProps<TElement, TExpandedChangeEvent>['dataTableStyle']
     
     
     
     // components:
-    dataTableComponent   ?: React.ReactComponentElement<any, DataTableProps<TElement>>
-    dataTableChildren    ?: DataTableProps<TElement>['children']
+    dataTableComponent   ?: React.ReactComponentElement<any, DataTableProps<TElement, TExpandedChangeEvent>>
+    dataTableChildren    ?: DataTableProps<TElement, TExpandedChangeEvent>['children']
 }
