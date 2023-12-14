@@ -56,6 +56,10 @@ import {
     ResponsiveChildrenHandler,
     ResponsiveProvider,
 }                           from '@reusable-ui/responsives'     // a responsive management system for react web components
+import {
+    // react components:
+    WindowResponsive,
+}                           from '@reusable-ui/dimensions'      // a set of React helper for fetching the dimension of elements
 
 // internals:
 import {
@@ -63,10 +67,6 @@ import {
     DataTableVariant,
     useDataTableVariant,
 }                           from './variants/DataTableVariant.js'
-import {
-    // react components:
-    WindowResponsive,
-}                           from './WindowResponsive.js'
 
 
 

@@ -44,6 +44,7 @@
     "@reusable-ui/basic": "^6.5.0",
     "@reusable-ui/card": "^6.5.0",
     "@reusable-ui/core": "^6.5.0",
+    "@reusable-ui/dimensions": "^6.5.1",
     "@reusable-ui/generic": "^6.5.0",
     "@reusable-ui/indicator": "^6.5.0"
   },
