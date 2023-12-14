@@ -236,16 +236,6 @@ export const usesDataTableCellLayout    = () => {
             
             
             
-            // sizes:
-            ...rule('[colspan="2"]', {
-                gridColumnEnd : 'span 2',
-            }),
-            ...rule('[colspan="3"]', {
-                gridColumnEnd : 'span 3',
-            }),
-            
-            
-            
             // customize:
             ...usesCssProps(usesPrefixedProps(dataTables, 'cell')), // apply config's cssProps starting with cell***
             
@@ -627,6 +617,13 @@ export const usesDataTableStates = () => {
                             
                             
                             // sizes:
+                            ...rule('[colspan="2"]', {
+                                gridColumnEnd : 'span 2',
+                            }),
+                            ...rule('[colspan="3"]', {
+                                gridColumnEnd : 'span 3',
+                            }),
+                            
                             // auto fix for multi column : missing column of <EditButton>
                             ...rule(':last-child', {
                                 ...rule(':nth-child(1)', {
