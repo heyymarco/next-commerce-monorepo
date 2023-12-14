@@ -21,11 +21,7 @@ import {
 
 // reusable-ui core:
 import {
-    // a responsive management system:
-    ifScreenWidthAtLeast,
-    
-    
-    
+    // border (stroke) stuff of UI:
     usesBorder,
     
     
@@ -273,20 +269,6 @@ export const usesDataTableCellLayout    = () => {
 export const usesDataTableDataLayout    = () => {
     return style({
         // special layouts:
-        ...rule(':nth-child(1)', { // <td> as <Label>
-            // layouts:
-            justifyContent     : 'center',  // center     the items horizontally
-            ...ifScreenWidthAtLeast('sm', {
-                justifyContent : 'end',     // right_most the items horizontally
-            }),
-        }),
-        ...rule(':nth-child(2)', { // <td> as <Data>
-            // layouts:
-            justifyContent     : 'center',  // center    the items horizontally
-            ...ifScreenWidthAtLeast('sm', {
-                justifyContent : 'start',   // left_most the items horizontally
-            }),
-        }),
         ...rule(':nth-child(3)', { // <td> as <EditButton>
             // layouts:
             justifyContent : 'center', // center the items vertically
@@ -306,18 +288,6 @@ export const usesDataTableTitleLayout   = () => {
 };
 export const usesDataTableLabelLayout   = () => {
     return style({
-        ...rule(':nth-child(1)', { // <th> as <Label>
-            // layouts:
-            justifyContent     : 'center',  // center     the items horizontally
-            ...ifScreenWidthAtLeast('sm', {
-                justifyContent : 'end',     // right_most the items horizontally
-            }),
-            
-            alignContent       : 'center',  // center     the items vertically
-        }),
-        
-        
-        
         // customize:
         ...usesCssProps(usesPrefixedProps(dataTables, 'label')), // apply config's cssProps starting with label***
     });
