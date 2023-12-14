@@ -71,20 +71,29 @@ import {
 
 
 // defaults:
-const _defaultSemanticTag         : SemanticTag  = 'table'    // uses <table>           as the default semantic tag
-const _defaultSemanticRole        : SemanticRole = 'table'    // uses [role="table"]    as the default semantic role
+const _defaultSemanticTag         : SemanticTag  = 'table'     // uses <table>            as the default semantic tag
+const _defaultSemanticRole        : SemanticRole = 'table'     // uses [role="table"]     as the default semantic role
 
-const _defaultHeaderSemanticTag   : SemanticTag  = 'thead'    // uses <thead>           as the default semantic tag
-const _defaultHeaderSemanticRole  : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+const _defaultHeaderSemanticTag   : SemanticTag  = 'thead'     // uses <thead>            as the default semantic tag
+const _defaultHeaderSemanticRole  : SemanticRole = 'rowgroup'  // uses [role="rowgroup"]  as the default semantic role
 
-const _defaultFooterSemanticTag   : SemanticTag  = 'tfoot'    // uses <tfoot>           as the default semantic tag
-const _defaultFooterSemanticRole  : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+const _defaultFooterSemanticTag   : SemanticTag  = 'tfoot'     // uses <tfoot>            as the default semantic tag
+const _defaultFooterSemanticRole  : SemanticRole = 'rowgroup'  // uses [role="rowgroup"]  as the default semantic role
 
-const _defaultBodySemanticTag     : SemanticTag  = 'tbody'    // uses <tbody>           as the default semantic tag
-const _defaultBodySemanticRole    : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+const _defaultBodySemanticTag     : SemanticTag  = 'tbody'     // uses <tbody>            as the default semantic tag
+const _defaultBodySemanticRole    : SemanticRole = 'rowgroup'  // uses [role="rowgroup"]  as the default semantic role
 
-const _defaultRowSemanticTag      : SemanticTag  = 'tr'       // uses <tr>              as the default semantic tag
-const _defaultRowSemanticRole     : SemanticRole = 'row'      // uses [role="row"]      as the default semantic role
+const _defaultRowSemanticTag      : SemanticTag  = 'tr'        // uses <tr>               as the default semantic tag
+const _defaultRowSemanticRole     : SemanticRole = 'row'       // uses [role="row"]       as the default semantic role
+
+const _defaultLabelSemanticTag    : SemanticTag  = 'th'        // uses <th>               as the default semantic tag
+const _defaultLabelSemanticRole   : SemanticRole = 'rowheader' // uses [role="rowheader"] as the default semantic role
+
+const _defaultDataSemanticTag     : SemanticTag  = 'td'        // uses <td>               as the default semantic tag
+const _defaultDataSemanticRole    : SemanticRole = 'cell'      // uses [role="cell"]      as the default semantic role
+
+const _defaultActionSemanticTag   : SemanticTag  = 'td'        // uses <td>               as the default semantic tag
+const _defaultActionSemanticRole  : SemanticRole = 'cell'      // uses [role="cell"]      as the default semantic role
 
 const _defaultResponsiveFallbacks : Fallbacks<boolean> = [true, false]
 
@@ -317,7 +326,7 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
     
     
     // classes:
-    const rowClasses = useMergeClasses(
+    const rowClasses   = useMergeClasses(
         // preserves the original `classes` from `props`:
         props.classes,
         // preserves the original `classes` from `tableRowComponent`:
@@ -327,6 +336,33 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
         
         // classes:
         'tr',
+    );
+    const labelClasses = useMergeClasses(
+        // preserves the original `classes` from `tableLabelComponent`:
+        tableLabelComponent.props.classes,
+        
+        
+        
+        // classes:
+        'th',
+    );
+    const dataClasses  = useMergeClasses(
+        // preserves the original `classes` from `tableDataComponent`:
+        tableDataComponent.props.classes,
+        
+        
+        
+        // classes:
+        'td',
+    );
+    const actionClasses  = useMergeClasses(
+        // preserves the original `classes` from `tableActionComponent`:
+        tableActionComponent.props.classes,
+        
+        
+        
+        // classes:
+        'td',
     );
     
     
@@ -355,15 +391,66 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
         
         // children:
         tableRowComponent.props.children ?? <>
-            <th className='th'>
-                {label}
-            </th>
-            <td className='td' colSpan={!actionChildren ? 2 : undefined}>
-                {children}
-            </td>
-            {!!actionChildren && <td className='td'>
-                {actionChildren}
-            </td>}
+            {React.cloneElement<GenericProps<Element>>(tableLabelComponent,
+                // props:
+                {
+                    // semantics:
+                    semanticTag  : tableLabelComponent.props.semanticTag  ?? _defaultLabelSemanticTag,
+                    semanticRole : tableLabelComponent.props.semanticRole ?? _defaultLabelSemanticRole,
+                    
+                    
+                    
+                    // classes:
+                    classes      : labelClasses,
+                },
+                
+                
+                
+                // children:
+                tableLabelComponent.props.children ?? label,
+            )}
+            {React.cloneElement<GenericProps<Element>>(tableDataComponent,
+                // props:
+                {
+                    // semantics:
+                    semanticTag  : tableDataComponent.props.semanticTag  ?? _defaultDataSemanticTag,
+                    semanticRole : tableDataComponent.props.semanticRole ?? _defaultDataSemanticRole,
+                    
+                    
+                    
+                    // classes:
+                    classes      : dataClasses,
+                    
+                    
+                    
+                    // miscs:
+                    // @ts-ignore
+                    colSpan      : tableDataComponent.props.colSpan      ?? (!actionChildren ? 2 : tableDataComponent.props.colSpan),
+                },
+                
+                
+                
+                // children:
+                tableDataComponent.props.children ?? children,
+            )}
+            {!!actionChildren && React.cloneElement<GenericProps<Element>>(tableActionComponent,
+                // props:
+                {
+                    // semantics:
+                    semanticTag  : tableActionComponent.props.semanticTag  ?? _defaultActionSemanticTag,
+                    semanticRole : tableActionComponent.props.semanticRole ?? _defaultActionSemanticRole,
+                    
+                    
+                    
+                    // classes:
+                    classes      : actionClasses,
+                },
+                
+                
+                
+                // children:
+                tableActionComponent.props.children ?? actionChildren,
+            )}
         </>
     );
 };
