@@ -277,19 +277,35 @@ export interface DataTableItemProps<TElement extends Element = HTMLElement>
         >
 {
     // accessibilities:
-    label          ?: React.ReactNode
+    label                ?: React.ReactNode
+    
+    
+    
+    // components:
+    tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    tableLabelComponent  ?: React.ReactComponentElement<any, GenericProps<Element >>
+    tableDataComponent   ?: React.ReactComponentElement<any, GenericProps<Element >>
+    tableActionComponent ?: React.ReactComponentElement<any, GenericProps<Element >>
     
     
     
     // children:
-    actionChildren ?: React.ReactNode
-    children       ?: React.ReactNode
+    actionChildren       ?: React.ReactNode
+    children             ?: React.ReactNode
 }
 export const DataTableItem = <TElement extends Element = HTMLElement>(props: DataTableItemProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // accessibilities:
         label,
+        
+        
+        
+        // components:
+        tableRowComponent    = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
+        tableLabelComponent  = (<Generic<Element > /> as React.ReactComponentElement<any, GenericProps<Element >>),
+        tableDataComponent   = (<Generic<Element > /> as React.ReactComponentElement<any, GenericProps<Element >>),
+        tableActionComponent = (<Generic<Element > /> as React.ReactComponentElement<any, GenericProps<Element >>),
         
         
         
@@ -301,9 +317,11 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
     
     
     // classes:
-    const classes = useMergeClasses(
-        // preserves the original `classes`:
+    const rowClasses = useMergeClasses(
+        // preserves the original `classes` from `props`:
         props.classes,
+        // preserves the original `classes` from `tableRowComponent`:
+        tableRowComponent.props.classes,
         
         
         
@@ -314,22 +332,29 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
     
     
     // jsx:
-    return (
-        <Generic<TElement>
+    return React.cloneElement<GenericProps<TElement>>(tableRowComponent,
+        // props:
+        {
             // other props:
-            {...restGenericProps}
+            ...restGenericProps,
+            ...tableRowComponent.props, // overwrites restGenericProps (if any conflics)
             
             
             
             // semantics:
-            semanticTag  = {props.semanticTag  ?? _defaultRowSemanticTag }
-            semanticRole = {props.semanticRole ?? _defaultRowSemanticRole}
+            semanticTag  : tableRowComponent.props.semanticTag  ?? props.semanticTag  ?? _defaultRowSemanticTag,
+            semanticRole : tableRowComponent.props.semanticRole ?? props.semanticRole ?? _defaultRowSemanticRole,
             
             
             
             // classes:
-            classes={classes}
-        >
+            classes      : rowClasses,
+        },
+        
+        
+        
+        // children:
+        tableRowComponent.props.children ?? <>
             <th className='th'>
                 {label}
             </th>
@@ -339,7 +364,7 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
             {!!actionChildren && <td className='td'>
                 {actionChildren}
             </td>}
-        </Generic>
+        </>
     );
 };
 
