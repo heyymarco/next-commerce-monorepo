@@ -247,16 +247,6 @@ export const usesDataTableCellLayout    = () => {
             ...rule('[colspan="3"]', {
                 gridColumnEnd : 'span 3',
             }),
-            ...ifScreenWidthAtLeast('sm', { // auto fix for multi column : missing column of <EditButton>
-                ...rule(':last-child', {
-                    ...rule(':nth-child(1)', {
-                        gridColumnEnd : 'span 3',
-                    }),
-                    ...rule(':nth-child(2)', {
-                        gridColumnEnd : 'span 2',
-                    }),
-                }),
-            }),
             
             
             
@@ -663,6 +653,19 @@ export const usesDataTableStates = () => {
                         ...children([tdElm, thElm], {
                             // borders:
                             ...cellSeparatorInlineRule(), // turns the current border as separator between <td>|<th>(s)
+                            
+                            
+                            
+                            // sizes:
+                            // auto fix for multi column : missing column of <EditButton>
+                            ...rule(':last-child', {
+                                ...rule(':nth-child(1)', {
+                                    gridColumnEnd : 'span 3',
+                                }),
+                                ...rule(':nth-child(2)', {
+                                    gridColumnEnd : 'span 2',
+                                }),
+                            }),
                         }),
                     }),
                 }),
