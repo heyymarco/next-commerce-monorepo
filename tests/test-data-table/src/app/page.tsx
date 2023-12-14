@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 // import Image from 'next/image'
-import { DataTable, DataTableBody, DataTableHeader } from '@heymarco/data-table'
+import { DataTable, DataTableBody, DataTableHeader, DataTableItem } from '@heymarco/data-table'
 import styles from './page.module.css'
 
 export default function Home() {
@@ -20,41 +20,18 @@ export default function Home() {
                         </tr>
                     </DataTableHeader>
                     <DataTableBody>
-                        <tr className="tr">
-                            <th className="th">
-                                hello
-                            </th>
-                            <td className="td">
-                                world
-                            </td>
-                        </tr>
-                        <tr className="tr">
-                            <th className="th">
-                                hellohaa
-                            </th>
-                            <td className="td">
-                                world world
-                            </td>
-                        </tr>
-                        <tr className="tr">
-                            <td className="td">
-                                hey
-                            </td>
-                            <td className="td">
-                                wd
-                            </td>
-                        </tr>
-                        <tr className="tr">
-                            <td className="td">
-                                hola hello
-                            </td>
-                            <td className="td">
-                                world world world
-                            </td>
-                            <td className="td">
-                                X
-                            </td>
-                        </tr>
+                        <DataTableItem label={<>hello</>}>
+                            world
+                        </DataTableItem>
+                        <DataTableItem label={<>hellohaa</>}>
+                            world world
+                        </DataTableItem>
+                        <DataTableItem label={<>hey</>}>
+                            wd
+                        </DataTableItem>
+                        <DataTableItem label={<>hola hello</>} actionChildren={<>X</>}>
+                            world world world
+                        </DataTableItem>
                     </DataTableBody>
                 </DataTable>
                 
