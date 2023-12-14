@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useCallback,
 }                           from 'react'
 
 // cssfn:
@@ -294,9 +299,9 @@ const DataTableWithWindowResponsive   = <TElement extends Element = HTMLTableEle
     
     
     // handlers:
-    const handleResponsiveChildren = useEvent((expanded: boolean) =>
+    const handleResponsiveChildren = useCallback((expanded: boolean) =>
         <DataTableImplementation {...restDataTableProps} expanded={expanded} />
-    );
+    , [props]); // re-create (and re-render) the callback if the `props` changed
     
     
     
@@ -309,9 +314,9 @@ const DataTableWithWindowResponsive   = <TElement extends Element = HTMLTableEle
 };
 const DataTableWithResponsiveProvider = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
     // handlers:
-    const handleResponsiveChildren = useEvent<ResponsiveChildrenHandler<boolean>>((currentFallback) =>
+    const handleResponsiveChildren = useCallback<ResponsiveChildrenHandler<boolean>>((currentFallback) =>
         <DataTableImplementation {...props} expanded={currentFallback} />
-    );
+    , [props]); // re-create (and re-render) the callback if the `props` changed
     
     
     
