@@ -365,7 +365,7 @@ const DataTableImplementation         = <TElement extends Element = HTMLTableEle
         // variants:
         dataTableVariant.class,
     );
-    const stateClasses = useMergeClasses(
+    const stateClasses   = useMergeClasses(
         // preserves the original `stateClasses`:
         props.stateClasses,
         
