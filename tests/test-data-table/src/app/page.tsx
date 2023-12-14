@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 // import Image from 'next/image'
-import { DataTable, DataTableBody, DataTableHeader, DataTableItem } from '@heymarco/data-table'
+import { DataTable, DataTableBody, DataTableHeader, DataTableFooter, DataTableItem } from '@heymarco/data-table'
 import styles from './page.module.css'
 
 export default function Home() {
@@ -13,11 +13,7 @@ export default function Home() {
             <div className={styles.test}>
                 <DataTable theme='success' enabled={enabled} active={active}>
                     <DataTableHeader>
-                        <tr className="tr">
-                            <th className="th">
-                                Test Table
-                            </th>
-                        </tr>
+                        Test Table
                     </DataTableHeader>
                     <DataTableBody>
                         <DataTableItem label={<>hello</>}>
@@ -30,9 +26,12 @@ export default function Home() {
                             wd
                         </DataTableItem>
                         <DataTableItem label={<>hola hello</>} actionChildren={<>X</>}>
-                            world world world
+                            world_world_world
                         </DataTableItem>
                     </DataTableBody>
+                    <DataTableFooter>
+                        End of Table
+                    </DataTableFooter>
                 </DataTable>
                 
                 <hr />
@@ -44,11 +43,7 @@ export default function Home() {
                 
                 <DataTable theme='primary'>
                     <DataTableHeader>
-                        <tr className="tr">
-                            <th className="th hidden">
-                                Test Table
-                            </th>
-                        </tr>
+                        Test Table
                     </DataTableHeader>
                     <DataTableBody>
                         <tr className="tr">
@@ -93,11 +88,7 @@ export default function Home() {
                 
                 <DataTable theme='primary'>
                     <DataTableHeader>
-                        <tr className="tr hidden">
-                            <th className="th hidden">
-                                Test Table
-                            </th>
-                        </tr>
+                        Test Table
                     </DataTableHeader>
                     <DataTableBody>
                         <tr className="tr hidden">

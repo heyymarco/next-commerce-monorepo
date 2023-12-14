@@ -137,6 +137,14 @@ export interface DataTableBodyProps<TElement extends Element = HTMLElement>
 {
 }
 export const DataTableHeader = <TElement extends Element = HTMLElement>(props: DataTableHeaderProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // children:
+        children,
+    ...restGenericProps} = props;
+    
+    
+    
     // classes:
     const classes = useMergeClasses(
         // preserves the original `classes`:
@@ -154,7 +162,7 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
     return (
         <Generic<TElement>
             // other props:
-            {...props}
+            {...restGenericProps}
             
             
             
@@ -166,10 +174,24 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
             
             // classes:
             classes={classes}
-        />
+        >
+            <tr className='tr'>
+                <th className='th' colSpan={3}>
+                    {children}
+                </th>
+            </tr>
+        </Generic>
     );
 };
 export const DataTableFooter = <TElement extends Element = HTMLElement>(props: DataTableFooterProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // children:
+        children,
+    ...restGenericProps} = props;
+    
+    
+    
     // classes:
     const classes = useMergeClasses(
         // preserves the original `classes`:
@@ -187,7 +209,7 @@ export const DataTableFooter = <TElement extends Element = HTMLElement>(props: D
     return (
         <Generic<TElement>
             // other props:
-            {...props}
+            {...restGenericProps}
             
             
             
@@ -199,7 +221,13 @@ export const DataTableFooter = <TElement extends Element = HTMLElement>(props: D
             
             // classes:
             classes={classes}
-        />
+        >
+            <tr className='tr'>
+                <th className='th' colSpan={3}>
+                    {children}
+                </th>
+            </tr>
+        </Generic>
     );
 };
 export const DataTableBody   = <TElement extends Element = HTMLElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
