@@ -3,6 +3,7 @@ import {
     // writes css in javascript:
     rule,
     variants,
+    states,
     children,
     style,
     
@@ -22,7 +23,6 @@ import {
 import {
     // a responsive management system:
     ifScreenWidthAtLeast,
-    ifScreenWidthSmallerThan,
     
     
     
@@ -42,6 +42,13 @@ import {
     
     // size options of UI:
     usesResizable,
+    
+    
+    
+    // a capability of UI to expand/reduce its size or toggle the visibility:
+    ifExpand,
+    ifCollapse,
+    usesCollapsible,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -362,27 +369,6 @@ export const usesDataTableLayout = () => {
         itemsSelector             : ':nth-child(n)', // select <tr> and <foreign-elm>
     });
     
-    const {groupableRule: rowGroupableInlineRule} = usesGroupable({
-        orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
-        orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
-        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
-    });
-    const {separatorRule: cellSeparatorInlineRule} = usesGroupable({
-        orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
-        orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
-        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
-    });
-    const {groupableRule: rowGroupableBlockRule} = usesGroupable({
-        orientationInlineSelector : null, // never  => the <tr> is never  stacked in horizontal
-        orientationBlockSelector  : '&',  // always => the <tr> is always stacked in vertical
-        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
-    });
-    const {separatorRule: cellSeparatorBlockRule} = usesGroupable({
-        orientationInlineSelector : null, // never  => the <tr> is never  stacked in horizontal
-        orientationBlockSelector  : '&',  // always => the <tr> is always stacked in vertical
-        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
-    });
-    
     
     
     return style({
@@ -390,14 +376,6 @@ export const usesDataTableLayout = () => {
         ...tableGroupableRule(), // make a nicely rounded corners for <table>
         ...children([theadElm, tfootElm, tbodyElm], {
             ...groupGroupableRule(), // make a nicely rounded corners for <thead>, <tfoot>, <tbody>
-            ...children(trElm, {
-                ...ifScreenWidthSmallerThan('sm', {
-                    ...rowGroupableBlockRule(),  // make a nicely rounded corners for <tr>
-                }),
-                ...ifScreenWidthAtLeast('sm', {
-                    ...rowGroupableInlineRule(), // make a nicely rounded corners for <tr>
-                }),
-            }),
         }),
         
         
@@ -406,10 +384,6 @@ export const usesDataTableLayout = () => {
         ...style({
             // layouts:
             display             : 'grid',
-            gridTemplateColumns : 'auto',              // 1 column
-            ...ifScreenWidthAtLeast('sm', {
-                gridTemplateColumns : 'auto 1fr auto', // 3 columns : <Title>|<Label> + <Content> + <EditButton>
-            }),
             
             
             
@@ -534,19 +508,6 @@ export const usesDataTableLayout = () => {
                 ...children(trElm, {
                     // borders:
                     ...rowSeparatorRule(), // turns the current border as separator between <DataTableGroup>(s)
-                    
-                    
-                    
-                    // children:
-                    ...children([tdElm, thElm], {
-                        // borders:
-                        ...ifScreenWidthSmallerThan('sm', {
-                            ...cellSeparatorBlockRule(),  // turns the current border as separator between <td>|<th>(s)
-                        }),
-                        ...ifScreenWidthAtLeast('sm', {
-                            ...cellSeparatorInlineRule(), // turns the current border as separator between <td>|<th>(s)
-                        }),
-                    }),
                 }),
             }),
             ...children(['&', theadElm, tfootElm, tbodyElm], {
@@ -627,7 +588,88 @@ export const usesDataTableVariants = () => {
         ...resizableRule(),
     });
 };
-export const usesDataTableStates = usesIndicatorStates;
+export const usesDataTableStates = () => {
+    // dependencies:
+    
+    // capabilities:
+    const {groupableRule: rowGroupableInlineRule} = usesGroupable({
+        orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
+        orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    const {separatorRule: cellSeparatorInlineRule} = usesGroupable({
+        orientationInlineSelector : '&',  // always => the <tr> is always stacked in horizontal
+        orientationBlockSelector  : null, // never  => the <tr> is never  stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    const {groupableRule: rowGroupableBlockRule} = usesGroupable({
+        orientationInlineSelector : null, // never  => the <tr> is never  stacked in horizontal
+        orientationBlockSelector  : '&',  // always => the <tr> is always stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    const {separatorRule: cellSeparatorBlockRule} = usesGroupable({
+        orientationInlineSelector : null, // never  => the <tr> is never  stacked in horizontal
+        orientationBlockSelector  : '&',  // always => the <tr> is always stacked in vertical
+        itemsSelector             : ':nth-child(n)', // select <td>, <th>, and <foreign-elm>
+    });
+    
+    // states:
+    const {collapsibleRule} = usesCollapsible(dataTables);
+    
+    
+    
+    return style({
+        // states:
+        ...usesIndicatorStates(),
+        ...collapsibleRule(),
+        ...states([
+            ifCollapse({
+                // layouts:
+                gridTemplateColumns : 'auto',          // 1 column
+                
+                
+                
+                // children:
+                ...children([theadElm, tfootElm, tbodyElm], {
+                    ...children(trElm, {
+                        // capabilities:
+                        ...rowGroupableBlockRule(),  // make a nicely rounded corners for <tr>
+                        
+                        
+                        
+                        // children:
+                        ...children([tdElm, thElm], {
+                            // borders:
+                            ...cellSeparatorBlockRule(),  // turns the current border as separator between <td>|<th>(s)
+                        }),
+                    }),
+                }),
+            }),
+            ifExpand({
+                // layouts:
+                gridTemplateColumns : 'auto 1fr auto', // 3 columns : <Title>|<Label> + <Content> + <EditButton>
+                
+                
+                
+                // children:
+                ...children([theadElm, tfootElm, tbodyElm], {
+                    ...children(trElm, {
+                        // capabilities:
+                        ...rowGroupableInlineRule(), // make a nicely rounded corners for <tr>
+                        
+                        
+                        
+                        // children:
+                        ...children([tdElm, thElm], {
+                            // borders:
+                            ...cellSeparatorInlineRule(), // turns the current border as separator between <td>|<th>(s)
+                        }),
+                    }),
+                }),
+            }),
+        ]),
+    });
+};
 
 export default () => style({
     // layouts:

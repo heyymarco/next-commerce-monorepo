@@ -12,7 +12,14 @@ import {
 
 // reusable-ui core:
 import {
+    // a responsive management system:
+    breakpoints,
+    BreakpointName,
+    
+    
+    
     // react helper hooks:
+    useEvent,
     useMergeClasses,
     
     
@@ -20,6 +27,12 @@ import {
     // a semantic management system for react web components:
     SemanticTag,
     SemanticRole,
+    
+    
+    
+    // a capability of UI to expand/reduce its size or toggle the visibility:
+    ExpandedChangeEvent,
+    CollapsibleProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -33,6 +46,12 @@ import {
     IndicatorProps,
     Indicator,
 }                           from '@reusable-ui/indicator'       // a base component
+import {
+    // react components:
+    Fallbacks,
+    ResponsiveChildrenHandler,
+    ResponsiveProvider,
+}                           from '@reusable-ui/responsives'     // a responsive management system for react web components
 
 // internals:
 import {
@@ -40,21 +59,27 @@ import {
     DataTableVariant,
     useDataTableVariant,
 }                           from './variants/DataTableVariant.js'
+import {
+    // react components:
+    WindowResponsive,
+}                           from './WindowResponsive.js'
 
 
 
 // defaults:
-const _defaultSemanticTag        : SemanticTag  = 'table'    // uses <table>           as the default semantic tag
-const _defaultSemanticRole       : SemanticRole = 'table'    // uses [role="table"]    as the default semantic role
+const _defaultSemanticTag         : SemanticTag  = 'table'    // uses <table>           as the default semantic tag
+const _defaultSemanticRole        : SemanticRole = 'table'    // uses [role="table"]    as the default semantic role
 
-const _defaultHeaderSemanticTag  : SemanticTag  = 'thead'    // uses <thead>           as the default semantic tag
-const _defaultHeaderSemanticRole : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+const _defaultHeaderSemanticTag   : SemanticTag  = 'thead'    // uses <thead>           as the default semantic tag
+const _defaultHeaderSemanticRole  : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
 
-const _defaultFooterSemanticTag  : SemanticTag  = 'tfoot'    // uses <tfoot>           as the default semantic tag
-const _defaultFooterSemanticRole : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+const _defaultFooterSemanticTag   : SemanticTag  = 'tfoot'    // uses <tfoot>           as the default semantic tag
+const _defaultFooterSemanticRole  : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
 
-const _defaultBodySemanticTag    : SemanticTag  = 'tbody'    // uses <tbody>           as the default semantic tag
-const _defaultBodySemanticRole   : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+const _defaultBodySemanticTag     : SemanticTag  = 'tbody'    // uses <tbody>           as the default semantic tag
+const _defaultBodySemanticRole    : SemanticRole = 'rowgroup' // uses [role="rowgroup"] as the default semantic role
+
+const _defaultResponsiveFallbacks : Fallbacks<boolean> = [true, false]
 
 
 
@@ -66,7 +91,7 @@ export const useDataTableStyleSheet = dynamicStyleSheet(
 
 
 // react components:
-export interface DataTableGroupProps<TElement extends Element = HTMLElement>
+export interface DataTableGroupProps<TElement extends Element = HTMLTableSectionElement>
     extends
         // bases:
         GenericProps<TElement>,
@@ -80,31 +105,31 @@ export interface DataTableGroupProps<TElement extends Element = HTMLElement>
     // children:
     children ?: React.ReactNode
 }
-export interface DataTableCaptionProps<TElement extends Element = HTMLElement>
+export interface DataTableCaptionProps<TElement extends Element = HTMLTableSectionElement>
     extends
         // bases:
         DataTableGroupProps<TElement>
 {
 }
-export interface DataTableHeaderProps<TElement extends Element = HTMLElement>
+export interface DataTableHeaderProps<TElement extends Element = HTMLTableSectionElement>
     extends
         // bases:
         DataTableCaptionProps<TElement>
 {
 }
-export interface DataTableFooterProps<TElement extends Element = HTMLElement>
+export interface DataTableFooterProps<TElement extends Element = HTMLTableSectionElement>
     extends
         // bases:
         DataTableCaptionProps<TElement>
 {
 }
-export interface DataTableBodyProps<TElement extends Element = HTMLElement>
+export interface DataTableBodyProps<TElement extends Element = HTMLTableSectionElement>
     extends
         // bases:
         DataTableGroupProps<TElement>
 {
 }
-export const DataTableHeader = <TElement extends Element = HTMLElement>(props: DataTableHeaderProps<TElement>): JSX.Element|null => {
+export const DataTableHeader = <TElement extends Element = HTMLTableSectionElement>(props: DataTableHeaderProps<TElement>): JSX.Element|null => {
     // classes:
     const classes = useMergeClasses(
         // preserves the original `classes`:
@@ -137,7 +162,7 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
         />
     );
 };
-export const DataTableFooter = <TElement extends Element = HTMLElement>(props: DataTableFooterProps<TElement>): JSX.Element|null => {
+export const DataTableFooter = <TElement extends Element = HTMLTableSectionElement>(props: DataTableFooterProps<TElement>): JSX.Element|null => {
     // classes:
     const classes = useMergeClasses(
         // preserves the original `classes`:
@@ -170,7 +195,7 @@ export const DataTableFooter = <TElement extends Element = HTMLElement>(props: D
         />
     );
 };
-export const DataTableBody   = <TElement extends Element = HTMLElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
+export const DataTableBody   = <TElement extends Element = HTMLTableSectionElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
     // classes:
     const classes = useMergeClasses(
         // preserves the original `classes`:
@@ -206,7 +231,7 @@ export const DataTableBody   = <TElement extends Element = HTMLElement>(props: D
 
 
 
-export interface DataTableProps<TElement extends Element = HTMLElement>
+export interface DataTableProps<TElement extends Element = HTMLTableElement, TExpandedChangeEvent extends ExpandedChangeEvent = ExpandedChangeEvent>
     extends
         // bases:
         Omit<IndicatorProps<TElement>,
@@ -215,18 +240,89 @@ export interface DataTableProps<TElement extends Element = HTMLElement>
         >,
         
         // <div>:
-        Omit<React.HTMLAttributes<TElement>,
+        Omit<React.TableHTMLAttributes<TElement>,
             // semantics:
             |'role' // we redefined [role] in <Generic>
         >,
         
         // variants:
-        DataTableVariant
+        DataTableVariant,
+        
+        // states:
+        CollapsibleProps<TExpandedChangeEvent>
 {
+    // behaviors:
+    breakpoint ?: BreakpointName
+    
+    
+    
     // children:
-    children ?: React.ReactNode
+    children   ?: React.ReactNode
 }
-const DataTable = <TElement extends Element = HTMLElement>(props: DataTableProps<TElement>): JSX.Element|null => {
+const DataTable                       = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
+    // fn props:
+    const breakpoint    = props.breakpoint;
+    const mediaMinWidth = breakpoint ? breakpoints[breakpoint] : undefined;
+    
+    const expanded      = props.expanded;
+    
+    
+    
+    // jsx:
+    
+    // controllable [expanded]:
+    if (expanded !== undefined) return (
+        <DataTableImplementation {...props} expanded={expanded} />
+    );
+    
+    // internal controllable [expanded] using provided [breakpoint]:
+    if (mediaMinWidth || (mediaMinWidth === 0)) return (
+        <DataTableWithWindowResponsive {...props} mediaMinWidth={mediaMinWidth} />
+    );
+    
+    // internal controllable [expanded] using overflow detection:
+    return (
+        <DataTableWithResponsiveProvider {...props} />
+    );
+};
+const DataTableWithWindowResponsive   = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement> & { mediaMinWidth : number }): JSX.Element|null => {
+    // rest props:
+    const {
+        mediaMinWidth,
+    ...restDataTableProps} = props;
+    
+    
+    
+    // handlers:
+    const handleResponsiveChildren = useEvent((expanded: boolean) =>
+        <DataTableImplementation {...restDataTableProps} expanded={expanded} />
+    );
+    
+    
+    
+    // jsx:
+    return (
+        <WindowResponsive mediaMinWidth={mediaMinWidth}>
+            {handleResponsiveChildren}
+        </WindowResponsive>
+    );
+};
+const DataTableWithResponsiveProvider = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
+    // handlers:
+    const handleResponsiveChildren = useEvent<ResponsiveChildrenHandler<boolean>>((currentFallback) =>
+        <DataTableImplementation {...props} expanded={currentFallback} />
+    );
+    
+    
+    
+    // jsx:
+    return (
+        <ResponsiveProvider fallbacks={_defaultResponsiveFallbacks}>
+            {handleResponsiveChildren}
+        </ResponsiveProvider>
+    );
+};
+const DataTableImplementation         = <TElement extends Element = HTMLTableElement>(props: DataTableProps<TElement>): JSX.Element|null => {
     // styles:
     const styleSheet       = useDataTableStyleSheet();
     
@@ -240,7 +336,17 @@ const DataTable = <TElement extends Element = HTMLElement>(props: DataTableProps
     // rest props:
     const {
         // variants:
-        dataTableStyle : _dataTableStyle, // remove
+        dataTableStyle : _dataTableStyle,           // remove
+        
+        
+        
+        // behaviors:
+        breakpoint     : _breakpoint,               // remove
+        
+        
+        
+        // states:
+        expanded       : dataTableExpanded = false, // take
     ...restIndicatorProps} = props;
     
     
@@ -254,6 +360,15 @@ const DataTable = <TElement extends Element = HTMLElement>(props: DataTableProps
         
         // variants:
         dataTableVariant.class,
+    );
+    const stateClasses = useMergeClasses(
+        // preserves the original `stateClasses`:
+        props.stateClasses,
+        
+        
+        
+        // states:
+        (dataTableExpanded || undefined) && 'expanded',
     );
     
     
@@ -275,6 +390,7 @@ const DataTable = <TElement extends Element = HTMLElement>(props: DataTableProps
             // classes:
             mainClass={props.mainClass ?? styleSheet.main}
             variantClasses={variantClasses}
+            stateClasses={stateClasses}
         />
     );
 };
@@ -285,7 +401,7 @@ export {
 
 
 
-export interface DataTableComponentProps<TElement extends Element = HTMLElement>
+export interface DataTableComponentProps<TElement extends Element = HTMLTableElement>
 {
     // refs:
     dataTableRef         ?: React.Ref<TElement> // setter ref
