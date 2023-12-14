@@ -24,7 +24,6 @@ import {
     
     
     // react helper hooks:
-    useEvent,
     useMergeClasses,
     
     
