@@ -125,16 +125,6 @@ export interface DataTableGroupProps<TElement extends Element = HTMLElement>
     // children:
     children ?: React.ReactNode
 }
-export interface DataTableCaptionProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        DataTableGroupProps<TElement>
-{
-    // components:
-    tableGroupComponent  ?: React.ReactComponentElement<any, GenericProps<TElement>>
-    tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<TElement>>
-    tableTitleComponent  ?: React.ReactComponentElement<any, GenericProps<Element >>
-}
 const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTableCaptionProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
@@ -250,6 +240,16 @@ const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTab
 
 
 
+export interface DataTableCaptionProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        DataTableGroupProps<TElement>
+{
+    // components:
+    tableGroupComponent  ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    tableTitleComponent  ?: React.ReactComponentElement<any, GenericProps<Element >>
+}
 export interface DataTableHeaderProps<TElement extends Element = HTMLElement>
     extends
         // bases:
