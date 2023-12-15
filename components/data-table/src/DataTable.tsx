@@ -139,7 +139,7 @@ export interface DataTableCaptionProps<TElement extends Element = HTMLElement>
         DataTableGroupProps<TElement>
 {
     // components:
-    tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<Element>>
     tableTitleComponent  ?: React.ReactComponentElement<any, GenericProps<Element >>
 }
 const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTableCaptionProps<TElement>): JSX.Element|null => {
