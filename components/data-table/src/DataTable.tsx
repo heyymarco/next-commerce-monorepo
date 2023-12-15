@@ -259,12 +259,6 @@ export interface DataTableFooterProps<TElement extends Element = HTMLElement>
         DataTableCaptionProps<TElement>
 {
 }
-export interface DataTableBodyProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        DataTableGroupProps<TElement>
-{
-}
 export const DataTableHeader = <TElement extends Element = HTMLElement>(props: DataTableHeaderProps<TElement>): JSX.Element|null => {
     // classes:
     const classes = useMergeClasses(
@@ -331,6 +325,13 @@ export const DataTableFooter = <TElement extends Element = HTMLElement>(props: D
         />
     );
 };
+
+export interface DataTableBodyProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        DataTableGroupProps<TElement>
+{
+}
 export const DataTableBody   = <TElement extends Element = HTMLElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
     // classes:
     const classes = useMergeClasses(
