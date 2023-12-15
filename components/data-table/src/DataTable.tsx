@@ -225,32 +225,30 @@ const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTab
             
             
             // children:
-            tableRowComponent.props.children ?? <>
-                {React.cloneElement<GenericProps<Element>>(tableTitleComponent,
-                    // props:
-                    {
-                        // semantics:
-                        semanticTag  : tableTitleComponent.props.semanticTag  ?? _defaultTitleSemanticTag,
-                        semanticRole : tableTitleComponent.props.semanticRole ?? _defaultTitleSemanticRole,
-                        
-                        
-                        
-                        // classes:
-                        classes      : titleClasses,
-                        
-                        
-                        
-                        // miscs:
-                        // @ts-ignore
-                        colSpan      : tableTitleComponent.props.colSpan      ?? 3,
-                    },
+            tableRowComponent.props.children ?? React.cloneElement<GenericProps<Element>>(tableTitleComponent,
+                // props:
+                {
+                    // semantics:
+                    semanticTag  : tableTitleComponent.props.semanticTag  ?? _defaultTitleSemanticTag,
+                    semanticRole : tableTitleComponent.props.semanticRole ?? _defaultTitleSemanticRole,
                     
                     
                     
-                    // children:
-                    tableTitleComponent.props.children ?? children,
-                )}
-            </>,
+                    // classes:
+                    classes      : titleClasses,
+                    
+                    
+                    
+                    // miscs:
+                    // @ts-ignore
+                    colSpan      : tableTitleComponent.props.colSpan      ?? 3,
+                },
+                
+                
+                
+                // children:
+                tableTitleComponent.props.children ?? children,
+            ),
         ),
     );
 };
@@ -393,7 +391,7 @@ export const DataTableBody   = <TElement extends Element = HTMLElement>(props: D
         
         
         // children:
-        tableGroupComponent.props.children ?? props.children,
+        tableGroupComponent.props.children ?? children,
     );
 };
 
