@@ -134,25 +134,7 @@ export interface DataTableCaptionProps<TElement extends Element = HTMLElement>
     tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<TElement>>
     tableTitleComponent  ?: React.ReactComponentElement<any, GenericProps<Element >>
 }
-export interface DataTableHeaderProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        DataTableCaptionProps<TElement>
-{
-}
-export interface DataTableFooterProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        DataTableCaptionProps<TElement>
-{
-}
-export interface DataTableBodyProps<TElement extends Element = HTMLElement>
-    extends
-        // bases:
-        DataTableGroupProps<TElement>
-{
-}
-export const DataTableHeader = <TElement extends Element = HTMLElement>(props: DataTableHeaderProps<TElement>): JSX.Element|null => {
+const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTableCaptionProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // components:
@@ -174,11 +156,6 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
         props.classes,
         // preserves the original `classes` from `tableGroupComponent`:
         props.classes,
-        
-        
-        
-        // classes:
-        'thead',
     );
     const rowClasses    = useMergeClasses(
         // preserves the original `classes` from `tableRowComponent`:
@@ -212,8 +189,8 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
             
             
             // semantics:
-            semanticTag  : tableGroupComponent.props.semanticTag  ?? props.semanticTag  ?? _defaultHeaderSemanticTag,
-            semanticRole : tableGroupComponent.props.semanticRole ?? props.semanticRole ?? _defaultHeaderSemanticRole,
+            semanticTag  : tableGroupComponent.props.semanticTag  ?? props.semanticTag,
+            semanticRole : tableGroupComponent.props.semanticRole ?? props.semanticRole,
             
             
             
@@ -228,8 +205,8 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
             // props:
             {
                 // semantics:
-                semanticTag  : tableRowComponent.props.semanticTag  ?? props.semanticTag  ?? _defaultRowSemanticTag,
-                semanticRole : tableRowComponent.props.semanticRole ?? props.semanticRole ?? _defaultRowSemanticRole,
+                semanticTag  : tableRowComponent.props.semanticTag  ?? _defaultRowSemanticTag,
+                semanticRole : tableRowComponent.props.semanticRole ?? _defaultRowSemanticRole,
                 
                 
                 
@@ -269,27 +246,62 @@ export const DataTableHeader = <TElement extends Element = HTMLElement>(props: D
         )
     );
 };
-export const DataTableFooter = <TElement extends Element = HTMLElement>(props: DataTableFooterProps<TElement>): JSX.Element|null => {
-    // rest props:
-    const {
-        // components:
-        tableGroupComponent  = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
-        tableRowComponent    = (<Generic<Element > /> as React.ReactComponentElement<any, GenericProps<Element >>),
-        tableTitleComponent  = (<Generic<Element > /> as React.ReactComponentElement<any, GenericProps<Element >>),
-        
-        
-        
-        // children:
-        children,
-    ...restGenericProps} = props;
-    
-    
-    
+
+export interface DataTableHeaderProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        DataTableCaptionProps<TElement>
+{
+}
+export interface DataTableFooterProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        DataTableCaptionProps<TElement>
+{
+}
+export interface DataTableBodyProps<TElement extends Element = HTMLElement>
+    extends
+        // bases:
+        DataTableGroupProps<TElement>
+{
+}
+export const DataTableHeader = <TElement extends Element = HTMLElement>(props: DataTableHeaderProps<TElement>): JSX.Element|null => {
     // classes:
-    const groupClasses  = useMergeClasses(
+    const classes = useMergeClasses(
         // preserves the original `classes` from `props`:
         props.classes,
-        // preserves the original `classes` from `tableGroupComponent`:
+        
+        
+        
+        // classes:
+        'thead',
+    );
+    
+    
+    
+    // jsx:
+    return (
+        <DataTableCaption<TElement>
+            // other props:
+            {...props}
+            
+            
+            
+            // semantics:
+            semanticTag  = {props.semanticTag  ?? _defaultHeaderSemanticTag}
+            semanticRole = {props.semanticRole ?? _defaultHeaderSemanticRole}
+            
+            
+            
+            // classes:
+            classes={classes}
+        />
+    );
+};
+export const DataTableFooter = <TElement extends Element = HTMLElement>(props: DataTableFooterProps<TElement>): JSX.Element|null => {
+    // classes:
+    const classes = useMergeClasses(
+        // preserves the original `classes` from `props`:
         props.classes,
         
         
@@ -297,93 +309,26 @@ export const DataTableFooter = <TElement extends Element = HTMLElement>(props: D
         // classes:
         'tfoot',
     );
-    const rowClasses    = useMergeClasses(
-        // preserves the original `classes` from `tableRowComponent`:
-        tableRowComponent.props.classes,
-        
-        
-        
-        // classes:
-        'tr',
-    );
-    const titleClasses  = useMergeClasses(
-        // preserves the original `classes` from `tableTitleComponent`:
-        tableTitleComponent.props.classes,
-        
-        
-        
-        // classes:
-        'th',
-    );
     
     
     
     // jsx:
-    return React.cloneElement<GenericProps<TElement>>(tableGroupComponent,
-        // props:
-        {
+    return (
+        <DataTableCaption<TElement>
             // other props:
-            ...restGenericProps,
-            ...tableGroupComponent.props, // overwrites restGenericProps (if any conflics)
+            {...props}
             
             
             
             // semantics:
-            semanticTag  : tableGroupComponent.props.semanticTag  ?? props.semanticTag  ?? _defaultFooterSemanticTag,
-            semanticRole : tableGroupComponent.props.semanticRole ?? props.semanticRole ?? _defaultFooterSemanticRole,
+            semanticTag  = {props.semanticTag  ?? _defaultFooterSemanticTag}
+            semanticRole = {props.semanticRole ?? _defaultFooterSemanticRole}
             
             
             
             // classes:
-            classes      : groupClasses,
-        },
-        
-        
-        
-        // children:
-        tableGroupComponent.props.children ?? React.cloneElement<GenericProps<Element>>(tableRowComponent,
-            // props:
-            {
-                // semantics:
-                semanticTag  : tableRowComponent.props.semanticTag  ?? props.semanticTag  ?? _defaultRowSemanticTag,
-                semanticRole : tableRowComponent.props.semanticRole ?? props.semanticRole ?? _defaultRowSemanticRole,
-                
-                
-                
-                // classes:
-                classes      : rowClasses,
-            },
-            
-            
-            
-            // children:
-            tableRowComponent.props.children ?? <>
-                {React.cloneElement<GenericProps<Element>>(tableTitleComponent,
-                    // props:
-                    {
-                        // semantics:
-                        semanticTag  : tableTitleComponent.props.semanticTag  ?? _defaultTitleSemanticTag,
-                        semanticRole : tableTitleComponent.props.semanticRole ?? _defaultTitleSemanticRole,
-                        
-                        
-                        
-                        // classes:
-                        classes      : titleClasses,
-                        
-                        
-                        
-                        // miscs:
-                        // @ts-ignore
-                        colSpan      : tableTitleComponent.props.colSpan      ?? 3,
-                    },
-                    
-                    
-                    
-                    // children:
-                    tableTitleComponent.props.children ?? children,
-                )}
-            </>
-        )
+            classes={classes}
+        />
     );
 };
 export const DataTableBody   = <TElement extends Element = HTMLElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
