@@ -110,6 +110,7 @@ export const useDataTableStyleSheet = dynamicStyleSheet(
 
 
 // react components:
+
 export interface DataTableGroupProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -247,6 +248,8 @@ const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTab
     );
 };
 
+
+
 export interface DataTableHeaderProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -326,6 +329,8 @@ export const DataTableFooter = <TElement extends Element = HTMLElement>(props: D
     );
 };
 
+
+
 export interface DataTableBodyProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -365,6 +370,7 @@ export const DataTableBody   = <TElement extends Element = HTMLElement>(props: D
         />
     );
 };
+
 
 
 export interface DataTableItemProps<TElement extends Element = HTMLElement>
