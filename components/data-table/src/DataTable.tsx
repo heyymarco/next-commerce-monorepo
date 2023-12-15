@@ -156,7 +156,7 @@ const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTab
         // preserves the original `classes` from `props`:
         props.classes,
         // preserves the original `classes` from `tableGroupComponent`:
-        props.classes,
+        tableGroupComponent.props.classes,
     );
     const rowClasses    = useMergeClasses(
         // preserves the original `classes` from `tableRowComponent`:
@@ -243,8 +243,8 @@ const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTab
                     // children:
                     tableTitleComponent.props.children ?? children,
                 )}
-            </>
-        )
+            </>,
+        ),
     );
 };
 
@@ -336,12 +336,29 @@ export interface DataTableBodyProps<TElement extends Element = HTMLElement>
         // bases:
         DataTableGroupProps<TElement>
 {
+    // components:
+    tableGroupComponent  ?: React.ReactComponentElement<any, GenericProps<TElement>>
 }
 export const DataTableBody   = <TElement extends Element = HTMLElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
+    // rest props:
+    const {
+        // components:
+        tableGroupComponent  = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
+        
+        
+        
+        // children:
+        children,
+    ...restGenericProps} = props;
+    
+    
+    
     // classes:
-    const classes = useMergeClasses(
-        // preserves the original `classes`:
+    const groupClasses  = useMergeClasses(
+        // preserves the original `classes` from `props`:
         props.classes,
+        // preserves the original `classes` from `tableGroupComponent`:
+        tableGroupComponent.props.classes,
         
         
         
@@ -352,22 +369,29 @@ export const DataTableBody   = <TElement extends Element = HTMLElement>(props: D
     
     
     // jsx:
-    return (
-        <Generic<TElement>
+    return React.cloneElement<GenericProps<TElement>>(tableGroupComponent,
+        // props:
+        {
             // other props:
-            {...props}
+            ...restGenericProps,
+            ...tableGroupComponent.props, // overwrites restGenericProps (if any conflics)
             
             
             
             // semantics:
-            semanticTag  = {props.semanticTag  ?? _defaultBodySemanticTag }
-            semanticRole = {props.semanticRole ?? _defaultBodySemanticRole}
+            semanticTag  : tableGroupComponent.props.semanticTag  ?? props.semanticTag  ?? _defaultBodySemanticTag ,
+            semanticRole : tableGroupComponent.props.semanticRole ?? props.semanticRole ?? _defaultBodySemanticRole,
             
             
             
             // classes:
-            classes={classes}
-        />
+            classes      : groupClasses,
+        },
+        
+        
+        
+        // children:
+        tableGroupComponent.props.children ?? props.children,
     );
 };
 
@@ -550,7 +574,7 @@ export const DataTableItem = <TElement extends Element = HTMLElement>(props: Dat
                 // children:
                 tableActionComponent.props.children ?? actionChildren,
             )}
-        </>
+        </>,
     );
 };
 
