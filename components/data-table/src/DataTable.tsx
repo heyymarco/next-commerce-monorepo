@@ -147,7 +147,7 @@ const DataTableCaption = <TElement extends Element = HTMLElement>(props: DataTab
     const {
         // components:
         tableGroupComponent  = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
-        tableRowComponent    = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<TElement>>),
+        tableRowComponent    = (<Generic<TElement> /> as React.ReactComponentElement<any, GenericProps<Element >>),
         tableTitleComponent  = (<Generic<Element > /> as React.ReactComponentElement<any, GenericProps<Element >>),
         
         
