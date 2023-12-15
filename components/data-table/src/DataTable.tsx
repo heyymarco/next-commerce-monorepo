@@ -122,8 +122,13 @@ export interface DataTableGroupProps<TElement extends Element = HTMLElement>
             |'role' // we redefined [role] in <Generic>
         >
 {
+    // components:
+    tableGroupComponent  ?: React.ReactComponentElement<any, GenericProps<TElement>>
+    
+    
+    
     // children:
-    children ?: React.ReactNode
+    children             ?: React.ReactNode
 }
 
 
@@ -134,7 +139,6 @@ export interface DataTableCaptionProps<TElement extends Element = HTMLElement>
         DataTableGroupProps<TElement>
 {
     // components:
-    tableGroupComponent  ?: React.ReactComponentElement<any, GenericProps<TElement>>
     tableRowComponent    ?: React.ReactComponentElement<any, GenericProps<TElement>>
     tableTitleComponent  ?: React.ReactComponentElement<any, GenericProps<Element >>
 }
@@ -336,8 +340,6 @@ export interface DataTableBodyProps<TElement extends Element = HTMLElement>
         // bases:
         DataTableGroupProps<TElement>
 {
-    // components:
-    tableGroupComponent  ?: React.ReactComponentElement<any, GenericProps<TElement>>
 }
 export const DataTableBody   = <TElement extends Element = HTMLElement>(props: DataTableBodyProps<TElement>): JSX.Element|null => {
     // rest props:
