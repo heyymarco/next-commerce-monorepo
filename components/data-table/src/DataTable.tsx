@@ -86,6 +86,9 @@ const _defaultBodySemanticRole    : SemanticRole = 'rowgroup'     // uses [role=
 const _defaultRowSemanticTag      : SemanticTag  = 'tr'           // uses <tr>                  as the default semantic tag
 const _defaultRowSemanticRole     : SemanticRole = 'row'          // uses [role="row"]          as the default semantic role
 
+const _defaultTitleSemanticTag    : SemanticTag  = 'th'           // uses <th>                  as the default semantic tag
+const _defaultTitleSemanticRole   : SemanticRole = 'columnheader' // uses [role="columnheader"] as the default semantic role
+
 const _defaultLabelSemanticTag    : SemanticTag  = 'th'           // uses <th>                  as the default semantic tag
 const _defaultLabelSemanticRole   : SemanticRole = 'rowheader'    // uses [role="rowheader"]    as the default semantic role
 
@@ -94,9 +97,6 @@ const _defaultDataSemanticRole    : SemanticRole = 'cell'         // uses [role=
 
 const _defaultActionSemanticTag   : SemanticTag  = 'td'           // uses <td>                  as the default semantic tag
 const _defaultActionSemanticRole  : SemanticRole = 'cell'         // uses [role="cell"]         as the default semantic role
-
-const _defaultTitleSemanticTag    : SemanticTag  = 'th'           // uses <th>                  as the default semantic tag
-const _defaultTitleSemanticRole   : SemanticRole = 'columnheader' // uses [role="columnheader"] as the default semantic role
 
 const _defaultResponsiveFallbacks : Fallbacks<boolean> = [true, false]
 
