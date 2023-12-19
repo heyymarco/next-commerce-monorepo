@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/data-table",
-  "version": "6.5.0",
+  "version": "6.5.1",
   "description": "A flexible and extensible table for displaying data, with optional header and footer.",
   "keywords": [
     "table",
