@@ -82,18 +82,32 @@ export interface AdapterWithCredentials
     extends
         Adapter
 {
+    // sign in:
     validateCredentials          : (credentials            : Credentials                               , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
+    
+    
+    
+    // reset password:
     createResetPasswordToken     : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
     validateResetPasswordToken   : (resetPasswordToken     : string                                    , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ResetPasswordTokenData|null>
     applyResetPasswordToken      : (resetPasswordToken     : string, password: string                  , options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
     
+    
+    
+    // user roles:
     getRoleByUserId              : (userId                 : string                                                                                  ) => Awaitable<AdapterRole|null>
     getRoleByUserEmail           : (userEmail              : string                                                                                  ) => Awaitable<AdapterRole|null>
     
+    
+    
+    // registrations:
     checkUsernameAvailability    : (username               : string                                                                                  ) => Awaitable<boolean>
     checkEmailAvailability       : (email                  : string                                                                                  ) => Awaitable<boolean>
-    
     registerUser                 : (name: string   , email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
+    
+    
+    
+    // email verification:
     markUserEmailAsVerified      : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
     applyEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
 }
@@ -114,6 +128,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
     return {
         ...PrismaAdapter(prisma),
         
+        
+        
+        // sign in:
         validateCredentials          : async (credentials                         , options) => {
             // options:
             const {
@@ -268,6 +285,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 return restUser;
             });
         },
+        
+        
+        
+        // reset password:
         createResetPasswordToken     : async (usernameOrEmail                     , options) => {
             // options:
             const {
@@ -489,6 +510,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
         },
         
+        
+        
+        // user roles:
         getRoleByUserId              : async (userId                                       ) => {
             // conditions:
             const hasRole = !!mRole && (mRole in prisma);
@@ -535,6 +559,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return user?.[mRole] ?? null;
         },
         
+        
+        
+        // registrations:
         checkUsernameAvailability    : async (username                                     ) => {
             // normalizations:
             username = username.toLowerCase();
@@ -567,7 +594,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             }));
         },
-        
         registerUser                 : async (name, email, username, password     , options) => {
             // options:
             const {
@@ -673,6 +699,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 };
             });
         },
+        
+        
+        
+        // email verification:
         markUserEmailAsVerified      : async (userId                              , options) => {
             // options:
             const {
