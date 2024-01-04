@@ -82,20 +82,20 @@ export interface AdapterWithCredentials
     extends
         Adapter
 {
-    validateCredentials          : (credentials            : Credentials                                , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
-    createResetPasswordToken     : (usernameOrEmail        : string                                     , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
-    validateResetPasswordToken   : (resetPasswordToken     : string                                     , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ResetPasswordTokenData|null>
-    applyResetPasswordToken      : (resetPasswordToken     : string, password: string                   , options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
+    validateCredentials          : (credentials            : Credentials                               , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
+    createResetPasswordToken     : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    validateResetPasswordToken   : (resetPasswordToken     : string                                    , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ResetPasswordTokenData|null>
+    applyResetPasswordToken      : (resetPasswordToken     : string, password: string                  , options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
     
-    getRoleByUserId              : (userId                 : string                                                                                   ) => Awaitable<AdapterRole|null>
-    getRoleByUserEmail           : (userEmail              : string                                                                                   ) => Awaitable<AdapterRole|null>
+    getRoleByUserId              : (userId                 : string                                                                                  ) => Awaitable<AdapterRole|null>
+    getRoleByUserEmail           : (userEmail              : string                                                                                  ) => Awaitable<AdapterRole|null>
     
-    checkUsernameAvailability    : (username               : string                                                                                   ) => Awaitable<boolean>
-    checkEmailAvailability       : (email                  : string                                                                                   ) => Awaitable<boolean>
+    checkUsernameAvailability    : (username               : string                                                                                  ) => Awaitable<boolean>
+    checkEmailAvailability       : (email                  : string                                                                                  ) => Awaitable<boolean>
     
-    registerUser                 : (fullname: string, email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
-    markUserEmailAsVerified      : (userId                 : string                                     , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
-    applyEmailConfirmationToken  : (emailConfirmationToken : string                                     , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
+    registerUser                 : (name: string   , email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
+    markUserEmailAsVerified      : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
+    applyEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
 }
 export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prisma: TPrisma, options?: ModelOptions<TPrisma>): AdapterWithCredentials => {
     // options:
@@ -568,7 +568,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             }));
         },
         
-        registerUser                 : async (fullname, email, username, password , options) => {
+        registerUser                 : async (name, email, username, password     , options) => {
             // options:
             const {
                 requireEmailVerified = false,
@@ -598,10 +598,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return prisma.$transaction(async (prismaTransaction): Promise<{ userId: string, emailConfirmationToken: string }> => {
                 // create/update User:
                 const userData = {
-                    name          : fullname, // signIn friendly name
-                    email         : email,    // signIn password
+                    name          : name,  // signIn friendly name
+                    email         : email, // signIn password
                     
-                    emailVerified : null,     // reset
+                    emailVerified : null,  // reset
                 };
                 const { id: userId } = await ((prismaTransaction as TPrisma)[mUser] as any).upsert({
                     where  : {
