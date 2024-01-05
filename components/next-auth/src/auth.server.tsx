@@ -298,9 +298,9 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     // add a related role to token object:
                     const role = (
                         !!user.id
-                        ? adapter.getRoleByUserId(user.id)
+                        ? adapter.getRoleByUserId(user.id)           // faster
                         :   !!user.email
-                            ? adapter.getRoleByUserEmail(user.email)
+                            ? adapter.getRoleByUserEmail(user.email) // slower
                             : null
                     );
                     token.role = role;
@@ -325,9 +325,9 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     // add a related role to session object:
                     const role = (
                         !!dbUser.id
-                        ? await adapter.getRoleByUserId(dbUser.id)
+                        ? await adapter.getRoleByUserId(dbUser.id)           // faster
                         :   !!dbUser.email
-                            ? await adapter.getRoleByUserEmail(dbUser.email)
+                            ? await adapter.getRoleByUserEmail(dbUser.email) // slower
                             : null
                     );
                     session.role = role ?? null;
