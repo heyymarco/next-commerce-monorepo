@@ -33,6 +33,10 @@ import type {
 // types:
 type Adapter = ReturnType<typeof PrismaAdapter>
 export type Credentials = Record<'username'|'password', string>
+export interface CreateResetPasswordTokenData {
+    resetPasswordToken : string
+    user               : AdapterUser
+}
 export interface ValidateResetPasswordTokenData {
     email    : string
     username : string|null
@@ -92,7 +96,7 @@ export interface AdapterWithCredentials
     
     
     // reset password:
-    createResetPasswordToken     : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions   ) => Awaitable<{ resetPasswordToken: string, user: AdapterUser}|Date|null>
+    createResetPasswordToken     : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions   ) => Awaitable<CreateResetPasswordTokenData|Date|null>
     validateResetPasswordToken   : (resetPasswordToken     : string                                    , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ValidateResetPasswordTokenData|null>
     applyResetPasswordToken      : (resetPasswordToken     : string, password: string                  , options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
     
