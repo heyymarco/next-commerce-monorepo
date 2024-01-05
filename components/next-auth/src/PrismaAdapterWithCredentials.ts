@@ -666,10 +666,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 };
                 await ((prismaTransaction as TPrisma)[mCredentials] as any).upsert({
                     where  : {
-                        userId : userId,
+                        userId   : userId,
                     },
                     create : {
-                        userId : userId,
+                        userId   : userId,
                         
                         ...credentialsData,
                     },
@@ -677,7 +677,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         ...credentialsData,
                     },
                     select : {
-                        id : true,
+                        id       : true,
                     },
                 });
                 
