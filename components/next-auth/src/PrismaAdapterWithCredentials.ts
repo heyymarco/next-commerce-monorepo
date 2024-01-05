@@ -37,6 +37,10 @@ export interface ResetPasswordTokenData {
     email    : string
     username : string|null
 }
+export interface RegisterUserData {
+    userId                 : string
+    emailConfirmationToken : string|null
+}
 
 
 // options:
@@ -103,7 +107,7 @@ export interface AdapterWithCredentials
     // registrations:
     checkUsernameAvailability    : (username               : string                                                                                  ) => Awaitable<boolean>
     checkEmailAvailability       : (email                  : string                                                                                  ) => Awaitable<boolean>
-    registerUser                 : (name: string   , email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<{ userId: string, emailConfirmationToken: string }>
+    registerUser                 : (name: string   , email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<RegisterUserData>
     
     
     
@@ -634,7 +638,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             // an atomic transaction of [`create/update User`, `create/update Credentials`, `create/update EmailConfirmationToken`]:
-            return prisma.$transaction(async (prismaTransaction): Promise<{ userId: string, emailConfirmationToken: string }> => {
+            return prisma.$transaction(async (prismaTransaction): Promise<RegisterUserData> => {
                 // create/update User:
                 const userData = {
                     name          : name,
@@ -708,7 +712,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 return {
                     userId,
-                    emailConfirmationToken,
+                    emailConfirmationToken : emailConfirmationToken || null,
                 };
             });
         },
