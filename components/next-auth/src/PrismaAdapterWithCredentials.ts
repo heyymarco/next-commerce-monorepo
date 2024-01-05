@@ -405,7 +405,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     [mResetPasswordToken] : {
                         token        : resetPasswordToken,
                         expiresAt : {
-                            gt       : now,
+                            gt       : now, // not expired yet (expires in the future)
                         },
                     },
                 },
@@ -445,7 +445,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         [mResetPasswordToken] : {
                             token        : resetPasswordToken,
                             expiresAt : {
-                                gt       : now,
+                                gt       : now, // not expired yet (expires in the future)
                             },
                         },
                     },
