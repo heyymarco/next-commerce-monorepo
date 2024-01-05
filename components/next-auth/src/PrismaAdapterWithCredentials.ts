@@ -184,7 +184,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 
-                // remove credentials property to increase security strength:
+                // exclude credentials property to increase security strength:
                 const {
                     [mCredentials] : expectedCredentials,
                 ...restUser} = userWithCredentials;
@@ -213,7 +213,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                             return lockedUntil;
                         }
                         else {
-                            // the locked period expires => unlock & reset the failure_counter:
+                            // the locked period expired => unlock & reset the failure_counter:
                             await ((prismaTransaction as TPrisma)[mCredentials] as any).update({
                                 where  : {
                                     id : expectedCredentials.id,
@@ -227,6 +227,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                                 },
                             });
                             expectedCredentials.failuresAttemps = null; // reset this variable too
+                            expectedCredentials.lockedAt        = null; // reset this variable too
                         } // if
                     } // if
                 }
