@@ -617,12 +617,11 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             // normalizations:
-            username = username.toLowerCase();
             email    = email.toLowerCase();
+            username = username.toLowerCase();
             
             
             
-            // database query:
             // generate the hashed password:
             const hashedPassword = await bcrypt.hash(password, 10);
             
