@@ -157,15 +157,15 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // a database transaction for preventing multiple bulk login for bypassing failureMaxAttemps (forced to be a sequential operation):
             // an atomic transaction of [`find user's credentials by username (or email)`, `update the failuresAttemps & lockedAt`]:
-            return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => {
+            return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => { // false: email is not verified; Date: account locked up; null: invalid username and/or password
                 const userWithCredentials = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
-                    where  :
+                    where   :
                         usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
                         ? {
                             email        : usernameOrEmail,
                         }
                         : {
-                            [mCredentials]  : {
+                            [mCredentials] : {
                                 username : usernameOrEmail,
                             },
                         },
