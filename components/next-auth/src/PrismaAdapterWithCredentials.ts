@@ -342,7 +342,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // limits the rate of resetPasswordToken request:
-                if (resetLimitInHours) {
+                if (resetLimitInHours) { // there are a limit of resetPasswordToken request
                     // find the last request date (if found) of resetPasswordToken by user id:
                     const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).findUnique({
                         where  : {
@@ -368,20 +368,20 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // create/update the resetPasswordToken record and get the related user name & email:
                 const {user} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).upsert({
                     where  : {
-                        userId        : userId,
+                        userId       : userId,
                     },
                     create : {
-                        userId        : userId,
+                        userId       : userId,
                         
-                        expiresAt     : resetPasswordExpiry,
-                        token         : resetPasswordToken,
+                        expiresAt    : resetPasswordExpiry,
+                        token        : resetPasswordToken,
                     },
                     update : {
-                        expiresAt     : resetPasswordExpiry,
-                        token         : resetPasswordToken,
+                        expiresAt    : resetPasswordExpiry,
+                        token        : resetPasswordToken,
                     },
                     select : {
-                        [mUser] : true,
+                        [mUser]      : true,
                     },
                 });
                 return user;
