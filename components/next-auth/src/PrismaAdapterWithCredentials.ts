@@ -506,13 +506,13 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 if (emailVerified === null) {
                     await ((prismaTransaction as TPrisma)[mUser] as any).update({
                         where  : {
-                            id   : userId,
+                            id            : userId,
                         },
                         data   : {
                             emailVerified : now,
                         },
                         select : {
-                            id       : true,
+                            id            : true,
                         },
                     });
                 } // if
