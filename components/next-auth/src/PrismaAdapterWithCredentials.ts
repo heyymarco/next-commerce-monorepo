@@ -160,7 +160,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => { // AdapterUser: succeeded; false: email is not verified; Date: account locked up; null: invalid username and/or password
                 // find user data + credentials by given username (or email):
                 const userWithCredentials = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
-                    where   :
+                    where   : (
                         usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
                         ? {
                             email        : usernameOrEmail,
@@ -169,7 +169,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                             [mCredentials] : {
                                 username : usernameOrEmail,
                             },
-                        },
+                        }
+                    ),
+                    
+                    // all User's columns plus credentials:
                     include : {
                         [mCredentials] : {
                             select : {
@@ -323,7 +326,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             const user = await prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => { // AdapterUser: succeeded; Date: reset request is too frequent; null: invalid username or email
                 // find user id by given username (or email):
                 const {id: userId} = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
-                    where   :
+                    where   : (
                         usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
                         ? {
                             email        : usernameOrEmail,
@@ -332,7 +335,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                             [mCredentials] : {
                                 username : usernameOrEmail,
                             },
-                        },
+                        }
+                    ),
+                    
                     select : {
                         id               : true, // required: for id key
                     },
