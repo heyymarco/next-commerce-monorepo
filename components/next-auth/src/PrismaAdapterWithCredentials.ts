@@ -489,6 +489,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     },
                     create : {
                         userId   : userId,
+                        
                         password : hashedPassword,
                     },
                     update : {
