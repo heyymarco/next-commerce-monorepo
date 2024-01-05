@@ -637,8 +637,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return prisma.$transaction(async (prismaTransaction): Promise<{ userId: string, emailConfirmationToken: string }> => {
                 // create/update User:
                 const userData = {
-                    name          : name,  // signIn friendly name
-                    email         : email, // signIn password
+                    name          : name,
+                    email         : email,
                     
                     emailVerified : null,  // reset
                 };
@@ -661,8 +661,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     failuresAttemps : null, // reset
                     lockedAt        : null, // reset
                     
-                    username        : username,       // signIn username
-                    password        : hashedPassword, // signIn password
+                    username        : username,
+                    password        : hashedPassword,
                 };
                 await ((prismaTransaction as TPrisma)[mCredentials] as any).upsert({
                     where  : {
