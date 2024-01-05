@@ -157,7 +157,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // a database transaction for preventing multiple bulk login for bypassing failureMaxAttemps (forced to be a sequential operation):
             // an atomic transaction of [`find user's credentials by username (or email)`, `update the failuresAttemps & lockedAt`]:
-            return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => { // false: email is not verified; Date: account locked up; null: invalid username and/or password
+            return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => { // AdapterUser: succeeded; false: email is not verified; Date: account locked up; null: invalid username and/or password
                 const userWithCredentials = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
                     where   :
                         usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
@@ -319,7 +319,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             // an atomic transaction of [`find user by username (or email)`, `find resetPasswordToken by user id`, `create/update the new resetPasswordToken`]:
-            const user = await prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => {
+            const user = await prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => { // AdapterUser: succeeded; Date: reset request is too frequent; null: invalid username or email
                 // find user id by given username (or email):
                 const {id: userId} = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
                     where  :
