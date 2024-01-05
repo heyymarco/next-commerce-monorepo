@@ -688,18 +688,18 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     // @ts-ignore
                     await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).upsert({
                         where  : {
-                            userId : userId,
+                            userId   : userId,
                         },
                         create : {
-                            userId : userId,
+                            userId   : userId,
                             
-                            token  : emailConfirmationToken,
+                            token    : emailConfirmationToken,
                         },
                         update : {
-                            token  : emailConfirmationToken,
+                            token    : emailConfirmationToken,
                         },
                         select : {
-                            id : true,
+                            id       : true,
                         },
                     });
                 } // if
