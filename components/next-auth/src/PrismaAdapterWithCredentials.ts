@@ -363,7 +363,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // limits the rate of resetPasswordToken request:
                 if (resetLimitInHours) { // there are a limit of resetPasswordToken request
                     // find the last request date (if found) of resetPasswordToken by user id:
-                    // @tsx-ignore
                     const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).findUnique({
                         where  : {
                             userId       : userId,
@@ -386,7 +385,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // create/update the resetPasswordToken record and get the related user name & email:
-                // @tsx-ignore
                 const {user} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).upsert({
                     where  : {
                         userId       : userId,
@@ -429,7 +427,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             const user = await (prisma[mUser] as any).findFirst({
                 where  : {
-                    // @tsx-ignore
                     [mResetPasswordToken] : {
                         token        : resetPasswordToken,
                         expiresAt : {
@@ -476,7 +473,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // find the related user id by given resetPasswordToken:
                 const user = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
                     where  : {
-                        // @tsx-ignore
                         [mResetPasswordToken] : {
                             token        : resetPasswordToken,
                             expiresAt : {
@@ -501,7 +497,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // delete the current resetPasswordToken record so it cannot be re-use again:
-                // @tsx-ignore
                 await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).delete({
                     where  : {
                         userId : userId,
