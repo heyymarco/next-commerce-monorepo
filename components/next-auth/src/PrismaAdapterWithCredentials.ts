@@ -637,7 +637,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // generate the emailConfirmationToken data:
             const hasEmailConfirmationToken = !!mEmailConfirmationToken && (mEmailConfirmationToken in prisma);
-            const emailConfirmationToken = (requireEmailVerified && hasEmailConfirmationToken) ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : '';
+            const emailConfirmationToken : string|null = (requireEmailVerified && hasEmailConfirmationToken) ? await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)() : null;
             
             
             
@@ -716,7 +716,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 return {
                     userId,
-                    emailConfirmationToken : emailConfirmationToken || null,
+                    emailConfirmationToken : emailConfirmationToken,
                 };
             });
         },
