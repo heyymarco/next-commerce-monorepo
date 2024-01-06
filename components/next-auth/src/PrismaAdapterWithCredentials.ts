@@ -3,10 +3,10 @@ import type {
     // types:
     Awaitable,
 }                           from 'next-auth'
-import {
-    // databases:
-    PrismaAdapter,
-}                           from '@auth/prisma-adapter'
+import type {
+    Adapter,
+    AdapterAccount,
+}                           from '@auth/core/adapters.js'
 
 // ORMs:
 import type {
@@ -31,7 +31,6 @@ import type {
 
 
 // types:
-type Adapter = ReturnType<typeof PrismaAdapter>
 export type Credentials = Record<'username'|'password', string>
 export interface CreateResetPasswordTokenData {
     resetPasswordToken : string
@@ -134,8 +133,167 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
     
     
     return {
-        ...PrismaAdapter(prisma),
+        // CRUD users:
+        createUser                   : async (user             ) => {
+            const {
+                name,
+            ...restData} = user;
+            if (!name) throw Error('`name` is required.');
+            
+            
+            
+            return prisma.user.create({
+                data : {
+                    ...restData,
+                    name,
+                },
+            });
+        },
         
+        getUser                      : async (id               ) => {
+            return prisma.user.findUnique({
+                where  : {
+                    id,
+                },
+            });
+        },
+        getUserByEmail               : async (email            ) => {
+            return prisma.user.findUnique({
+                where  : {
+                    email,
+                },
+            });
+        },
+        getUserByAccount             : async (providerAccount  ) => {
+            const {
+                provider,
+                providerAccountId,
+            } = providerAccount;
+            
+            
+            
+            const account = await prisma.account.findFirst({
+                where  : {
+                    provider,
+                    providerAccountId,
+                },
+                select : {
+                    user : true,
+                },
+            });
+            return account?.user ?? null;
+        },
+        
+        updateUser                   : async (user             ) => {
+            const {
+                id,
+                name,
+            ...restData} = user;
+            if ((name !== undefined) && !name) throw Error('`name` is required.');
+            
+            
+            
+            return prisma.user.update({
+                where : {
+                    id,
+                },
+                data  : {
+                    ...restData,
+                    name,
+                },
+            });
+        },
+        deleteUser                   : async (userId           ) => {
+            return prisma.user.delete({
+                where : {
+                    id : userId,
+                },
+            });
+        },
+        
+        
+        
+        // CRUD sessions:
+        createSession                : async (session          ) => {
+            return prisma.session.create({
+                data : session,
+            });
+        },
+        getSessionAndUser            : async (sessionToken     ) => {
+            const userAndSession = await prisma.session.findUnique({
+                where   : {
+                    sessionToken,
+                },
+                include : {
+                    user: true,
+                },
+            });
+            if (!userAndSession) return null;
+            
+            
+            
+            const {
+                user,
+            ...session} = userAndSession;
+            return {
+                user,
+                session,
+            };
+        },
+        updateSession                : async (session          ) => {
+            return prisma.session.update({
+                where  : {
+                    sessionToken: session.sessionToken,
+                },
+                data   : session,
+            });
+        },
+        deleteSession                : async (sessionToken     ) => {
+            return prisma.session.delete({
+                where: {
+                    sessionToken,
+                },
+            });
+        },
+        
+        
+        
+        // account links:
+        linkAccount                  : async (account          ) => {
+            return prisma.account.create({
+                data : account,
+            }) as unknown as AdapterAccount;
+        },
+        unlinkAccount                : async (providerAccount  ) => {
+            const {
+                provider,
+                providerAccountId,
+            } = providerAccount;
+            
+            
+            
+            const found = await prisma.account.findFirst({
+                where  : {
+                    provider,
+                    providerAccountId,
+                },
+                select : {
+                    id : true,
+                },
+            });
+            if (!found) return undefined;
+            return await prisma.account.delete({
+                where  : {
+                    id : found?.id,
+                },
+            }) as unknown as AdapterAccount;
+        },
+        
+        
+        
+        // token verifications:
+        createVerificationToken      : undefined,
+        useVerificationToken         : undefined,
         
         
         // sign in:
