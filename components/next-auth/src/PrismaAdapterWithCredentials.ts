@@ -566,11 +566,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     id : userId,
                 },
                 select : {
-                    // @ts-ignore
                     [mRole] : true,
                 },
             });
-            // @ts-ignore
             return user?.[mRole] ?? null;
         },
         getRoleByUserEmail           : async (userEmail                                    ) => {
@@ -591,11 +589,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     email : userEmail,
                 },
                 select : {
-                    // @ts-ignore
                     [mRole] : true,
                 },
             });
-            // @ts-ignore
             return user?.[mRole] ?? null;
         },
         
