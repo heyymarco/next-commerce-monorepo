@@ -296,6 +296,11 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         useVerificationToken         : undefined,
         
         
+        
+        // --------------------------------------------------------------------------------------
+        
+        
+        
         // sign in:
         validateCredentials          : async (credentials                         , options) => {
             // options:
