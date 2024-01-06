@@ -710,8 +710,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // create/update EmailConfirmationToken:
-                if (emailConfirmationToken) {
-                    // @ts-ignore
+                if (hasEmailConfirmationToken && emailConfirmationToken) {
                     await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).upsert({
                         where  : {
                             userId   : userId,
@@ -781,7 +780,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // find the related user id by given emailConfirmationToken:
                 const user = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
                     where  : {
-                        // @ts-ignore
                         [mEmailConfirmationToken] : {
                             token        : emailConfirmationToken,
                         },
@@ -803,7 +801,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // delete the current emailConfirmationToken record so it cannot be re-use again:
-                // @ts-ignore
                 await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).delete({
                     where  : {
                         userId : userId,
