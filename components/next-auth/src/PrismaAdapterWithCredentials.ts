@@ -716,7 +716,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 return {
                     userId,
-                    emailConfirmationToken : emailConfirmationToken,
+                    emailConfirmationToken,
                 };
             });
         },
