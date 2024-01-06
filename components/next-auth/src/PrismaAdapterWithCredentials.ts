@@ -82,7 +82,7 @@ export interface ModelOptions<TPrisma extends PrismaClient> {
     session                ?: keyof TPrisma
     user                   ?: keyof TPrisma
     credentials            ?: keyof TPrisma
-    resetPasswordToken     ?: keyof TPrisma
+    resetPasswordToken     ?: keyof TPrisma | null
     emailConfirmationToken ?: keyof TPrisma | null
     role                   ?: keyof TPrisma | null
 }
@@ -309,6 +309,12 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         // reset password:
         createResetPasswordToken     : async (usernameOrEmail                     , options) => {
+            // conditions:
+            const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
+            if (!hasResetPasswordToken) return null;
+            
+            
+            
             // options:
             const {
                 now = new Date(),
@@ -357,6 +363,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // limits the rate of resetPasswordToken request:
                 if (resetLimitInHours) { // there are a limit of resetPasswordToken request
                     // find the last request date (if found) of resetPasswordToken by user id:
+                    // @tsx-ignore
                     const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).findUnique({
                         where  : {
                             userId       : userId,
@@ -379,6 +386,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // create/update the resetPasswordToken record and get the related user name & email:
+                // @tsx-ignore
                 const {user} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).upsert({
                     where  : {
                         userId       : userId,
@@ -406,6 +414,12 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             };
         },
         validateResetPasswordToken   : async (resetPasswordToken                  , options) => {
+            // conditions:
+            const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
+            if (!hasResetPasswordToken) return null;
+            
+            
+            
             // options:
             const {
                 now = new Date(),
@@ -415,6 +429,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             const user = await (prisma[mUser] as any).findFirst({
                 where  : {
+                    // @tsx-ignore
                     [mResetPasswordToken] : {
                         token        : resetPasswordToken,
                         expiresAt : {
@@ -438,6 +453,12 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             };
         },
         applyResetPasswordToken      : async (resetPasswordToken, password: string, options) => {
+            // conditions:
+            const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
+            if (!hasResetPasswordToken) return false;
+            
+            
+            
             // options:
             const {
                 now = new Date(),
@@ -455,6 +476,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // find the related user id by given resetPasswordToken:
                 const user = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
                     where  : {
+                        // @tsx-ignore
                         [mResetPasswordToken] : {
                             token        : resetPasswordToken,
                             expiresAt : {
@@ -479,6 +501,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // delete the current resetPasswordToken record so it cannot be re-use again:
+                // @tsx-ignore
                 await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).delete({
                     where  : {
                         userId : userId,
@@ -745,16 +768,16 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
         },
         applyEmailConfirmationToken  : async (emailConfirmationToken              , options) => {
+            // conditions:
+            const hasEmailConfirmationToken = !!mEmailConfirmationToken && (mEmailConfirmationToken in prisma);
+            if (!hasEmailConfirmationToken) return false;
+            
+            
+            
             // options:
             const {
                 now = new Date(),
             } = options ?? {};
-            
-            
-            
-            // conditions:
-            const hasEmailConfirmationToken = !!mEmailConfirmationToken && (mEmailConfirmationToken in prisma);
-            if (!hasEmailConfirmationToken) return false;
             
             
             
