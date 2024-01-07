@@ -134,17 +134,17 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
     
     return {
         // CRUD users:
-        createUser                   : async (user             ) => {
+        createUser                   : async (userData         ) => {
             const {
                 name,
-            ...restData} = user;
+            ...restUserData} = userData;
             if (!name) throw Error('`name` is required.');
             
             
             
             return prisma.user.create({
                 data : {
-                    ...restData,
+                    ...restUserData,
                     name,
                 },
             });
