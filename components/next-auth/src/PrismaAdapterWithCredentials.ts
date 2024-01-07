@@ -5,7 +5,9 @@ import type {
 }                           from 'next-auth'
 import type {
     Adapter,
-    AdapterAccount,
+    AdapterUser    as AuthAdapterUser,
+    AdapterSession as AuthAdapterSession,
+    AdapterAccount as AuthAdapterAccount,
 }                           from '@auth/core/adapters.js'
 
 // ORMs:
@@ -142,7 +144,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            return prisma.user.create({
+            return (prisma[mUser] as any).create({
                 data  : {
                     ...restUserData,
                     name,
@@ -151,14 +153,14 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         },
         
         getUser                      : async (userId           ) => {
-            return prisma.user.findUnique({
+            return (prisma[mUser] as any).findUnique({
                 where  : {
                     id : userId,
                 },
             });
         },
         getUserByEmail               : async (userEmail        ) => {
-            return prisma.user.findUnique({
+            return (prisma[mUser] as any).findUnique({
                 where  : {
                     email : userEmail,
                 },
@@ -172,16 +174,16 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            const account = await prisma.account.findFirst({
+            const account = await (prisma[mAccount] as any).findFirst({
                 where  : {
                     provider,
                     providerAccountId,
                 },
                 select : {
-                    user : true,
+                    [mUser] : true,
                 },
             });
-            return account?.user ?? null;
+            return (account as any)?.[mUser] ?? null;
         },
         
         updateUser                   : async (userData         ) => {
@@ -193,7 +195,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            return prisma.user.update({
+            return (prisma[mUser] as any).update({
                 where : {
                     id,
                 },
@@ -204,7 +206,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
         },
         deleteUser                   : async (userId           ) => {
-            return prisma.user.delete({
+            return (prisma[mUser] as any).delete({
                 where  : {
                     id : userId,
                 },
@@ -215,17 +217,17 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         // CRUD sessions:
         createSession                : async (sessionData      ) => {
-            return prisma.session.create({
+            return (prisma[mSession] as any).create({
                 data  : sessionData,
             });
         },
         getSessionAndUser            : async (sessionToken     ) => {
-            const sessionAndUser = await prisma.session.findUnique({
+            const sessionAndUser = await (prisma[mSession] as any).findUnique({
                 where   : {
                     sessionToken,
                 },
                 include : {
-                    user : true,
+                    [mUser] : true,
                 },
             });
             if (!sessionAndUser) return null;
@@ -233,15 +235,15 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             const {
-                user,
+                [mUser] : user,
             ...session} = sessionAndUser;
             return {
-                user,
-                session,
+                user    : user    as AuthAdapterUser,
+                session : session as AuthAdapterSession,
             };
         },
         updateSession                : async (sessionData      ) => {
-            return prisma.session.update({
+            return (prisma[mSession] as any).update({
                 where  : {
                     sessionToken: sessionData.sessionToken,
                 },
@@ -249,7 +251,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
         },
         deleteSession                : async (sessionToken     ) => {
-            return prisma.session.delete({
+            return (prisma[mSession] as any).delete({
                 where  : {
                     sessionToken,
                 },
@@ -260,10 +262,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         // CRUD accounts:
         linkAccount                  : async (accountData      ) => {
-            const account = await prisma.account.create({
+            const account = await (prisma[mAccount] as any).create({
                 data  : accountData,
             });
-            return account as AdapterAccount;
+            return account as AuthAdapterAccount;
         },
         unlinkAccount                : async (userAccount      ) => {
             const {
@@ -274,7 +276,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             const deletedAccount = await prisma.$transaction(async (prismaTransaction) => {
-                const account = await prismaTransaction.account.findFirst({
+                const account = await ((prismaTransaction as TPrisma)[mAccount] as any).findFirst({
                     where  : {
                         provider,
                         providerAccountId,
@@ -284,13 +286,13 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     },
                 });
                 if (!account) return undefined;
-                return await prismaTransaction.account.delete({
+                return await ((prismaTransaction as TPrisma)[mAccount] as any).delete({
                     where  : {
                         id : account?.id,
                     },
                 });
             });
-            return deletedAccount as AdapterAccount;
+            return deletedAccount as AuthAdapterAccount;
         },
         
         
