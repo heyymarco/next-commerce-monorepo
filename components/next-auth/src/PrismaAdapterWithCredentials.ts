@@ -250,7 +250,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         },
         deleteSession                : async (sessionToken     ) => {
             return prisma.session.delete({
-                where: {
+                where  : {
                     sessionToken,
                 },
             });
