@@ -143,7 +143,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             return prisma.user.create({
-                data : {
+                data  : {
                     ...restUserData,
                     name,
                 },
@@ -184,11 +184,11 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return account?.user ?? null;
         },
         
-        updateUser                   : async (user             ) => {
+        updateUser                   : async (userData         ) => {
             const {
                 id,
                 name,
-            ...restData} = user;
+            ...restUserData} = userData;
             if ((name !== undefined) && !name) throw Error('`name` is required.');
             
             
@@ -198,7 +198,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     id,
                 },
                 data  : {
-                    ...restData,
+                    ...restUserData,
                     name,
                 },
             });
