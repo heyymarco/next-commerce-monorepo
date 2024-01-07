@@ -9,9 +9,11 @@ import type {
 }                           from 'next-auth'
 import type {
     // models:
+    Adapter,
     AdapterUser,
     AdapterSession,
-}                           from 'next-auth/adapters'
+    AdapterAccount,
+}                           from '@auth/core/adapters'
 
 
 
@@ -23,8 +25,10 @@ export type {
     User,
     Session,
     
+    Adapter,
     AdapterUser,
     AdapterSession,
+    AdapterAccount,
 }
 
 

@@ -3,12 +3,6 @@ import type {
     // types:
     Awaitable,
 }                           from 'next-auth'
-import type {
-    Adapter,
-    AdapterUser    as AuthAdapterUser,
-    AdapterSession as AuthAdapterSession,
-    AdapterAccount as AuthAdapterAccount,
-}                           from '@auth/core/adapters.js'
 
 // ORMs:
 import type {
@@ -26,7 +20,10 @@ import {
 // internals:
 import type {
     // models:
+    Adapter,
     AdapterUser,
+    AdapterSession,
+    AdapterAccount,
     AdapterRole,
 }                           from './types.js'
 
@@ -238,8 +235,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 [mUser] : user,
             ...session} = sessionAndUser;
             return {
-                user    : user    as AuthAdapterUser,
-                session : session as AuthAdapterSession,
+                user    : user    as AdapterUser,
+                session : session as AdapterSession,
             };
         },
         updateSession                : async (sessionData      ) => {
@@ -265,7 +262,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             const account = await (prisma[mAccount] as any).create({
                 data  : accountData,
             });
-            return account as AuthAdapterAccount;
+            return account as AdapterAccount;
         },
         unlinkAccount                : async (userAccount      ) => {
             const {
@@ -292,7 +289,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     },
                 });
             });
-            return deletedAccount as AuthAdapterAccount;
+            return deletedAccount as AdapterAccount;
         },
         
         
