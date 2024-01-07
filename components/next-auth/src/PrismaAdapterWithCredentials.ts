@@ -205,7 +205,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         },
         deleteUser                   : async (userId           ) => {
             return prisma.user.delete({
-                where : {
+                where  : {
                     id : userId,
                 },
             });
