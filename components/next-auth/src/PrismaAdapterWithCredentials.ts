@@ -273,20 +273,22 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            const account = await prisma.account.findFirst({
-                where  : {
-                    provider,
-                    providerAccountId,
-                },
-                select : {
-                    id : true,
-                },
-            });
-            if (!account) return undefined;
-            const deletedAccount = await prisma.account.delete({
-                where  : {
-                    id : account?.id,
-                },
+            const deletedAccount = await prisma.$transaction(async (prismaTransaction) => {
+                const account = await prismaTransaction.account.findFirst({
+                    where  : {
+                        provider,
+                        providerAccountId,
+                    },
+                    select : {
+                        id : true,
+                    },
+                });
+                if (!account) return undefined;
+                return await prismaTransaction.account.delete({
+                    where  : {
+                        id : account?.id,
+                    },
+                });
             });
             return deletedAccount as AdapterAccount;
         },
