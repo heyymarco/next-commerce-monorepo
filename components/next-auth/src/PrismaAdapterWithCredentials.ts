@@ -225,7 +225,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     sessionToken,
                 },
                 include : {
-                    user: true,
+                    user : true,
                 },
             });
             if (!sessionAndUser) return null;
