@@ -214,9 +214,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // CRUD sessions:
-        createSession                : async (session          ) => {
+        createSession                : async (sessionData      ) => {
             return prisma.session.create({
-                data : session,
+                data  : sessionData,
             });
         },
         getSessionAndUser            : async (sessionToken     ) => {
