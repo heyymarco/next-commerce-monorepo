@@ -83,16 +83,14 @@ import {
     ResetPassword,
 }                           from './templates/ResetPassword.js'
 
-// configs:
-import type {
-    AuthConfig,
-}                           from './auth.config.server.js'
-import type {
-    CredentialsConfig,
-}                           from './credentials.config.js'
-
 // internals:
 import type {
+    // types:
+    AuthConfig,
+    CredentialsConfig,
+    
+    
+    
     // models:
     User,
     AdapterUser,
@@ -176,8 +174,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     const session     : SessionOptions = {
         strategy  : 'database',
         
-        maxAge    : (authConfig.SESSION_MAX_AGE    ?? 24) * 60 * 60, // hours
-        updateAge : (authConfig.SESSION_UPDATE_AGE ??  6) * 60 * 60, // hours
+        maxAge    : (authConfig.session.maxAge    ?? 24) * 60 * 60, // hours
+        updateAge : (authConfig.session.updateAge ??  6) * 60 * 60, // hours
         
         generateSessionToken() {
             return randomUUID();
@@ -205,9 +203,9 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         const now    = new Date();
                         const result = await adapter.validateCredentials(credentials as Credentials, {
                             now                  : now,
-                            requireEmailVerified : (authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED ?? false),
-                            failureMaxAttemps    : (authConfig.USER_SIGNIN_FAILURE_MAX_ATTEMPS    ?? null),
-                            failureLockDuration  : (authConfig.USER_SIGNIN_FAILURE_LOCK_DURATION  ?? 0.25),
+                            requireEmailVerified : (authConfig.signIn.requireVerifiedEmail ?? true            ),
+                            failureMaxAttemps    : (authConfig.signIn.failureMaxAttempts   ?? 5    /* times */),
+                            failureLockDuration  : (authConfig.signIn.failureLockDuration  ?? 0.25 /* hours */),
                         });
                         if (result === null) return null;
                         if (result === false) {
@@ -250,7 +248,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     
-                    if (!(authConfig.USER_SIGNUP_ENABLE ?? true)) return false;
+                    if (!(authConfig.signUp.enabled ?? true)) return false;
                     
                     
                     
@@ -347,11 +345,11 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             },
         },
         pages     : {
-            signIn        : authConfig.PAGE_SIGNIN_PATH,
+            signIn        : authConfig.signIn.path,
          // signOut       : '/auth/signout',
-            error         : authConfig.PAGE_SIGNIN_PATH, // Error code passed in query string as ?error=
-         // verifyRequest : '/auth/verify-request',      // Check your email: A sign in link has been sent to your email address.
-         // newUser       : '/auth/new-user',            // New users will be directed here on first sign in (leave the property out if not of interest)
+            error         : authConfig.signIn.path, // Error code passed in query string as ?error=
+         // verifyRequest : '/auth/verify-request', // Check your email: A sign in link has been sent to your email address.
+         // newUser       : '/auth/new-user',       // New users will be directed here on first sign in (leave the property out if not of interest)
         },
     };
     //#endregion configs
@@ -390,8 +388,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             const now    = new Date();
             const result = await adapter.createResetPasswordToken(username, {
                 now               : now,
-                resetLimitInHours : (authConfig.EMAIL_RESET_LIMITS  ?? 0.25),
-                emailResetMaxAge  : (authConfig.EMAIL_RESET_MAX_AGE ?? 24),
+                resetLimitInHours : (authConfig.reset.throttle ?? 0.25 /* hours */),
+                emailResetMaxAge  : (authConfig.reset.maxAge   ?? 24   /* hours */),
             });
             if (!result) {
                 // the user account is not found => reject:
@@ -413,7 +411,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             
             
             // generate a link to a page for resetting password:
-            const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
+            const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.signIn.path}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
             
             
             
@@ -436,7 +434,11 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         <ResetPasswordContextProvider url={resetLinkUrl}>
                             <UserContextProvider model={user}>
                                 {
-                                    authConfig.EMAIL_RESET_SUBJECT ?? <>Password Reset Request</>
+                                    authConfig.emails.reset.subject
+                                    ??
+                                    <>
+                                        Password Reset Request
+                                    </>
                                 }
                             </UserContextProvider>
                         </ResetPasswordContextProvider>
@@ -445,7 +447,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         <ResetPasswordContextProvider url={resetLinkUrl}>
                             <UserContextProvider model={user}>
                                 {
-                                    authConfig.EMAIL_RESET_MESSAGE
+                                    authConfig.emails.reset.message
                                     ??
                                     <article>
                                         <p>
@@ -934,13 +936,13 @@ If the problem still persists, please contact our technical support.`,
             const {
                 emailConfirmationToken,
             } = await adapter.registerUser(fullname, email, username, password, {
-                requireEmailVerified : (authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED ?? false),
+                requireEmailVerified : (authConfig.signIn.requireVerifiedEmail ?? true            ),
             });
             
             
             if (emailConfirmationToken) {
                 // generate a link to a page for confirming email:
-                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${authConfig.PAGE_SIGNIN_PATH}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
+                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${authConfig.signIn.path}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
                 
                 
                 
@@ -966,7 +968,11 @@ If the problem still persists, please contact our technical support.`,
                                     email : email,
                                 }}>
                                     {
-                                        authConfig.EMAIL_SIGNUP_SUBJECT ?? <>Your Account Registration at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}</>
+                                        authConfig.emails.signUp.subject
+                                        ??
+                                        <>
+                                            Your Account Registration at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}
+                                        </>
                                     }
                                 </UserContextProvider>
                             </EmailConfirmationContextProvider>
@@ -978,7 +984,7 @@ If the problem still persists, please contact our technical support.`,
                                     email : email,
                                 }}>
                                     {
-                                        authConfig.EMAIL_SIGNUP_MESSAGE
+                                        authConfig.emails.signUp.message
                                         ??
                                         <article>
                                             <p>

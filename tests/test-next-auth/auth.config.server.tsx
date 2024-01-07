@@ -4,7 +4,7 @@ import {
     default as React,
 }                               from 'react'
 
-// OAuth providers:
+// auth-js:
 import GoogleProvider           from '@auth/core/providers/google'
 import FacebookProvider         from '@auth/core/providers/facebook'
 import InstagramProvider        from '@auth/core/providers/instagram'

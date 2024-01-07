@@ -4,37 +4,14 @@ import {
     default as React,
 }                           from 'react'
 
+// internals:
+import type {
+    // types:
+    CredentialsConfig,
+}                           from './types.js'
 
 
-export interface CredentialsConfig {
-    FULLNAME_MIN_LENGTH      : number /* characters */
-    FULLNAME_MAX_LENGTH      : number /* characters */
-    
-    
-    
-    EMAIL_MIN_LENGTH         : number /* characters */
-    EMAIL_MAX_LENGTH         : number /* characters */
-    EMAIL_FORMAT             : RegExp
-    EMAIL_FORMAT_HINT        : React.ReactNode
-    
-    
-    
-    USERNAME_MIN_LENGTH      : number /* characters */
-    USERNAME_MAX_LENGTH      : number /* characters */
-    USERNAME_FORMAT          : RegExp
-    USERNAME_FORMAT_HINT     : React.ReactNode
-    USERNAME_PROHIBITED      : (string|RegExp)[]
-    USERNAME_PROHIBITED_HINT : React.ReactNode
-    
-    
-    
-    PASSWORD_MIN_LENGTH      : number /* characters */
-    PASSWORD_MAX_LENGTH      : number /* characters */
-    PASSWORD_HAS_UPPERCASE   : boolean
-    PASSWORD_HAS_LOWERCASE   : boolean
-    PASSWORD_PROHIBITED      : (string|RegExp)[]
-    PASSWORD_PROHIBITED_HINT : React.ReactNode
-};
+
 export const defaultCredentialsConfig: CredentialsConfig = {
     FULLNAME_MIN_LENGTH      : 2,
     FULLNAME_MAX_LENGTH      : 30,
