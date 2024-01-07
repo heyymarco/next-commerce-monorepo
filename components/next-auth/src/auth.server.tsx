@@ -14,6 +14,13 @@ import {
     NextResponse as NextResponseFix,
 }                           from 'next/server'
 
+// auth-js:
+import {
+    // cryptos:
+    encode,
+    decode,
+}                           from '@auth/core/jwt'
+
 // next-auth:
 import {
     // types:
@@ -25,16 +32,15 @@ import {
     // routers:
     default as NextAuthFix,
 }                           from 'next-auth'
-import {
-    // cryptos:
-    encode,
-    decode,
-}                           from 'next-auth/jwt'
+import type {
+    CredentialsConfig as NextAuthCredentialsConfig,
+    OAuthConfig       as NextAuthOAuthConfig,
+}                           from 'next-auth/providers' // TODO: to be removed, for compatibility reason
 
 // credentials providers:
 import {
     default as CredentialsProviderFix,
-}                           from 'next-auth/providers/credentials'
+}                           from '@auth/core/providers/credentials'
 
 // webs:
 import {
@@ -92,6 +98,7 @@ import type {
     AdapterUser,
 }                           from './types.js'
 import type {
+    Credentials,
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
 import {
@@ -196,7 +203,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     // get user by valid credentials:
                     try {
                         const now    = new Date();
-                        const result = await adapter.validateCredentials(credentials, {
+                        const result = await adapter.validateCredentials(credentials as Credentials, {
                             now                  : now,
                             requireEmailVerified : (authConfig.USER_SIGNIN_REQUIRE_EMAIL_VERIFIED ?? false),
                             failureMaxAttemps    : (authConfig.USER_SIGNIN_FAILURE_MAX_ATTEMPS    ?? null),
@@ -217,10 +224,10 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         return null; // something was wrong when reading database => unable to verify
                     } // try
                 },
-            }),
+            }) as NextAuthCredentialsConfig,
             
             // OAuth providers:
-            ...authConfig.oAuthProviders ?? [],
+            ...((authConfig.oAuthProviders ?? []) as unknown[] as NextAuthOAuthConfig<any>[]),
         ],
         callbacks : {
             ...callbacks,
@@ -1221,7 +1228,7 @@ If the problem still persists, please contact our technical support.`,
                     
                     
                     // jwt's built in encode handler:
-                    return encode(params);
+                    return encode(params as any);
                 },
                 async decode(params) {
                     if (isDatabaseSession && isCredentialsCallback()) return null; // force not to use jwt token => fallback to database token
@@ -1229,7 +1236,7 @@ If the problem still persists, please contact our technical support.`,
                     
                     
                     // jwt's built in decode handler:
-                    return decode(params);
+                    return decode(params as any);
                 },
             },
         });

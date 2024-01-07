@@ -1,12 +1,17 @@
-// next-auth:
+// auth-js:
 import type {
+    // types:
+    Awaitable,
+    
+    
+    
     // models:
-    DefaultUser,
     DefaultSession,
+    DefaultSession as AuthDefaultSession,
     
     User,
     Session,
-}                           from 'next-auth'
+}                           from '@auth/core/types'
 import type {
     // models:
     Adapter,
@@ -14,6 +19,20 @@ import type {
     AdapterSession,
     AdapterAccount,
 }                           from '@auth/core/adapters'
+
+// next-auth:
+import type {
+    // models:
+    DefaultUser,
+    DefaultUser as NextAuthDefaultUser,
+}                           from 'next-auth' // TODO: to be removed, for compatibility reason
+
+
+
+// types:
+export type {
+    Awaitable,
+}
 
 
 
@@ -33,8 +52,19 @@ export type {
 
 
 
-declare module 'next-auth' {
+declare module 'next-auth' { // TODO: to be removed, for compatibility reason
     interface DefaultUser {
+        role ?: Role|null
+    }
+    
+    
+    
+    interface DefaultSession extends AuthDefaultSession {
+        role ?: Role|null
+    }
+}
+declare module '@auth/core' {
+    interface DefaultUser extends NextAuthDefaultUser {
         role ?: Role|null
     }
     

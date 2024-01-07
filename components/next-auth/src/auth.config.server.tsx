@@ -7,11 +7,11 @@ import {
 // OAuth providers:
 import type {
     OAuthConfig,
-}                           from 'next-auth/providers'
-import GoogleProvider       from 'next-auth/providers/google'
-import FacebookProvider     from 'next-auth/providers/facebook'
-import InstagramProvider    from 'next-auth/providers/instagram'
-import TwitterProvider      from 'next-auth/providers/twitter'
+}                           from '@auth/core/providers'
+import GoogleProvider       from '@auth/core/providers/google'
+import FacebookProvider     from '@auth/core/providers/facebook'
+import InstagramProvider    from '@auth/core/providers/instagram'
+import TwitterProvider      from '@auth/core/providers/twitter'
 
 // templates:
 import {
@@ -163,6 +163,7 @@ export const defaultAuthConfig : AuthConfig = {
         TwitterProvider({
             clientId     : process.env.TWITTER_ID       ?? '',
             clientSecret : process.env.TWITTER_SECRET   ?? '',
+            // @ts-ignore
             version      : '2.0',
             allowDangerousEmailAccountLinking: true,
         }),

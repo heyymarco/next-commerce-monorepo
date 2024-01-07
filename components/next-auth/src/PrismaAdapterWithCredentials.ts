@@ -1,9 +1,3 @@
-// next-auth:
-import type {
-    // types:
-    Awaitable,
-}                           from 'next-auth'
-
 // ORMs:
 import type {
     PrismaClient,
@@ -19,6 +13,11 @@ import {
 
 // internals:
 import type {
+    // types:
+    Awaitable,
+    
+    
+    
     // models:
     Adapter,
     AdapterUser,

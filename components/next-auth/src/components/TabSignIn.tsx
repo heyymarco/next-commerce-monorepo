@@ -6,11 +6,11 @@ import {
     default as React,
 }                           from 'react'
 
-// next-auth:
+// auth-js:
 import type {
     // types:
     BuiltInProviderType,
-}                           from 'next-auth/providers'
+}                           from '@auth/core/providers'
 
 // reusable-ui core:
 import {

@@ -28,11 +28,13 @@ import {
     useSearchParams,
 }                           from 'next/navigation'
 
-// next-auth:
+// auth-js:
 import type {
     // types:
     BuiltInProviderType,
-}                           from 'next-auth/providers'
+}                           from '@auth/core/providers'
+
+// next-auth:
 import {
     // apis:
     signIn,
