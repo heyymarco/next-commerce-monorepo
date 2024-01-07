@@ -265,15 +265,15 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
             return account as AdapterAccount;
         },
-        unlinkAccount                : async (providerAccount  ) => {
+        unlinkAccount                : async (userAccount      ) => {
             const {
                 provider,
                 providerAccountId,
-            } = providerAccount;
+            } = userAccount;
             
             
             
-            const found = await prisma.account.findFirst({
+            const account = await prisma.account.findFirst({
                 where  : {
                     provider,
                     providerAccountId,
@@ -282,12 +282,13 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     id : true,
                 },
             });
-            if (!found) return undefined;
-            return await prisma.account.delete({
+            if (!account) return undefined;
+            const deletedAccount = await prisma.account.delete({
                 where  : {
-                    id : found?.id,
+                    id : account?.id,
                 },
-            }) as unknown as AdapterAccount;
+            });
+            return deletedAccount as AdapterAccount;
         },
         
         
