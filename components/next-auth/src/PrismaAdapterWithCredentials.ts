@@ -157,10 +157,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             });
         },
-        getUserByEmail               : async (email            ) => {
+        getUserByEmail               : async (userEmail        ) => {
             return prisma.user.findUnique({
                 where  : {
-                    email,
+                    email : userEmail,
                 },
             });
         },
