@@ -258,7 +258,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         
-        // account links:
+        // CRUD accounts:
         linkAccount                  : async (accountData      ) => {
             const account = await prisma.account.create({
                 data  : accountData,
