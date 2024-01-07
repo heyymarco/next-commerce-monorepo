@@ -164,11 +164,11 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             });
         },
-        getUserByAccount             : async (providerAccount  ) => {
+        getUserByAccount             : async (userAccount      ) => {
             const {
                 provider,
                 providerAccountId,
-            } = providerAccount;
+            } = userAccount;
             
             
             
