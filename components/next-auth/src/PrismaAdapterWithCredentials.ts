@@ -220,7 +220,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
         },
         getSessionAndUser            : async (sessionToken     ) => {
-            const userAndSession = await prisma.session.findUnique({
+            const sessionAndUser = await prisma.session.findUnique({
                 where   : {
                     sessionToken,
                 },
@@ -228,13 +228,13 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     user: true,
                 },
             });
-            if (!userAndSession) return null;
+            if (!sessionAndUser) return null;
             
             
             
             const {
                 user,
-            ...session} = userAndSession;
+            ...session} = sessionAndUser;
             return {
                 user,
                 session,
