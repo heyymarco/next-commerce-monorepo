@@ -240,12 +240,12 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 session,
             };
         },
-        updateSession                : async (session          ) => {
+        updateSession                : async (sessionData      ) => {
             return prisma.session.update({
                 where  : {
-                    sessionToken: session.sessionToken,
+                    sessionToken: sessionData.sessionToken,
                 },
-                data   : session,
+                data   : sessionData,
             });
         },
         deleteSession                : async (sessionToken     ) => {
