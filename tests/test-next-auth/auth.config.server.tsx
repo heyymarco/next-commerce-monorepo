@@ -16,7 +16,7 @@ import {
     
     // a spacer (gap) management system
     spacerValues,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                               from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // auth-js:
 import GoogleProvider           from '@auth/core/providers/google'
@@ -153,18 +153,11 @@ export const authConfig : AuthConfig = {
                         Account Activation Instruction
                     </h2>
                     
-                    <p style={styles.paragraph}>
+                    <p style={styles.paragraphLast}>
                         In order to sign in to our website,
                         you need to confirm your email address by clicking on the link below:
                         <br />
-                        <EmailConfirmation.Link>
-                            Confirm Your Email
-                        </EmailConfirmation.Link>
-                    </p>
-                    <p style={styles.paragraphLast}>
-                        Or copy and paste the URL into your browser:
-                        <br />
-                        <EmailConfirmation.Url />
+                        <EmailConfirmation.Link />
                     </p>
                 </section>
                 
@@ -237,17 +230,10 @@ export const authConfig : AuthConfig = {
                         Password Reset Instruction
                     </h2>
                     
-                    <p style={styles.paragraph}>
+                    <p style={styles.paragraphLast}>
                         To reset your password, click on the link below:
                         <br />
-                        <ResetPassword.Link>
-                            Reset Password
-                        </ResetPassword.Link>
-                    </p>
-                    <p style={styles.paragraphLast}>
-                        Or copy and paste the URL into your browser:
-                        <br />
-                        <ResetPassword.Url />
+                        <ResetPassword.Link />
                     </p>
                 </section>
                 

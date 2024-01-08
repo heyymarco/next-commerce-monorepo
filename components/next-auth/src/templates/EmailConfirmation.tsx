@@ -14,7 +14,7 @@ import {
 
 // react components:
 
-const EmailConfirmationUrl = (): React.ReactNode => {
+const EmailConfirmationUrl = (): string|null => {
     // contexts:
     const model = useEmailConfirmationContext();
     
@@ -31,15 +31,15 @@ export interface EmailConfirmationLinkProps {
     children ?: React.ReactNode
 }
 const EmailConfirmationLink = (props: EmailConfirmationLinkProps): React.ReactNode => {
-    // contexts:
-    const model = useEmailConfirmationContext();
+    const url = EmailConfirmationUrl();
     
     
     
     // jsx:
+    if (!url) return null;
     return (
-        <a href={model.url}>
-            {props.children ?? 'Reset Password'}
+        <a href={url}>
+            {props.children ?? url}
         </a>
     );
 };

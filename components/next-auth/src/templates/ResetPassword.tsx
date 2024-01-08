@@ -14,7 +14,7 @@ import {
 
 // react components:
 
-const ResetPasswordUrl = (): React.ReactNode => {
+const ResetPasswordUrl = (): string|null => {
     // contexts:
     const model = useResetPasswordContext();
     
@@ -31,15 +31,15 @@ export interface ResetPasswordLinkProps {
     children ?: React.ReactNode
 }
 const ResetPasswordLink = (props: ResetPasswordLinkProps): React.ReactNode => {
-    // contexts:
-    const model = useResetPasswordContext();
+    const url = ResetPasswordUrl();
     
     
     
     // jsx:
+    if (!url) return null;
     return (
-        <a href={model.url}>
-            {props.children ?? 'Reset Password'}
+        <a href={url}>
+            {props.children ?? url}
         </a>
     );
 };
