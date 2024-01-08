@@ -142,7 +142,7 @@ export const authConfig : AuthConfig = {
                     </p>
                     
                     <p style={styles.paragraphLast}>
-                        Your account has been created but <strong>not activated yet</strong>.
+                        Your account has been created but <strong>not yet activated</strong>.
                         <br />
                         Please follow the activation instruction below.
                     </p>
