@@ -174,9 +174,7 @@ export const defaultAuthConfig : AuthConfig = {
                     <p style={styles.paragraphLast}>
                         Or copy and paste the URL into your browser:
                         <br />
-                        <u>
-                            <EmailConfirmation.Url />
-                        </u>
+                        <EmailConfirmation.Url />
                     </p>
                 </section>
                 
@@ -259,9 +257,7 @@ export const defaultAuthConfig : AuthConfig = {
                     <p style={styles.paragraphLast}>
                         Or copy and paste the URL into your browser:
                         <br />
-                        <u>
-                            <ResetPassword.Url />
-                        </u>
+                        <ResetPassword.Url />
                     </p>
                 </section>
                 
