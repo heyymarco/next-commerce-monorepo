@@ -44,9 +44,6 @@ import {
 // other libs:
 import Color                from 'color'                // color utilities
 
-// configs:
-import '@/theme.basics.config'
-
 
 
 export const theme = (themeName: ThemeName, gradient: boolean = true) => {

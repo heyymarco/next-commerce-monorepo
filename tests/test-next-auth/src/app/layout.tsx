@@ -1,4 +1,7 @@
+// themes:
+import '@/../theme.config'
 import './globals.css'
+
 import { Inter } from 'next/font/google'
 
 import { StylesCSR    } from './StylesCSR'    // client_side_rendering CSS (required)

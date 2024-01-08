@@ -1,3 +1,6 @@
+// themes:
+import '@/../theme.basics.config'
+
 // react:
 import {
     // react:
@@ -47,7 +50,7 @@ export const authConfig : AuthConfig = {
         requireVerifiedEmail : true,
         failureMaxAttempts   : 5    /* times */,
         failureLockDuration  : 0.25 /* hours */,
-        path                 : '/auth/signin',
+        path                 : '/signin',
     },
     reset                    : {
         throttle             : 0.08 /* hours */,
