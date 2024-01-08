@@ -1,5 +1,5 @@
 // themes:
-import '@/../theme.basics.config'
+import './theme.basics.config'
 
 import '@reusable-ui/typos/effects'
 

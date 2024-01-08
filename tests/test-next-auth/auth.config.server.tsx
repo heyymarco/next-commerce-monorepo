@@ -1,5 +1,5 @@
 // themes:
-import '@/../theme.basics.config'
+import './theme.basics.config'
 
 // react:
 import {
