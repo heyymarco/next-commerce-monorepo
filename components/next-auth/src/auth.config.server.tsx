@@ -5,7 +5,7 @@ import {
 }                           from 'react'
 
 // styles:
-import * as styles          from './templates/styles'
+import * as styles          from './templates/styles.js'
 
 // auth-js:
 import GoogleProvider       from '@auth/core/providers/google'
@@ -17,7 +17,7 @@ import TwitterProvider      from '@auth/core/providers/twitter'
 import {
     // react components:
     Business,
-}                           from './templates/Business'
+}                           from './templates/Business.js'
 import {
     // react components:
     EmailConfirmation,

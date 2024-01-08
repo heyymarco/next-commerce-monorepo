@@ -60,6 +60,11 @@ import {
 // templates:
 import {
     // react components:
+    BusinessContextProviderProps,
+    BusinessContextProvider,
+}                           from './templates/businessDataContext.js'
+import {
+    // react components:
     UserContextProvider,
 }                           from './templates/userContext.js'
 import {
@@ -70,18 +75,6 @@ import {
     // react components:
     ResetPasswordContextProvider,
 }                           from './templates/resetPasswordContext.js'
-import {
-    // react components:
-    User as TemplateUser,
-}                           from './templates/User.js'
-import {
-    // react components:
-    EmailConfirmation,
-}                           from './templates/EmailConfirmation.js'
-import {
-    // react components:
-    ResetPassword,
-}                           from './templates/ResetPassword.js'
 
 // internals:
 import type {
@@ -107,6 +100,11 @@ import {
     passwordValidationPath as defaultPasswordValidationPath,
     emailConfirmationPath  as defaultEmailConfirmationPath,
 }                           from './api-paths.js'
+
+// configs:
+import {
+    defaultAuthConfig,
+}                           from './auth.config.server.js'
 
 
 
@@ -163,10 +161,65 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     // options:
     const {
         adapter,
-        authConfig,
+        authConfig = defaultAuthConfig,
         credentialsConfig,
         callbacks,
     } = options;
+    
+    const {
+        business : {
+            name                 : businessName               = defaultAuthConfig.business.name,
+            url                  : businessUrl                = defaultAuthConfig.business.url,
+        },
+        signUp : {
+            enabled              : signUpEnabled              = defaultAuthConfig.signUp.enabled,
+        },
+        signIn : {
+            requireVerifiedEmail : signInRequireVerifiedEmail = defaultAuthConfig.signIn.requireVerifiedEmail,
+            failureMaxAttempts   : signInFailureMaxAttempts   = defaultAuthConfig.signIn.failureMaxAttempts,
+            failureLockDuration  : signInFailureLockDuration  = defaultAuthConfig.signIn.failureLockDuration,
+            path                 : signInPath                 = defaultAuthConfig.signIn.path,
+        },
+        reset : {
+            throttle             : resetThrottle              = defaultAuthConfig.reset.throttle,
+            maxAge               : resetMaxAge                = defaultAuthConfig.reset.maxAge,
+        },
+        session : {
+            maxAge               : sessionMaxAge              = defaultAuthConfig.session.maxAge,
+            updateAge            : sessionUpdateAge           = defaultAuthConfig.session.updateAge,
+        },
+        
+        
+        
+        oAuthProviders                                        = defaultAuthConfig.oAuthProviders,
+        
+        
+        
+        emails : {
+            signUp               : {
+                host             : emailsSignUpHost           = defaultAuthConfig.emails.signUp.host,
+                port             : emailsSignUpPort           = defaultAuthConfig.emails.signUp.port,
+                secure           : emailsSignUpSecure         = defaultAuthConfig.emails.signUp.secure,
+                username         : emailsSignUpUsername       = defaultAuthConfig.emails.signUp.username,
+                password         : emailsSignUpPassword       = defaultAuthConfig.emails.signUp.password,
+                
+                from             : emailsSignUpFrom           = defaultAuthConfig.emails.signUp.from,
+                subject          : emailsSignUpSubject        = defaultAuthConfig.emails.signUp.subject,
+                message          : emailsSignUpMessage        = defaultAuthConfig.emails.signUp.message,
+            },
+            reset                : {
+                host             : emailsResetHost            = defaultAuthConfig.emails.reset.host,
+                port             : emailsResetPort            = defaultAuthConfig.emails.reset.port,
+                secure           : emailsResetSecure          = defaultAuthConfig.emails.reset.secure,
+                username         : emailsResetUsername        = defaultAuthConfig.emails.reset.username,
+                password         : emailsResetPassword        = defaultAuthConfig.emails.reset.password,
+                
+                from             : emailsResetFrom            = defaultAuthConfig.emails.reset.from,
+                subject          : emailsResetSubject         = defaultAuthConfig.emails.reset.subject,
+                message          : emailsResetMessage         = defaultAuthConfig.emails.reset.message,
+            },
+        },
+    } = authConfig;
     
     
     
@@ -174,8 +227,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     const session     : SessionOptions = {
         strategy  : 'database',
         
-        maxAge    : (authConfig.session.maxAge    ?? 24) * 60 * 60, // hours
-        updateAge : (authConfig.session.updateAge ??  6) * 60 * 60, // hours
+        maxAge    : sessionMaxAge,
+        updateAge : sessionUpdateAge,
         
         generateSessionToken() {
             return randomUUID();
@@ -203,9 +256,9 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         const now    = new Date();
                         const result = await adapter.validateCredentials(credentials as Credentials, {
                             now                  : now,
-                            requireEmailVerified : (authConfig.signIn.requireVerifiedEmail ?? true            ),
-                            failureMaxAttemps    : (authConfig.signIn.failureMaxAttempts   ?? 5    /* times */),
-                            failureLockDuration  : (authConfig.signIn.failureLockDuration  ?? 0.25 /* hours */),
+                            requireEmailVerified : signInRequireVerifiedEmail,
+                            failureMaxAttemps    : signInFailureMaxAttempts,
+                            failureLockDuration  : signInFailureLockDuration,
                         });
                         if (result === null) return null;
                         if (result === false) {
@@ -225,7 +278,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             }) as NextAuthCredentialsConfig,
             
             // OAuth providers:
-            ...((authConfig.oAuthProviders ?? []) as unknown[] as NextAuthOAuthConfig<any>[]),
+            ...(oAuthProviders as unknown[] as NextAuthOAuthConfig<any>[]),
         ],
         callbacks : {
             ...callbacks,
@@ -248,7 +301,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     
-                    if (!(authConfig.signUp.enabled ?? true)) return false;
+                    if (!signUpEnabled) return false;
                     
                     
                     
@@ -345,9 +398,9 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             },
         },
         pages     : {
-            signIn        : authConfig.signIn.path,
+            signIn        : signInPath,
          // signOut       : '/auth/signout',
-            error         : authConfig.signIn.path, // Error code passed in query string as ?error=
+            error         : signInPath, // Error code passed in query string as ?error=
          // verifyRequest : '/auth/verify-request', // Check your email: A sign in link has been sent to your email address.
          // newUser       : '/auth/new-user',       // New users will be directed here on first sign in (leave the property out if not of interest)
         },
@@ -388,8 +441,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             const now    = new Date();
             const result = await adapter.createResetPasswordToken(username, {
                 now               : now,
-                resetLimitInHours : (authConfig.reset.throttle ?? 0.25 /* hours */),
-                emailResetMaxAge  : (authConfig.reset.maxAge   ?? 24   /* hours */),
+                resetLimitInHours : resetThrottle,
+                emailResetMaxAge  : resetMaxAge,
             });
             if (!result) {
                 // the user account is not found => reject:
@@ -411,76 +464,49 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             
             
             // generate a link to a page for resetting password:
-            const resetLinkUrl = `${process.env.WEBSITE_URL}${authConfig.signIn.path}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
+            const resetLinkUrl = `${process.env.WEBSITE_URL}${signInPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
             
             
             
             // send a link of resetPasswordToken to the user's email:
             const { renderToStaticMarkup } = await import('react-dom/server');
+            const businessContextProviderProps  : BusinessContextProviderProps = {
+                // data:
+                model : {
+                    name : businessName,
+                    url  : businessUrl,
+                },
+            };
             const transporter = nodemailer.createTransport({
-                host     :  process.env.EMAIL_RESET_SERVER_HOST ?? '',
-                port     : Number.parseInt(process.env.EMAIL_RESET_SERVER_PORT ?? '465'),
-                secure   : (process.env.EMAIL_RESET_SERVER_SECURE === 'true'),
+                host     : emailsResetHost,
+                port     : emailsResetPort,
+                secure   : emailsResetSecure,
                 auth     : {
-                    user :  process.env.EMAIL_RESET_SERVER_USERNAME,
-                    pass :  process.env.EMAIL_RESET_SERVER_PASSWORD,
+                    user : emailsResetUsername,
+                    pass : emailsResetPassword,
                 },
             });
             try {
                 await transporter.sendMail({
-                    from    : process.env.EMAIL_RESET_FROM, // sender address
+                    from    : emailsResetFrom, // sender address
                     to      : user.email, // list of receivers
                     subject : renderToStaticMarkup(
-                        <ResetPasswordContextProvider url={resetLinkUrl}>
-                            <UserContextProvider model={user}>
-                                {
-                                    authConfig.emails.reset.subject
-                                    ??
-                                    <>
-                                        Password Reset Request
-                                    </>
-                                }
-                            </UserContextProvider>
-                        </ResetPasswordContextProvider>
+                        <BusinessContextProvider {...businessContextProviderProps}>
+                            <ResetPasswordContextProvider url={resetLinkUrl}>
+                                <UserContextProvider model={user}>
+                                    {emailsResetSubject}
+                                </UserContextProvider>
+                            </ResetPasswordContextProvider>
+                        </BusinessContextProvider>
                     ).replace(/[\r\n\t]+/g, ' ').trim(),
                     html    : renderToStaticMarkup(
-                        <ResetPasswordContextProvider url={resetLinkUrl}>
-                            <UserContextProvider model={user}>
-                                {
-                                    authConfig.emails.reset.message
-                                    ??
-                                    <article>
-                                        <p>
-                                            Hi <TemplateUser.Name />.
-                                        </p>
-                                        <p>
-                                            <strong>
-                                                Forgot your password?
-                                            </strong>
-                                            <br />
-                                            We received a request to reset the password for your account.
-                                        </p>
-                                        <p>
-                                            To reset your password, click on the link below:
-                                            <br />
-                                            <ResetPassword.Link>
-                                                Reset Password
-                                            </ResetPassword.Link>
-                                        </p>
-                                        <p>
-                                            Or copy and paste the URL into your browser:
-                                            <br />
-                                            <u>
-                                                <ResetPassword.Url />
-                                            </u>
-                                        </p>
-                                        <p>
-                                            If you did not make this request then please ignore this email.
-                                        </p>
-                                    </article>
-                                }
-                            </UserContextProvider>
-                        </ResetPasswordContextProvider>
+                        <BusinessContextProvider {...businessContextProviderProps}>
+                            <ResetPasswordContextProvider url={resetLinkUrl}>
+                                <UserContextProvider model={user}>
+                                    {emailsResetMessage}
+                                </UserContextProvider>
+                            </ResetPasswordContextProvider>
+                        </BusinessContextProvider>
                     ),
                 });
             }
@@ -936,85 +962,61 @@ If the problem still persists, please contact our technical support.`,
             const {
                 emailConfirmationToken,
             } = await adapter.registerUser(fullname, email, username, password, {
-                requireEmailVerified : (authConfig.signIn.requireVerifiedEmail ?? true            ),
+                requireEmailVerified : signInRequireVerifiedEmail,
             });
             
             
             if (emailConfirmationToken) {
                 // generate a link to a page for confirming email:
-                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${authConfig.signIn.path}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
+                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${signInPath}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
                 
                 
                 
                 // send a link of emailConfirmationToken to the user's email:
                 const { renderToStaticMarkup } = await import('react-dom/server');
+                const businessContextProviderProps  : BusinessContextProviderProps = {
+                    // data:
+                    model : {
+                        name : businessName,
+                        url  : businessUrl,
+                    },
+                };
                 const transporter = nodemailer.createTransport({
-                    host     :  process.env.EMAIL_SIGNUP_SERVER_HOST ?? '',
-                    port     : Number.parseInt(process.env.EMAIL_SIGNUP_SERVER_PORT ?? '465'),
-                    secure   : (process.env.EMAIL_SIGNUP_SERVER_SECURE === 'true'),
+                    host     : emailsSignUpHost,
+                    port     : emailsSignUpPort,
+                    secure   : emailsSignUpSecure,
                     auth     : {
-                        user :  process.env.EMAIL_SIGNUP_SERVER_USERNAME,
-                        pass :  process.env.EMAIL_SIGNUP_SERVER_PASSWORD,
+                        user : emailsSignUpUsername,
+                        pass : emailsSignUpPassword,
                     },
                 });
                 try {
                     await transporter.sendMail({
-                        from    : process.env.EMAIL_SIGNUP_FROM, // sender address
+                        from    : emailsSignUpFrom, // sender address
                         to      : email, // list of receivers
                         subject : renderToStaticMarkup(
-                            <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
-                                <UserContextProvider model={{
-                                    name  : fullname,
-                                    email : email,
-                                }}>
-                                    {
-                                        authConfig.emails.signUp.subject
-                                        ??
-                                        <>
-                                            Your Account Registration at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}
-                                        </>
-                                    }
-                                </UserContextProvider>
-                            </EmailConfirmationContextProvider>
+                            <BusinessContextProvider {...businessContextProviderProps}>
+                                <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
+                                    <UserContextProvider model={{
+                                        name  : fullname,
+                                        email : email,
+                                    }}>
+                                        {emailsSignUpSubject}
+                                    </UserContextProvider>
+                                </EmailConfirmationContextProvider>
+                            </BusinessContextProvider>
                         ).replace(/[\r\n\t]+/g, ' ').trim(),
                         html    : renderToStaticMarkup(
-                            <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
-                                <UserContextProvider model={{
-                                    name  : fullname,
-                                    email : email,
-                                }}>
-                                    {
-                                        authConfig.emails.signUp.message
-                                        ??
-                                        <article>
-                                            <p>
-                                                Hi <TemplateUser.Name />.
-                                            </p>
-                                            <p>
-                                                You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
-                                            </p>
-                                            <p>
-                                                In order to sign in to our website,
-                                                you need to confirm your email address by clicking on the link below:
-                                                <br />
-                                                <EmailConfirmation.Link>
-                                                    Confirm Your Email
-                                                </EmailConfirmation.Link>
-                                            </p>
-                                            <p>
-                                                Or copy and paste the URL into your browser:
-                                                <br />
-                                                <u>
-                                                    <EmailConfirmation.Url />
-                                                </u>
-                                            </p>
-                                            <p>
-                                                If you did not signed up on our website then please ignore this email.
-                                            </p>
-                                        </article>
-                                    }
-                                </UserContextProvider>
-                            </EmailConfirmationContextProvider>
+                            <BusinessContextProvider {...businessContextProviderProps}>
+                                <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
+                                    <UserContextProvider model={{
+                                        name  : fullname,
+                                        email : email,
+                                    }}>
+                                        {emailsSignUpMessage}
+                                    </UserContextProvider>
+                                </EmailConfirmationContextProvider>
+                            </BusinessContextProvider>
                         ),
                     });
                 }
