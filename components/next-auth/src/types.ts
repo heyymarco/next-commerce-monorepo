@@ -98,8 +98,8 @@ export interface SignUpConfig {
 }
 export interface SignInConfig {
     requireVerifiedEmail : boolean
-    failureMaxAttempts   : number /* times */
-    failureLockDuration  : number /* hours */
+    failureMaxAttempts   : number|null /* times */
+    failureLockDuration  : number      /* hours */
     path                 : string
 }
 export interface ResetConfig {
