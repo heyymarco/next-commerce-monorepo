@@ -220,7 +220,7 @@ export const authConfig : AuthConfig = {
                     }}
                 >
                     <h1 style={styles.heading1}>
-                        Forgot your password?
+                        Forgot Your Password?
                     </h1>
                     
                     <p style={styles.paragraph}>
