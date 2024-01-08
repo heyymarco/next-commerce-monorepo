@@ -42,7 +42,7 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // other libs:
-import Color                from 'color'                // color utilities
+import Color                from 'color'                        // color utilities
 
 
 
