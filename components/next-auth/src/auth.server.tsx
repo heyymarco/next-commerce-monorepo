@@ -257,7 +257,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         const result = await adapter.validateCredentials(credentials as Credentials, {
                             now                  : now,
                             requireEmailVerified : signInRequireVerifiedEmail,
-                            failureMaxAttemps    : signInFailureMaxAttempts,
+                            failureMaxAttempts   : signInFailureMaxAttempts,
                             failureLockDuration  : signInFailureLockDuration,
                         });
                         if (result === null) return null;
@@ -440,9 +440,9 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             // create a new resetPasswordToken:
             const now    = new Date();
             const result = await adapter.createResetPasswordToken(username, {
-                now               : now,
-                resetLimitInHours : resetThrottle,
-                emailResetMaxAge  : resetMaxAge,
+                now           : now,
+                resetThrottle : resetThrottle,
+                resetMaxAge   : resetMaxAge,
             });
             if (!result) {
                 // the user account is not found => reject:

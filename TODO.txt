@@ -1,4 +1,4 @@
 add inputWithLabelComponent
 implement <InputWithLabel> to <AddressFields>
-[@heymarco/next-auth] implement loginErrorAttemps
+[@heymarco/next-auth] implement loginErrorAttempt
 [@heymarco/quantity-input] implement disabled & readOnly Buttons

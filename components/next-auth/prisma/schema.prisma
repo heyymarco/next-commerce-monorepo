@@ -77,7 +77,7 @@ model Credentials {
     id                      String                  @id @default(cuid())
     
     // data:
-    failuresAttemps         Int?
+    failureAttempts         Int?
     lockedAt                DateTime?
     username                String?                 @unique
     password                String?

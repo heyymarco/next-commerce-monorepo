@@ -14,6 +14,9 @@ import type {
     AuthConfig,
 }                               from '@heymarco/next-auth/server'
 import {
+    styles,
+    
+    Business,
     User,
     EmailConfirmation,
     ResetPassword,
@@ -22,85 +25,27 @@ import {
 
 
 export const authConfig : AuthConfig = {
-    PAGE_SIGNIN_PATH                  : '/signin',
-    
-    
-    
-    USER_SIGNUP_ENABLE                 : true,
-    
-    EMAIL_SIGNUP_SUBJECT               : `Your Account Registration at ${process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}`,
-    EMAIL_SIGNUP_MESSAGE               : <>
-        <p>
-            Hi <User.Name />.
-        </p>
-        <p>
-            You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
-        </p>
-        <p>
-            In order to sign in to our website,
-            you need to confirm your email address by clicking on the link below:
-            <br />
-            <EmailConfirmation.Link>
-                Confirm Your Email
-            </EmailConfirmation.Link>
-        </p>
-        <p>
-            Or copy and paste the URL into your browser:
-            <br />
-            <u>
-                <EmailConfirmation.Url />
-            </u>
-        </p>
-        <p>
-            If you did not signed up on our website then please ignore this email.
-        </p>
-    </>,
-    
-    
-    
-    USER_SIGNIN_REQUIRE_EMAIL_VERIFIED : true,
-    USER_SIGNIN_FAILURE_MAX_ATTEMPS    : 5    /* times */,
-    USER_SIGNIN_FAILURE_LOCK_DURATION  : 0.25 /* hours */,
-    
-    
-    
-    SESSION_MAX_AGE                    : 24   /* hours */,
-    SESSION_UPDATE_AGE                 : 6    /* hours */,
-    
-    
-    
-    EMAIL_RESET_SUBJECT                : 'Password Reset Request',
-    EMAIL_RESET_MESSAGE                : <>
-        <p>
-            Hi <User.Name />.
-        </p>
-        <p>
-            <strong>
-                Forgot your password?
-            </strong>
-            <br />
-            We received a request to reset the password for your account.
-        </p>
-        <p>
-            To reset your password, click on the link below:
-            <br />
-            <ResetPassword.Link>
-                Reset Password
-            </ResetPassword.Link>
-        </p>
-        <p>
-            Or copy and paste the URL into your browser:
-            <br />
-            <u>
-                <ResetPassword.Url />
-            </u>
-        </p>
-        <p>
-            If you did not make this request then please ignore this email.
-        </p>
-    </>,
-    EMAIL_RESET_LIMITS                 : 0.25 /* hours */,
-    EMAIL_RESET_MAX_AGE                : 24   /* hours */,
+    business : {
+        name                 : process.env.BUSINESS_NAME ?? '',
+        url                  : process.env.BUSINESS_URL  ?? '',
+    },
+    signUp : {
+        enabled              : true,
+    },
+    signIn : {
+        requireVerifiedEmail : true,
+        failureMaxAttempts   : 5    /* times */,
+        failureLockDuration  : 0.25 /* hours */,
+        path                 : '/auth/signin',
+    },
+    reset : {
+        throttle             : 0.08 /* hours */,
+        maxAge               : 24   /* hours */,
+    },
+    session : {
+        maxAge               : 24   /* hours */,
+        updateAge            : 6    /* hours */,
+    },
     
     
     
@@ -128,4 +73,88 @@ export const authConfig : AuthConfig = {
             allowDangerousEmailAccountLinking: true,
         }),
     ],
+    
+    
+    
+    emails                             : {
+        signUp : {
+            host     : process.env.EMAIL_SIGNUP_HOST     ?? '',
+            port     : Number.parseInt(process.env.EMAIL_SIGNUP_PORT ?? '465'),
+            secure   : (process.env.EMAIL_SIGNUP_SECURE === 'true'),
+            username : process.env.EMAIL_SIGNUP_USERNAME ?? '',
+            password : process.env.EMAIL_SIGNUP_PASSWORD ?? '',
+            
+            from     : process.env.EMAIL_SIGNUP_FROM ?? '',
+            subject  : <>
+                Your Account Registration at <Business.Name />
+            </>,
+            message  : <article style={styles.article}>
+                <p>
+                    Hi <User.Name />.
+                </p>
+                <p>
+                    You&apos;ve successfully signed up for an account at {process.env.BUSINESS_NAME || process.env.WEBSITE_URL || 'our website'}.
+                </p>
+                <p>
+                    In order to sign in to our website,
+                    you need to confirm your email address by clicking on the link below:
+                    <br />
+                    <EmailConfirmation.Link>
+                        Confirm Your Email
+                    </EmailConfirmation.Link>
+                </p>
+                <p>
+                    Or copy and paste the URL into your browser:
+                    <br />
+                    <u>
+                        <EmailConfirmation.Url />
+                    </u>
+                </p>
+                <p>
+                    If you did not signed up on our website then please ignore this email.
+                </p>
+            </article>,
+        },
+        reset  : {
+            host     : process.env.EMAIL_RESET_HOST     ?? '',
+            port     : Number.parseInt(process.env.EMAIL_RESET_PORT ?? '465'),
+            secure   : (process.env.EMAIL_RESET_SECURE === 'true'),
+            username : process.env.EMAIL_RESET_USERNAME ?? '',
+            password : process.env.EMAIL_RESET_PASSWORD ?? '',
+            
+            from     : process.env.EMAIL_RESET_FROM ?? '',
+            subject  : <>
+                Password Reset Request at <Business.Name />
+            </>,
+            message  : <article style={styles.article}>
+                <p>
+                    Hi <User.Name />.
+                </p>
+                <p>
+                    <strong>
+                        Forgot your password?
+                    </strong>
+                    <br />
+                    We received a request to reset the password for your account.
+                </p>
+                <p>
+                    To reset your password, click on the link below:
+                    <br />
+                    <ResetPassword.Link>
+                        Reset Password
+                    </ResetPassword.Link>
+                </p>
+                <p>
+                    Or copy and paste the URL into your browser:
+                    <br />
+                    <u>
+                        <ResetPassword.Url />
+                    </u>
+                </p>
+                <p>
+                    If you did not make this request then please ignore this email.
+                </p>
+            </article>,
+        },
+    },
 };

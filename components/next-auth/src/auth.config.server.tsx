@@ -4,9 +4,6 @@ import {
     default as React,
 }                           from 'react'
 
-// styles:
-import * as styles          from './templates/styles.js'
-
 // auth-js:
 import GoogleProvider       from '@auth/core/providers/google'
 import FacebookProvider     from '@auth/core/providers/facebook'
@@ -14,6 +11,7 @@ import InstagramProvider    from '@auth/core/providers/instagram'
 import TwitterProvider      from '@auth/core/providers/twitter'
 
 // templates:
+import * as styles          from './templates/styles.js'
 import {
     // react components:
     Business,
@@ -54,7 +52,7 @@ export const defaultAuthConfig : AuthConfig = {
         path                 : '/auth/signin',
     },
     reset : {
-        throttle             : 0.25 /* hours */,
+        throttle             : 0.08 /* hours */,
         maxAge               : 24   /* hours */,
     },
     session : {

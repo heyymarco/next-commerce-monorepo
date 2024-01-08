@@ -44,17 +44,18 @@ export interface RegisterUserData {
 }
 
 
+
 // options:
 export interface ValidateCredentialsOptions {
     now                  ?: Date
     requireEmailVerified ?: boolean
-    failureMaxAttemps    ?: number|null
+    failureMaxAttempts   ?: number|null
     failureLockDuration  ?: number
 }
 export interface CreateResetPasswordTokenOptions {
     now                  ?: Date
-    resetLimitInHours    ?: number
-    emailResetMaxAge     ?: number
+    resetThrottle        ?: number
+    resetMaxAge          ?: number
 }
 export interface ValidateResetPasswordTokenOptions {
     now                  ?: Date
@@ -309,7 +310,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             const {
                 now                  = new Date(),
                 requireEmailVerified = true,
-                failureMaxAttemps    = null,
+                failureMaxAttempts   = null,
                 failureLockDuration  = 0.25,
             } = options ?? {};
             
@@ -328,8 +329,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            // a database transaction for preventing multiple bulk login for bypassing failureMaxAttemps (forced to be a sequential operation):
-            // an atomic transaction of [`find user's credentials by username (or email)`, `update the failuresAttemps & lockedAt`]:
+            // a database transaction for preventing multiple bulk login for bypassing failureMaxAttempts (forced to be a sequential operation):
+            // an atomic transaction of [`find user's credentials by username (or email)`, `update the failureAttempts & lockedAt`]:
             return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => { // AdapterUser: succeeded; false: email is not verified; Date: account locked up; null: invalid username and/or password
                 // find user data + credentials by given username (or email):
                 const userWithCredentials = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
@@ -350,7 +351,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         [mCredentials] : {
                             select : {
                                 id              : true, // required: for further updating failure_counter and/or lockedAt
-                                failuresAttemps : true, // required: for inspecting the failureMaxAttemps   constraint
+                                failureAttempts : true, // required: for inspecting the failureMaxAttempts  constraint
                                 lockedAt        : true, // required: for inspecting the failureLockDuration constraint
                                 password        : true, // required: for password hash comparison
                             },
@@ -396,14 +397,14 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                                     id : expectedCredentials.id,
                                 },
                                 data   : {
-                                    failuresAttemps : null, // reset the failure_counter
+                                    failureAttempts : null, // reset the failure_counter
                                     lockedAt        : null, // reset the lock_date constraint
                                 },
                                 select : {
                                     id : true,
                                 },
                             });
-                            expectedCredentials.failuresAttemps = null; // reset this variable too
+                            expectedCredentials.failureAttempts = null; // reset this variable too
                             expectedCredentials.lockedAt        = null; // reset this variable too
                         } // if
                     } // if
@@ -415,14 +416,14 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 {
                     const isSuccess = !!password && !!expectedCredentials.password && await bcrypt.compare(password, expectedCredentials.password);
                     if (isSuccess) { // signIn attemp succeeded:
-                        if (expectedCredentials.failuresAttemps !== null) { // there are some failure attemps => reset
+                        if (expectedCredentials.failureAttempts !== null) { // there are some failure attempts => reset
                             // reset the failure_counter:
                             await ((prismaTransaction as TPrisma)[mCredentials] as any).update({
                                 where  : {
                                     id : expectedCredentials.id,
                                 },
                                 data   : {
-                                    failuresAttemps : null, // reset the failure_counter
+                                    failureAttempts : null, // reset the failure_counter
                                 },
                                 select : {
                                     id : true,
@@ -431,16 +432,16 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         } // if
                     }
                     else { // signIn attemp failed:
-                        if (failureMaxAttemps) { // there are a limit of failure signIn attemps
+                        if (failureMaxAttempts !== null) { // there are a limit of failure signIn attempts
                             // increase the failure_counter and/or lockedAt:
-                            const currentFailuresAttemps : number  = (expectedCredentials.failuresAttemps ?? 0) + 1;
-                            const isLocked               : boolean = (currentFailuresAttemps >= failureMaxAttemps);
+                            const currentFailureAttempts : number  = (expectedCredentials.failureAttempts ?? 0) + 1;
+                            const isLocked               : boolean = (currentFailureAttempts >= failureMaxAttempts);
                             await ((prismaTransaction as TPrisma)[mCredentials] as any).update({
                                 where  : {
                                     id : expectedCredentials.id,
                                 },
                                 data   : {
-                                    failuresAttemps : currentFailuresAttemps,
+                                    failureAttempts : currentFailureAttempts,
                                     lockedAt        : (
                                         !isLocked   // if under limit
                                         ? undefined // do not lock now, the user still have a/some chance(s) to retry
@@ -483,8 +484,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             // options:
             const {
                 now = new Date(),
-                resetLimitInHours,
-                emailResetMaxAge = 24,
+                resetThrottle,
+                resetMaxAge = 24,
             } = options ?? {};
             
             
@@ -496,7 +497,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // generate the resetPasswordToken data:
             const resetPasswordToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
-            const resetPasswordMaxAge = emailResetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
+            const resetPasswordMaxAge = resetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
             const resetPasswordExpiry = new Date(now.valueOf() + resetPasswordMaxAge);
             
             
@@ -526,7 +527,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // limits the rate of resetPasswordToken request:
-                if (resetLimitInHours) { // there are a limit of resetPasswordToken request
+                if (resetThrottle !== undefined) { // there are a limit of resetPasswordToken request
                     // find the last request date (if found) of resetPasswordToken by user id:
                     const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).findUnique({
                         where  : {
@@ -539,7 +540,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     
                     // calculate how often the last request of resetPasswordToken:
                     if (!!lastRequestDate) {
-                        const minInterval = resetLimitInHours * 60 * 60 * 1000 /* convert to milliseconds */;
+                        const minInterval = resetThrottle * 60 * 60 * 1000 /* convert to milliseconds */;
                         if ((now.valueOf() - lastRequestDate.valueOf()) < minInterval) { // the request interval is shorter than minInterval  => reject the request
                             // the reset request is too frequent => reject:
                             return new Date(lastRequestDate.valueOf() + minInterval);
@@ -845,7 +846,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 // create/update Credentials:
                 const credentialsData = {
-                    failuresAttemps : null, // reset
+                    failureAttempts : null, // reset
                     lockedAt        : null, // reset
                     
                     username        : username,

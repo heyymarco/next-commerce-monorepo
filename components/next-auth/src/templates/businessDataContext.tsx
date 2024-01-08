@@ -5,6 +5,10 @@ import {
 }                           from 'react'
 
 // internals:
+import type {
+    // types:
+    BusinessConfig,
+}                           from '../types.js'
 import {
     // contexts:
     createContext,
@@ -14,10 +18,6 @@ import {
     // hooks:
     useContext,
 }                           from '../hooks/mock-context.js'
-import type {
-    // types:
-    BusinessConfig,
-}                           from '../types.js'
 
 
 

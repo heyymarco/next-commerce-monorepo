@@ -72,6 +72,10 @@ import {
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internals:
+import type {
+    // types:
+    CredentialsConfig,
+}                           from '../../types.js'
 import {
     // utilities:
     invalidSelector,
@@ -93,11 +97,6 @@ import {
     signUpPath             as defaultSignUpPath,
     emailConfirmationPath  as defaultEmailConfirmationPath,
 }                           from '../../api-paths.js'
-
-// configs:
-import type {
-    CredentialsConfig,
-}                           from '../../credentials.config.js'
 
 
 
