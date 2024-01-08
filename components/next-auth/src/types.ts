@@ -90,53 +90,53 @@ export interface AdapterRole extends Role {}
 
 
 export interface BusinessConfig {
-    name                 : string
-    url                  : string
+    name                     : string
+    url                      : string
 }
 export interface SignUpConfig {
-    enabled              : boolean
+    enabled                  : boolean
 }
 export interface SignInConfig {
-    requireVerifiedEmail : boolean
-    failureMaxAttempts   : number|null /* times */
-    failureLockDuration  : number      /* hours */
-    path                 : string
+    requireVerifiedEmail     : boolean
+    failureMaxAttempts       : number|null /* times */
+    failureLockDuration      : number      /* hours */
+    path                     : string
 }
 export interface ResetConfig {
-    throttle             : number /* hours */
-    maxAge               : number /* hours */
+    throttle                 : number /* hours */
+    maxAge                   : number /* hours */
 }
 export interface SessionConfig {
-    maxAge               : number /* hours */
-    updateAge            : number /* hours */
+    maxAge                   : number /* hours */
+    updateAge                : number /* hours */
 }
 export interface EmailConfig {
-    host                 : string
-    port                 : number
-    secure               : boolean
-    username             : string
-    password             : string
+    host                     : string
+    port                     : number
+    secure                   : boolean
+    username                 : string
+    password                 : string
     
-    from                 : string
-    subject              : React.ReactNode
-    message              : React.ReactNode
+    from                     : string
+    subject                  : React.ReactNode
+    message                  : React.ReactNode
 }
 export interface AuthConfig {
-    business             : BusinessConfig
-    signUp               : SignUpConfig
-    signIn               : SignInConfig
-    reset                : ResetConfig
-    session              : SessionConfig
+    business                 : BusinessConfig
+    signUp                   : SignUpConfig
+    signIn                   : SignInConfig
+    reset                    : ResetConfig
+    session                  : SessionConfig
     
     
     
-    oAuthProviders                     : OAuthConfig<any>[]
+    oAuthProviders           : OAuthConfig<any>[]
     
     
     
-    emails                             : {
-        signUp : EmailConfig
-        reset  : EmailConfig
+    emails                   : {
+        signUp               : EmailConfig
+        reset                : EmailConfig
     }
 }
 
