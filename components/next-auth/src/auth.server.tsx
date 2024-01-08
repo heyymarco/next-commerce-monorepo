@@ -464,7 +464,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             
             
             // generate a link to a page for resetting password:
-            const resetLinkUrl = `${process.env.WEBSITE_URL}${signInPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
+            const resetLinkUrl = `${process.env.WEBSITE_URL ?? ''}${signInPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
             
             
             
@@ -968,7 +968,7 @@ If the problem still persists, please contact our technical support.`,
             
             if (emailConfirmationToken) {
                 // generate a link to a page for confirming email:
-                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL}${signInPath}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
+                const emailConfirmationLinkUrl = `${process.env.WEBSITE_URL ?? ''}${signInPath}?emailConfirmationToken=${encodeURIComponent(emailConfirmationToken)}`
                 
                 
                 
