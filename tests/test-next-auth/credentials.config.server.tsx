@@ -6,7 +6,6 @@ import type {
 
 // internals:
 import {
-    // types:
     credentialsConfigShared,
 }                               from './credentials.config.shared.js'
 
