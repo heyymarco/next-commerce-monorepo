@@ -144,10 +144,10 @@ const CredentialsProvider : typeof CredentialsProviderFix = (
 
 // general_implementation auth handlers:
 export interface CreateAuthHandlerOptions {
-    adapter            : AdapterWithCredentials
-    authConfigServer   : AuthConfigServer
-    credentialsConfig  : CredentialsConfigServer
-    callbacks         ?: NextAuthOptions['callbacks']
+    adapter                  : AdapterWithCredentials
+    authConfigServer         : AuthConfigServer
+    credentialsConfigServer  : CredentialsConfigServer
+    callbacks               ?: NextAuthOptions['callbacks']
 }
 export interface NextAuthRouteContext {
     params : { nextauth: string[] }
@@ -157,7 +157,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     const {
         adapter,
         authConfigServer,
-        credentialsConfig,
+        credentialsConfigServer,
         callbacks,
     } = options;
     
@@ -215,6 +215,32 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             },
         },
     } = authConfigServer;
+    
+    const {
+        name     : {
+            minLength      : nameMinLength,
+            maxLength      : nameMaxLength,
+        },
+        email    : {
+            minLength      : emailMinLength,
+            maxLength      : emailMaxLength,
+            
+            format         : emailFormat,
+        },
+        username : {
+            minLength      : usernameMinLength,
+            maxLength      : usernameMaxLength,
+            format         : usernameFormat,
+            prohibited     : usernameProhibited,
+        },
+        password : {
+            minLength      : passwordMinLength,
+            maxLength      : passwordMaxLength,
+            hasUppercase   : passwordHasUppercase,
+            hasLowercase   : passwordHasLowercase,
+            prohibited     : passwordProhibited,
+        },
+    } = credentialsConfigServer;
     
     
     
@@ -616,25 +642,21 @@ If the problem still persists, please contact our technical support.`,
                 error: 'The required password is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        const passwordMinLength = credentialsConfig.password.minLength;
         if ((typeof(passwordMinLength) === 'number') && Number.isFinite(passwordMinLength) && (password.length < passwordMinLength)) {
             return NextResponse.json({
                 error: `The password is too short. Minimum is ${passwordMinLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const passwordMaxLength = credentialsConfig.password.maxLength;
         if ((typeof(passwordMaxLength) === 'number') && Number.isFinite(passwordMaxLength) && (password.length > passwordMaxLength)) {
             return NextResponse.json({
                 error: `The password is too long. Maximum is ${passwordMaxLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const passwordHasUppercase = credentialsConfig.password.hasUppercase;
         if (passwordHasUppercase && !password.match(/[A-Z]/)) {
             return NextResponse.json({
                 error: `The password must have at least one capital letter.`,
             }, { status: 400 }); // handled with error
         } // if
-        const passwordHasLowercase = credentialsConfig.password.hasLowercase;
         if (passwordHasLowercase && !password.match(/[a-z]/)) {
             return NextResponse.json({
                 error: `The password must have at least one non-capital letter.`,
@@ -694,19 +716,17 @@ If the problem still persists, please contact our technical support.`,
                 error: 'The required email is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        const emailMinLength = credentialsConfig.email.minLength;
         if ((typeof(emailMinLength) === 'number') && Number.isFinite(emailMinLength) && (email.length < emailMinLength)) {
             return NextResponse.json({
                 error: `The email is too short. Minimum is ${emailMinLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const emailMaxLength = credentialsConfig.email.maxLength;
         if ((typeof(emailMaxLength) === 'number') && Number.isFinite(emailMaxLength) && (email.length > emailMaxLength)) {
             return NextResponse.json({
                 error: `The email is too long. Maximum is ${emailMaxLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        if (!email.match(credentialsConfig.email.format)) {
+        if (!email.match(emailFormat)) {
             return NextResponse.json({
                 error: `The email is not well formatted.`,
             }, { status: 400 }); // handled with error
@@ -760,19 +780,17 @@ If the problem still persists, please contact our technical support.`,
                 error: 'The required username is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        const usernameMinLength = credentialsConfig.username.minLength;
         if ((typeof(usernameMinLength) === 'number') && Number.isFinite(usernameMinLength) && (username.length < usernameMinLength)) {
             return NextResponse.json({
                 error: `The username is too short. Minimum is ${usernameMinLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const usernameMaxLength = credentialsConfig.username.maxLength;
         if ((typeof(usernameMaxLength) === 'number') && Number.isFinite(usernameMaxLength) && (username.length > usernameMaxLength)) {
             return NextResponse.json({
                 error: `The username is too long. Maximum is ${usernameMaxLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        if (!username.match(credentialsConfig.username.format)) {
+        if (!username.match(usernameFormat)) {
             return NextResponse.json({
                 error: `The username is not well formatted.`,
             }, { status: 400 }); // handled with error
@@ -826,19 +844,17 @@ If the problem still persists, please contact our technical support.`,
                 error: 'The required username is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        const usernameMinLength = credentialsConfig.username.minLength;
         if ((typeof(usernameMinLength) === 'number') && Number.isFinite(usernameMinLength) && (username.length < usernameMinLength)) {
             return NextResponse.json({
                 error: `The username is too short. Minimum is ${usernameMinLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const usernameMaxLength = credentialsConfig.username.maxLength;
         if ((typeof(usernameMaxLength) === 'number') && Number.isFinite(usernameMaxLength) && (username.length > usernameMaxLength)) {
             return NextResponse.json({
                 error: `The username is too long. Maximum is ${usernameMaxLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        if (!username.match(credentialsConfig.username.format)) {
+        if (!username.match(usernameFormat)) {
             return NextResponse.json({
                 error: `The username is not well formatted.`,
             }, { status: 400 }); // handled with error
@@ -847,7 +863,7 @@ If the problem still persists, please contact our technical support.`,
         
         
         if (((): boolean => {
-            for (const prohibited of credentialsConfig.username.prohibited) {
+            for (const prohibited of usernameProhibited) {
                 if (prohibited instanceof RegExp) {
                     if (prohibited.test(username)) return true; // prohibited word found
                 }
@@ -888,25 +904,21 @@ If the problem still persists, please contact our technical support.`,
                 error: 'The required password is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        const passwordMinLength = credentialsConfig.password.minLength;
         if ((typeof(passwordMinLength) === 'number') && Number.isFinite(passwordMinLength) && (password.length < passwordMinLength)) {
             return NextResponse.json({
                 error: `The password is too short. Minimum is ${passwordMinLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const passwordMaxLength = credentialsConfig.password.maxLength;
         if ((typeof(passwordMaxLength) === 'number') && Number.isFinite(passwordMaxLength) && (password.length > passwordMaxLength)) {
             return NextResponse.json({
                 error: `The password is too long. Maximum is ${passwordMaxLength} characters.`,
             }, { status: 400 }); // handled with error
         } // if
-        const passwordHasUppercase = credentialsConfig.password.hasUppercase;
         if (passwordHasUppercase && !password.match(/[A-Z]/)) {
             return NextResponse.json({
                 error: `The password must have at least one capital letter.`,
             }, { status: 400 }); // handled with error
         } // if
-        const passwordHasLowercase = credentialsConfig.password.hasLowercase;
         if (passwordHasLowercase && !password.match(/[a-z]/)) {
             return NextResponse.json({
                 error: `The password must have at least one non-capital letter.`,
@@ -916,7 +928,7 @@ If the problem still persists, please contact our technical support.`,
         
         
         if (((): boolean => {
-            for (const prohibited of credentialsConfig.password.prohibited) {
+            for (const prohibited of passwordProhibited) {
                 if (prohibited instanceof RegExp) {
                     if (prohibited.test(password)) return true; // prohibited word found
                 }
@@ -947,6 +959,25 @@ If the problem still persists, please contact our technical support.`,
         
         
         // validate the request parameter(s):
+        const {
+            fullname: name,
+        } = await getRequestData(req);
+        if ((typeof(name) !== 'string') || !name) {
+            return NextResponse.json({
+                error: 'The required name is not provided.',
+            }, { status: 400 }); // handled with error
+        } // if
+        if ((typeof(nameMinLength) === 'number') && Number.isFinite(nameMinLength) && (name.length < nameMinLength)) {
+            return NextResponse.json({
+                error: `The name is too short. Minimum is ${nameMinLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        if ((typeof(nameMaxLength) === 'number') && Number.isFinite(nameMaxLength) && (name.length > nameMaxLength)) {
+            return NextResponse.json({
+                error: `The name is too long. Maximum is ${nameMaxLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        
         const validation1 = await checkEmailAvailabilityRouteHandler(req, context, '');
         if (validation1 && !validation1.ok) return validation1;
         

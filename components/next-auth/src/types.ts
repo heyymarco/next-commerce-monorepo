@@ -173,9 +173,9 @@ export type FieldPasswordConfig =
     & FieldProhibitedConfig
 export interface CredentialsConfigServer {
     name     : FieldNameConfig
-    email    : FieldEmailConfig
-    username : FieldUsernameConfig
-    password : FieldPasswordConfig
+    email    : Omit<FieldEmailConfig   , 'formatHint'>
+    username : Omit<FieldUsernameConfig, 'prohibitedHint'|'formatHint'>
+    password : Omit<FieldPasswordConfig, 'prohibitedHint'>
 };
 export interface CredentialsConfigClient {
     name     : FieldNameConfig

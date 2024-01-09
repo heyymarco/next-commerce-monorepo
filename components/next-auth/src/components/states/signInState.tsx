@@ -390,25 +390,25 @@ export const useSignInState = (): SignInState => {
 // react components:
 export interface SignInStateProps {
     // configs:
-    credentialsConfig    : CredentialsConfigClient
+    credentialsConfigClient  : CredentialsConfigClient
     
     
     
     // auths:
-    resolveProviderName ?: (oAuthProvider: BuiltInProviderType) => string
-    basePath            ?: string
+    resolveProviderName     ?: (oAuthProvider: BuiltInProviderType) => string
+    basePath                ?: string
     
     
     
     // pages:
-    homepagePath        ?: string
-    defaultCallbackUrl  ?: string|null
+    homepagePath            ?: string
+    defaultCallbackUrl      ?: string|null
 }
 const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) => {
     // rest props:
     const {
         // configs:
-        credentialsConfig,
+        credentialsConfigClient,
         
         
         
@@ -567,7 +567,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             prohibitedHint : passwordProhibitedHint,
         },
-    } = credentialsConfig;
+    } = credentialsConfigClient;
     
     
     

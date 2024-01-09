@@ -14,7 +14,7 @@ export default function Home() {
     return (
         <Container tag='main' theme='primary'>
             <SignIn
-                credentialsConfig={credentialsConfigClient}
+                credentialsConfigClient={credentialsConfigClient}
                 providers={loginProviders}
                 signUpEnable={false}
                 defaultCallbackUrl='/?welcome'

@@ -20,9 +20,9 @@ import {
 
 
 const authRouteHandler = createAuthRouteHandler({
-    adapter           : PrismaAdapterWithCredentials(prisma),
-    authConfigServer  : authConfigServer,
-    credentialsConfig : credentialsConfigServer,
+    adapter                 : PrismaAdapterWithCredentials(prisma),
+    authConfigServer        : authConfigServer,
+    credentialsConfigServer : credentialsConfigServer,
 })
 export {
     authRouteHandler as GET,

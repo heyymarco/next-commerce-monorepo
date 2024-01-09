@@ -148,21 +148,21 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     // rest props:
     const {
         // configs:
-        credentialsConfig   : _credentialsConfig,   // remove
+        credentialsConfigClient : _credentialsConfigClient,   // remove
         
         
         
         // auths:
-        signUpEnable        = true,
+        signUpEnable            = true,
         providers,
-        resolveProviderName : _resolveProviderName, // remove
-        basePath            : _basePath,            // remove
+        resolveProviderName     : _resolveProviderName, // remove
+        basePath                : _basePath,            // remove
         
         
         
         // pages:
-        homepagePath        : _homepagePath,        // remove
-        defaultCallbackUrl  : _defaultCallbackUrl,  // remove
+        homepagePath            : _homepagePath,        // remove
+        defaultCallbackUrl      : _defaultCallbackUrl,  // remove
         
         
         
