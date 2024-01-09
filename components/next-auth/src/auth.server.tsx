@@ -93,12 +93,12 @@ import type {
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
 import {
-    signUpPath             as defaultSignUpPath,
-    resetPasswordPath      as defaultResetPasswordPath,
-    usernameValidationPath as defaultUsernameValidationPath,
-    emailValidationPath    as defaultEmailValidationPath,
-    passwordValidationPath as defaultPasswordValidationPath,
-    emailConfirmationPath  as defaultEmailConfirmationPath,
+    signUpPath,
+    resetPasswordPath,
+    usernameValidationPath,
+    emailValidationPath,
+    passwordValidationPath,
+    emailConfirmationPath,
 }                           from './api-paths.js'
 
 
@@ -432,7 +432,6 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     
     //#region custom handlers
-    // general_implementation custom handlers:
     // reset password:
     const requestPasswordResetRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
@@ -1195,64 +1194,14 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    
-    // specific next-js /app custom handlers:
-    interface CustomRouteHandlerOptions {
-        resetPasswordPath      ?: string
-        usernameValidationPath ?: string
-        emailValidationPath    ?: string
-        passwordValidationPath ?: string
-        signUpPath             ?: string
-        emailConfirmationPath  ?: string
-    }
-    const customRouteHandler                     = async (req: Request, context: NextAuthRouteContext, options?: CustomRouteHandlerOptions): Promise<false|Response> => {
-        // options:
-        const {
-            resetPasswordPath      = defaultResetPasswordPath,
-            usernameValidationPath = defaultUsernameValidationPath,
-            emailValidationPath    = defaultEmailValidationPath,
-            passwordValidationPath = defaultPasswordValidationPath,
-            signUpPath             = defaultSignUpPath,
-            emailConfirmationPath  = defaultEmailConfirmationPath,
-        } = options ?? {};
-        
-        
-        
-        return (
-            // reset password:
-            await requestPasswordResetRouteHandler(req, context, resetPasswordPath)
-            ||
-            await validatePasswordResetRouteHandler(req, context, resetPasswordPath)
-            ||
-            await usePasswordResetRouteHandler(req, context, resetPasswordPath)
-            
-            ||
-            
-            // registrations:
-            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
-            ||
-            await checkEmailAvailabilityRouteHandler(req, context, emailValidationPath)
-            ||
-            await checkUsernameNotProhibitedRouteHandler(req, context, usernameValidationPath)
-            ||
-            await checkPasswordNotProhibitedRouteHandler(req, context, passwordValidationPath)
-            ||
-            await signUpRouteHandler(req, context, signUpPath)
-            
-            ||
-            
-            // email verification:
-            await useEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
-        );
-    };
     //#endregion custom handlers
     
     
     
-    //#region next-auth's built in handlers
-    const nextAuthHandler                   = async (req: Request|NextApiRequest, contextOrRes: NextAuthRouteContext|NextApiResponse, isCredentialsCallback: (() => boolean)): Promise<any> => {
-        const isDatabaseSession = (session.strategy === 'database');
-        let sessionCookie : string|null = null;
+    // built in handlers:
+    const nextAuthHandler                        = async (req: Request|NextApiRequest, contextOrRes: NextAuthRouteContext|NextApiResponse, testIsCredentialsRequest: (() => boolean)): Promise<any> => {
+        const isUpdatingCookie : boolean     = (session.strategy === 'database') && testIsCredentialsRequest();
+        let sessionCookie      : string|null = null;
         
         
         
@@ -1261,7 +1210,7 @@ If the problem still persists, please contact our technical support.`,
             callbacks : {
                 ...authOptions.callbacks,
                 async signIn(params) {
-                    if (isDatabaseSession && isCredentialsCallback()) {
+                    if (isUpdatingCookie) {
                         // extract the user detail:
                         const {user: userDetail} = params;
                         
@@ -1292,6 +1241,7 @@ If the problem still persists, please contact our technical support.`,
                         //     path         : '/',
                         //     expires      : sessionExpiry,
                         //     httpOnly     : true,
+                        //     secure       : true,
                         //     sameSite     : 'lax',
                         // });
                         sessionCookie = `${cookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly;${isSecureCookie ? ' Secure;' : '' } SameSite=Lax`;
@@ -1305,7 +1255,7 @@ If the problem still persists, please contact our technical support.`,
             },
             jwt : {
                 async encode(params) {
-                    if (isDatabaseSession && isCredentialsCallback()) return ''; // force not to use jwt token => fallback to database token
+                    if (isUpdatingCookie) return ''; // force not to use jwt token => fallback to database token
                     
                     
                     
@@ -1313,7 +1263,7 @@ If the problem still persists, please contact our technical support.`,
                     return encode(params as any);
                 },
                 async decode(params) {
-                    if (isDatabaseSession && isCredentialsCallback()) return null; // force not to use jwt token => fallback to database token
+                    if (isUpdatingCookie) return null; // force not to use jwt token => fallback to database token
                     
                     
                     
@@ -1338,13 +1288,48 @@ If the problem still persists, please contact our technical support.`,
         
         return response;
     };
-    //#endregion next-auth's built in handlers
+    
+    
+    
+    // merged handlers:
+    const mergedRouteHandler                     = async (req: Request, context: NextAuthRouteContext, testIsCredentialsRequest: (() => boolean)): Promise<Response> => {
+        return (
+            // reset password:
+            await requestPasswordResetRouteHandler(req, context, resetPasswordPath)
+            ||
+            await validatePasswordResetRouteHandler(req, context, resetPasswordPath)
+            ||
+            await usePasswordResetRouteHandler(req, context, resetPasswordPath)
+            
+            ||
+            
+            // registrations:
+            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
+            ||
+            await checkEmailAvailabilityRouteHandler(req, context, emailValidationPath)
+            ||
+            await checkUsernameNotProhibitedRouteHandler(req, context, usernameValidationPath)
+            ||
+            await checkPasswordNotProhibitedRouteHandler(req, context, passwordValidationPath)
+            ||
+            await signUpRouteHandler(req, context, signUpPath)
+            
+            ||
+            
+            // email verification:
+            await useEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
+            
+            ||
+            
+            // built in handlers:
+            await nextAuthHandler(req, context, testIsCredentialsRequest)
+        );
+    };
     
     
     
     return {
-        customRouteHandler,
-        nextAuthHandler,
+        authHandler : mergedRouteHandler,
         authOptions,
     };
 };
@@ -1352,8 +1337,7 @@ If the problem still persists, please contact our technical support.`,
 // specific next-js /app auth handlers:
 export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
     const {
-        customRouteHandler,
-        nextAuthHandler,
+        authHandler,
         authOptions,
     } = createNextAuthHandler(options);
     
@@ -1365,14 +1349,7 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
         
         
         
-        // intercept with custom handlers:
-        const customRouteResponse = await customRouteHandler(req, context);
-        if (customRouteResponse) return customRouteResponse;
-        
-        
-        
-        // tests:
-        const isCredentialsCallback = (): boolean => (
+        return await authHandler(req, context, /* testIsCredentialsRequest: */() =>
             (req.method === 'POST')
             &&
             !!context.params.nextauth
@@ -1381,10 +1358,6 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
             &&
             context.params.nextauth.includes('credentials')
         );
-        
-        
-        
-        return await nextAuthHandler(req, context, isCredentialsCallback);
     };
     authRouteHandler.authOptions = authOptions;
     return authRouteHandler;
@@ -1393,8 +1366,7 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
 // specific next-js /pages auth handlers:
 export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
     const {
-        customRouteHandler,
-        nextAuthHandler,
+        authHandler,
         authOptions,
     } = createNextAuthHandler(options);
     
@@ -1428,25 +1400,17 @@ export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
         
         
         
-        // intercept with custom handlers:
-        if (await nextApiWrapperHandler(req, res, (request, context) => customRouteHandler(request, context))) return;
-        
-        
-        
-        // tests:
-        const isCredentialsCallback = (): boolean => (
-            (req.method === 'POST')
-            &&
-            !!req.query.nextauth
-            &&
-            req.query.nextauth.includes('callback')
-            &&
-            req.query.nextauth.includes('credentials')
+        await nextApiWrapperHandler(req, res, (request, context) =>
+            authHandler(request, context, /* testIsCredentialsRequest: */() =>
+                (req.method === 'POST')
+                &&
+                !!req.query.nextauth
+                &&
+                req.query.nextauth.includes('callback')
+                &&
+                req.query.nextauth.includes('credentials')
+            )
         );
-        
-        
-        
-        await nextAuthHandler(req, res, isCredentialsCallback);
     };
     authApiHandler.authOptions = authOptions;
     return authApiHandler;
