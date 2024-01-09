@@ -686,7 +686,7 @@ If the problem still persists, please contact our technical support.`,
         
         
         try {
-            const result = await adapter.applyResetPasswordToken(resetPasswordToken, password, {
+            const result = await adapter.useResetPasswordToken(resetPasswordToken, password, {
                 now : new Date(),
             });
             if (!result) {
@@ -1166,7 +1166,7 @@ If the problem still persists, please contact our technical support.`,
         
         
         try {
-            const result = await adapter.applyEmailConfirmationToken(emailConfirmationToken, {
+            const result = await adapter.useEmailConfirmationToken(emailConfirmationToken, {
                 now : new Date(),
             });
             if (!result) {

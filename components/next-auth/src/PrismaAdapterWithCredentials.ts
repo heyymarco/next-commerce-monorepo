@@ -60,7 +60,7 @@ export interface CreateResetPasswordTokenOptions {
 export interface ValidateResetPasswordTokenOptions {
     now                  ?: Date
 }
-export interface ApplyResetPasswordTokenOptions {
+export interface UseResetPasswordTokenOptions {
     now                  ?: Date
 }
 export interface RegisterUserOptions {
@@ -69,7 +69,7 @@ export interface RegisterUserOptions {
 export interface MarkUserEmailAsVerifiedOptions {
     now                  ?: Date
 }
-export interface ApplyEmailConfirmationTokenOptions {
+export interface UseEmailConfirmationTokenOptions {
     now                  ?: Date
 }
 
@@ -89,33 +89,33 @@ export interface AdapterWithCredentials
         Adapter
 {
     // sign in:
-    validateCredentials          : (credentials            : Credentials                               , options?: ValidateCredentialsOptions        ) => Awaitable<AdapterUser|false|Date|null>
+    validateCredentials        : (credentials            : Credentials                               , options?: ValidateCredentialsOptions       ) => Awaitable<AdapterUser|false|Date|null>
     
     
     
     // reset password:
-    createResetPasswordToken     : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions   ) => Awaitable<CreateResetPasswordTokenData|Date|null>
-    validateResetPasswordToken   : (resetPasswordToken     : string                                    , options?: ValidateResetPasswordTokenOptions ) => Awaitable<ValidateResetPasswordTokenData|null>
-    applyResetPasswordToken      : (resetPasswordToken     : string, password: string                  , options?: ApplyResetPasswordTokenOptions    ) => Awaitable<boolean>
+    createResetPasswordToken   : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions  ) => Awaitable<CreateResetPasswordTokenData|Date|null>
+    validateResetPasswordToken : (resetPasswordToken     : string                                    , options?: ValidateResetPasswordTokenOptions) => Awaitable<ValidateResetPasswordTokenData|null>
+    useResetPasswordToken      : (resetPasswordToken     : string, password: string                  , options?: UseResetPasswordTokenOptions     ) => Awaitable<boolean>
     
     
     
     // registrations:
-    checkUsernameAvailability    : (username               : string                                                                                  ) => Awaitable<boolean>
-    checkEmailAvailability       : (email                  : string                                                                                  ) => Awaitable<boolean>
-    registerUser                 : (name: string   , email : string, username: string, password: string, options?: RegisterUserOptions               ) => Awaitable<RegisterUserData>
+    checkUsernameAvailability  : (username               : string                                                                                 ) => Awaitable<boolean>
+    checkEmailAvailability     : (email                  : string                                                                                 ) => Awaitable<boolean>
+    registerUser               : (name: string   , email : string, username: string, password: string, options?: RegisterUserOptions              ) => Awaitable<RegisterUserData>
     
     
     
     // email verification:
-    markUserEmailAsVerified      : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
-    applyEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
+    markUserEmailAsVerified    : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions   ) => Awaitable<void>
+    useEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: UseEmailConfirmationTokenOptions ) => Awaitable<boolean>
     
     
     
     // user roles:
-    getRoleByUserId              : (userId                 : string                                                                                  ) => Awaitable<AdapterRole|null>
-    getRoleByUserEmail           : (userEmail              : string                                                                                  ) => Awaitable<AdapterRole|null>
+    getRoleByUserId            : (userId                 : string                                                                                 ) => Awaitable<AdapterRole|null>
+    getRoleByUserEmail         : (userEmail              : string                                                                                 ) => Awaitable<AdapterRole|null>
 }
 export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prisma: TPrisma, options?: ModelOptions<TPrisma>): AdapterWithCredentials => {
     // options:
@@ -133,7 +133,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
     
     return {
         // CRUD users:
-        createUser                   : async (userData         ) => {
+        createUser                 : async (userData         ) => {
             const {
                 name,
             ...restUserData} = userData;
@@ -149,21 +149,21 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
         },
         
-        getUser                      : async (userId           ) => {
+        getUser                    : async (userId           ) => {
             return (prisma[mUser] as any).findUnique({
                 where  : {
                     id : userId,
                 },
             });
         },
-        getUserByEmail               : async (userEmail        ) => {
+        getUserByEmail             : async (userEmail        ) => {
             return (prisma[mUser] as any).findUnique({
                 where  : {
                     email : userEmail,
                 },
             });
         },
-        getUserByAccount             : async (userAccount      ) => {
+        getUserByAccount           : async (userAccount      ) => {
             const {
                 provider,
                 providerAccountId,
@@ -183,7 +183,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return (account as any)?.[mUser] ?? null;
         },
         
-        updateUser                   : async (userData         ) => {
+        updateUser                 : async (userData         ) => {
             const {
                 id,
                 name,
@@ -202,7 +202,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             });
         },
-        deleteUser                   : async (userId           ) => {
+        deleteUser                 : async (userId           ) => {
             return (prisma[mUser] as any).delete({
                 where  : {
                     id : userId,
@@ -213,12 +213,12 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // CRUD sessions:
-        createSession                : async (sessionData      ) => {
+        createSession              : async (sessionData      ) => {
             return (prisma[mSession] as any).create({
                 data  : sessionData,
             });
         },
-        getSessionAndUser            : async (sessionToken     ) => {
+        getSessionAndUser          : async (sessionToken     ) => {
             const sessionAndUser = await (prisma[mSession] as any).findUnique({
                 where   : {
                     sessionToken,
@@ -239,7 +239,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 session : session as AdapterSession,
             };
         },
-        updateSession                : async (sessionData      ) => {
+        updateSession              : async (sessionData      ) => {
             return (prisma[mSession] as any).update({
                 where  : {
                     sessionToken: sessionData.sessionToken,
@@ -247,7 +247,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 data   : sessionData,
             });
         },
-        deleteSession                : async (sessionToken     ) => {
+        deleteSession              : async (sessionToken     ) => {
             return (prisma[mSession] as any).delete({
                 where  : {
                     sessionToken,
@@ -258,13 +258,13 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // CRUD accounts:
-        linkAccount                  : async (accountData      ) => {
+        linkAccount                : async (accountData      ) => {
             const account = await (prisma[mAccount] as any).create({
                 data  : accountData,
             });
             return account as AdapterAccount;
         },
-        unlinkAccount                : async (userAccount      ) => {
+        unlinkAccount              : async (userAccount      ) => {
             const {
                 provider,
                 providerAccountId,
@@ -295,8 +295,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // token verifications:
-        createVerificationToken      : undefined,
-        useVerificationToken         : undefined,
+        createVerificationToken    : undefined,
+        useVerificationToken       : undefined,
         
         
         
@@ -305,7 +305,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // sign in:
-        validateCredentials          : async (credentials                         , options) => {
+        validateCredentials        : async (credentials                         , options) => {
             // options:
             const {
                 now                  = new Date(),
@@ -474,7 +474,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // reset password:
-        createResetPasswordToken     : async (usernameOrEmail                     , options) => {
+        createResetPasswordToken   : async (usernameOrEmail                     , options) => {
             // conditions:
             const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
             if (!hasResetPasswordToken) return null;
@@ -577,7 +577,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 user,
             };
         },
-        validateResetPasswordToken   : async (resetPasswordToken                  , options) => {
+        validateResetPasswordToken : async (resetPasswordToken                  , options) => {
             // conditions:
             const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
             if (!hasResetPasswordToken) return null;
@@ -615,7 +615,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 username : user[mCredentials]?.username || null,
             };
         },
-        applyResetPasswordToken      : async (resetPasswordToken, password: string, options) => {
+        useResetPasswordToken      : async (resetPasswordToken, password: string, options) => {
             // conditions:
             const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
             if (!hasResetPasswordToken) return false;
@@ -719,7 +719,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // registrations:
-        checkUsernameAvailability    : async (username                                     ) => {
+        checkUsernameAvailability  : async (username                                     ) => {
             // normalizations:
             username = username.toLowerCase();
             
@@ -735,7 +735,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             }));
         },
-        checkEmailAvailability       : async (email                                        ) => {
+        checkEmailAvailability     : async (email                                        ) => {
             // normalizations:
             email = email.toLowerCase();
             
@@ -751,7 +751,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             }));
         },
-        registerUser                 : async (name, email, username, password     , options) => {
+        registerUser               : async (name, email, username, password     , options) => {
             // options:
             const {
                 requireEmailVerified = false,
@@ -858,7 +858,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // email verification:
-        markUserEmailAsVerified      : async (userId                              , options) => {
+        markUserEmailAsVerified    : async (userId                              , options) => {
             // options:
             const {
                 now = new Date(),
@@ -878,7 +878,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 },
             });
         },
-        applyEmailConfirmationToken  : async (emailConfirmationToken              , options) => {
+        useEmailConfirmationToken  : async (emailConfirmationToken              , options) => {
             // conditions:
             const hasEmailConfirmationToken = !!mEmailConfirmationToken && (mEmailConfirmationToken in prisma);
             if (!hasEmailConfirmationToken) return false;
@@ -954,7 +954,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // user roles:
-        getRoleByUserId              : async (userId                                       ) => {
+        getRoleByUserId            : async (userId                                       ) => {
             // conditions:
             const hasRole = !!mRole && (mRole in prisma);
             if (!hasRole) return null;
@@ -972,7 +972,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
             return user?.[mRole] ?? null;
         },
-        getRoleByUserEmail           : async (userEmail                                    ) => {
+        getRoleByUserEmail         : async (userEmail                                    ) => {
             // conditions:
             const hasRole = !!mRole && (mRole in prisma);
             if (!hasRole) return null;
