@@ -142,32 +142,44 @@ export interface AuthConfig {
 
 
 
-export interface CredentialsConfig {
-    FULLNAME_MIN_LENGTH      : number /* characters */
-    FULLNAME_MAX_LENGTH      : number /* characters */
-    
-    
-    
-    EMAIL_MIN_LENGTH         : number /* characters */
-    EMAIL_MAX_LENGTH         : number /* characters */
-    EMAIL_FORMAT             : RegExp
-    EMAIL_FORMAT_HINT        : React.ReactNode
-    
-    
-    
-    USERNAME_MIN_LENGTH      : number /* characters */
-    USERNAME_MAX_LENGTH      : number /* characters */
-    USERNAME_FORMAT          : RegExp
-    USERNAME_FORMAT_HINT     : React.ReactNode
-    USERNAME_PROHIBITED      : (string|RegExp)[]
-    USERNAME_PROHIBITED_HINT : React.ReactNode
-    
-    
-    
-    PASSWORD_MIN_LENGTH      : number /* characters */
-    PASSWORD_MAX_LENGTH      : number /* characters */
-    PASSWORD_HAS_UPPERCASE   : boolean
-    PASSWORD_HAS_LOWERCASE   : boolean
-    PASSWORD_PROHIBITED      : (string|RegExp)[]
-    PASSWORD_PROHIBITED_HINT : React.ReactNode
+export interface FieldLengthConfig {
+    minLength      : number
+    maxLength      : number
+}
+export interface FieldFormatConfig {
+    format         : RegExp
+    formatHint     : React.ReactNode
+}
+export interface FieldProhibitedConfig {
+    prohibited     : (string|RegExp)[]
+    prohibitedHint : React.ReactNode
+}
+export interface FieldCaseConfig {
+    hasUppercase   : boolean
+    hasLowercase   : boolean
+}
+export type FieldNameConfig =
+    & FieldLengthConfig
+export type FieldEmailConfig =
+    & FieldLengthConfig
+    & FieldFormatConfig
+export type FieldUsernameConfig =
+    & FieldLengthConfig
+    & FieldFormatConfig
+    & FieldProhibitedConfig
+export type FieldPasswordConfig =
+    & FieldLengthConfig
+    & FieldCaseConfig
+    & FieldProhibitedConfig
+export interface CredentialsConfigServer {
+    name     : FieldNameConfig
+    email    : FieldEmailConfig
+    username : FieldUsernameConfig
+    password : FieldPasswordConfig
+};
+export interface CredentialsConfigClient {
+    name     : FieldNameConfig
+    email    : FieldEmailConfig
+    username : Omit<FieldUsernameConfig, 'prohibited'>
+    password : Omit<FieldPasswordConfig, 'prohibited'>
 };

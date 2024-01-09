@@ -14,15 +14,15 @@ import {
     authConfig,
 }                           from '@/../auth.config.server'
 import {
-    credentialsConfig,
-}                           from '@/../credentials.config'
+    credentialsConfigServer,
+}                           from '@/../credentials.config.server'
 
 
 
 const authRouteHandler = createAuthRouteHandler({
     adapter           : PrismaAdapterWithCredentials(prisma),
     authConfig        : authConfig,
-    credentialsConfig : credentialsConfig,
+    credentialsConfig : credentialsConfigServer,
 })
 export {
     authRouteHandler as GET,

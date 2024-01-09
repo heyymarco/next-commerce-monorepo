@@ -74,7 +74,7 @@ import {
 // internals:
 import type {
     // types:
-    CredentialsConfig,
+    CredentialsConfigClient,
 }                           from '../../types.js'
 import {
     // utilities:
@@ -390,7 +390,7 @@ export const useSignInState = (): SignInState => {
 // react components:
 export interface SignInStateProps {
     // configs:
-    credentialsConfig    : CredentialsConfig
+    credentialsConfig    : CredentialsConfigClient
     
     
     
@@ -537,25 +537,37 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     
     
     // constraints:
-    const fullnameMinLength          = credentialsConfig.FULLNAME_MIN_LENGTH;
-    const fullnameMaxLength          = credentialsConfig.FULLNAME_MAX_LENGTH;
-    
-    const emailMinLength             = credentialsConfig.EMAIL_MIN_LENGTH;
-    const emailMaxLength             = credentialsConfig.EMAIL_MAX_LENGTH;
-    const emailFormat                = credentialsConfig.EMAIL_FORMAT;
-    const emailFormatHint            = credentialsConfig.EMAIL_FORMAT_HINT;
-    
-    const usernameMinLength          = credentialsConfig.USERNAME_MIN_LENGTH;
-    const usernameMaxLength          = credentialsConfig.USERNAME_MAX_LENGTH;
-    const usernameFormat             = credentialsConfig.USERNAME_FORMAT;
-    const usernameFormatHint         = credentialsConfig.USERNAME_FORMAT_HINT;
-    const usernameProhibitedHint     = credentialsConfig.USERNAME_PROHIBITED_HINT;
-    
-    const passwordMinLength          = credentialsConfig.PASSWORD_MIN_LENGTH;
-    const passwordMaxLength          = credentialsConfig.PASSWORD_MAX_LENGTH;
-    const passwordHasUppercase       = credentialsConfig.PASSWORD_HAS_UPPERCASE;
-    const passwordHasLowercase       = credentialsConfig.PASSWORD_HAS_LOWERCASE;
-    const passwordProhibitedHint     = credentialsConfig.PASSWORD_PROHIBITED_HINT;
+    const {
+        name     : {
+            minLength      : fullnameMinLength,
+            maxLength      : fullnameMaxLength,
+        },
+        email    : {
+            minLength      : emailMinLength,
+            maxLength      : emailMaxLength,
+            
+            format         : emailFormat,
+            formatHint     : emailFormatHint,
+        },
+        username : {
+            minLength      : usernameMinLength,
+            maxLength      : usernameMaxLength,
+            
+            format         : usernameFormat,
+            formatHint     : usernameFormatHint,
+            
+            prohibitedHint : usernameProhibitedHint,
+        },
+        password : {
+            minLength      : passwordMinLength,
+            maxLength      : passwordMaxLength,
+            
+            hasUppercase   : passwordHasUppercase,
+            hasLowercase   : passwordHasLowercase,
+            
+            prohibitedHint : passwordProhibitedHint,
+        },
+    } = credentialsConfig;
     
     
     

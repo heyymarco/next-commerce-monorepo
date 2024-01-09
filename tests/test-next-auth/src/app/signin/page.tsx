@@ -5,7 +5,7 @@ import { SignIn } from '@heymarco/next-auth'
 // import styles from './page.module.css'
 
 import { Container } from '@reusable-ui/components'      // a set of official Reusable-UI components
-import { credentialsConfig } from '@/../credentials.config'
+import { credentialsConfigClient } from '@/../credentials.config.client'
 import { loginProviders } from './loginProviders'
 
 
@@ -14,7 +14,7 @@ export default function Home() {
     return (
         <Container tag='main' theme='primary'>
             <SignIn
-                credentialsConfig={credentialsConfig}
+                credentialsConfig={credentialsConfigClient}
                 providers={loginProviders}
                 signUpEnable={false}
                 defaultCallbackUrl='/?welcome'
