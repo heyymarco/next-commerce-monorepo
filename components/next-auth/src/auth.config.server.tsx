@@ -45,17 +45,15 @@ import type {
     // types:
     AuthConfigServer,
 }                           from './types.js'
+import {
+    defaultAuthConfigShared,
+}                           from './auth.config.shared.js'
 
 
 
 export const defaultAuthConfigServer : AuthConfigServer = {
-    business                 : {
-        name                 : process.env.BUSINESS_NAME ?? '',
-        url                  : process.env.BUSINESS_URL  ?? '',
-    },
-    signUp                   : {
-        enabled              : true,
-    },
+    business                 : defaultAuthConfigShared.business,
+    signUp                   : defaultAuthConfigShared.signUp,
     signIn                   : {
         requireVerifiedEmail : true,
         failureMaxAttempts   : 5    /* times */,
@@ -63,7 +61,8 @@ export const defaultAuthConfigServer : AuthConfigServer = {
         path                 : '/auth/signin',
     },
     reset                    : {
-        enabled              : true,
+        ...defaultAuthConfigShared.reset,
+        
         throttle             : 0.08 /* hours */,
         maxAge               : 24   /* hours */,
     },

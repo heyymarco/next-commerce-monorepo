@@ -1,5 +1,5 @@
 // themes:
-import './theme.basics.config'
+import './theme.basics.config' // sync client-side-themes
 
 // react:
 import {
@@ -24,9 +24,11 @@ import FacebookProvider         from '@auth/core/providers/facebook'
 import InstagramProvider        from '@auth/core/providers/instagram'
 import TwitterProvider          from '@auth/core/providers/twitter'
 
+// heymarco:
 import type {
+    // types:
     AuthConfigServer,
-}                               from '@heymarco/next-auth/server'
+}                               from '@heymarco/next-auth'
 import {
     styles,
     
@@ -36,16 +38,16 @@ import {
     ResetPassword,
 }                               from '@heymarco/next-auth/templates'
 
+// internals:
+import {
+    authConfigShared,
+}                               from './auth.config.shared.js'
+
 
 
 export const authConfigServer : AuthConfigServer = {
-    business                 : {
-        name                 : process.env.BUSINESS_NAME ?? '',
-        url                  : process.env.BUSINESS_URL  ?? '',
-    },
-    signUp                   : {
-        enabled              : true,
-    },
+    business                 : authConfigShared.business,
+    signUp                   : authConfigShared.signUp,
     signIn                   : {
         requireVerifiedEmail : true,
         failureMaxAttempts   : 5    /* times */,
@@ -53,7 +55,8 @@ export const authConfigServer : AuthConfigServer = {
         path                 : '/signin',
     },
     reset                    : {
-        enabled              : true,
+        ...authConfigShared.reset,
+        
         throttle             : 0.08 /* hours */,
         maxAge               : 24   /* hours */,
     },

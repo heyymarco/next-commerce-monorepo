@@ -140,6 +140,12 @@ export interface AuthConfigServer {
         reset                : EmailConfig
     }
 }
+export interface AuthConfigShared {
+    business                 : BusinessConfig
+    signUp                   : Pick<SignUpConfig, 'enabled'>
+    reset                    : Pick<ResetConfig , 'enabled'>
+}
+export interface AuthConfigClient extends AuthConfigShared {}
 
 
 
