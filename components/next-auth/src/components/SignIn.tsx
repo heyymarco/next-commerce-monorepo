@@ -78,6 +78,10 @@ import {
 }                           from './TabReset.js'
 
 // internals:
+import type {
+    // types:
+    AuthConfigClient,
+}                           from '../types.js'
 import {
     SignInState,
     SignInStateProps,
@@ -114,7 +118,7 @@ export interface SignInProps<TElement extends Element = HTMLElement>
         TabResetProps
 {
     // auths:
-    signUpEnable                 ?: boolean
+    authConfigClient              : AuthConfigClient
     
     
     
@@ -148,21 +152,21 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     // rest props:
     const {
         // configs:
-        credentialsConfigClient : _credentialsConfigClient,   // remove
+        credentialsConfigClient : _credentialsConfigClient, // remove
         
         
         
         // auths:
-        signUpEnable            = true,
+        authConfigClient,
         providers,
-        resolveProviderName     : _resolveProviderName, // remove
-        basePath                : _basePath,            // remove
+        resolveProviderName     : _resolveProviderName,     // remove
+        basePath                : _basePath,                // remove
         
         
         
         // pages:
-        homepagePath            : _homepagePath,        // remove
-        defaultCallbackUrl      : _defaultCallbackUrl,  // remove
+        homepagePath            : _homepagePath,            // remove
+        defaultCallbackUrl      : _defaultCallbackUrl,      // remove
         
         
         
@@ -228,6 +232,15 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         gotoRecoverButtonComponent  = (<ButtonIcon icon='help_center' buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
         gotoHomeButtonComponent     = (<ButtonIcon icon='home'        buttonStyle='link' size='sm' />                    as React.ReactComponentElement<any, ButtonProps>),
     ...restBasicProps} = props;
+    
+    const {
+        signUp : {
+            enabled : signUpEnabled,
+        },
+        reset  : {
+            enabled : resetEnabled,
+        },
+    } = authConfigClient;
     
     
     
@@ -452,12 +465,27 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
             
             // states:
             expandedTabIndex : tabComponent.props.expandedTabIndex ?? ((): number => {
+                /*
+                    The [signUp] tab is located *before* [signIn] tab,
+                    so the existance *shifts* the tabIndex of [signIn] [recover] [reset] tabs.
+                    
+                    The [recover] [reset] tabs are located *after* [signIn] tab,
+                    so the existance doesn't change the tabIndex of [signUp] [signIn] tabs.
+                    
+                    without signUp:
+                    [signIn] [recover] [reset]
+                        0        1        2
+                    
+                    with signUp:
+                    [signUp] [signIn] [recover] [reset]
+                        0        1        2        3
+                */
                 switch (section) {
                     case 'signUp' : return 0;
-                    case 'recover': return 1 + (+signUpEnable);
-                    case 'reset'  : return 2 + (+signUpEnable);
+                    case 'recover': return 1 + (+signUpEnabled);
+                    case 'reset'  : return 2 + (+signUpEnabled);
                     case 'signIn' :
-                    default       : return 0 + (+signUpEnable);
+                    default       : return 0 + (+signUpEnabled);
                 } // switch
             })(),
             
@@ -486,7 +514,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         // children:
         tabComponent.props.children ?? [
-            (!!signUpEnable && React.cloneElement<TabPanelProps<Element>>(signUpTabPanelComponent,
+            (!!signUpEnabled && React.cloneElement<TabPanelProps<Element>>(signUpTabPanelComponent,
                 // props:
                 {
                     // identifiers:
@@ -575,11 +603,11 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     
                     emailValidationModalStatusComponent={emailValidationModalStatusComponent}
                 />,
-                (!!signUpEnable ? <SwitchSignUpButton /> : <VisuallyHidden className='switchSignUp visually-hidden' />),
-                <GotoRecoverButton />,
+                (!!signUpEnabled ? <SwitchSignUpButton /> : <VisuallyHidden className='switchSignUp visually-hidden' />),
+                (!!resetEnabled  ? <GotoRecoverButton  /> : <VisuallyHidden className='gotoRecover visually-hidden'  />),
                 <GotoHomeButton />,
             ),
-            React.cloneElement<TabPanelProps<Element>>(recoverTabPanelComponent,
+            (!!resetEnabled && React.cloneElement<TabPanelProps<Element>>(recoverTabPanelComponent,
                 // props:
                 {
                     // identifiers:
@@ -603,8 +631,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     sendRecoverLinkButtonComponent={sendRecoverLinkButtonComponent}
                 />,
                 <GotoSignInButton />,
-            ),
-            React.cloneElement<TabPanelProps<Element>>(resetTabPanelComponent,
+            )),
+            (!!resetEnabled && React.cloneElement<TabPanelProps<Element>>(resetTabPanelComponent,
                 // props:
                 {
                     // identifiers:
@@ -642,7 +670,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     tokenValidationModalStatusComponent={tokenValidationModalStatusComponent}
                 />,
                 <GotoSignInButton />,
-            ),
+            )),
         ],
     );
 };
