@@ -5,16 +5,17 @@ import type {
 }                           from './types.js'
 import {
     // types:
-    defaultCredentialsConfigClient,
-}                           from './credentials.config.client.js'
+    defaultCredentialsConfigShared,
+}                           from './credentials.config.shared.js'
 
 
 
 export const defaultCredentialsConfigServer : CredentialsConfigServer = {
-    name     : defaultCredentialsConfigClient.name,
-    email    : defaultCredentialsConfigClient.email,
+    name     : defaultCredentialsConfigShared.name,
+    email    : defaultCredentialsConfigShared.email,
     username : {
-        ...defaultCredentialsConfigClient.username,
+        ...defaultCredentialsConfigShared.username,
+        
         prohibited     : [
             /admin/i,
             /marketing/i,
@@ -37,7 +38,8 @@ export const defaultCredentialsConfigServer : CredentialsConfigServer = {
         ],
     },
     password : {
-        ...defaultCredentialsConfigClient.password,
+        ...defaultCredentialsConfigShared.password,
+        
         prohibited     : [
             'qweasd',
             'qweasdzxc',

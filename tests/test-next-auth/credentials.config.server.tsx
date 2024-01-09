@@ -1,18 +1,23 @@
+// heymarco:
 import type {
+    // types:
     CredentialsConfigServer,
 }                           from '@heymarco/next-auth'
+
+// internals:
 import {
     // types:
-    credentialsConfigClient,
-}                           from './credentials.config.client.js'
+    credentialsConfigShared,
+}                           from './credentials.config.shared.js'
 
 
 
 export const credentialsConfigServer : CredentialsConfigServer = {
-    name     : credentialsConfigClient.name,
-    email    : credentialsConfigClient.email,
+    name     : credentialsConfigShared.name,
+    email    : credentialsConfigShared.email,
     username : {
-        ...credentialsConfigClient.username,
+        ...credentialsConfigShared.username,
+        
         prohibited     : [
             /admin/i,
             /marketing/i,
@@ -35,7 +40,8 @@ export const credentialsConfigServer : CredentialsConfigServer = {
         ],
     },
     password : {
-        ...credentialsConfigClient.password,
+        ...credentialsConfigShared.password,
+        
         prohibited     : [
             'qweasd',
             'qweasdzxc',

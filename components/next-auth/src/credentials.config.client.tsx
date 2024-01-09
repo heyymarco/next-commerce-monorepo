@@ -9,36 +9,29 @@ import type {
     // types:
     CredentialsConfigClient,
 }                           from './types.js'
+import {
+    // types:
+    defaultCredentialsConfigShared,
+}                           from './credentials.config.shared.js'
 
 
 
 export const defaultCredentialsConfigClient : CredentialsConfigClient = {
-    name     : {
-        minLength      : 2,
-        maxLength      : 30,
-    },
+    name     : defaultCredentialsConfigShared.name,
     email    : {
-        minLength      : 5,
-        maxLength      : 50,
+        ...defaultCredentialsConfigShared.email,
         
-        format         : /^[a-zA-Z0-9-_.!#$%&'*+/=?^`{|}~]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/,
         formatHint     : <>Must be a common email format.</>,
     },
     username : {
-        minLength      : 3,
-        maxLength      : 20,
+        ...defaultCredentialsConfigShared.username,
         
-        format         : /^[a-z][a-z0-9-_]*$/i,
         formatHint     : <>Begins with a letter followed by letters, numbers, underscores, or hyphens.</>,
         
         prohibitedHint : <>Must not contain prohibited words.</>,
     },
     password : {
-        minLength      : 5,
-        maxLength      : 30,
-        
-        hasUppercase   : true,
-        hasLowercase   : false,
+        ...defaultCredentialsConfigShared.password,
         
         prohibitedHint : <>Must not using common passwords.</>,
     },

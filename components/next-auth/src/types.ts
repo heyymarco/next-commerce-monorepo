@@ -183,3 +183,9 @@ export interface CredentialsConfigClient {
     username : Omit<FieldUsernameConfig, 'prohibited'>
     password : Omit<FieldPasswordConfig, 'prohibited'>
 };
+export interface CredentialsConfigShared {
+    name     : FieldNameConfig
+    email    : Omit<FieldEmailConfig   , 'formatHint'>
+    username : Omit<FieldUsernameConfig, 'prohibited'|'prohibitedHint'|'formatHint'>
+    password : Omit<FieldPasswordConfig, 'prohibited'|'prohibitedHint'>
+};
