@@ -1199,13 +1199,19 @@ If the problem still persists, please contact our technical support.`,
     
     
     // built in handlers:
-    const nextAuthHandler                        = async (req: Request|NextApiRequest, contextOrRes: NextAuthRouteContext|NextApiResponse, testIsCredentialsRequest: (() => boolean)): Promise<any> => {
-        const isUpdatingCookie : boolean     = (session.strategy === 'database') && testIsCredentialsRequest();
+    const nextAuthHandler                        = async (req: Request, context: NextAuthRouteContext): Promise<Response> => {
+        const isUpdatingCookie : boolean     = (session.strategy === 'database') && (
+            (req.method === 'POST')
+            &&
+            context.params.nextauth.includes('callback')
+            &&
+            context.params.nextauth.includes('credentials')
+        );
         let sessionCookie      : string|null = null;
         
         
         
-        const response = await NextAuth(req as any, contextOrRes as any, {
+        const response = await NextAuth(req as NextRequest, context, {
             ...authOptions,
             callbacks : {
                 ...authOptions.callbacks,
@@ -1236,7 +1242,7 @@ If the problem still persists, please contact our technical support.`,
                         const isSecureCookie = process.env.NEXTAUTH_URL?.startsWith?.('https://') ?? !!process.env.VERCEL;
                         const cookieName     = `${isSecureCookie ? '__Secure-' : ''}next-auth.session-token`;
                         // create the sessionToken record into cookie:
-                        // const cookies = new Cookies(req as any, contextOrRes as any);
+                        // const cookies = new Cookies(req, context);
                         // cookies.set(cookieName, sessionToken, {
                         //     path         : '/',
                         //     expires      : sessionExpiry,
@@ -1276,12 +1282,7 @@ If the problem still persists, please contact our technical support.`,
         
         
         if (!!sessionCookie) {
-            if (!(contextOrRes as any).params) {
-                (contextOrRes as NextApiResponse).appendHeader('Set-Cookie', sessionCookie);
-            }
-            else if (response instanceof Response) {
-                response.headers.append('Set-Cookie', sessionCookie);
-            } // if
+            response.headers.append('Set-Cookie', sessionCookie);
         } // if
         
         
@@ -1292,7 +1293,7 @@ If the problem still persists, please contact our technical support.`,
     
     
     // merged handlers:
-    const mergedRouteHandler                     = async (req: Request, context: NextAuthRouteContext, testIsCredentialsRequest: (() => boolean)): Promise<Response> => {
+    const mergedRouteHandler                     = async (req: Request, context: NextAuthRouteContext): Promise<Response> => {
         return (
             // reset password:
             await requestPasswordResetRouteHandler(req, context, resetPasswordPath)
@@ -1322,7 +1323,7 @@ If the problem still persists, please contact our technical support.`,
             ||
             
             // built in handlers:
-            await nextAuthHandler(req, context, testIsCredentialsRequest)
+            await nextAuthHandler(req, context)
         );
     };
     
@@ -1349,15 +1350,7 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
         
         
         
-        return await authHandler(req, context, /* testIsCredentialsRequest: */() =>
-            (req.method === 'POST')
-            &&
-            !!context.params.nextauth
-            &&
-            context.params.nextauth.includes('callback')
-            &&
-            context.params.nextauth.includes('credentials')
-        );
+        return await authHandler(req, context);
     };
     authRouteHandler.authOptions = authOptions;
     return authRouteHandler;
@@ -1374,11 +1367,11 @@ export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
     
     const nextApiWrapperHandler = async (req: NextApiRequest, res: NextApiResponse, handler: (request: Request, context: NextAuthRouteContext) => Promise<false|Response>): Promise<boolean> => {
         const response = await handler(
-            new Request(new URL(req.url ?? '/', 'https://localhost').href, {
+            /* request: */ new Request(new URL(req.url ?? '/', 'https://localhost').href, {
                 method : req.method,
                 body   : /^(POST|PUT|PATCH)$/i.test(req.method ?? '') ? JSON.stringify(req.body) : null,
             }),
-            {
+            /* context: */ {
                 params : {
                     nextauth : req.query.nextauth as string[],
                 },
@@ -1401,15 +1394,7 @@ export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
         
         
         await nextApiWrapperHandler(req, res, (request, context) =>
-            authHandler(request, context, /* testIsCredentialsRequest: */() =>
-                (req.method === 'POST')
-                &&
-                !!req.query.nextauth
-                &&
-                req.query.nextauth.includes('callback')
-                &&
-                req.query.nextauth.includes('credentials')
-            )
+            authHandler(request, context)
         );
     };
     authApiHandler.authOptions = authOptions;
