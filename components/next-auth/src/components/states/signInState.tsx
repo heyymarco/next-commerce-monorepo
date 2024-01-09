@@ -1394,7 +1394,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         else { // success
             // report the success:
             showMessageNotification(
-                <p><Busy />&nbsp;You are being redirected to <strong>{resolveProviderName(providerType)} sign in page</strong>. Please wait...</p>
+                <p><Busy />&nbsp;Authenticating...</p>
             );
         } // if
     });
