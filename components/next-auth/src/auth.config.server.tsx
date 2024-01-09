@@ -63,6 +63,7 @@ export const defaultAuthConfigServer : AuthConfigServer = {
         path                 : '/auth/signin',
     },
     reset                    : {
+        enabled              : true,
         throttle             : 0.08 /* hours */,
         maxAge               : 24   /* hours */,
     },

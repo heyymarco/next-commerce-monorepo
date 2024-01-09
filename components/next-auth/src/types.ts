@@ -103,6 +103,7 @@ export interface SignInConfig {
     path                     : string
 }
 export interface ResetConfig {
+    enabled                  : boolean
     throttle                 : number /* hours */
     maxAge                   : number /* hours */
 }

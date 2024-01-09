@@ -176,6 +176,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
             path                 : signInPath,
         },
         reset : {
+            enabled              : resetEnabled,
             throttle             : resetThrottle,
             maxAge               : resetMaxAge,
         },
@@ -433,6 +434,11 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     //#region custom handlers
     // general_implementation custom handlers:
     const requestPasswordResetRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!resetEnabled)                         return false; // ignore
+        
+        
+        
         // filters the request type:
         if (req.method !== 'POST')                 return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -558,6 +564,11 @@ If the problem still persists, please contact our technical support.`,
         } // try
     };
     const validatePasswordResetRouteHandler      = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!resetEnabled)                         return false; // ignore
+        
+        
+        
         // filters the request type:
         if (req.method !== 'GET')                  return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -616,6 +627,11 @@ If the problem still persists, please contact our technical support.`,
         } // try
     };
     const applyPasswordResetRouteHandler         = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!resetEnabled)                         return false; // ignore
+        
+        
+        
         // filters the request type:
         if (req.method !== 'PATCH')                return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
