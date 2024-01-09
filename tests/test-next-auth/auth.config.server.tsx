@@ -25,7 +25,7 @@ import InstagramProvider        from '@auth/core/providers/instagram'
 import TwitterProvider          from '@auth/core/providers/twitter'
 
 import type {
-    AuthConfig,
+    AuthConfigServer,
 }                               from '@heymarco/next-auth/server'
 import {
     styles,
@@ -38,7 +38,7 @@ import {
 
 
 
-export const authConfig : AuthConfig = {
+export const authConfigServer : AuthConfigServer = {
     business                 : {
         name                 : process.env.BUSINESS_NAME ?? '',
         url                  : process.env.BUSINESS_URL  ?? '',

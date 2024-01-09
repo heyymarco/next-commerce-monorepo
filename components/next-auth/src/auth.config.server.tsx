@@ -43,12 +43,12 @@ import {
 // internals:
 import type {
     // types:
-    AuthConfig,
+    AuthConfigServer,
 }                           from './types.js'
 
 
 
-export const defaultAuthConfig : AuthConfig = {
+export const defaultAuthConfigServer : AuthConfigServer = {
     business                 : {
         name                 : process.env.BUSINESS_NAME ?? '',
         url                  : process.env.BUSINESS_URL  ?? '',

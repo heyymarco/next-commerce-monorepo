@@ -79,7 +79,7 @@ import {
 // internals:
 import type {
     // types:
-    AuthConfig,
+    AuthConfigServer,
     CredentialsConfigServer,
     
     
@@ -100,11 +100,6 @@ import {
     passwordValidationPath as defaultPasswordValidationPath,
     emailConfirmationPath  as defaultEmailConfirmationPath,
 }                           from './api-paths.js'
-
-// configs:
-import {
-    defaultAuthConfig,
-}                           from './auth.config.server.js'
 
 
 
@@ -150,7 +145,7 @@ const CredentialsProvider : typeof CredentialsProviderFix = (
 // general_implementation auth handlers:
 export interface CreateAuthHandlerOptions {
     adapter            : AdapterWithCredentials
-    authConfig         : AuthConfig
+    authConfigServer   : AuthConfigServer
     credentialsConfig  : CredentialsConfigServer
     callbacks         ?: NextAuthOptions['callbacks']
 }
@@ -161,65 +156,65 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     // options:
     const {
         adapter,
-        authConfig = defaultAuthConfig,
+        authConfigServer,
         credentialsConfig,
         callbacks,
     } = options;
     
     const {
         business : {
-            name                 : businessName               = defaultAuthConfig.business.name,
-            url                  : businessUrl                = defaultAuthConfig.business.url,
+            name                 : businessName,
+            url                  : businessUrl,
         },
         signUp : {
-            enabled              : signUpEnabled              = defaultAuthConfig.signUp.enabled,
+            enabled              : signUpEnabled,
         },
         signIn : {
-            requireVerifiedEmail : signInRequireVerifiedEmail = defaultAuthConfig.signIn.requireVerifiedEmail,
-            failureMaxAttempts   : signInFailureMaxAttempts   = defaultAuthConfig.signIn.failureMaxAttempts,
-            failureLockDuration  : signInFailureLockDuration  = defaultAuthConfig.signIn.failureLockDuration,
-            path                 : signInPath                 = defaultAuthConfig.signIn.path,
+            requireVerifiedEmail : signInRequireVerifiedEmail,
+            failureMaxAttempts   : signInFailureMaxAttempts,
+            failureLockDuration  : signInFailureLockDuration,
+            path                 : signInPath,
         },
         reset : {
-            throttle             : resetThrottle              = defaultAuthConfig.reset.throttle,
-            maxAge               : resetMaxAge                = defaultAuthConfig.reset.maxAge,
+            throttle             : resetThrottle,
+            maxAge               : resetMaxAge,
         },
         session : {
-            maxAge               : sessionMaxAge              = defaultAuthConfig.session.maxAge,
-            updateAge            : sessionUpdateAge           = defaultAuthConfig.session.updateAge,
+            maxAge               : sessionMaxAge,
+            updateAge            : sessionUpdateAge,
         },
         
         
         
-        oAuthProviders                                        = defaultAuthConfig.oAuthProviders,
+        oAuthProviders,
         
         
         
         emails : {
             signUp               : {
-                host             : emailsSignUpHost           = defaultAuthConfig.emails.signUp.host,
-                port             : emailsSignUpPort           = defaultAuthConfig.emails.signUp.port,
-                secure           : emailsSignUpSecure         = defaultAuthConfig.emails.signUp.secure,
-                username         : emailsSignUpUsername       = defaultAuthConfig.emails.signUp.username,
-                password         : emailsSignUpPassword       = defaultAuthConfig.emails.signUp.password,
+                host             : emailsSignUpHost,
+                port             : emailsSignUpPort,
+                secure           : emailsSignUpSecure,
+                username         : emailsSignUpUsername,
+                password         : emailsSignUpPassword,
                 
-                from             : emailsSignUpFrom           = defaultAuthConfig.emails.signUp.from,
-                subject          : emailsSignUpSubject        = defaultAuthConfig.emails.signUp.subject,
-                message          : emailsSignUpMessage        = defaultAuthConfig.emails.signUp.message,
+                from             : emailsSignUpFrom,
+                subject          : emailsSignUpSubject,
+                message          : emailsSignUpMessage,
             },
             reset                : {
-                host             : emailsResetHost            = defaultAuthConfig.emails.reset.host,
-                port             : emailsResetPort            = defaultAuthConfig.emails.reset.port,
-                secure           : emailsResetSecure          = defaultAuthConfig.emails.reset.secure,
-                username         : emailsResetUsername        = defaultAuthConfig.emails.reset.username,
-                password         : emailsResetPassword        = defaultAuthConfig.emails.reset.password,
+                host             : emailsResetHost,
+                port             : emailsResetPort,
+                secure           : emailsResetSecure,
+                username         : emailsResetUsername,
+                password         : emailsResetPassword,
                 
-                from             : emailsResetFrom            = defaultAuthConfig.emails.reset.from,
-                subject          : emailsResetSubject         = defaultAuthConfig.emails.reset.subject,
-                message          : emailsResetMessage         = defaultAuthConfig.emails.reset.message,
+                from             : emailsResetFrom,
+                subject          : emailsResetSubject,
+                message          : emailsResetMessage,
             },
         },
-    } = authConfig;
+    } = authConfigServer;
     
     
     

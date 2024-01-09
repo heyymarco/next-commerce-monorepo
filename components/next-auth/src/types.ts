@@ -121,7 +121,7 @@ export interface EmailConfig {
     subject                  : React.ReactNode
     message                  : React.ReactNode
 }
-export interface AuthConfig {
+export interface AuthConfigServer {
     business                 : BusinessConfig
     signUp                   : SignUpConfig
     signIn                   : SignInConfig
