@@ -433,6 +433,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     //#region custom handlers
     // general_implementation custom handlers:
+    // reset password:
     const requestPasswordResetRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!resetEnabled)                         return false; // ignore
@@ -714,7 +715,14 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
+    
+    // registrations:
     const checkEmailAvailabilityRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                            return false; // ignore
+        
+        
+        
         // filters the request type:
         if (path) {
             if (req.method !== 'GET')                  return false; // ignore
@@ -779,6 +787,11 @@ If the problem still persists, please contact our technical support.`,
         } // try
     };
     const checkUsernameAvailabilityRouteHandler  = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                            return false; // ignore
+        
+        
+        
         // filters the request type:
         if (path) {
             if (req.method !== 'GET')                  return false; // ignore
@@ -843,6 +856,11 @@ If the problem still persists, please contact our technical support.`,
         } // try
     };
     const checkUsernameNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                            return false; // ignore
+        
+        
+        
         // filters the request type:
         if (path) {
             if (req.method !== 'PUT')                  return false; // ignore
@@ -903,6 +921,11 @@ If the problem still persists, please contact our technical support.`,
         }); // handled with success
     };
     const checkPasswordNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                            return false; // ignore
+        
+        
+        
         // filters the request type:
         if (path) {
             if (req.method !== 'PUT')                  return false; // ignore
@@ -968,6 +991,11 @@ If the problem still persists, please contact our technical support.`,
         }); // handled with success
     };
     const signUpRouteHandler                     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                        return false; // ignore
+        
+        
+        
         // filters the request type:
         if (req.method !== 'POST')                 return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
@@ -1107,6 +1135,11 @@ If the problem still persists, please contact our technical support.`,
         } // try
     };
     const applyEmailConfirmationRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                        return false; // ignore
+        
+        
+        
         // filters the request type:
         if (req.method !== 'PATCH')                return false; // ignore
         if (context.params.nextauth?.[0] !== path) return false; // ignore
