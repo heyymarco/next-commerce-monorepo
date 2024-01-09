@@ -680,8 +680,8 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 400 }); // handled with error
         } // if
         
-        const validation4 = await checkPasswordNotProhibitedRouteHandler(req, context, '');
-        if (validation4 && !validation4.ok) return validation4;
+        const validationPasswordNotProhibited = await checkPasswordNotProhibitedRouteHandler(req, context, '');
+        if (validationPasswordNotProhibited && !validationPasswordNotProhibited.ok) return validationPasswordNotProhibited;
         
         
         
@@ -717,75 +717,6 @@ If the problem still persists, please contact our technical support.`,
     };
     
     // registrations:
-    const checkEmailAvailabilityRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
-        // conditions:
-        if (!signUpEnabled)                            return false; // ignore
-        
-        
-        
-        // filters the request type:
-        if (path) {
-            if (req.method !== 'GET')                  return false; // ignore
-            if (context.params.nextauth?.[0] !== path) return false; // ignore
-        } // if
-        
-        
-        
-        // validate the request parameter(s):
-        const {
-            email,
-        } = await getRequestData(req);
-        if ((typeof(email) !== 'string') || !email) {
-            return NextResponse.json({
-                error: 'The required email is not provided.',
-            }, { status: 400 }); // handled with error
-        } // if
-        if ((typeof(emailMinLength) === 'number') && Number.isFinite(emailMinLength) && (email.length < emailMinLength)) {
-            return NextResponse.json({
-                error: `The email is too short. Minimum is ${emailMinLength} characters.`,
-            }, { status: 400 }); // handled with error
-        } // if
-        if ((typeof(emailMaxLength) === 'number') && Number.isFinite(emailMaxLength) && (email.length > emailMaxLength)) {
-            return NextResponse.json({
-                error: `The email is too long. Maximum is ${emailMaxLength} characters.`,
-            }, { status: 400 }); // handled with error
-        } // if
-        if (!email.match(emailFormat)) {
-            return NextResponse.json({
-                error: `The email is not well formatted.`,
-            }, { status: 400 }); // handled with error
-        } // if
-        
-        
-        
-        try {
-            const result = await adapter.checkEmailAvailability(email);
-            if (!result) {
-                return NextResponse.json({
-                    error: `The email "${email}" is already taken.`,
-                }, { status: 409 }); // handled with error
-            } // if
-            
-            
-            
-            return NextResponse.json({
-                ok       : true,
-                message  : `The email "${email}" can be used.`,
-            }); // handled with success
-        }
-        catch (error: any) {
-            return NextResponse.json({
-                error:
-`Oops, there was an error while checking email availability.
-
-There was a problem on our server.
-The server may be busy or currently under maintenance.
-
-Please try again in a few minutes.
-If the problem still persists, please contact our technical support.`,
-            }, { status: 500 }); // handled with error
-        } // try
-    };
     const checkUsernameAvailabilityRouteHandler  = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!signUpEnabled)                            return false; // ignore
@@ -846,6 +777,75 @@ If the problem still persists, please contact our technical support.`,
             return NextResponse.json({
                 error:
 `Oops, there was an error while checking username availability.
+
+There was a problem on our server.
+The server may be busy or currently under maintenance.
+
+Please try again in a few minutes.
+If the problem still persists, please contact our technical support.`,
+            }, { status: 500 }); // handled with error
+        } // try
+    };
+    const checkEmailAvailabilityRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+        // conditions:
+        if (!signUpEnabled)                            return false; // ignore
+        
+        
+        
+        // filters the request type:
+        if (path) {
+            if (req.method !== 'GET')                  return false; // ignore
+            if (context.params.nextauth?.[0] !== path) return false; // ignore
+        } // if
+        
+        
+        
+        // validate the request parameter(s):
+        const {
+            email,
+        } = await getRequestData(req);
+        if ((typeof(email) !== 'string') || !email) {
+            return NextResponse.json({
+                error: 'The required email is not provided.',
+            }, { status: 400 }); // handled with error
+        } // if
+        if ((typeof(emailMinLength) === 'number') && Number.isFinite(emailMinLength) && (email.length < emailMinLength)) {
+            return NextResponse.json({
+                error: `The email is too short. Minimum is ${emailMinLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        if ((typeof(emailMaxLength) === 'number') && Number.isFinite(emailMaxLength) && (email.length > emailMaxLength)) {
+            return NextResponse.json({
+                error: `The email is too long. Maximum is ${emailMaxLength} characters.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        if (!email.match(emailFormat)) {
+            return NextResponse.json({
+                error: `The email is not well formatted.`,
+            }, { status: 400 }); // handled with error
+        } // if
+        
+        
+        
+        try {
+            const result = await adapter.checkEmailAvailability(email);
+            if (!result) {
+                return NextResponse.json({
+                    error: `The email "${email}" is already taken.`,
+                }, { status: 409 }); // handled with error
+            } // if
+            
+            
+            
+            return NextResponse.json({
+                ok       : true,
+                message  : `The email "${email}" can be used.`,
+            }); // handled with success
+        }
+        catch (error: any) {
+            return NextResponse.json({
+                error:
+`Oops, there was an error while checking email availability.
 
 There was a problem on our server.
 The server may be busy or currently under maintenance.
@@ -1022,17 +1022,17 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 400 }); // handled with error
         } // if
         
-        const validation1 = await checkEmailAvailabilityRouteHandler(req, context, '');
-        if (validation1 && !validation1.ok) return validation1;
+        const validationUsernameAvailability  = await checkUsernameAvailabilityRouteHandler(req, context, '');
+        if (validationUsernameAvailability  && !validationUsernameAvailability.ok ) return validationUsernameAvailability;
         
-        const validation2 = await checkUsernameAvailabilityRouteHandler(req, context, '');
-        if (validation2 && !validation2.ok) return validation2;
+        const validationEmailAvailability     = await checkEmailAvailabilityRouteHandler(req, context, '');
+        if (validationEmailAvailability     && !validationEmailAvailability.ok    ) return validationEmailAvailability;
         
-        const validation3 = await checkUsernameNotProhibitedRouteHandler(req, context, '');
-        if (validation3 && !validation3.ok) return validation3;
+        const validationUsernameNotProhibited = await checkUsernameNotProhibitedRouteHandler(req, context, '');
+        if (validationUsernameNotProhibited && !validationUsernameNotProhibited.ok) return validationUsernameNotProhibited;
         
-        const validation4 = await checkPasswordNotProhibitedRouteHandler(req, context, '');
-        if (validation4 && !validation4.ok) return validation4;
+        const validationPasswordNotProhibited = await checkPasswordNotProhibitedRouteHandler(req, context, '');
+        if (validationPasswordNotProhibited && !validationPasswordNotProhibited.ok) return validationPasswordNotProhibited;
         
         const {
             fullname,
@@ -1134,6 +1134,8 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
+    
+    // email verification:
     const applyEmailConfirmationRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!signUpEnabled)                        return false; // ignore
@@ -1217,22 +1219,29 @@ If the problem still persists, please contact our technical support.`,
         
         
         return (
+            // reset password:
             await requestPasswordResetRouteHandler(req, context, resetPasswordPath)
             ||
             await validatePasswordResetRouteHandler(req, context, resetPasswordPath)
             ||
             await applyPasswordResetRouteHandler(req, context, resetPasswordPath)
+            
+            ||
+            
+            // registrations:
+            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
             ||
             await checkEmailAvailabilityRouteHandler(req, context, emailValidationPath)
-            ||
-            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
             ||
             await checkUsernameNotProhibitedRouteHandler(req, context, usernameValidationPath)
             ||
             await checkPasswordNotProhibitedRouteHandler(req, context, passwordValidationPath)
             ||
             await signUpRouteHandler(req, context, signUpPath)
+            
             ||
+            
+            // email verification:
             await applyEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
         );
     };

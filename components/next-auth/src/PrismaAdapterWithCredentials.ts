@@ -100,12 +100,6 @@ export interface AdapterWithCredentials
     
     
     
-    // user roles:
-    getRoleByUserId              : (userId                 : string                                                                                  ) => Awaitable<AdapterRole|null>
-    getRoleByUserEmail           : (userEmail              : string                                                                                  ) => Awaitable<AdapterRole|null>
-    
-    
-    
     // registrations:
     checkUsernameAvailability    : (username               : string                                                                                  ) => Awaitable<boolean>
     checkEmailAvailability       : (email                  : string                                                                                  ) => Awaitable<boolean>
@@ -116,6 +110,12 @@ export interface AdapterWithCredentials
     // email verification:
     markUserEmailAsVerified      : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions    ) => Awaitable<void>
     applyEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: ApplyEmailConfirmationTokenOptions) => Awaitable<boolean>
+    
+    
+    
+    // user roles:
+    getRoleByUserId              : (userId                 : string                                                                                  ) => Awaitable<AdapterRole|null>
+    getRoleByUserEmail           : (userEmail              : string                                                                                  ) => Awaitable<AdapterRole|null>
 }
 export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prisma: TPrisma, options?: ModelOptions<TPrisma>): AdapterWithCredentials => {
     // options:
@@ -718,51 +718,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         
-        // user roles:
-        getRoleByUserId              : async (userId                                       ) => {
-            // conditions:
-            const hasRole = !!mRole && (mRole in prisma);
-            if (!hasRole) return null;
-            
-            
-            
-            // database query:
-            const user = await (prisma[mUser] as any).findUnique({
-                where  : {
-                    id : userId,
-                },
-                select : {
-                    [mRole] : true,
-                },
-            });
-            return user?.[mRole] ?? null;
-        },
-        getRoleByUserEmail           : async (userEmail                                    ) => {
-            // conditions:
-            const hasRole = !!mRole && (mRole in prisma);
-            if (!hasRole) return null;
-            
-            
-            
-            // normalizations:
-            userEmail = userEmail.toLowerCase();
-            
-            
-            
-            // database query:
-            const user = await (prisma[mUser] as any).findUnique({
-                where  : {
-                    email : userEmail,
-                },
-                select : {
-                    [mRole] : true,
-                },
-            });
-            return user?.[mRole] ?? null;
-        },
-        
-        
-        
         // registrations:
         checkUsernameAvailability    : async (username                                     ) => {
             // normalizations:
@@ -994,6 +949,51 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // report the success:
                 return true;
             });
+        },
+        
+        
+        
+        // user roles:
+        getRoleByUserId              : async (userId                                       ) => {
+            // conditions:
+            const hasRole = !!mRole && (mRole in prisma);
+            if (!hasRole) return null;
+            
+            
+            
+            // database query:
+            const user = await (prisma[mUser] as any).findUnique({
+                where  : {
+                    id : userId,
+                },
+                select : {
+                    [mRole] : true,
+                },
+            });
+            return user?.[mRole] ?? null;
+        },
+        getRoleByUserEmail           : async (userEmail                                    ) => {
+            // conditions:
+            const hasRole = !!mRole && (mRole in prisma);
+            if (!hasRole) return null;
+            
+            
+            
+            // normalizations:
+            userEmail = userEmail.toLowerCase();
+            
+            
+            
+            // database query:
+            const user = await (prisma[mUser] as any).findUnique({
+                where  : {
+                    email : userEmail,
+                },
+                select : {
+                    [mRole] : true,
+                },
+            });
+            return user?.[mRole] ?? null;
         },
     };
 };
