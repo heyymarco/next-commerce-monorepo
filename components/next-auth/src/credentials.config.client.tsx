@@ -10,7 +10,6 @@ import type {
     CredentialsConfigClient,
 }                           from './types.js'
 import {
-    // types:
     defaultCredentialsConfigShared,
 }                           from './credentials.config.shared.js'
 

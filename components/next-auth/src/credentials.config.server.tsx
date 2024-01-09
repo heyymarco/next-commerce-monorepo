@@ -4,7 +4,6 @@ import type {
     CredentialsConfigServer,
 }                           from './types.js'
 import {
-    // types:
     defaultCredentialsConfigShared,
 }                           from './credentials.config.shared.js'
 
