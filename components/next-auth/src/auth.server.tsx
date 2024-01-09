@@ -1245,31 +1245,6 @@ If the problem still persists, please contact our technical support.`,
             await useEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
         );
     };
-    
-    // specific next-js /pages custom handlers:
-    const customApiHandler                       = async (req: NextApiRequest, res: NextApiResponse  , options?: CustomRouteHandlerOptions): Promise<boolean> => {
-        const customRouteResponse = await customRouteHandler(
-            new Request(new URL(req.url ?? '/', 'https://localhost').href, {
-                method : req.method,
-                body   : /^(POST|PUT|PATCH)$/i.test(req.method ?? '') ? JSON.stringify(req.body) : null,
-            }),
-            {
-                params : {
-                    nextauth : req.query.nextauth as string[],
-                },
-            },
-            options
-        );
-        if (!customRouteResponse) return false;
-        
-        
-        
-        for (const [headerKey, headerValue] of customRouteResponse.headers.entries()) {
-            res.setHeader(headerKey, headerValue);
-        } // for
-        res.status(customRouteResponse.status).send(await customRouteResponse.text());
-        return true;
-    };
     //#endregion custom handlers
     
     
@@ -1369,7 +1344,6 @@ If the problem still persists, please contact our technical support.`,
     
     return {
         customRouteHandler,
-        customApiHandler,
         nextAuthHandler,
         authOptions,
     };
@@ -1391,7 +1365,7 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
         
         
         
-        // custom handlers:
+        // intercept with custom handlers:
         const customRouteResponse = await customRouteHandler(req, context);
         if (customRouteResponse) return customRouteResponse;
         
@@ -1419,21 +1393,43 @@ export const createAuthRouteHandler = (options: CreateAuthHandlerOptions) => {
 // specific next-js /pages auth handlers:
 export const createAuthApiHandler   = (options: CreateAuthHandlerOptions) => {
     const {
-        customApiHandler,
+        customRouteHandler,
         nextAuthHandler,
         authOptions,
     } = createNextAuthHandler(options);
     
     
     
+    const nextApiWrapperHandler = async (req: NextApiRequest, res: NextApiResponse, handler: (request: Request, context: NextAuthRouteContext) => Promise<false|Response>): Promise<boolean> => {
+        const response = await handler(
+            new Request(new URL(req.url ?? '/', 'https://localhost').href, {
+                method : req.method,
+                body   : /^(POST|PUT|PATCH)$/i.test(req.method ?? '') ? JSON.stringify(req.body) : null,
+            }),
+            {
+                params : {
+                    nextauth : req.query.nextauth as string[],
+                },
+            }
+        );
+        if (!response) return false;
+        
+        
+        
+        for (const [headerKey, headerValue] of response.headers.entries()) {
+            res.setHeader(headerKey, headerValue);
+        } // for
+        res.status(response.status).send(await response.text());
+        return true;
+    };
     const authApiHandler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
         // responses HEAD request as success:
         if(req.method === 'HEAD') return res.status(200).send(null);
         
         
         
-        // custom handlers:
-        if (await customApiHandler(req, res)) return;
+        // intercept with custom handlers:
+        if (await nextApiWrapperHandler(req, res, (request, context) => customRouteHandler(request, context))) return;
         
         
         
