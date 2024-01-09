@@ -41,7 +41,7 @@ import {
 // internals:
 import {
     authConfigShared,
-}                               from './auth.config.shared.js'
+}                               from './auth.config.shared'
 
 
 

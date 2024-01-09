@@ -13,7 +13,7 @@ import type {
 // internals:
 import {
     credentialsConfigShared,
-}                               from './credentials.config.shared.js'
+}                               from './credentials.config.shared'
 
 
 
