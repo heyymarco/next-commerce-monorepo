@@ -2,19 +2,19 @@
 import {
     // react:
     default as React,
-}                           from 'react'
+}                               from 'react'
 
 // heymarco:
 import type {
     // types:
     CredentialsConfigClient,
-}                           from '@heymarco/next-auth'
+}                               from '@heymarco/next-auth'
 
 // internals:
 import {
     // types:
     credentialsConfigShared,
-}                           from './credentials.config.shared.js'
+}                               from './credentials.config.shared.js'
 
 
 

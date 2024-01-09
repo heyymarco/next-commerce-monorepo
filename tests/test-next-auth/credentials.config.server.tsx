@@ -2,13 +2,13 @@
 import type {
     // types:
     CredentialsConfigServer,
-}                           from '@heymarco/next-auth'
+}                               from '@heymarco/next-auth'
 
 // internals:
 import {
     // types:
     credentialsConfigShared,
-}                           from './credentials.config.shared.js'
+}                               from './credentials.config.shared.js'
 
 
 

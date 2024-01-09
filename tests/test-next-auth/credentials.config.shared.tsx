@@ -2,7 +2,7 @@
 import type {
     // types:
     CredentialsConfigShared,
-}                           from '@heymarco/next-auth'
+}                               from '@heymarco/next-auth'
 
 
 
