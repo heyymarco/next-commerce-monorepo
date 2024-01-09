@@ -627,7 +627,7 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 500 }); // handled with error
         } // try
     };
-    const applyPasswordResetRouteHandler         = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const usePasswordResetRouteHandler           = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!resetEnabled)                         return false; // ignore
         
@@ -1136,7 +1136,7 @@ If the problem still persists, please contact our technical support.`,
     };
     
     // email verification:
-    const applyEmailConfirmationRouteHandler     = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
+    const useEmailConfirmationRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!signUpEnabled)                        return false; // ignore
         
@@ -1224,7 +1224,7 @@ If the problem still persists, please contact our technical support.`,
             ||
             await validatePasswordResetRouteHandler(req, context, resetPasswordPath)
             ||
-            await applyPasswordResetRouteHandler(req, context, resetPasswordPath)
+            await usePasswordResetRouteHandler(req, context, resetPasswordPath)
             
             ||
             
@@ -1242,7 +1242,7 @@ If the problem still persists, please contact our technical support.`,
             ||
             
             // email verification:
-            await applyEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
+            await useEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
         );
     };
     
