@@ -49,7 +49,7 @@
   "dependencies": {
     "@cssfn/core": "^3.2.0",
     "@cssfn/cssfn-react": "^3.2.0",
-    "@reusable-ui/components": "^6.5.0",
+    "@reusable-ui/components": "^6.6.0",
     "@reusable-ui/core": "^6.5.0",
     "@types/bcrypt": "^5.0.0",
     "@types/nodemailer": "^6.4.9",

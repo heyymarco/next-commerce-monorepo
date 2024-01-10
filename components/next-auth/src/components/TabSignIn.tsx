@@ -4,6 +4,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useRef,
 }                           from 'react'
 
 // auth-js:
@@ -17,6 +22,11 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
+    
+    
+    
+    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
+    GlobalStackableProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -43,9 +53,16 @@ import {
     
     
     
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    ModalCard,
+    
+    
+    
     // utility-components:
-    ModalStatusProps,
-    ModalStatus,
+    PromiseDialog,
+    ModalBaseProps,
+    useDialogMessage,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
@@ -92,19 +109,19 @@ export interface TabSignInProps
         Omit<FieldPasswordProps       , 'isActiveSection'|'isActionApplied'|'isPasswordEntry'>
 {
     // auths:
-    providers                           ?: BuiltInProviderType[]
+    providers                         ?: BuiltInProviderType[]
     
     
     
     // components:
-    signInTitleComponent                ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    signInTitleComponent              ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    signInButtonComponent               ?: ButtonComponentProps['buttonComponent']
-    signInWithButtonComponent           ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
+    signInButtonComponent             ?: ButtonComponentProps['buttonComponent']
+    signInWithButtonComponent         ?: ButtonComponentProps['buttonComponent'] | ((oAuthProvider: BuiltInProviderType) => Required<ButtonComponentProps>['buttonComponent'])
     
-    alternateSignInSeparatorComponent   ?: React.ReactComponentElement<any, GenericProps<Element>>
+    alternateSignInSeparatorComponent ?: React.ReactComponentElement<any, GenericProps<Element>>
     
-    emailValidationModalStatusComponent ?: React.ReactComponentElement<any, ModalStatusProps<Element>>|null
+    emailValidationDialogComponent    ?: React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>|null
 }
 export const TabSignIn = (props: TabSignInProps) => {
     // rest props:
@@ -126,7 +143,7 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         alternateSignInSeparatorComponent   = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
         
-        emailValidationModalStatusComponent = (<ModalStatus<Element> theme='primary' />                                                   as React.ReactComponentElement<any, ModalStatusProps<Element>>),
+        emailValidationDialogComponent      = (<ModalCard<Element> theme='primary' inheritEnabled={false} />                              as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
     } = props;
     
     
@@ -176,6 +193,49 @@ export const TabSignIn = (props: TabSignInProps) => {
         // actions:
         signInButtonHandleClickInternal,
     );
+    
+    
+    
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // effects:
+    const shouldDialogShown : boolean = (
+        !!emailValidationDialogComponent // if no <Dialog> defined => nothing to display
+        &&
+        (emailVerified === null)         // if already verified => no need to display the <Dialog>
+    );
+    const shownDialogRef = useRef<null|PromiseDialog<any>>(null); // initially no <Dialog> was shown
+    if ((!!shownDialogRef.current) !== shouldDialogShown) { // detect changes
+        // close prev shown <Dialog> (if any):
+        shownDialogRef.current?.closeDialog(null);
+        
+        // show a new <Dialog> (if needed):
+        if (emailValidationDialogComponent && shouldDialogShown) {
+            shownDialogRef.current = showDialog(
+                React.cloneElement<(ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>(emailValidationDialogComponent,
+                    // props:
+                    {
+                        // global stackable:
+                        viewport : emailValidationDialogComponent.props.viewport ?? formRef,
+                    },
+                    
+                    
+                    
+                    // children:
+                    (emailValidationDialogComponent.props.children ?? <CardBody>
+                        <p>
+                            <Busy />&nbsp;Validating email confirmation token...
+                        </p>
+                    </CardBody>),
+                )
+            );
+        } // if
+    } // if
     
     
     
@@ -327,29 +387,6 @@ export const TabSignIn = (props: TabSignInProps) => {
                     })}
                 </div>
             </>}
-            
-            {/* <ModalStatus> */}
-            {!!emailValidationModalStatusComponent && React.cloneElement<ModalStatusProps<Element>>(emailValidationModalStatusComponent,
-                // props:
-                {
-                    // accessibilities:
-                    inheritEnabled : emailValidationModalStatusComponent.props.inheritEnabled ?? false,
-                    
-                    
-                    
-                    // global stackable:
-                    viewport       : emailValidationModalStatusComponent.props.viewport       ?? formRef,
-                },
-                
-                
-                
-                // children:
-                (emailValidationModalStatusComponent.props.children ?? ((emailVerified === null) && <CardBody>
-                    <p>
-                        <Busy />&nbsp;Validating email confirmation token...
-                    </p>
-                </CardBody>)),
-            )}
         </form>
     );
 };

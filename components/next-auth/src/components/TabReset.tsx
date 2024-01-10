@@ -4,6 +4,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -11,6 +16,11 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
+    
+    
+    
+    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
+    GlobalStackableProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -32,9 +42,16 @@ import {
     
     
     
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    ModalCard,
+    
+    
+    
     // utility-components:
-    ModalStatusProps,
-    ModalStatus,
+    PromiseDialog,
+    ModalBaseProps,
+    useDialogMessage,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
 // internal components:
@@ -79,11 +96,11 @@ export interface TabResetProps
         Omit<FieldPassword2Props, 'isActiveSection'|'isActionApplied'>
 {
     // components:
-    resetTitleComponent                  ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
+    resetTitleComponent             ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    passwordResetButtonComponent         ?: ButtonComponentProps['buttonComponent']
+    passwordResetButtonComponent    ?: ButtonComponentProps['buttonComponent']
     
-    tokenValidationModalStatusComponent  ?: React.ReactComponentElement<any, ModalStatusProps<Element>>|null
+    tokenValidationDialogComponent  ?: React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>|null
 }
 export const TabReset = (props: TabResetProps) => {
     // rest props:
@@ -107,7 +124,7 @@ export const TabReset = (props: TabResetProps) => {
         
         passwordResetButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
         
-        tokenValidationModalStatusComponent  = (<ModalStatus<Element> theme='primary' />                                                   as React.ReactComponentElement<any, ModalStatusProps<Element>>),
+        tokenValidationDialogComponent       = (<ModalCard<Element> theme='primary' inheritEnabled={false} />                              as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
     } = props;
     
     
@@ -152,6 +169,49 @@ export const TabReset = (props: TabResetProps) => {
         // actions:
         passwordResetButtonHandleClickInternal,
     );
+    
+    
+    
+    // dialogs:
+    const {
+        showDialog,
+    } = useDialogMessage();
+    
+    
+    
+    // effects:
+    const shouldDialogShown : boolean = (
+        !!tokenValidationDialogComponent // if no <Dialog> defined => nothing to display
+        &&
+        (tokenVerified === null)         // if already verified => no need to display the <Dialog>
+    );
+    const shownDialogRef = useRef<null|PromiseDialog<any>>(null); // initially no <Dialog> was shown
+    if ((!!shownDialogRef.current) !== shouldDialogShown) { // detect changes
+        // close prev shown <Dialog> (if any):
+        shownDialogRef.current?.closeDialog(null);
+        
+        // show a new <Dialog> (if needed):
+        if (tokenValidationDialogComponent && shouldDialogShown) {
+            shownDialogRef.current = showDialog(
+                React.cloneElement<(ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>(tokenValidationDialogComponent,
+                    // props:
+                    {
+                        // global stackable:
+                        viewport : tokenValidationDialogComponent.props.viewport ?? formRef,
+                    },
+                    
+                    
+                    
+                    // children:
+                    (tokenValidationDialogComponent.props.children ?? <CardBody>
+                        <p>
+                            <Busy />&nbsp;Validating password reset token...
+                        </p>
+                    </CardBody>),
+                )
+            );
+        } // if
+    } // if
     
     
     
@@ -255,29 +315,6 @@ export const TabReset = (props: TabResetProps) => {
                 
                 // children:
                 passwordResetButtonComponent.props.children ?? 'Reset Password',
-            )}
-            
-            {/* <ModalStatus> */}
-            {!!tokenValidationModalStatusComponent && React.cloneElement<ModalStatusProps<Element>>(tokenValidationModalStatusComponent,
-                // props:
-                {
-                    // accessibilities:
-                    inheritEnabled : tokenValidationModalStatusComponent.props.inheritEnabled ?? false,
-                    
-                    
-                    
-                    // global stackable:
-                    viewport       : tokenValidationModalStatusComponent.props.viewport       ?? formRef,
-                },
-                
-                
-                
-                // children:
-                (tokenValidationModalStatusComponent.props.children ?? ((tokenVerified === null) && <CardBody>
-                    <p>
-                        <Busy />&nbsp;Validating password reset token...
-                    </p>
-                </CardBody>)),
             )}
         </form>
     );

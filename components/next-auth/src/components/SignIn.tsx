@@ -223,8 +223,8 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         alternateSignInSeparatorComponent,
         
-        tokenValidationModalStatusComponent,
-        emailValidationModalStatusComponent,
+        tokenValidationDialogComponent,
+        emailValidationDialogComponent,
         
         switchSignUpButtonComponent = (<ButtonIcon icon='account_box' buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
         switchSignInButtonComponent = (<ButtonIcon icon='login'       buttonStyle='link' size='sm' iconPosition='end' /> as React.ReactComponentElement<any, ButtonProps>),
@@ -601,7 +601,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     
                     alternateSignInSeparatorComponent={alternateSignInSeparatorComponent}
                     
-                    emailValidationModalStatusComponent={emailValidationModalStatusComponent}
+                    emailValidationDialogComponent={emailValidationDialogComponent}
                 />,
                 (!!signUpEnabled ? <SwitchSignUpButton /> : <VisuallyHidden className='switchSignUp visually-hidden' />),
                 (!!resetEnabled  ? <GotoRecoverButton  /> : <VisuallyHidden className='gotoRecover visually-hidden'  />),
@@ -667,7 +667,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     
                     passwordResetButtonComponent={passwordResetButtonComponent}
                     
-                    tokenValidationModalStatusComponent={tokenValidationModalStatusComponent}
+                    tokenValidationDialogComponent={tokenValidationDialogComponent}
                 />,
                 <GotoSignInButton />,
             )),
