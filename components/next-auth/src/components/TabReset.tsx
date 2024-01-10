@@ -180,19 +180,19 @@ export const TabReset = (props: TabResetProps) => {
     
     
     // effects:
-    const shouldDialogShown : boolean = (
+    const shouldTokenValidationDialogShown : boolean = (
         !!tokenValidationDialogComponent // if no <Dialog> defined => nothing to display
         &&
         (tokenVerified === null)         // if already verified => no need to display the <Dialog>
     );
-    const shownDialogRef = useRef<null|PromiseDialog<any>>(null); // initially no <Dialog> was shown
-    if ((!!shownDialogRef.current) !== shouldDialogShown) { // detect changes
+    const shownTokenValidationDialogRef = useRef<null|PromiseDialog<any>>(null); // initially no <Dialog> was shown
+    if ((!!shownTokenValidationDialogRef.current) !== shouldTokenValidationDialogShown) { // detect changes
         // close prev shown <Dialog> (if any):
-        shownDialogRef.current?.closeDialog(null);
+        shownTokenValidationDialogRef.current?.closeDialog(null);
         
         // show a new <Dialog> (if needed):
-        if (tokenValidationDialogComponent && shouldDialogShown) {
-            shownDialogRef.current = showDialog(
+        if (tokenValidationDialogComponent && shouldTokenValidationDialogShown) {
+            shownTokenValidationDialogRef.current = showDialog(
                 React.cloneElement<(ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>(tokenValidationDialogComponent,
                     // props:
                     {

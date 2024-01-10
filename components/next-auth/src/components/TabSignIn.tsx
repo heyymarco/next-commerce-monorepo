@@ -204,19 +204,19 @@ export const TabSignIn = (props: TabSignInProps) => {
     
     
     // effects:
-    const shouldDialogShown : boolean = (
+    const shouldEmailValidationDialogShown : boolean = (
         !!emailValidationDialogComponent // if no <Dialog> defined => nothing to display
         &&
         (emailVerified === null)         // if already verified => no need to display the <Dialog>
     );
-    const shownDialogRef = useRef<null|PromiseDialog<any>>(null); // initially no <Dialog> was shown
-    if ((!!shownDialogRef.current) !== shouldDialogShown) { // detect changes
+    const shownEmailValidationDialogRef = useRef<null|PromiseDialog<any>>(null); // initially no <Dialog> was shown
+    if ((!!shownEmailValidationDialogRef.current) !== shouldEmailValidationDialogShown) { // detect changes
         // close prev shown <Dialog> (if any):
-        shownDialogRef.current?.closeDialog(null);
+        shownEmailValidationDialogRef.current?.closeDialog(null);
         
         // show a new <Dialog> (if needed):
-        if (emailValidationDialogComponent && shouldDialogShown) {
-            shownDialogRef.current = showDialog(
+        if (emailValidationDialogComponent && shouldEmailValidationDialogShown) {
+            shownEmailValidationDialogRef.current = showDialog(
                 React.cloneElement<(ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>(emailValidationDialogComponent,
                     // props:
                     {
