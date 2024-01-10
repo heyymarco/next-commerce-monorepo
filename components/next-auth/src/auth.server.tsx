@@ -193,26 +193,26 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         
         emails : {
             signUp               : {
-                host             : emailsSignUpHost,
-                port             : emailsSignUpPort,
-                secure           : emailsSignUpSecure,
-                username         : emailsSignUpUsername,
-                password         : emailsSignUpPassword,
+                host             : emailSignUpHost,
+                port             : emailSignUpPort,
+                secure           : emailSignUpSecure,
+                username         : emailSignUpUsername,
+                password         : emailSignUpPassword,
                 
-                from             : emailsSignUpFrom,
-                subject          : emailsSignUpSubject,
-                message          : emailsSignUpMessage,
+                from             : emailSignUpFrom,
+                subject          : emailSignUpSubject,
+                message          : emailSignUpMessage,
             },
             reset                : {
-                host             : emailsResetHost,
-                port             : emailsResetPort,
-                secure           : emailsResetSecure,
-                username         : emailsResetUsername,
-                password         : emailsResetPassword,
+                host             : emailResetHost,
+                port             : emailResetPort,
+                secure           : emailResetSecure,
+                username         : emailResetUsername,
+                password         : emailResetPassword,
                 
-                from             : emailsResetFrom,
-                subject          : emailsResetSubject,
-                message          : emailsResetMessage,
+                from             : emailResetFrom,
+                subject          : emailResetSubject,
+                message          : emailResetMessage,
             },
         },
     } = authConfigServer;
@@ -505,23 +505,23 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 },
             };
             const transporter = nodemailer.createTransport({
-                host     : emailsResetHost,
-                port     : emailsResetPort,
-                secure   : emailsResetSecure,
+                host     : emailResetHost,
+                port     : emailResetPort,
+                secure   : emailResetSecure,
                 auth     : {
-                    user : emailsResetUsername,
-                    pass : emailsResetPassword,
+                    user : emailResetUsername,
+                    pass : emailResetPassword,
                 },
             });
             try {
                 await transporter.sendMail({
-                    from    : emailsResetFrom, // sender address
+                    from    : emailResetFrom, // sender address
                     to      : user.email, // list of receivers
                     subject : renderToStaticMarkup(
                         <BusinessContextProvider {...businessContextProviderProps}>
                             <PasswordResetContextProvider url={resetLinkUrl}>
                                 <UserContextProvider model={user}>
-                                    {emailsResetSubject}
+                                    {emailResetSubject}
                                 </UserContextProvider>
                             </PasswordResetContextProvider>
                         </BusinessContextProvider>
@@ -530,7 +530,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                         <BusinessContextProvider {...businessContextProviderProps}>
                             <PasswordResetContextProvider url={resetLinkUrl}>
                                 <UserContextProvider model={user}>
-                                    {emailsResetMessage}
+                                    {emailResetMessage}
                                 </UserContextProvider>
                             </PasswordResetContextProvider>
                         </BusinessContextProvider>
@@ -1066,17 +1066,17 @@ If the problem still persists, please contact our technical support.`,
                     },
                 };
                 const transporter = nodemailer.createTransport({
-                    host     : emailsSignUpHost,
-                    port     : emailsSignUpPort,
-                    secure   : emailsSignUpSecure,
+                    host     : emailSignUpHost,
+                    port     : emailSignUpPort,
+                    secure   : emailSignUpSecure,
                     auth     : {
-                        user : emailsSignUpUsername,
-                        pass : emailsSignUpPassword,
+                        user : emailSignUpUsername,
+                        pass : emailSignUpPassword,
                     },
                 });
                 try {
                     await transporter.sendMail({
-                        from    : emailsSignUpFrom, // sender address
+                        from    : emailSignUpFrom, // sender address
                         to      : email, // list of receivers
                         subject : renderToStaticMarkup(
                             <BusinessContextProvider {...businessContextProviderProps}>
@@ -1085,7 +1085,7 @@ If the problem still persists, please contact our technical support.`,
                                         name  : fullname,
                                         email : email,
                                     }}>
-                                        {emailsSignUpSubject}
+                                        {emailSignUpSubject}
                                     </UserContextProvider>
                                 </EmailConfirmationContextProvider>
                             </BusinessContextProvider>
@@ -1097,7 +1097,7 @@ If the problem still persists, please contact our technical support.`,
                                         name  : fullname,
                                         email : email,
                                     }}>
-                                        {emailsSignUpMessage}
+                                        {emailSignUpMessage}
                                     </UserContextProvider>
                                 </EmailConfirmationContextProvider>
                             </BusinessContextProvider>
