@@ -219,7 +219,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         signInButtonComponent,
         signInWithButtonComponent,
         sendRecoverLinkButtonComponent,
-        resetPasswordButtonComponent,
+        passwordResetButtonComponent,
         
         alternateSignInSeparatorComponent,
         
@@ -665,7 +665,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     password2ValidationListItemComponent={password2ValidationListItemComponent}
                     password2ValidationIconComponent={password2ValidationIconComponent}
                     
-                    resetPasswordButtonComponent={resetPasswordButtonComponent}
+                    passwordResetButtonComponent={passwordResetButtonComponent}
                     
                     tokenValidationModalStatusComponent={tokenValidationModalStatusComponent}
                 />,

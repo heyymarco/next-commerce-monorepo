@@ -35,7 +35,7 @@ import {
     Business,
     User,
     EmailConfirmation,
-    ResetPassword,
+    PasswordReset,
 }                               from '@heymarco/next-auth/templates'
 
 // internals:
@@ -237,7 +237,7 @@ export const authConfigServer : AuthConfigServer = {
                     <p style={styles.paragraphLast}>
                         To reset your password, click on the link below:
                         <br />
-                        <ResetPassword.Link />
+                        <PasswordReset.Link />
                     </p>
                 </section>
                 

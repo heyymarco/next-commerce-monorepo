@@ -4,7 +4,7 @@
 contexts:
     SignInState             value={signInState}
     EmailConfirmationApi    value={{ url: props.url }}
-    ResetPasswordApi        value={{ url: props.url }}
+    PasswordResetApi        value={{ url: props.url }}
     Partial<AdapterUser>    value={props.model}
     IArticleContext         value={supContextProp}
 

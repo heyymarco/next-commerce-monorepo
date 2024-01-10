@@ -30,11 +30,11 @@ import type {
 
 // types:
 export type Credentials = Record<'username'|'password', string>
-export interface CreateResetPasswordTokenData {
-    resetPasswordToken : string
+export interface CreatePasswordResetTokenData {
+    passwordResetToken : string
     user               : AdapterUser
 }
-export interface ValidateResetPasswordTokenData {
+export interface ValidatePasswordResetTokenData {
     email    : string
     username : string|null
 }
@@ -46,21 +46,21 @@ export interface RegisterUserData {
 
 
 // options:
-export interface ValidateCredentialsOptions {
+export interface CredentialsSignInOptions {
     now                  ?: Date
     requireEmailVerified ?: boolean
     failureMaxAttempts   ?: number|null
     failureLockDuration  ?: number
 }
-export interface CreateResetPasswordTokenOptions {
+export interface CreatePasswordResetTokenOptions {
     now                  ?: Date
     resetThrottle        ?: number
     resetMaxAge          ?: number
 }
-export interface ValidateResetPasswordTokenOptions {
+export interface ValidatePasswordResetTokenOptions {
     now                  ?: Date
 }
-export interface UseResetPasswordTokenOptions {
+export interface UsePasswordResetTokenOptions {
     now                  ?: Date
 }
 export interface RegisterUserOptions {
@@ -80,7 +80,7 @@ export interface ModelOptions<TPrisma extends PrismaClient> {
     session                ?: keyof TPrisma
     user                   ?: keyof TPrisma
     credentials            ?: keyof TPrisma
-    resetPasswordToken     ?: keyof TPrisma | null
+    passwordResetToken     ?: keyof TPrisma | null
     emailConfirmationToken ?: keyof TPrisma | null
     role                   ?: keyof TPrisma | null
 }
@@ -89,14 +89,14 @@ export interface AdapterWithCredentials
         Adapter
 {
     // sign in:
-    validateCredentials        : (credentials            : Credentials                               , options?: ValidateCredentialsOptions       ) => Awaitable<AdapterUser|false|Date|null>
+    credentialsSignIn          : (credentials            : Credentials                               , options?: CredentialsSignInOptions         ) => Awaitable<AdapterUser|false|Date|null>
     
     
     
-    // reset password:
-    createResetPasswordToken   : (usernameOrEmail        : string                                    , options?: CreateResetPasswordTokenOptions  ) => Awaitable<CreateResetPasswordTokenData|Date|null>
-    validateResetPasswordToken : (resetPasswordToken     : string                                    , options?: ValidateResetPasswordTokenOptions) => Awaitable<ValidateResetPasswordTokenData|null>
-    useResetPasswordToken      : (resetPasswordToken     : string, password: string                  , options?: UseResetPasswordTokenOptions     ) => Awaitable<boolean>
+    // password reset:
+    createPasswordResetToken   : (usernameOrEmail        : string                                    , options?: CreatePasswordResetTokenOptions  ) => Awaitable<CreatePasswordResetTokenData|Date|null>
+    validatePasswordResetToken : (passwordResetToken     : string                                    , options?: ValidatePasswordResetTokenOptions) => Awaitable<ValidatePasswordResetTokenData|null>
+    usePasswordResetToken      : (passwordResetToken     : string, password: string                  , options?: UsePasswordResetTokenOptions     ) => Awaitable<boolean>
     
     
     
@@ -124,7 +124,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         session                 : mSession                = 'session',
         user                    : mUser                   = 'user',
         credentials             : mCredentials            = 'credentials',
-        resetPasswordToken      : mResetPasswordToken     = 'resetPasswordToken',
+        passwordResetToken      : mPasswordResetToken     = 'passwordResetToken',
         emailConfirmationToken  : mEmailConfirmationToken = 'emailConfirmationToken',
         role                    : mRole                   = 'role',
     } = options ?? {};
@@ -305,7 +305,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // sign in:
-        validateCredentials        : async (credentials                         , options) => {
+        credentialsSignIn          : async (credentials                         , options) => {
             // options:
             const {
                 now                  = new Date(),
@@ -473,11 +473,11 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         
-        // reset password:
-        createResetPasswordToken   : async (usernameOrEmail                     , options) => {
+        // password reset:
+        createPasswordResetToken   : async (usernameOrEmail                     , options) => {
             // conditions:
-            const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
-            if (!hasResetPasswordToken) return null;
+            const hasPasswordResetToken = !!mPasswordResetToken && (mPasswordResetToken in prisma);
+            if (!hasPasswordResetToken) return null;
             
             
             
@@ -495,14 +495,14 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            // generate the resetPasswordToken data:
-            const resetPasswordToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
-            const resetPasswordMaxAge = resetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
-            const resetPasswordExpiry = new Date(now.valueOf() + resetPasswordMaxAge);
+            // generate the passwordResetToken data:
+            const passwordResetToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
+            const passwordResetMaxAge = resetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
+            const passwordResetExpiry = new Date(now.valueOf() + passwordResetMaxAge);
             
             
             
-            // an atomic transaction of [`find user by username (or email)`, `find resetPasswordToken by user id`, `create/update the new resetPasswordToken`]:
+            // an atomic transaction of [`find user by username (or email)`, `find passwordResetToken by user id`, `create/update the new passwordResetToken`]:
             const user = await prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => { // AdapterUser: succeeded; Date: reset request is too frequent; null: invalid username or email
                 // find user id by given username (or email):
                 const {id: userId} = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
@@ -526,10 +526,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 
-                // limits the rate of resetPasswordToken request:
-                if (resetThrottle !== undefined) { // there are a limit of resetPasswordToken request
-                    // find the last request date (if found) of resetPasswordToken by user id:
-                    const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).findUnique({
+                // limits the rate of passwordResetToken request:
+                if (resetThrottle !== undefined) { // there are a limit of passwordResetToken request
+                    // find the last request date (if found) of passwordResetToken by user id:
+                    const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).findUnique({
                         where  : {
                             userId       : userId,
                         },
@@ -538,7 +538,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         },
                     }) ?? {};
                     
-                    // calculate how often the last request of resetPasswordToken:
+                    // calculate how often the last request of passwordResetToken:
                     if (!!lastRequestDate) {
                         const minInterval = resetThrottle * 60 * 60 * 1000 /* convert to milliseconds */;
                         if ((now.valueOf() - lastRequestDate.valueOf()) < minInterval) { // the request interval is shorter than minInterval  => reject the request
@@ -550,20 +550,20 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 
-                // create/update the resetPasswordToken record and get the related user name & email:
-                const {user} = await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).upsert({
+                // create/update the passwordResetToken record and get the related user name & email:
+                const {user} = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).upsert({
                     where  : {
                         userId       : userId,
                     },
                     create : {
                         userId       : userId,
                         
-                        expiresAt    : resetPasswordExpiry,
-                        token        : resetPasswordToken,
+                        expiresAt    : passwordResetExpiry,
+                        token        : passwordResetToken,
                     },
                     update : {
-                        expiresAt    : resetPasswordExpiry,
-                        token        : resetPasswordToken,
+                        expiresAt    : passwordResetExpiry,
+                        token        : passwordResetToken,
                     },
                     select : {
                         [mUser]      : true,
@@ -573,14 +573,14 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             });
             if (!user || (user instanceof Date)) return user;
             return {
-                resetPasswordToken,
+                passwordResetToken,
                 user,
             };
         },
-        validateResetPasswordToken : async (resetPasswordToken                  , options) => {
+        validatePasswordResetToken : async (passwordResetToken                  , options) => {
             // conditions:
-            const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
-            if (!hasResetPasswordToken) return null;
+            const hasPasswordResetToken = !!mPasswordResetToken && (mPasswordResetToken in prisma);
+            if (!hasPasswordResetToken) return null;
             
             
             
@@ -593,8 +593,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             const user = await (prisma[mUser] as any).findFirst({
                 where  : {
-                    [mResetPasswordToken] : {
-                        token        : resetPasswordToken,
+                    [mPasswordResetToken] : {
+                        token        : passwordResetToken,
                         expiresAt : {
                             gt       : now, // not expired yet (expires in the future)
                         },
@@ -615,10 +615,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 username : user[mCredentials]?.username || null,
             };
         },
-        useResetPasswordToken      : async (resetPasswordToken, password: string, options) => {
+        usePasswordResetToken      : async (passwordResetToken, password: string, options) => {
             // conditions:
-            const hasResetPasswordToken = !!mResetPasswordToken && (mResetPasswordToken in prisma);
-            if (!hasResetPasswordToken) return false;
+            const hasPasswordResetToken = !!mPasswordResetToken && (mPasswordResetToken in prisma);
+            if (!hasPasswordResetToken) return false;
             
             
             
@@ -634,13 +634,13 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            // an atomic transaction of [`find user id by resetPasswordToken`, `delete current resetPasswordToken record`, `create/update user's credentials`]:
+            // an atomic transaction of [`find user id by passwordResetToken`, `delete current passwordResetToken record`, `create/update user's credentials`]:
             return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
-                // find the related user id by given resetPasswordToken:
+                // find the related user id by given passwordResetToken:
                 const user = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
                     where  : {
-                        [mResetPasswordToken] : {
-                            token        : resetPasswordToken,
+                        [mPasswordResetToken] : {
+                            token        : passwordResetToken,
                             expiresAt : {
                                 gt       : now, // not expired yet (expires in the future)
                             },
@@ -651,7 +651,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         emailVerified    : true, // required: for marking user's email has verified
                     },
                 });
-                if (!user) { // there is no user with related resetPasswordToken
+                if (!user) { // there is no user with related passwordResetToken
                     // report the error:
                     return false;
                 } // if
@@ -662,8 +662,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 
-                // delete the current resetPasswordToken record so it cannot be re-use again:
-                await ((prismaTransaction as TPrisma)[mResetPasswordToken] as any).delete({
+                // delete the current passwordResetToken record so it cannot be re-use again:
+                await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).delete({
                     where  : {
                         userId : userId,
                     },

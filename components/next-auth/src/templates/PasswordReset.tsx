@@ -7,16 +7,16 @@ import {
 // internals:
 import {
     // hooks:
-    useResetPasswordContext,
-}                           from './resetPasswordContext.js'
+    usePasswordResetContext,
+}                           from './passwordResetContext.js'
 
 
 
 // react components:
 
-const ResetPasswordUrl = (): string|null => {
+const PasswordResetUrl = (): string|null => {
     // contexts:
-    const model = useResetPasswordContext();
+    const model = usePasswordResetContext();
     
     
     
@@ -26,12 +26,12 @@ const ResetPasswordUrl = (): string|null => {
     );
 };
 
-export interface ResetPasswordLinkProps {
+export interface PasswordResetLinkProps {
     // children:
     children ?: React.ReactNode
 }
-const ResetPasswordLink = (props: ResetPasswordLinkProps): React.ReactNode => {
-    const url = ResetPasswordUrl();
+const PasswordResetLink = (props: PasswordResetLinkProps): React.ReactNode => {
+    const url = PasswordResetUrl();
     
     
     
@@ -44,7 +44,7 @@ const ResetPasswordLink = (props: ResetPasswordLinkProps): React.ReactNode => {
     );
 };
 
-export const ResetPassword = {
-    Url  : ResetPasswordUrl,
-    Link : ResetPasswordLink,
+export const PasswordReset = {
+    Url  : PasswordResetUrl,
+    Link : PasswordResetLink,
 };

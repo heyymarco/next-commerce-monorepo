@@ -81,7 +81,7 @@ export interface TabResetProps
     // components:
     resetTitleComponent                  ?: React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>
     
-    resetPasswordButtonComponent         ?: ButtonComponentProps['buttonComponent']
+    passwordResetButtonComponent         ?: ButtonComponentProps['buttonComponent']
     
     tokenValidationModalStatusComponent  ?: React.ReactComponentElement<any, ModalStatusProps<Element>>|null
 }
@@ -105,7 +105,7 @@ export const TabReset = (props: TabResetProps) => {
         password2ValidationListItemComponent,
         password2ValidationIconComponent,
         
-        resetPasswordButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
+        passwordResetButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
         
         tokenValidationModalStatusComponent  = (<ModalStatus<Element> theme='primary' />                                                   as React.ReactComponentElement<any, ModalStatusProps<Element>>),
     } = props;
@@ -133,7 +133,7 @@ export const TabReset = (props: TabResetProps) => {
     
     
     // handlers:
-    const resetPasswordButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
+    const passwordResetButtonHandleClickInternal = useEvent<React.MouseEventHandler<HTMLButtonElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
         event.preventDefault();
@@ -143,14 +143,14 @@ export const TabReset = (props: TabResetProps) => {
         // actions:
         doReset();
     });
-    const resetPasswordButtonHandleClick         = useMergeEvents(
-        // preserves the original `onClick` from `resetPasswordButtonComponent`:
-        resetPasswordButtonComponent.props.onClick,
+    const passwordResetButtonHandleClick         = useMergeEvents(
+        // preserves the original `onClick` from `passwordResetButtonComponent`:
+        passwordResetButtonComponent.props.onClick,
         
         
         
         // actions:
-        resetPasswordButtonHandleClickInternal,
+        passwordResetButtonHandleClickInternal,
     );
     
     
@@ -233,28 +233,28 @@ export const TabReset = (props: TabResetProps) => {
                 password2ValidationIconComponent={password2ValidationIconComponent}
             />
             
-            {/* <ResetPasswordButton> */}
-            {React.cloneElement<ButtonProps>(resetPasswordButtonComponent,
+            {/* <PasswordResetButton> */}
+            {React.cloneElement<ButtonProps>(passwordResetButtonComponent,
                 // props:
                 {
                     // actions:
-                    type      : resetPasswordButtonComponent.props.type      ?? 'submit',
+                    type      : passwordResetButtonComponent.props.type      ?? 'submit',
                     
                     
                     
                     // classes:
-                    className : resetPasswordButtonComponent.props.className ?? 'doReset',
+                    className : passwordResetButtonComponent.props.className ?? 'doReset',
                     
                     
                     
                     // handlers:
-                    onClick   : resetPasswordButtonHandleClick,
+                    onClick   : passwordResetButtonHandleClick,
                 },
                 
                 
                 
                 // children:
-                resetPasswordButtonComponent.props.children ?? 'Reset Password',
+                passwordResetButtonComponent.props.children ?? 'Reset Password',
             )}
             
             {/* <ModalStatus> */}
@@ -275,7 +275,7 @@ export const TabReset = (props: TabResetProps) => {
                 // children:
                 (tokenValidationModalStatusComponent.props.children ?? ((tokenVerified === null) && <CardBody>
                     <p>
-                        <Busy />&nbsp;Validating reset password token...
+                        <Busy />&nbsp;Validating password reset token...
                     </p>
                 </CardBody>)),
             )}

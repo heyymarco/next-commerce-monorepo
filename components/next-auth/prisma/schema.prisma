@@ -65,7 +65,7 @@ model User {
     accounts                Account[]               // a User may have some related Account(s)              // one  to many
     sessions                Session[]               // a User may have some related Session(s)              // one  to many
     credentials             Credentials?            // a User may have one  related Credentials             // one  to one
-    resetPasswordToken      ResetPasswordToken?     // a User may have one  related ResetPasswordToken      // one  to one
+    passwordResetToken      PasswordResetToken?     // a User may have one  related PasswordResetToken      // one  to one
     emailConfirmationToken  EmailConfirmationToken? // a User may have one  related EmailConfirmationToken  // one  to one
     
     // roleId                  String?
@@ -87,7 +87,7 @@ model Credentials {
     user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related Credentials if the User deleted
 }
 
-model ResetPasswordToken {
+model PasswordResetToken {
     // records:
     id                      String                  @id @default(cuid())
     updatedAt               DateTime                @updatedAt
@@ -98,7 +98,7 @@ model ResetPasswordToken {
     
     // relations:
     userId                  String                  @unique
-    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related ResetPasswordToken if the User deleted
+    user                    User                    @relation(fields: [userId], references: [id], onDelete: Cascade) // delete the related PasswordResetToken if the User deleted
 }
 
 model EmailConfirmationToken {

@@ -73,8 +73,8 @@ import {
 }                           from './templates/emailConfirmationContext.js'
 import {
     // react components:
-    ResetPasswordContextProvider,
-}                           from './templates/resetPasswordContext.js'
+    PasswordResetContextProvider,
+}                           from './templates/passwordResetContext.js'
 
 // internals:
 import type {
@@ -94,7 +94,7 @@ import type {
 }                           from './PrismaAdapterWithCredentials.js'
 import {
     signUpPath,
-    resetPasswordPath,
+    passwordResetPath,
     usernameValidationPath,
     emailValidationPath,
     passwordValidationPath,
@@ -276,7 +276,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     // get user by valid credentials:
                     try {
                         const now    = new Date();
-                        const result = await adapter.validateCredentials(credentials as Credentials, {
+                        const result = await adapter.credentialsSignIn(credentials as Credentials, {
                             now                  : now,
                             requireEmailVerified : signInRequireVerifiedEmail,
                             failureMaxAttempts   : signInFailureMaxAttempts,
@@ -432,7 +432,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     
     //#region custom handlers
-    // reset password:
+    // password reset:
     const requestPasswordResetRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!resetEnabled)                         return false; // ignore
@@ -462,11 +462,11 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
         
         
         
-        // create a new resetPasswordToken and then send a link of resetPasswordToken to the user's email:
+        // create a new passwordResetToken and then send a link of passwordResetToken to the user's email:
         try {
-            // create a new resetPasswordToken:
+            // create a new passwordResetToken:
             const now    = new Date();
-            const result = await adapter.createResetPasswordToken(username, {
+            const result = await adapter.createPasswordResetToken(username, {
                 now           : now,
                 resetThrottle : resetThrottle,
                 resetMaxAge   : resetMaxAge,
@@ -484,18 +484,18 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 }, { status: 400 }); // handled with error
             } // if
             const {
-                resetPasswordToken,
+                passwordResetToken,
                 user,
             } = result;
             
             
             
             // generate a link to a page for resetting password:
-            const resetLinkUrl = `${process.env.WEBSITE_URL ?? ''}${signInPath}?resetPasswordToken=${encodeURIComponent(resetPasswordToken)}`
+            const resetLinkUrl = `${process.env.WEBSITE_URL ?? ''}${signInPath}?passwordResetToken=${encodeURIComponent(passwordResetToken)}`
             
             
             
-            // send a link of resetPasswordToken to the user's email:
+            // send a link of passwordResetToken to the user's email:
             const { renderToStaticMarkup } = await import('react-dom/server');
             const businessContextProviderProps  : BusinessContextProviderProps = {
                 // data:
@@ -519,20 +519,20 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     to      : user.email, // list of receivers
                     subject : renderToStaticMarkup(
                         <BusinessContextProvider {...businessContextProviderProps}>
-                            <ResetPasswordContextProvider url={resetLinkUrl}>
+                            <PasswordResetContextProvider url={resetLinkUrl}>
                                 <UserContextProvider model={user}>
                                     {emailsResetSubject}
                                 </UserContextProvider>
-                            </ResetPasswordContextProvider>
+                            </PasswordResetContextProvider>
                         </BusinessContextProvider>
                     ).replace(/[\r\n\t]+/g, ' ').trim(),
                     html    : renderToStaticMarkup(
                         <BusinessContextProvider {...businessContextProviderProps}>
-                            <ResetPasswordContextProvider url={resetLinkUrl}>
+                            <PasswordResetContextProvider url={resetLinkUrl}>
                                 <UserContextProvider model={user}>
                                     {emailsResetMessage}
                                 </UserContextProvider>
-                            </ResetPasswordContextProvider>
+                            </PasswordResetContextProvider>
                         </BusinessContextProvider>
                     ),
                 });
@@ -577,29 +577,29 @@ If the problem still persists, please contact our technical support.`,
         
         // validate the request parameter(s):
         const {
-            resetPasswordToken,
+            passwordResetToken,
         } = await getRequestData(req);
-        if ((typeof(resetPasswordToken) !== 'string') || !resetPasswordToken) {
+        if ((typeof(passwordResetToken) !== 'string') || !passwordResetToken) {
             return NextResponse.json({
-                error: 'The required reset password token is not provided.',
+                error: 'The required password reset token is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        if (resetPasswordToken.length > 50) { // prevents of DDOS attack
+        if (passwordResetToken.length > 50) { // prevents of DDOS attack
             return NextResponse.json({
-                error: 'The reset password token is too long.',
+                error: 'The password reset token is too long.',
             }, { status: 400 }); // handled with error
         } // if
         
         
         
-        // find the related email & username by given resetPasswordToken:
+        // find the related email & username by given passwordResetToken:
         try {
-            const result = await adapter.validateResetPasswordToken(resetPasswordToken, {
+            const result = await adapter.validatePasswordResetToken(passwordResetToken, {
                 now : new Date(),
             });
             if (!result) {
                 return NextResponse.json({
-                    error: 'The reset password token is invalid or expired.',
+                    error: 'The password reset token is invalid or expired.',
                 }, { status: 404 }); // handled with error
             } // if
             
@@ -640,17 +640,17 @@ If the problem still persists, please contact our technical support.`,
         
         // validate the request parameter(s):
         const {
-            resetPasswordToken,
+            passwordResetToken,
             password,
         } = await getRequestData(req);
-        if ((typeof(resetPasswordToken) !== 'string') || !resetPasswordToken) {
+        if ((typeof(passwordResetToken) !== 'string') || !passwordResetToken) {
             return NextResponse.json({
-                error: 'The required reset password token is not provided.',
+                error: 'The required password reset token is not provided.',
             }, { status: 400 }); // handled with error
         } // if
-        if (resetPasswordToken.length > 50) { // prevents of DDOS attack
+        if (passwordResetToken.length > 50) { // prevents of DDOS attack
             return NextResponse.json({
-                error: 'The reset password token is too long.',
+                error: 'The password reset token is too long.',
             }, { status: 400 }); // handled with error
         } // if
         if ((typeof(password) !== 'string') || !password) {
@@ -685,12 +685,12 @@ If the problem still persists, please contact our technical support.`,
         
         
         try {
-            const result = await adapter.useResetPasswordToken(resetPasswordToken, password, {
+            const result = await adapter.usePasswordResetToken(passwordResetToken, password, {
                 now : new Date(),
             });
             if (!result) {
                 return NextResponse.json({
-                    error: 'The reset password token is invalid or expired.',
+                    error: 'The password reset token is invalid or expired.',
                 }, { status: 404 }); // handled with error
             } // if
             
@@ -1295,12 +1295,12 @@ If the problem still persists, please contact our technical support.`,
     // merged handlers:
     const mergedRouteHandler                     = async (req: Request, context: NextAuthRouteContext): Promise<Response> => {
         return (
-            // reset password:
-            await requestPasswordResetRouteHandler(req, context, resetPasswordPath)
+            // password reset:
+            await requestPasswordResetRouteHandler(req, context, passwordResetPath)
             ||
-            await validatePasswordResetRouteHandler(req, context, resetPasswordPath)
+            await validatePasswordResetRouteHandler(req, context, passwordResetPath)
             ||
-            await usePasswordResetRouteHandler(req, context, resetPasswordPath)
+            await usePasswordResetRouteHandler(req, context, passwordResetPath)
             
             ||
             

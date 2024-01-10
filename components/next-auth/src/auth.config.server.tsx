@@ -37,8 +37,8 @@ import {
 }                           from './templates/User.js'
 import {
     // react components:
-    ResetPassword,
-}                           from './templates/ResetPassword.js'
+    PasswordReset,
+}                           from './templates/PasswordReset.js'
 
 // internals:
 import type {
@@ -243,7 +243,7 @@ export const defaultAuthConfigServer : AuthConfigServer = {
                     <p style={styles.paragraphLast}>
                         To reset your password, click on the link below:
                         <br />
-                        <ResetPassword.Link />
+                        <PasswordReset.Link />
                     </p>
                 </section>
                 

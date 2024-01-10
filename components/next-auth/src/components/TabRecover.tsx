@@ -165,7 +165,7 @@ export const TabRecover = (props: TabRecoverProps) => {
                 
                 
                 // children:
-                sendRecoverLinkButtonComponent.props.children ?? 'Send Reset Password Link',
+                sendRecoverLinkButtonComponent.props.children ?? 'Send Password Reset Link',
             )}
         </form>
     );
