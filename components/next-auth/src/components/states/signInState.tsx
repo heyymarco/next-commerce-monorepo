@@ -1866,7 +1866,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                         ||
                         (isRecoverSection && !isRecoverApplied)                                     // on 'recover' section => enabled if recoverRequest was NOT sent
                         ||
-                        (isResetSection   && !isResetApplied && !!tokenVerified)                    // on 'reset'   section => enabled if passwordReset  was NOT applied and token verified
+                        (isResetSection   && !isResetApplied && !!tokenVerified)                    // on 'reset'   section => enabled if passwordReset  was NOT sent and token verified
                     )
                 }
             >
