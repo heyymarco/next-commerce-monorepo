@@ -805,7 +805,11 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 // report the failure:
                 await showMessageFetchError(error);
-                if (!isMounted.current) return; // unmounted => abort
+                // if (!isMounted.current) return; // unmounted => abort
+                
+                
+                
+                // no need to redirect to another tab, because sign in tab is the default tab
             } // try
         })();
     }, [emailConfirmationToken, emailVerified]);
