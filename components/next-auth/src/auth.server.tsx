@@ -342,10 +342,10 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 
                 if ((account?.type === 'oauth') && (!('emailVerified' in user) || (user.emailVerified === null))) {
-                    const markUserEmailAsVerified = async () => {
+                    const markEmailAsVerified = async () => {
                         // login with oAuth is also intrinsically verifies the email:
                         const now = new Date();
-                        await adapter.markUserEmailAsVerified(user.id, {
+                        await adapter.markEmailAsVerified(user.id, {
                             now : now,
                         });
                         (user as any).emailVerified = now; // update the data
@@ -355,7 +355,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     }
                     else {
                         // immediately update:
-                        await markUserEmailAsVerified();
+                        await markEmailAsVerified();
                     } // if
                 } // if
                 

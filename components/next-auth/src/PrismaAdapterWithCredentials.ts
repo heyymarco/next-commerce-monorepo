@@ -66,7 +66,7 @@ export interface UsePasswordResetTokenOptions {
 export interface RegisterUserOptions {
     requireEmailVerified ?: boolean
 }
-export interface MarkUserEmailAsVerifiedOptions {
+export interface MarkEmailAsVerifiedOptions {
     now                  ?: Date
 }
 export interface UseEmailConfirmationTokenOptions {
@@ -108,7 +108,7 @@ export interface AdapterWithCredentials
     
     
     // email verifications:
-    markUserEmailAsVerified    : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions   ) => Awaitable<void>
+    markEmailAsVerified        : (userId                 : string                                    , options?: MarkEmailAsVerifiedOptions       ) => Awaitable<void>
     useEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: UseEmailConfirmationTokenOptions ) => Awaitable<boolean>
     
     
@@ -858,7 +858,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         // email verifications:
-        markUserEmailAsVerified    : async (userId                              , options) => {
+        markEmailAsVerified        : async (userId                              , options) => {
             // options:
             const {
                 now = new Date(),
