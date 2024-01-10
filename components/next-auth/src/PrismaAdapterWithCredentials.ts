@@ -107,7 +107,7 @@ export interface AdapterWithCredentials
     
     
     
-    // email verification:
+    // email verifications:
     markUserEmailAsVerified    : (userId                 : string                                    , options?: MarkUserEmailAsVerifiedOptions   ) => Awaitable<void>
     useEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: UseEmailConfirmationTokenOptions ) => Awaitable<boolean>
     
@@ -857,7 +857,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         
-        // email verification:
+        // email verifications:
         markUserEmailAsVerified    : async (userId                              , options) => {
             // options:
             const {

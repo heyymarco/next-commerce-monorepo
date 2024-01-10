@@ -1134,7 +1134,7 @@ If the problem still persists, please contact our technical support.`,
         } // try
     };
     
-    // email verification:
+    // email verifications:
     const useEmailConfirmationRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!signUpEnabled)                        return false; // ignore
@@ -1317,7 +1317,7 @@ If the problem still persists, please contact our technical support.`,
             
             ||
             
-            // email verification:
+            // email verifications:
             await useEmailConfirmationRouteHandler(req, context, emailConfirmationPath)
             
             ||
