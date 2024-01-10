@@ -124,7 +124,7 @@ export const TabReset = (props: TabResetProps) => {
         
         passwordResetButtonComponent         = (<ButtonWithBusy busyType='recover'        buttonComponent={<ButtonIcon icon='save' />} />  as React.ReactComponentElement<any, ButtonProps>),
         
-        tokenValidationDialogComponent       = (<ModalCard<Element> theme='primary' inheritEnabled={false} />                              as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
+        tokenValidationDialogComponent       = (<ModalCard<Element> theme='primary' backdropStyle='static' inheritEnabled={false} />       as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
     } = props;
     
     

@@ -143,7 +143,7 @@ export const TabSignIn = (props: TabSignInProps) => {
         
         alternateSignInSeparatorComponent   = (<AlternateSignInSeparator  />                                                              as React.ReactComponentElement<any, GenericProps<Element>>),
         
-        emailValidationDialogComponent      = (<ModalCard<Element> theme='primary' inheritEnabled={false} />                              as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
+        emailValidationDialogComponent      = (<ModalCard<Element> theme='primary' backdropStyle='static' inheritEnabled={false} />       as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
     } = props;
     
     
