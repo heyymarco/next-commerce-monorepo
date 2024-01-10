@@ -743,23 +743,8 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                const isRequestError = (
-                    // axios'  error request:
-                    !!error.request
-                    ||
-                    // fetch's error request:
-                    (error instanceof TypeError)
-                );
-                if (isRequestError) {
-                    // redirect to sign in tab:
-                    gotoSignIn();
-                } // if
-                // nothing to do with unverified token & server_side_error => keeps the UI disabled
-                // else {
-                //     // focus to password field:
-                //     passwordRef.current?.setSelectionRange(0, password.length);
-                //     internalSetFocus(passwordRef.current);
-                // } // if
+                // redirect to sign in tab:
+                gotoSignIn();
             } // try
         })();
     }, [passwordResetToken, tokenVerified]);
@@ -1860,13 +1845,13 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                     !isBusy // disabled if busy
                     &&
                     (
-                        (isSignUpSection  && !isSignUpApplied)                                      // on 'signUp'  section => enabled if registration   was NOT sent
+                        (isSignUpSection  && !isSignUpApplied)                                                            // on 'signUp'  section => enabled if registration___was_NOT_sent
                         ||
-                        (isSignInSection  && (!emailConfirmationToken || (emailVerified !== null))) // on 'signIn'  section => enabled if no emailConfirmationToken -or- email has verified (success or failed)
+                        (isSignInSection                        && (!emailConfirmationToken || (emailVerified !== null))) // on 'signIn'  section => enabled if                                 no_emailConfirmationToken -or-  email_has_verified          (success or failed)
                         ||
-                        (isRecoverSection && !isRecoverApplied)                                     // on 'recover' section => enabled if recoverRequest was NOT sent
+                        (isRecoverSection && !isRecoverApplied)                                                           // on 'recover' section => enabled if recoverRequest_was_NOT_sent
                         ||
-                        (isResetSection   && !isResetApplied && !!tokenVerified)                    // on 'reset'   section => enabled if passwordReset  was NOT sent and token verified
+                        (isResetSection   && !isResetApplied    && (!!passwordResetToken    && (!!tokenVerified       ))) // on 'reset'   section => enabled if passwordReset__was_NOT_sent and has_passwordResetToken    -and- token_has_verified_as_valid (success only)
                     )
                 }
             >
