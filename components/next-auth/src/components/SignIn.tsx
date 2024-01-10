@@ -83,7 +83,6 @@ import type {
     AuthConfigClient,
 }                           from '../types.js'
 import {
-    SignInState,
     SignInStateProps,
     SignInStateProvider,
     useSignInState,
@@ -99,7 +98,6 @@ export const useSignInStyleSheet = dynamicStyleSheet(
 
 
 // react components:
-export type SignInChildrenWithState = (signInState: SignInState) => React.ReactNode
 export interface SignInProps<TElement extends Element = HTMLElement>
     extends
         // bases:
@@ -152,25 +150,27 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
     // rest props:
     const {
         // configs:
-        credentialsConfigClient : _credentialsConfigClient, // remove
+        credentialsConfigClient     : _credentialsConfigClient,   // remove
         
         
         
         // auths:
         authConfigClient,
         providers,
-        resolveProviderName     : _resolveProviderName,     // remove
-        basePath                : _basePath,                // remove
+        resolveProviderName         : _resolveProviderName,       // remove
+        basePath                    : _basePath,                  // remove
         
         
         
         // pages:
-        homepagePath            : _homepagePath,            // remove
-        defaultCallbackUrl      : _defaultCallbackUrl,      // remove
+        homepagePath                : _homepagePath,              // remove
+        defaultCallbackUrl          : _defaultCallbackUrl,        // remove
         
         
         
         // components:
+        signInWithDialogComponent   : _signInWithDialogComponent, // remove
+        
         bodyComponent               = (<Content mild={true} />                                                           as React.ReactComponentElement<any, BasicProps<TElement>>),
         tabComponent                = (<Tab headerComponent={null}>{undefined}</Tab>                                     as React.ReactComponentElement<any, TabProps<Element>>),
         signUpTabPanelComponent     = (<TabPanel />                                                                      as React.ReactComponentElement<any, TabPanelProps<Element>>),

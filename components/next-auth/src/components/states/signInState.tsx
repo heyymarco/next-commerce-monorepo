@@ -57,17 +57,34 @@ import {
     
     // a validation management system:
     ValidationProvider,
+    
+    
+    
+    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
+    GlobalStackableProps,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
 import {
+    // layout-components:
+    CardBody,
+    
+    
+    
     // status-components:
     Busy,
     
     
     
+    // dialog-components:
+    ModalExpandedChangeEvent,
+    ModalCard,
+    
+    
+    
     // utility-components:
     paragraphify,
+    ModalBaseProps,
     useDialogMessage,
 }                           from '@reusable-ui/components'      // a set of official Reusable-UI components
 
@@ -390,19 +407,24 @@ export const useSignInState = (): SignInState => {
 // react components:
 export interface SignInStateProps {
     // configs:
-    credentialsConfigClient  : CredentialsConfigClient
+    credentialsConfigClient    : CredentialsConfigClient
     
     
     
     // auths:
-    resolveProviderName     ?: (oAuthProvider: BuiltInProviderType) => string
-    basePath                ?: string
+    resolveProviderName       ?: (oAuthProvider: BuiltInProviderType) => string
+    basePath                  ?: string
     
     
     
     // pages:
-    homepagePath            ?: string
-    defaultCallbackUrl      ?: string|null
+    homepagePath              ?: string
+    defaultCallbackUrl        ?: string|null
+    
+    
+    
+    // components:
+    signInWithDialogComponent ?: React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>|null
 }
 const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) => {
     // rest props:
@@ -413,14 +435,19 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         
         
         // auths:
-        resolveProviderName : resolveProviderNameUnstable,
-        basePath            = '/api/auth',
+        resolveProviderName       : resolveProviderNameUnstable,
+        basePath                  = '/api/auth',
         
         
         
         // pages:
-        homepagePath        = '/',
-        defaultCallbackUrl  = null,
+        homepagePath              = '/',
+        defaultCallbackUrl        = null,
+        
+        
+        
+        // components:
+        signInWithDialogComponent = (<ModalCard<Element> theme='primary' backdropStyle='static' inheritEnabled={false} /> as React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>),
         
         
         
@@ -610,11 +637,11 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     
     // dialogs:
     const {
+        showDialog,
         showMessageError,
         showMessageFieldError,
         showMessageFetchError,
         showMessageSuccess,
-        showMessageNotification,
     } = useDialogMessage();
     
     
@@ -1393,9 +1420,26 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         }
         else { // success
             // report the success:
-            showMessageNotification(
-                <p><Busy />&nbsp;Authenticating...</p>
-            );
+            if (signInWithDialogComponent) {
+                showDialog(
+                    React.cloneElement<(ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>(signInWithDialogComponent,
+                        // props:
+                        {
+                            // global stackable:
+                            viewport : signInWithDialogComponent.props.viewport ?? formRef,
+                        },
+                        
+                        
+                        
+                        // children:
+                        (signInWithDialogComponent.props.children ?? <CardBody>
+                            <p>
+                                <Busy />&nbsp;Authenticating using {providerType}...
+                            </p>
+                        </CardBody>),
+                    )
+                );
+            } // if
         } // if
     });
     const doRecover    = useEvent(async(): Promise<void> => {
