@@ -646,7 +646,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     
     
     
-    // dom effects:
+    // effects:
     
     // displays an error passed by `next-auth`:
     useEffect(() => {
