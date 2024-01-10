@@ -432,7 +432,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     
     
     //#region custom handlers
-    // password reset:
+    // password resets:
     const requestPasswordResetRouteHandler       = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
         if (!resetEnabled)                         return false; // ignore
@@ -1295,7 +1295,7 @@ If the problem still persists, please contact our technical support.`,
     // merged handlers:
     const mergedRouteHandler                     = async (req: Request, context: NextAuthRouteContext): Promise<Response> => {
         return (
-            // password reset:
+            // password resets:
             await requestPasswordResetRouteHandler(req, context, passwordResetPath)
             ||
             await validatePasswordResetRouteHandler(req, context, passwordResetPath)

@@ -93,7 +93,7 @@ export interface AdapterWithCredentials
     
     
     
-    // password reset:
+    // password resets:
     createPasswordResetToken   : (usernameOrEmail        : string                                    , options?: CreatePasswordResetTokenOptions  ) => Awaitable<CreatePasswordResetTokenData|Date|null>
     validatePasswordResetToken : (passwordResetToken     : string                                    , options?: ValidatePasswordResetTokenOptions) => Awaitable<ValidatePasswordResetTokenData|null>
     usePasswordResetToken      : (passwordResetToken     : string, password: string                  , options?: UsePasswordResetTokenOptions     ) => Awaitable<boolean>
@@ -473,7 +473,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         
         
-        // password reset:
+        // password resets:
         createPasswordResetToken   : async (usernameOrEmail                     , options) => {
             // conditions:
             const hasPasswordResetToken = !!mPasswordResetToken && (mPasswordResetToken in prisma);
