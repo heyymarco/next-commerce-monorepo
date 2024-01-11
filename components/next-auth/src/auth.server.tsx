@@ -1111,7 +1111,7 @@ If the problem still persists, please contact our technical support.`,
                 ok       : true,
                 message  :
                     !emailConfirmationToken
-                    ? 'Your account has been successfully created. Now you can sign in with the new username and password.'
+                    ? 'Your account has been successfully created.\n\nNow you can sign in with the new username and password.'
                     : 'Your account has been successfully created.\n\nWe have sent a confirmation link to your email to activate your account. Please check your inbox in a moment.'
                 ,
             }, { status: !emailConfirmationToken ? 200 : 201 }); // handled with success
