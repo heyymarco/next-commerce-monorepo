@@ -183,11 +183,11 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         recoverTitleComponent,
         resetTitleComponent,
         
-        fullnameInputComponent,
-        fullnameTooltipComponent,
-        fullnameValidationListComponent,
-        fullnameValidationListItemComponent,
-        fullnameValidationIconComponent,
+        nameInputComponent,
+        nameTooltipComponent,
+        nameValidationListComponent,
+        nameValidationListItemComponent,
+        nameValidationIconComponent,
         
         emailInputComponent,
         emailTooltipComponent,
@@ -533,11 +533,11 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
                     // components:
                     signUpTitleComponent={signUpTitleComponent}
                     
-                    fullnameInputComponent={fullnameInputComponent}
-                    fullnameTooltipComponent={fullnameTooltipComponent}
-                    fullnameValidationListComponent={fullnameValidationListComponent}
-                    fullnameValidationListItemComponent={fullnameValidationListItemComponent}
-                    fullnameValidationIconComponent={fullnameValidationIconComponent}
+                    nameInputComponent={nameInputComponent}
+                    nameTooltipComponent={nameTooltipComponent}
+                    nameValidationListComponent={nameValidationListComponent}
+                    nameValidationListItemComponent={nameValidationListItemComponent}
+                    nameValidationIconComponent={nameValidationIconComponent}
                     
                     emailInputComponent={emailInputComponent}
                     emailTooltipComponent={emailTooltipComponent}
