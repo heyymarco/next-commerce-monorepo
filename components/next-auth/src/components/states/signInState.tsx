@@ -1250,9 +1250,27 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 data.message
                 ? paragraphify(data.message)
                 : (
-                    <p>
-                        Your account has been successfully created. Now you can sign in with the new username and password.
-                    </p>
+                    (response.status === 201)
+                    ? (
+                        <>
+                            <p>
+                                Your account has been successfully created.
+                            </p>
+                            <p>
+                                We have sent a confirmation link to your email to activate your account. Please check your inbox in a moment.
+                            </p>
+                        </>
+                    )
+                    : (
+                        <>
+                            <p>
+                                Your account has been successfully created.
+                            </p>
+                            <p>
+                                Now you can sign in with the new username and password.
+                            </p>
+                        </>
+                    )
                 )
             );
             if (!isMounted.current) return; // unmounted => abort
@@ -1486,22 +1504,9 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 data.message
                 ? paragraphify(data.message)
                 : (
-                    (response.status === 201)
-                    ? (
-                        <>
-                            <p>
-                                Your account has been successfully created.
-                            </p>
-                            <p>
-                                We have sent a confirmation link to your email to activate your account. Please check your inbox in a moment.
-                            </p>
-                        </>
-                    )
-                    : (
-                        <p>
-                            A password reset link sent to your email. Please check your inbox in a moment.
-                        </p>
-                    )
+                    <p>
+                        A password reset link sent to your email. Please check your inbox in a moment.
+                    </p>
                 )
             );
             if (!isMounted.current) return; // unmounted => abort
