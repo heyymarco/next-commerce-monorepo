@@ -46,6 +46,9 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useEvent,
+    EventHandler,
+    useMergeEvents,
+    useScheduleTriggerEvent,
     useMountedFlag,
     
     
@@ -129,6 +132,7 @@ export type SignInSection =
     | 'signIn'
     | 'recover'
     | 'reset'
+export type ControllableSignInSection = Exclude<SignInSection, 'reset'>
 export type BusyState =
     | false               // idle
     |'signUp'             // busy: sign up
@@ -423,6 +427,13 @@ export interface SignInStateProps {
     
     
     
+    // tabs:
+    defaultSection            ?: ControllableSignInSection
+    section                   ?: ControllableSignInSection
+    onSectionChange           ?: EventHandler<ControllableSignInSection>
+    
+    
+    
     // components:
     signInWithDialogComponent ?: React.ReactComponentElement<any, (ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>|null
 }
@@ -443,6 +454,13 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         // pages:
         homepagePath              = '/',
         defaultCallbackUrl        = null,
+        
+        
+        
+        // tabs:
+        defaultSection            : defaultUncontrollableSection = 'signIn',
+        section                   : controllableSection,
+        onSectionChange,
         
         
         
@@ -484,18 +502,49 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     
     
     // states:
-    const [section          , setSection          ] = useState<SignInSection>(!!passwordResetTokenRef.current ? 'reset' : 'signIn');
-    const isSignUpSection                           = (section === 'signUp');
-    const isSignInSection                           = (section === 'signIn');
-    const isRecoverSection                          = (section === 'recover');
-    const isResetSection                            = (section === 'reset');
-    const [tokenVerified    , setTokenVerified    ] = useState<null|{ email: string, username: string|null }|false>(!passwordResetToken ? false : null);
-    const [emailVerified    , setEmailVerified    ] = useState<null|boolean>(!emailConfirmationToken ? false : null);
-    const [isSignUpApplied  , setIsSignUpApplied  ] = useState<boolean>(false);
-    const [isRecoverApplied , setIsRecoverApplied ] = useState<boolean>(false);
-    const [isResetApplied   , setIsResetApplied   ] = useState<boolean>(false);
-    const [isBusy           , setIsBusyInternal   ] = useState<BusyState>(false);
-    const isMounted                                 = useMountedFlag();
+    const isControllableSection = (controllableSection !== undefined);
+    const [sectionDn        , setSectionDn       ] = useState<SignInSection>(
+        !!passwordResetTokenRef.current
+        ? 'reset' // special section
+        : defaultUncontrollableSection
+    );
+    const section : SignInSection = (
+        (sectionDn === 'reset')
+        ? 'reset' // special section
+        : (controllableSection /*controllable*/ ?? sectionDn /*uncontrollable*/)
+    );
+    const handleSectionChangeInternal = useEvent<EventHandler<ControllableSignInSection>>((newSection) => {
+        // update state:
+        if (!isControllableSection) setSectionDn(newSection);
+    });
+    const handleSectionChange         = useMergeEvents(
+        // preserves the original `onSectionChange` from `props`:
+        onSectionChange,
+        
+        
+        
+        // actions:
+        handleSectionChangeInternal,
+    );
+    const scheduleTriggerEvent        = useScheduleTriggerEvent();
+    const triggerSectionChange        = useEvent<EventHandler<ControllableSignInSection>>((newSection): void => {
+        if (handleSectionChange) scheduleTriggerEvent(() => { // runs the `onSectionChange` event *next after* current macroTask completed
+            // fire `onSectionChange` react event:
+            handleSectionChange(newSection);
+        });
+    });
+    
+    const isSignUpSection                          = (section === 'signUp');
+    const isSignInSection                          = (section === 'signIn');
+    const isRecoverSection                         = (section === 'recover');
+    const isResetSection                           = (section === 'reset');
+    const [tokenVerified    , setTokenVerified   ] = useState<null|{ email: string, username: string|null }|false>(!passwordResetToken ? false : null);
+    const [emailVerified    , setEmailVerified   ] = useState<null|boolean>(!emailConfirmationToken ? false : null);
+    const [isSignUpApplied  , setIsSignUpApplied ] = useState<boolean>(false);
+    const [isRecoverApplied , setIsRecoverApplied] = useState<boolean>(false);
+    const [isResetApplied   , setIsResetApplied  ] = useState<boolean>(false);
+    const [isBusy           , setIsBusyInternal  ] = useState<BusyState>(false);
+    const isMounted                                = useMountedFlag();
     
     
     
@@ -1176,13 +1225,13 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     });
     
     const gotoSignUp   = useEvent(() => {
-        setSection('signUp');
+        triggerSectionChange('signUp');
     });
     const gotoSignIn   = useEvent(() => {
-        setSection('signIn');
+        triggerSectionChange('signIn');
     });
     const gotoRecover  = useEvent(() => {
-        setSection('recover');
+        triggerSectionChange('recover');
     });
     const gotoHome     = useEvent(() => {
         router.push(homepagePath);

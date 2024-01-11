@@ -19,6 +19,7 @@ export default function Home() {
                 credentialsConfigClient={credentialsConfigClient}
                 providers={loginProviders}
                 defaultCallbackUrl='/?welcome'
+                defaultSection='signUp'
                 gotoHomeButtonComponent={null}
             />
         </Container>

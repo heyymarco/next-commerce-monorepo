@@ -168,6 +168,13 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         
         
+        // tabs:
+        defaultSection              : _defaultSection,
+        section                     : _section,
+        onSectionChange             : _onSectionChange,
+        
+        
+        
         // components:
         signInWithDialogComponent   : _signInWithDialogComponent, // remove
         
