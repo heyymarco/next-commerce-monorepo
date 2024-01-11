@@ -1003,7 +1003,10 @@ If the problem still persists, please contact our technical support.`,
         
         // validate the request parameter(s):
         const {
-            fullname: name,
+            name,
+            email,
+            username,
+            password,
         } = await getRequestData(req);
         if ((typeof(name) !== 'string') || !name) {
             return NextResponse.json({
@@ -1021,11 +1024,11 @@ If the problem still persists, please contact our technical support.`,
             }, { status: 400 }); // handled with error
         } // if
         
-        const validationUsernameAvailability  = await checkUsernameAvailabilityRouteHandler(req, context, '');
-        if (validationUsernameAvailability  && !validationUsernameAvailability.ok ) return validationUsernameAvailability;
-        
         const validationEmailAvailability     = await checkEmailAvailabilityRouteHandler(req, context, '');
         if (validationEmailAvailability     && !validationEmailAvailability.ok    ) return validationEmailAvailability;
+        
+        const validationUsernameAvailability  = await checkUsernameAvailabilityRouteHandler(req, context, '');
+        if (validationUsernameAvailability  && !validationUsernameAvailability.ok ) return validationUsernameAvailability;
         
         const validationUsernameNotProhibited = await checkUsernameNotProhibitedRouteHandler(req, context, '');
         if (validationUsernameNotProhibited && !validationUsernameNotProhibited.ok) return validationUsernameNotProhibited;
@@ -1033,19 +1036,12 @@ If the problem still persists, please contact our technical support.`,
         const validationPasswordNotProhibited = await checkPasswordNotProhibitedRouteHandler(req, context, '');
         if (validationPasswordNotProhibited && !validationPasswordNotProhibited.ok) return validationPasswordNotProhibited;
         
-        const {
-            fullname,
-            email,
-            username,
-            password,
-        } = await getRequestData(req);
-        
         
         
         try {
             const {
                 emailConfirmationToken,
-            } = await adapter.registerUser(fullname, email, username, password, {
+            } = await adapter.registerUser(name, email, username, password, {
                 requireEmailVerified : signInRequireVerifiedEmail,
             });
             
@@ -1082,7 +1078,7 @@ If the problem still persists, please contact our technical support.`,
                             <BusinessContextProvider {...businessContextProviderProps}>
                                 <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
                                     <UserContextProvider model={{
-                                        name  : fullname,
+                                        name  : name,
                                         email : email,
                                     }}>
                                         {emailSignUpSubject}
@@ -1094,7 +1090,7 @@ If the problem still persists, please contact our technical support.`,
                             <BusinessContextProvider {...businessContextProviderProps}>
                                 <EmailConfirmationContextProvider url={emailConfirmationLinkUrl}>
                                     <UserContextProvider model={{
-                                        name  : fullname,
+                                        name  : name,
                                         email : email,
                                     }}>
                                         {emailSignUpMessage}
@@ -1305,9 +1301,9 @@ If the problem still persists, please contact our technical support.`,
             ||
             
             // registrations:
-            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
-            ||
             await checkEmailAvailabilityRouteHandler(req, context, emailValidationPath)
+            ||
+            await checkUsernameAvailabilityRouteHandler(req, context, usernameValidationPath)
             ||
             await checkUsernameNotProhibitedRouteHandler(req, context, usernameValidationPath)
             ||
