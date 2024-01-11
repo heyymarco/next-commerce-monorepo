@@ -1117,7 +1117,6 @@ If the problem still persists, please contact our technical support.`,
             }, { status: !emailConfirmationToken ? 200 : 201 }); // handled with success
         }
         catch (error: any) {
-            console.log(error);
             return NextResponse.json({
                 error:
 `Oops, there was an error while registering your account.

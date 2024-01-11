@@ -492,9 +492,9 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     
     
     // data:
-    const callbackUrlRef            = useRef<string|null>(searchParams?.get('callbackUrl'       ) || defaultCallbackUrl);
+    const callbackUrlRef            = useRef<string|null>(searchParams?.get('callbackUrl'           ) || defaultCallbackUrl);
     const callbackUrl               = callbackUrlRef.current;
-    const passwordResetTokenRef     = useRef<string|null>(searchParams?.get('passwordResetToken') || null);
+    const passwordResetTokenRef     = useRef<string|null>(searchParams?.get('passwordResetToken'    ) || null);
     const passwordResetToken        = passwordResetTokenRef.current;
     const emailConfirmationTokenRef = useRef<string|null>(searchParams?.get('emailConfirmationToken') || null);
     const emailConfirmationToken    = emailConfirmationTokenRef.current;
@@ -514,8 +514,8 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         : (controllableSection /*controllable*/ ?? sectionDn /*uncontrollable*/)
     );
     const handleSectionChangeInternal = useEvent<EventHandler<ControllableSignInSection>>((newSection) => {
-        // update state:
-        if (!isControllableSection) setSectionDn(newSection);
+        // update state if uncontrollable -or- controllable with initially 'reset' special section:
+        if (!isControllableSection || (sectionDn === 'reset')) setSectionDn(newSection);
     });
     const handleSectionChange         = useMergeEvents(
         // preserves the original `onSectionChange` from `props`:
@@ -777,7 +777,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                // save the success:
+                // passwordResetTokenValidation succeeded => save the success:
                 setTokenVerified(data);
             }
             catch (error: any) { // error
@@ -792,7 +792,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                // redirect to sign in tab:
+                // passwordResetTokenValidation failed due to network|client|server error => redirect to sign in tab:
                 gotoSignIn();
             } // try
         })();
@@ -830,7 +830,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                // save the success:
+                // emailConfirmationTokenValidation succeeded => save the success:
                 setEmailVerified(true);
                 
                 
@@ -858,7 +858,8 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                // no need to redirect to another tab, because sign in tab is the default tab
+                // emailConfirmationTokenValidation failed due to network|client|server error => no need to redirect to another tab, because sign in tab is the default tab
+                // stays on login page
             } // try
         })();
     }, [emailConfirmationToken, emailVerified]);
@@ -1326,7 +1327,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // redirect to sign in tab:
+            // signUp succeeded => redirect to sign in tab:
             gotoSignIn();
         }
         catch (error: any) { // error
@@ -1345,22 +1346,10 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            const isRequestError = (
-                // axios'  error request:
-                !!error.request
-                ||
-                // fetch's error request:
-                (error instanceof TypeError)
-            );
-            if (isRequestError) {
-                // redirect to sign in tab:
-                gotoSignIn();
-            }
-            else {
-                // focus to name field:
-                nameRef.current?.setSelectionRange(0, name.length);
-                nameRef.current?.focus();
-            } // if
+            // signUp failed due to network|client|server error => user can retry signUp again:
+            // focus to name field:
+            nameRef.current?.setSelectionRange(0, name.length);
+            nameRef.current?.focus();
         } // try
     });
     const doSignIn     = useEvent(async (): Promise<void> => {
@@ -1412,6 +1401,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
+            // signIn failed due to network|client|server error => user can retry signIn again:
             // focus to password field:
             passwordRef.current?.setSelectionRange(0, password.length);
             passwordRef.current?.focus();
@@ -1423,7 +1413,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // redirect to origin page:
+            // signIn succeeded => redirect to origin page:
             if (callbackUrl) {
                 // redirect to `callbackUrl` (if supplied)
                 
@@ -1457,9 +1447,9 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         setIsBusy(providerType); // mark as busy
         const result = await signIn(providerType, {
             callbackUrl:
-                callbackUrl // redirect to `callbackUrl` (if supplied)
+                callbackUrl // signInWith succeeded => redirect to `callbackUrl` (if supplied)
                 ||          // -or-
-                undefined   // stays on login page
+                undefined   // signInWith succeeded => stays on login page
         });
         if (!isMounted.current) return; // unmounted => abort
         
@@ -1473,9 +1463,14 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             // report the failure:
             showMessageError(getAuthErrorDescription(result?.error ?? 'OAuthSignin'));
+            
+            
+            
+            // signInWith failed due to network|client|server error => user can retry signIn again:
+            // stays on login page
         }
         else { // success
-            // report the success:
+            // signInWith succeeded => report the success:
             if (signInWithDialogComponent) {
                 showDialog(
                     React.cloneElement<(ModalBaseProps<Element, ModalExpandedChangeEvent<any>> & GlobalStackableProps)>(signInWithDialogComponent,
@@ -1562,7 +1557,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // redirect to sign in tab:
+            // requestRecoverPassword succeeded => redirect to sign in tab:
             gotoSignIn();
         }
         catch (error: any) { // error
@@ -1580,6 +1575,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
+            // requestRecoverPassword failed due to network|client|server error => user can retry requestRecoverPassword again:
             // focus to usernameOrEmail field:
             usernameOrEmailRef.current?.setSelectionRange(0, usernameOrEmail.length);
             usernameOrEmailRef.current?.focus();
@@ -1656,7 +1652,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // redirect to sign in tab:
+            // resetPassword succeeded => redirect to sign in tab:
             gotoSignIn();
         }
         catch (error: any) { // error
@@ -1675,22 +1671,10 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            const isRequestError = (
-                // axios'  error request:
-                !!error.request
-                ||
-                // fetch's error request:
-                (error instanceof TypeError)
-            );
-            if (isRequestError) {
-                // redirect to sign in tab:
-                gotoSignIn();
-            }
-            else {
-                // focus to password field:
-                passwordRef.current?.setSelectionRange(0, password.length);
-                passwordRef.current?.focus();
-            } // if
+            // resetPassword failed due to network|client|server error => user can retry resetPassword again:
+            // focus to password field:
+            passwordRef.current?.setSelectionRange(0, password.length);
+            passwordRef.current?.focus();
         } // try
     });
     
