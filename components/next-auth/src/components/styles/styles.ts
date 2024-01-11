@@ -70,7 +70,7 @@ import {
     recoverTitleElm,
     resetTitleElm,
     
-    fullnameElm,
+    nameElm,
     emailElm,
     usernameElm,
     passwordElm,
@@ -189,9 +189,9 @@ export const usesSignInLayout = () => {
                         // positions:
                         gridArea     : 'email',
                     }),
-                    ...children(fullnameElm, {
+                    ...children(nameElm, {
                         // positions:
-                        gridArea     : 'fullname',
+                        gridArea     : 'name',
                     }),
                     ...children(usernameElm, {
                         // positions:
@@ -317,7 +317,7 @@ export const usesSignInLayout = () => {
                 // layouts:
                 gridTemplate   : [[
                     '"   title       title       title       title       title       title   " min-content',
-                    '"  fullname    fullname    fullname    fullname    fullname    fullname " min-content',
+                    '"    name        name        name        name        name        name   " min-content',
                     '"   email       email       email       email       email       email   " min-content',
                     '"  username    username    username    username    username    username " min-content',
                     '" password    password    password    password    password    password  " min-content',
@@ -331,7 +331,7 @@ export const usesSignInLayout = () => {
                 ...ifContainerWidthAtLeast('sm', {
                     gridTemplate   : [[
                         '"   title       title       title       title       title       title   " min-content',
-                        '"  fullname    fullname    fullname    fullname    fullname    fullname " min-content',
+                        '"    name        name        name        name        name        name   " min-content',
                         '"   email       email       email       email       email       email   " min-content',
                         '"  username    username    username    username    username    username " min-content',
                         '" password    password    password    password    password    password  " min-content',
@@ -346,7 +346,7 @@ export const usesSignInLayout = () => {
                 ...ifContainerWidthAtLeast('md', {
                     gridTemplate   : [[
                         '"   title       title       title       title       title       title   " min-content',
-                        '"  fullname    fullname    fullname    fullname    fullname    fullname " min-content',
+                        '"    name        name        name        name        name        name   " min-content',
                         '"   email       email       email       email       email       email   " min-content',
                         '"  username    username    username    username    username    username " min-content',
                         '" password    password    password    password    password    password  " min-content',
