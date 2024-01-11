@@ -28,9 +28,9 @@ import {
 }                           from './ButtonWithBusy.js'
 import {
     // react components:
-    FieldFullnameProps,
-    FieldFullname,
-}                           from './FieldFullname.js'
+    FieldNameProps,
+    FieldName,
+}                           from './FieldName.js'
 import {
     // react components:
     FieldEmailProps,
@@ -68,7 +68,7 @@ import {
 export interface TabSignUpProps
     extends
         // components:
-        Omit<FieldFullnameProps , 'isActiveSection'|'isActionApplied'>,
+        Omit<FieldNameProps     , 'isActiveSection'|'isActionApplied'>,
         Omit<FieldEmailProps    , 'isActiveSection'|'isActionApplied'|'emailReadOnly'>,
         Omit<FieldUsernameProps , 'isActiveSection'|'isActionApplied'>,
         Omit<FieldPasswordProps , 'isActiveSection'|'isActionApplied'|'isPasswordEntry'>,
@@ -85,11 +85,11 @@ export const TabSignUp = (props: TabSignUpProps) => {
         // components:
         signUpTitleComponent                 = (<h1>Sign Up</h1> as React.ReactComponentElement<any, Pick<React.HTMLAttributes<Element>, 'className'>>),
         
-        fullnameInputComponent,
-        fullnameTooltipComponent,
-        fullnameValidationListComponent,
-        fullnameValidationListItemComponent,
-        fullnameValidationIconComponent,
+        nameInputComponent,
+        nameTooltipComponent,
+        nameValidationListComponent,
+        nameValidationListItemComponent,
+        nameValidationIconComponent,
         
         emailInputComponent,
         emailTooltipComponent,
@@ -187,7 +187,7 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 },
             )}
             
-            <FieldFullname
+            <FieldName
                 // states:
                 isActiveSection={isSignUpSection}
                 isActionApplied={isSignUpApplied}
@@ -195,11 +195,11 @@ export const TabSignUp = (props: TabSignUpProps) => {
                 
                 
                 // components:
-                fullnameInputComponent={fullnameInputComponent}
-                fullnameTooltipComponent={fullnameTooltipComponent}
-                fullnameValidationListComponent={fullnameValidationListComponent}
-                fullnameValidationListItemComponent={fullnameValidationListItemComponent}
-                fullnameValidationIconComponent={fullnameValidationIconComponent}
+                nameInputComponent={nameInputComponent}
+                nameTooltipComponent={nameTooltipComponent}
+                nameValidationListComponent={nameValidationListComponent}
+                nameValidationListItemComponent={nameValidationListItemComponent}
+                nameValidationIconComponent={nameValidationIconComponent}
             />
             
             <FieldEmail
