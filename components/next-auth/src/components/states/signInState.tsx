@@ -792,7 +792,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                // passwordResetTokenValidation failed due to network|client|server error => redirect to sign in tab:
+                // passwordResetTokenValidation failed due to network|client|server error => redirect to signIn tab:
                 gotoSignIn();
             } // try
         })();
@@ -858,7 +858,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 
-                // emailConfirmationTokenValidation failed due to network|client|server error => no need to redirect to another tab, because sign in tab is the default tab
+                // emailConfirmationTokenValidation failed due to network|client|server error => no need to redirect to another tab, because signIn tab is the default tab
                 // stays on login page
             } // try
         })();
@@ -1327,7 +1327,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // signUp succeeded => redirect to sign in tab:
+            // signUp succeeded => redirect to signIn tab:
             gotoSignIn();
         }
         catch (error: any) { // error
@@ -1557,7 +1557,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // requestRecoverPassword succeeded => redirect to sign in tab:
+            // requestRecoverPassword succeeded => redirect to signIn tab:
             gotoSignIn();
         }
         catch (error: any) { // error
@@ -1652,7 +1652,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             
-            // resetPassword succeeded => redirect to sign in tab:
+            // resetPassword succeeded => redirect to signIn tab:
             gotoSignIn();
         }
         catch (error: any) { // error
