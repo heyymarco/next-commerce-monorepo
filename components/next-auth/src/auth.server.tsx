@@ -921,7 +921,7 @@ If the problem still persists, please contact our technical support.`,
     };
     const checkPasswordNotProhibitedRouteHandler = async (req: Request, context: NextAuthRouteContext, path: string): Promise<false|Response> => {
         // conditions:
-        if (!signUpEnabled)                            return false; // ignore
+        if (!signUpEnabled && !resetEnabled)           return false; // ignore
         
         
         
