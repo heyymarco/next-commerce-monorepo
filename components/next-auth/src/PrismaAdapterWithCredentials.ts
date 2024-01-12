@@ -385,7 +385,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 {
                     const lockedAt = expectedCredentials.lockedAt ?? null;
                     if (lockedAt !== null) {
-                        const lockedUntil = new Date(/* since: */ lockedAt.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert to milliseconds */));
+                        const lockedUntil = new Date(/* since: */ lockedAt.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert hours to milliseconds */));
                         if (lockedUntil > now) {
                             // still in locked period => return the released_out date:
                             return lockedUntil;
@@ -455,7 +455,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                             
                             
                             
-                            if (isLocked) return new Date(/* since: */ now.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert to milliseconds */)); // the credentials has been locked
+                            if (isLocked) return new Date(/* since: */ now.valueOf() + /* duration: */ (failureLockDuration * 60 * 60 * 1000 /* convert hours to milliseconds */)); // the credentials has been locked
                         } // if
                     } // if
                     
@@ -497,7 +497,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // generate the passwordResetToken data:
             const passwordResetToken  = await customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', 16)();
-            const passwordResetMaxAge = resetMaxAge * 60 * 60 * 1000 /* convert to milliseconds */;
+            const passwordResetMaxAge = resetMaxAge * 60 * 60 * 1000 /* convert hours to milliseconds */;
             const passwordResetExpiry = new Date(now.valueOf() + passwordResetMaxAge);
             
             
@@ -540,7 +540,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     
                     // calculate how often the last request of passwordResetToken:
                     if (!!lastRequestDate) {
-                        const minInterval = resetThrottle * 60 * 60 * 1000 /* convert to milliseconds */;
+                        const minInterval = resetThrottle * 60 * 60 * 1000 /* convert hours to milliseconds */;
                         if ((now.valueOf() - lastRequestDate.valueOf()) < minInterval) { // the request interval is shorter than minInterval  => reject the request
                             // the reset request is too frequent => reject:
                             return new Date(lastRequestDate.valueOf() + minInterval);

@@ -249,8 +249,8 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
     const session     : SessionOptions = {
         strategy  : 'database',
         
-        maxAge    : sessionMaxAge,
-        updateAge : sessionUpdateAge,
+        maxAge    : sessionMaxAge    * 60 * 60 /* convert hours to seconds */,
+        updateAge : sessionUpdateAge * 60 * 60 /* convert hours to seconds */,
         
         generateSessionToken() {
             return randomUUID();
@@ -1220,7 +1220,7 @@ If the problem still persists, please contact our technical support.`,
                         
                         // generate the sessionToken data:
                         const sessionToken  = await session.generateSessionToken();
-                        const sessionMaxAge = session.maxAge /* relative time from now in seconds */ * 1000 /* convert to milliseconds */;
+                        const sessionMaxAge = session.maxAge /* relative time from now in seconds */ * 1000 /* convert seconds to milliseconds */;
                         const sessionExpiry = new Date(Date.now() + sessionMaxAge);
                         
                         
