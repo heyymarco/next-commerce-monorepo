@@ -869,7 +869,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 // emailConfirmationTokenValidation failed due to network|client|server error => no need to redirect to another tab, because signIn tab is the default tab
-                // stays on login page
+                // stays on signIn tab
             } // try
         })();
     }, [emailConfirmationToken, emailVerified]);
@@ -1432,7 +1432,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 router.replace(callbackUrl);
             }
             else {
-                // stays on login page
+                // stays on signIn tab
                 
                 
                 
@@ -1459,7 +1459,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             callbackUrl:
                 callbackUrl // signInWith succeeded => redirect to `callbackUrl` (if supplied)
                 ||          // -or-
-                undefined   // signInWith succeeded => stays on login page
+                undefined   // signInWith succeeded => stays on signIn tab
         });
         if (!isMounted.current) return; // unmounted => abort
         
@@ -1477,7 +1477,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             
             
             // signInWith failed due to network|client|server error => user can retry signIn again:
-            // stays on login page
+            // stays on signIn tab
         }
         else { // success
             // signInWith succeeded => report the success:
