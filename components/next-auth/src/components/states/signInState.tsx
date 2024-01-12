@@ -785,6 +785,10 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 // passwordResetTokenValidation succeeded => save the success:
                 setTokenVerified(data);
+                
+                
+                
+                // now the user can fill the passwordResetToken form
             }
             catch (error: any) { // error
                 // save the failure:
