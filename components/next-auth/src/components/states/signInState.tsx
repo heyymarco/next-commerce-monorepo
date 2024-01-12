@@ -1503,7 +1503,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
             } // if
         } // if
     });
-    const doRecover    = useEvent(async(): Promise<void> => {
+    const doRecover    = useEvent(async (): Promise<void> => {
         // conditions:
         if (signInState.isBusy) return; // ignore when busy /* instant update without waiting for (slow|delayed) re-render */
         
