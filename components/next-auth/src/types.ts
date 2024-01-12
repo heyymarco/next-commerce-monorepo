@@ -66,7 +66,7 @@ declare module 'next-auth' { // TODO: to be removed, for compatibility reason
         role ?: Role|null
     }
 }
-declare module '@auth/core' {
+declare module '@auth/core/types' {
     interface DefaultUser extends NextAuthDefaultUser {
         role ?: Role|null
     }
