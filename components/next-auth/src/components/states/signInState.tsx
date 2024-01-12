@@ -529,7 +529,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         handleUncontrollableSectionChange, /*uncontrollable*/
     );
     const scheduleTriggerEvent              = useScheduleTriggerEvent();
-    const triggerSectionChange              = useEvent<EventHandler<ControllableSignInSection>>((newSection): void => {
+    const triggerSectionChange              = useEvent<EventHandler<ControllableSignInSection>>((newSection) => {
         if (handleSectionChange) scheduleTriggerEvent(() => { // runs the `on(Controllable|Uncontrollable)SectionChange` event *next after* current macroTask completed
             // fire `on(Controllable|Uncontrollable)SectionChange` react event:
             handleSectionChange(newSection);
