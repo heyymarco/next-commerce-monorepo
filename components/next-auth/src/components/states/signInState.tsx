@@ -517,20 +517,20 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
         // update state if uncontrollable -or- controllable with initially 'reset'_special_uncontrollable:
         if (!isControllableSection || (uncontrollableSection === 'reset')) setUncontrollableSection(newSection);
     });
-    const handleControllableSectionChange   = useMergeEvents(
+    const handleSectionChange               = useMergeEvents(
         // preserves the original `onControllableSectionChange` from `props`:
-        onControllableSectionChange,
+        onControllableSectionChange,       /*controllable*/
         
         
         
         // actions:
-        handleUncontrollableSectionChange,
+        handleUncontrollableSectionChange, /*uncontrollable*/
     );
     const scheduleTriggerEvent              = useScheduleTriggerEvent();
     const triggerSectionChange              = useEvent<EventHandler<ControllableSignInSection>>((newSection): void => {
-        if (handleControllableSectionChange) scheduleTriggerEvent(() => { // runs the `onControllableSectionChange` event *next after* current macroTask completed
-            // fire `onControllableSectionChange` react event:
-            handleControllableSectionChange(newSection);
+        if (handleSectionChange) scheduleTriggerEvent(() => { // runs the `on(Controllable|Uncontrollable)SectionChange` event *next after* current macroTask completed
+            // fire `on(Controllable|Uncontrollable)SectionChange` react event:
+            handleSectionChange(newSection);
         });
     });
     
