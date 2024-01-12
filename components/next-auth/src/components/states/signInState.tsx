@@ -494,8 +494,10 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     // data:
     const callbackUrlRef            = useRef<string|null>(searchParams?.get('callbackUrl'           ) || defaultCallbackUrl);
     const callbackUrl               = callbackUrlRef.current;
+    
     const passwordResetTokenRef     = useRef<string|null>(searchParams?.get('passwordResetToken'    ) || null);
     const passwordResetToken        = passwordResetTokenRef.current;
+    
     const emailConfirmationTokenRef = useRef<string|null>(searchParams?.get('emailConfirmationToken') || null);
     const emailConfirmationToken    = emailConfirmationTokenRef.current;
     
@@ -504,7 +506,7 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     // states:
     const isControllableSection = (controllableSection !== undefined);
     const [uncontrollableSection, setUncontrollableSection] = useState<SignInSection>(
-        !!passwordResetTokenRef.current
+        !!passwordResetToken
         ? 'reset' // special_uncontrollable
         : defaultUncontrollableSection
     );
