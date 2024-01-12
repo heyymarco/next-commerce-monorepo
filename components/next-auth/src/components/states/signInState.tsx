@@ -538,12 +538,16 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
     const isSignInSection                          = (section === 'signIn');
     const isRecoverSection                         = (section === 'recover');
     const isResetSection                           = (section === 'reset');
+    
     const [tokenVerified    , setTokenVerified   ] = useState<null|{ email: string, username: string|null }|false>(!passwordResetToken ? false : null);
     const [emailVerified    , setEmailVerified   ] = useState<null|boolean>(!emailConfirmationToken ? false : null);
+    
     const [isSignUpApplied  , setIsSignUpApplied ] = useState<boolean>(false);
     const [isRecoverApplied , setIsRecoverApplied] = useState<boolean>(false);
     const [isResetApplied   , setIsResetApplied  ] = useState<boolean>(false);
+    
     const [isBusy           , setIsBusyInternal  ] = useState<BusyState>(false);
+    
     const isMounted                                = useMountedFlag();
     
     
