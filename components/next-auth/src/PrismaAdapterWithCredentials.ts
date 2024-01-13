@@ -76,13 +76,13 @@ export interface UseEmailConfirmationTokenOptions {
 
 
 export interface ModelOptions<TPrisma extends PrismaClient> {
-    account                ?: keyof TPrisma
-    session                ?: keyof TPrisma
-    user                   ?: keyof TPrisma
-    credentials            ?: keyof TPrisma
-    passwordResetToken     ?: keyof TPrisma | null
-    emailConfirmationToken ?: keyof TPrisma | null
-    role                   ?: keyof TPrisma | null
+    account                ?: Extract<keyof TPrisma, string>
+    session                ?: Extract<keyof TPrisma, string>
+    user                   ?: Extract<keyof TPrisma, string>
+    credentials            ?: Extract<keyof TPrisma, string>
+    passwordResetToken     ?: Extract<keyof TPrisma, string> | null
+    emailConfirmationToken ?: Extract<keyof TPrisma, string> | null
+    role                   ?: Extract<keyof TPrisma, string> | null
 }
 export interface AdapterWithCredentials
     extends
@@ -128,6 +128,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         emailConfirmationToken  : mEmailConfirmationToken = 'emailConfirmationToken',
         role                    : mRole                   = 'role',
     } = options ?? {};
+    const fUserId = `${mUser}Id`;
     
     
     
@@ -531,7 +532,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     // find the last request date (if found) of passwordResetToken by user id:
                     const {updatedAt: lastRequestDate} = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).findUnique({
                         where  : {
-                            userId       : userId,
+                            [fUserId]    : userId,
                         },
                         select : {
                             updatedAt    : true,
@@ -553,10 +554,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // create/update the passwordResetToken record and get the related user name & email:
                 const {user} = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).upsert({
                     where  : {
-                        userId       : userId,
+                        [fUserId]    : userId,
                     },
                     create : {
-                        userId       : userId,
+                        [fUserId]    : userId,
                         
                         expiresAt    : passwordResetExpiry,
                         token        : passwordResetToken,
@@ -665,10 +666,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // delete the current passwordResetToken record so it cannot be re-use again:
                 await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).delete({
                     where  : {
-                        userId : userId,
+                        [fUserId] : userId,
                     },
                     select : {
-                        id     : true,
+                        id        : true,
                     },
                 });
                 
@@ -677,18 +678,18 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // create/update user's credentials:
                 await ((prismaTransaction as TPrisma)[mCredentials] as any).upsert({
                     where  : {
-                        userId   : userId,
+                        [fUserId] : userId,
                     },
                     create : {
-                        userId   : userId,
+                        [fUserId] : userId,
                         
-                        password : hashedPassword,
+                        password  : hashedPassword,
                     },
                     update : {
-                        password : hashedPassword,
+                        password  : hashedPassword,
                     },
                     select : {
-                        id       : true,
+                        id        : true,
                     },
                 });
                 
@@ -809,10 +810,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 };
                 await ((prismaTransaction as TPrisma)[mCredentials] as any).upsert({
                     where  : {
-                        userId   : userId,
+                        [fUserId] : userId,
                     },
                     create : {
-                        userId   : userId,
+                        [fUserId] : userId,
                         
                         ...credentialsData,
                     },
@@ -820,7 +821,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         ...credentialsData,
                     },
                     select : {
-                        id       : true,
+                        id        : true,
                     },
                 });
                 
@@ -830,18 +831,18 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 if (hasEmailConfirmationToken && emailConfirmationToken) {
                     await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).upsert({
                         where  : {
-                            userId   : userId,
+                            [fUserId] : userId,
                         },
                         create : {
-                            userId   : userId,
+                            [fUserId] : userId,
                             
-                            token    : emailConfirmationToken,
+                            token     : emailConfirmationToken,
                         },
                         update : {
-                            token    : emailConfirmationToken,
+                            token     : emailConfirmationToken,
                         },
                         select : {
-                            id       : true,
+                            id        : true,
                         },
                     });
                 } // if
@@ -920,10 +921,10 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // delete the current emailConfirmationToken record so it cannot be re-use again:
                 await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).delete({
                     where  : {
-                        userId : userId,
+                        [fUserId] : userId,
                     },
                     select : {
-                        id     : true,
+                        id        : true,
                     },
                 });
                 
