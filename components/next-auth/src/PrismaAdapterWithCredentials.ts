@@ -215,8 +215,17 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         // CRUD sessions:
         createSession              : async (sessionData      ) => {
+            const {
+                userId : userId,
+            ...restSessionData} = sessionData;
+            
+            
+            
             return (prisma[mSession] as any).create({
-                data  : sessionData,
+                data  : {
+                    ...restSessionData,
+                    [fUserId] : userId,
+                },
             });
         },
         getSessionAndUser          : async (sessionToken     ) => {
@@ -241,11 +250,20 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             };
         },
         updateSession              : async (sessionData      ) => {
+            const {
+                userId : userId,
+            ...restSessionData} = sessionData;
+            
+            
+            
             return (prisma[mSession] as any).update({
                 where  : {
-                    sessionToken: sessionData.sessionToken,
+                    sessionToken: restSessionData.sessionToken,
                 },
-                data   : sessionData,
+                data   : {
+                    ...restSessionData,
+                    [fUserId] : userId,
+                },
             });
         },
         deleteSession              : async (sessionToken     ) => {
@@ -260,8 +278,17 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         
         // CRUD accounts:
         linkAccount                : async (accountData      ) => {
+            const {
+                userId : userId,
+            ...restAccountData} = accountData;
+            
+            
+            
             const account = await (prisma[mAccount] as any).create({
-                data  : accountData,
+                data  : {
+                    ...restAccountData,
+                    [fUserId] : userId,
+                },
             });
             return account as AdapterAccount;
         },
