@@ -5,18 +5,32 @@ import {
     // react:
     default as React,
 }                           from 'react'
-import { SessionProvider } from 'next-auth/react'
+
+// next-auth:
+import {
+    // react components:
+    SessionProviderProps,
+    SessionProvider,
+}                           from 'next-auth/react'
 
 
 
-export interface NextAuthSessionProviderProps {
-    children ?: React.ReactNode
+// react components:
+export interface NextAuthSessionProviderProps
+    extends
+        // bases:
+        SessionProviderProps
+{
 }
-export function NextAuthSessionProvider(props: NextAuthSessionProviderProps) {
+const NextAuthSessionProvider = (props: NextAuthSessionProviderProps): JSX.Element|null => {
     // jsx:
     return (
         <SessionProvider>
             {props.children}
         </SessionProvider>
     )
+};
+export {
+    NextAuthSessionProvider,
+    NextAuthSessionProvider as default,
 }

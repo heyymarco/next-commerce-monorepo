@@ -143,6 +143,7 @@ export interface AuthConfigServer {
 export interface AuthConfigShared {
     business                 : BusinessConfig
     signUp                   : Pick<SignUpConfig, 'enabled'>
+    signIn                   : Pick<SignInConfig, 'path'>
     reset                    : Pick<ResetConfig , 'enabled'>
 }
 export interface AuthConfigClient extends AuthConfigShared {}

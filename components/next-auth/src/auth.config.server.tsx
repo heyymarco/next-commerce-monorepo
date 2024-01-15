@@ -55,10 +55,11 @@ export const defaultAuthConfigServer : AuthConfigServer = {
     business                 : defaultAuthConfigShared.business,
     signUp                   : defaultAuthConfigShared.signUp,
     signIn                   : {
+        ...defaultAuthConfigShared.signIn,
+        
         requireVerifiedEmail : true,
         failureMaxAttempts   : 5    /* times */,
         failureLockDuration  : 0.25 /* hours */,
-        path                 : '/auth/signin',
     },
     reset                    : {
         ...defaultAuthConfigShared.reset,
