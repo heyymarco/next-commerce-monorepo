@@ -36,6 +36,9 @@ export default function Content() {
                     </Button>}
                     {!!session && <div>
                         <p>
+                            Credentials: {!!session.credentials && JSON.stringify(session.credentials)}
+                        </p>
+                        <p>
                             Role: {!!session.role && JSON.stringify(session.role)}
                         </p>
                     </div>}

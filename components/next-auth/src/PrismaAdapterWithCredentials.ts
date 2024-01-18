@@ -23,13 +23,14 @@ import type {
     AdapterUser,
     AdapterSession,
     AdapterAccount,
+    AdapterCredentials,
     AdapterRole,
 }                           from './types.js'
 
 
 
 // types:
-export type Credentials = Record<'username'|'password', string>
+export type CredentialsSignIn = Record<'username'|'password', string>
 export interface CreatePasswordResetTokenData {
     passwordResetToken : string
     user               : AdapterUser
@@ -89,7 +90,7 @@ export interface AdapterWithCredentials
         Adapter
 {
     // sign in:
-    credentialsSignIn          : (credentials            : Credentials                               , options?: CredentialsSignInOptions         ) => Awaitable<AdapterUser|false|Date|null>
+    credentialsSignIn          : (credentials            : CredentialsSignIn                         , options?: CredentialsSignInOptions         ) => Awaitable<AdapterUser|false|Date|null>
     
     
     
@@ -110,6 +111,12 @@ export interface AdapterWithCredentials
     // email verifications:
     markEmailAsVerified        : (userId                 : string                                    , options?: MarkEmailAsVerifiedOptions       ) => Awaitable<void>
     useEmailConfirmationToken  : (emailConfirmationToken : string                                    , options?: UseEmailConfirmationTokenOptions ) => Awaitable<boolean>
+    
+    
+    
+    // user credentials:
+    getCredentialsByUserId     : (userId                 : string                                                                                 ) => Awaitable<AdapterCredentials|null>
+    getCredentialsByUserEmail  : (userEmail              : string                                                                                 ) => Awaitable<AdapterCredentials|null>
     
     
     
@@ -977,6 +984,47 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 // report the success:
                 return true;
             });
+        },
+        
+        
+        
+        // user credentials:
+        getCredentialsByUserId     : async (userId                                       ) => {
+            // database query:
+            const user = await (prisma[mUser] as any).findUnique({
+                where  : {
+                    id : userId,
+                },
+                select : {
+                    [mCredentials] : {
+                        select : {
+                            username : true,
+                        },
+                    },
+                },
+            });
+            return user?.[mCredentials] ?? null;
+        },
+        getCredentialsByUserEmail  : async (userEmail                                    ) => {
+            // normalizations:
+            userEmail = userEmail.toLowerCase();
+            
+            
+            
+            // database query:
+            const user = await (prisma[mUser] as any).findUnique({
+                where  : {
+                    email : userEmail,
+                },
+                select : {
+                    [mCredentials] : {
+                        select : {
+                            username : true,
+                        },
+                    },
+                },
+            });
+            return user?.[mCredentials] ?? null;
         },
         
         

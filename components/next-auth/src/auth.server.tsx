@@ -89,7 +89,7 @@ import type {
     AdapterUser,
 }                           from './types.js'
 import type {
-    Credentials,
+    CredentialsSignIn,
     AdapterWithCredentials,
 }                           from './PrismaAdapterWithCredentials.js'
 import {
@@ -276,7 +276,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     // get user by valid credentials:
                     try {
                         const now    = new Date();
-                        const result = await adapter.credentialsSignIn(credentials as Credentials, {
+                        const result = await adapter.credentialsSignIn(credentials as CredentialsSignIn, {
                             now                  : now,
                             requireEmailVerified : signInRequireVerifiedEmail,
                             failureMaxAttempts   : signInFailureMaxAttempts,
@@ -375,6 +375,18 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 // assigning userRole(s):
                 if (account) { // if `account` exist, this means that the callback is being invoked for the first time (i.e. the user is being signed in).
+                    // add a related credentials to token object:
+                    const credentials = (
+                        !!user.id
+                        ? adapter.getCredentialsByUserId(user.id)           // faster
+                        :   !!user.email
+                            ? adapter.getCredentialsByUserEmail(user.email) // slower
+                            : null
+                    );
+                    if (credentials) token.credentials = credentials;
+                    
+                    
+                    
                     // add a related role to token object:
                     const role = (
                         !!user.id
@@ -383,7 +395,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                             ? adapter.getRoleByUserEmail(user.email) // slower
                             : null
                     );
-                    token.role = role;
+                    if (role) token.role = role;
                 } // if
                 
                 
@@ -402,6 +414,18 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 // assigning userRole(s):
                 const sessionUser = session.user;
                 if (sessionUser) {
+                    // add a related credentials to session object:
+                    const credentials = (
+                        !!dbUser.id
+                        ? await adapter.getCredentialsByUserId(dbUser.id)           // faster
+                        :   !!dbUser.email
+                            ? await adapter.getCredentialsByUserEmail(dbUser.email) // slower
+                            : null
+                    );
+                    if (credentials) session.credentials = credentials;
+                    
+                    
+                    
                     // add a related role to session object:
                     const role = (
                         !!dbUser.id
@@ -410,7 +434,7 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                             ? await adapter.getRoleByUserEmail(dbUser.email) // slower
                             : null
                     );
-                    session.role = role ?? null;
+                    if (role) session.role = role;
                 } // if
                 
                 

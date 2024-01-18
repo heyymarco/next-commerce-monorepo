@@ -63,7 +63,8 @@ declare module 'next-auth' { // TODO: to be removed, for compatibility reason
     
     
     interface DefaultSession extends AuthDefaultSession {
-        role ?: Role|null
+        credentials ?: Credentials
+        role        ?: Role
     }
 }
 declare module '@auth/core/types' {
@@ -80,9 +81,17 @@ declare module '@auth/core/types' {
 
 
 
+export interface DefaultCredentials {
+    username : string
+}
+export interface Credentials extends DefaultCredentials {}
+export interface AdapterCredentials extends Credentials {}
+
+
+
 export interface DefaultRole {
-    id   : string
-    name : string
+    id       : string
+    name     : string
 }
 export interface Role extends DefaultRole {}
 export interface AdapterRole extends Role {}
