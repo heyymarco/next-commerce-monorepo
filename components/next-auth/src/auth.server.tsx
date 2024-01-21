@@ -327,7 +327,12 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                     
                     
                     
-                    const newUser : User = user;
+                    const newUser : User = {
+                        id    : user.id,
+                        name  : user.name  ?? '',
+                        email : user.email ?? '',
+                        image : user.image ?? null,
+                    };
                     if (!newUser.name ) return false; // the name  field is required to be stored to model User => sign up failed
                     if (!newUser.email) return false; // the email field is required to be stored to model User => sign up failed
                 }

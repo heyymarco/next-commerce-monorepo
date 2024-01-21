@@ -9,13 +9,13 @@ import type {
     DefaultSession,
     DefaultSession as AuthDefaultSession,
     
-    User,
+    // // User,
     Session,
 }                           from '@auth/core/types'
 import type {
     // models:
     Adapter,
-    AdapterUser,
+    // // AdapterUser,
     AdapterSession,
     AdapterAccount,
 }                           from '@auth/core/adapters'
@@ -23,12 +23,12 @@ import type {
     OAuthConfig,
 }                           from '@auth/core/providers'
 
-// next-auth:
-import type {
-    // models:
-    DefaultUser,
-    DefaultUser as NextAuthDefaultUser,
-}                           from 'next-auth' // TODO: to be removed, for compatibility reason
+// // // next-auth:
+// // import type {
+// //     // models:
+// //     DefaultUser,
+// //     DefaultUser as NextAuthDefaultUser,
+// // }                           from 'next-auth' // TODO: to be removed, for compatibility reason
 
 
 
@@ -41,14 +41,14 @@ export type {
 
 // models:
 export type {
-    DefaultUser,
+    // // DefaultUser,
     DefaultSession,
     
-    User,
+    // // User,
     Session,
     
     Adapter,
-    AdapterUser,
+    // // AdapterUser,
     AdapterSession,
     AdapterAccount,
 }
@@ -56,27 +56,39 @@ export type {
 
 
 declare module 'next-auth' { // TODO: to be removed, for compatibility reason
-    interface DefaultUser {
-        role ?: Role|null
-    }
+    // ref to '@heymarco/next-auth':
+    interface DefaultUser extends HeyMarcoDefaultUser {}
     
     
     
-    interface DefaultSession extends AuthDefaultSession {
-        credentials ?: Credentials
-        role        ?: Role
-    }
+    // ref to '@auth/core/types':
+    interface DefaultSession extends AuthDefaultSession {}
 }
 declare module '@auth/core/types' {
-    interface DefaultUser extends NextAuthDefaultUser {
-        role ?: Role|null
+    // ref to '@heymarco/next-auth':
+    type DefaultUser = HeyMarcoDefaultUser
+    
+    
+    
+    interface DefaultSession { // as AuthDefaultSession
+        user        ?: User        // maybe empty
+        credentials ?: Credentials // maybe empty
+        role        ?: Role        // maybe empty
     }
-    
-    
-    
-    interface DefaultSession {
-        role ?: Role|null
-    }
+}
+
+
+
+export interface DefaultUser {
+    id    : string
+    name  : string
+    email : string
+    image : string|null // maybe empty
+}
+type HeyMarcoDefaultUser = DefaultUser
+export interface User extends DefaultUser {}
+export interface AdapterUser extends User {
+    emailVerified : Date|null // maybe empty
 }
 
 
