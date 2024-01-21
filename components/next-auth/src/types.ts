@@ -23,7 +23,13 @@ import type {
     OAuthConfig,
 }                           from '@auth/core/providers'
 
-// // // next-auth:
+// next-auth:
+import type {
+    DefaultJWT,
+    DefaultJWT as NextAuthDefaultJWT,
+    
+    JWT,
+}                           from 'next-auth/jwt' // TODO: to be removed, for compatibility reason
 // // import type {
 // //     // models:
 // //     DefaultUser,
@@ -43,9 +49,11 @@ export type {
 export type {
     // // DefaultUser,
     DefaultSession,
+    DefaultJWT,
     
     // // User,
     Session,
+    JWT,
     
     Adapter,
     // // AdapterUser,
@@ -61,8 +69,17 @@ declare module 'next-auth' { // TODO: to be removed, for compatibility reason
     
     
     
-    // ref to '@auth/core/types':
-    interface DefaultSession extends AuthDefaultSession {}
+    // mod of '@auth/core/types':
+    interface DefaultSession extends AuthDefaultSession {
+        // user        ?: User        // maybe empty // TODO: conflict! to be fixed soon
+        credentials ?: Credentials // maybe empty
+        role        ?: Role        // maybe empty
+    }
+}
+declare module 'next-auth/jwt' { // TODO: to be removed, for compatibility reason
+    interface DefaultJWT { // as NextAuthDefaultJWT
+        userId ?: string|null
+    }
 }
 declare module '@auth/core/types' {
     // ref to '@heymarco/next-auth':
@@ -75,6 +92,10 @@ declare module '@auth/core/types' {
         credentials ?: Credentials // maybe empty
         role        ?: Role        // maybe empty
     }
+    
+    
+    
+    type DefaultJWT = NextAuthDefaultJWT
 }
 
 

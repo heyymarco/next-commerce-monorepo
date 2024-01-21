@@ -378,8 +378,13 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 
                 
-                // assigning userRole(s):
+                // assigning additional data to session:
                 if (account) { // if `account` exist, this means that the callback is being invoked for the first time (i.e. the user is being signed in).
+                    // add a related userId to token:
+                    if (!('userId' in token)) token.userId = user.id;
+                    
+                    
+                    
                     // add a related credentials to token object:
                     const credentials = (
                         !!user.id
@@ -416,9 +421,14 @@ const createNextAuthHandler         = (options: CreateAuthHandlerOptions) => {
                 
                 
                 
-                // assigning userRole(s):
+                // assigning additional data to session:
                 const sessionUser = session.user;
                 if (sessionUser) {
+                    // add a related userId to sessionUser:
+                    if (!('id' in sessionUser)) (sessionUser as unknown as User).id = dbUser.id;
+                    
+                    
+                    
                     // add a related credentials to session object:
                     const credentials = (
                         !!dbUser.id
