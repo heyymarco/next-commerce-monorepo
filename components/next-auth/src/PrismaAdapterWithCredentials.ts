@@ -586,7 +586,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // create/update the passwordResetToken record and get the related user name & email:
-                const {user} = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).upsert({
+                const {
+                    [mUser] : user,
+                } = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).upsert({
                     where  : {
                         [fUserId]    : userId,
                     },
