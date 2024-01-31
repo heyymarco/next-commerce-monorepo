@@ -57,6 +57,7 @@ import {
 }                           from './states/orderableListState'
 import {
     // react components:
+    ListItemWithOrderableProps,
     ListItemWithOrderable,
 }                           from './ListItemWithOrderable'
 
@@ -118,45 +119,40 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     // handlers:
-    // const draggingFromRef = useRef<number>(0);
-    const lastDropTo      = useRef<number|undefined>(undefined);
+    const [draggingFrom, setDraggingFrom] = useState<number|undefined>(undefined);
+    const lastDraftTo = useRef<number|undefined>(undefined);
     const handleDragStart = useEvent(({from}: OrderableListDragStartEvent): void => {
-        // draggingFromRef.current = from;
-        lastDropTo.current      = undefined;
+        setDraggingFrom(from); // remember the active dragging index
+        lastDraftTo.current = undefined; // clear the last draftTo index
     });
     const handleDragEnd   = useEvent(() => {
-        // if dragging is completed|canceled|out_of_drop => resets draftChildren:
-        setDraftChildren(undefined);
+        setDraggingFrom(undefined);  // clear the active dragging index
+        // lastDraftTo.current = undefined; // no need to clear the last draftTo index
+        setDraftChildren(undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
     });
     const handleDragMove  = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:
-        console.log({from, to, date: Date.now()});
+        // console.log({from, to, date: Date.now()});
         if (to === from) {
             return;
         }
-        else if (to === lastDropTo.current) {
+        else if (to === lastDraftTo.current) {
             console.log('back', {from, to, date: Date.now()});
-            // lastDropTo.current = from;
-            // if (draftChildren !== undefined) setDraftChildren(undefined); // reset to original place
-            // const backup = from;
-            // from = to;
-            // to = backup;
-            // from = to;
+            
+            
+            
             return;
         } // if
-        
-        
-        
-        lastDropTo.current = to;
         
         
         
         const mutatedChildren = wrappedChildren.slice(0); // copy
         [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
         setDraftChildren(mutatedChildren);
+        lastDraftTo.current = to;
     });
     const handleDropped   = useEvent(({from, to}: OrderableListDroppedEvent): void => {
-        to = lastDropTo.current ?? to; // cancel out effect of moved draftChildren (if any)
+        to = lastDraftTo.current ?? to; // cancel out effect of moved draftChildren (if any)
         const mutatedChildren = children.slice(0); // copy
         [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
         triggerChildrenChange(mutatedChildren);
