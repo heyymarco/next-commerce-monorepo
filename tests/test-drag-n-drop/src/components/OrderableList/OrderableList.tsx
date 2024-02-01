@@ -46,7 +46,6 @@ import {
 }                           from './states/hooks'
 import {
     // types:
-    OrderableListDragStartEvent,
     OrderableListDragMoveEvent,
     OrderableListDroppedEvent,
     
@@ -119,40 +118,47 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     // handlers:
-    const [draggingFrom, setDraggingFrom] = useState<number|undefined>(undefined);
-    const lastDraftTo = useRef<number|undefined>(undefined);
-    const handleDragStart = useEvent(({from}: OrderableListDragStartEvent): void => {
-        setDraggingFrom(from); // remember the active dragging index
-        lastDraftTo.current = undefined; // clear the last draftTo index
+    const lastMovedTo = useRef<number|undefined>(undefined);
+    const handleDragStartEnd = useEvent((): void => {
+        lastMovedTo.current = undefined; // clear the last draftTo index
+        setDraftChildren(undefined);     // if dragging is completed|canceled|out_of_drop => resets draftChildren
     });
-    const handleDragEnd   = useEvent(() => {
-        setDraggingFrom(undefined);  // clear the active dragging index
-        // lastDraftTo.current = undefined; // no need to clear the last draftTo index
-        setDraftChildren(undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
-    });
-    const handleDragMove  = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
+    const handleDragMove     = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:
-        // console.log({from, to, date: Date.now()});
         if (to === from) {
-            return;
+            return; // useless move => ignore
         }
-        else if (to === lastDraftTo.current) {
-            console.log('back', {from, to, date: Date.now()});
-            
-            
-            
+        else if (to < 0) {
+            // restore to original place;
+            lastMovedTo.current = undefined;
+            setDraftChildren(undefined);
             return;
         } // if
         
         
         
+        lastMovedTo.current = to;
+        
+        
+        
         const mutatedChildren = wrappedChildren.slice(0); // copy
-        [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
+        [mutatedChildren[from], mutatedChildren[to]] = [
+            (() => {
+                return React.cloneElement<ListItemWithOrderableProps<HTMLElement>>(mutatedChildren[to] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement>>,
+                    // props:
+                    {
+                        listIndex : -1,
+                        theme: 'danger', // for *visual* debugging purpose
+                    },
+                );
+            })(),
+            mutatedChildren[from],
+        ];
         setDraftChildren(mutatedChildren);
-        lastDraftTo.current = to;
     });
-    const handleDropped   = useEvent(({from, to}: OrderableListDroppedEvent): void => {
-        to = lastDraftTo.current ?? to; // cancel out effect of moved draftChildren (if any)
+    const handleDropped      = useEvent(({from, to}: OrderableListDroppedEvent): void => {
+        to = lastMovedTo.current ?? to; // cancel out effect of moved draftChildren (if any)
+        if (from === to) return; // useless move => ignore
         const mutatedChildren = children.slice(0); // copy
         [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
         triggerChildrenChange(mutatedChildren);
@@ -170,7 +176,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
             : flattenChildren(children)
             .map<React.ReactNode>((listItem, childIndex) => {
                 // conditions:
-                if (!React.isValidElement<ListItemProps<HTMLElement>>(listItem)) return <>{listItem}</>; // not an <ListItem> => place it anyway
+                if (!React.isValidElement<ListItemProps<HTMLElement>>(listItem)) return listItem; // not a <ListItem> => place it anyway
                 
                 
                 
@@ -238,8 +244,8 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     return (
         <OrderableListStateProvider
             // handlers:
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStartEnd}
+            onDragEnd={handleDragStartEnd}
             onDragMove={handleDragMove}
             onDropped={handleDropped}
         >
