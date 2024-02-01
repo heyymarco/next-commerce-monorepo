@@ -144,7 +144,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                 // props:
                 {
                     listIndex : -1,
-                    theme: 'danger', // for *visual* debugging purpose
+                    // theme: 'danger', // for *visual* debugging purpose
                 },
             ),
             mutatedChildren[fromIndex],
@@ -236,9 +236,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                                 //#endregion restore conflicting props
                             />
                         }
-                    >
-                        key: {listItem.key} | {listItem.props.children}
-                    </ListItemWithOrderable>
+                    />
                 );
             })
         );
