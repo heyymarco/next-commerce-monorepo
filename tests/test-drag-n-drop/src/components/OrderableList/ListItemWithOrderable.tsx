@@ -13,13 +13,11 @@ import {
 
 // reusable-ui core:
 import {
-    globalStacks,
-    
-    
-    
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useEvent,
+    useMergeRefs,
+    useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -31,6 +29,9 @@ import type {
 }                           from '@reusable-ui/list'            // represents a series of content
 
 // internals:
+import {
+    useListItemWithOrderableStyleSheet,
+}                           from './styles/loader'
 import {
     // states:
     useOrderableListState,
@@ -61,6 +62,11 @@ export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLE
     refresh   ?: object // declarative way to refresh()
 }
 export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement>(props: ListItemWithOrderableProps<TElement>): JSX.Element|null => {
+    // styles:
+    const styleSheet = useListItemWithOrderableStyleSheet();
+    
+    
+    
     // rest props:
     const {
         // positions:
@@ -96,13 +102,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // refs:
-    const listItemRef       = useRef<TElement|null>(null);
-    const listItemParentRef = useMemo<React.MutableRefObject<TElement|null>>(() => ({
+    const listItemRef                = useRef<TElement|null>(null);
+    const listItemParentRef          = useMemo<React.MutableRefObject<TElement|null>>(() => ({
         get current(): HTMLElement|null {
             return listItemRef.current?.parentElement ?? null;
         },
     }) as React.MutableRefObject<TElement|null>, []);
-    const listItemTouchedPosition = useRef<{ left: number, top: number }>({ left: 0, top: 0 });
+    const listItemTouchedPositionRef = useRef<{ left: number, top: number }>({ left: 0, top: 0 });
     
     
     
@@ -169,7 +175,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         const {left: baseLeft, top: baseTop} = listItemParentElm.getBoundingClientRect();
         const touchedLeft = clientX - baseLeft;
         const touchedTop  = clientY - baseTop;
-        listItemTouchedPosition.current = {
+        listItemTouchedPositionRef.current = {
             left : touchedLeft,
             top  : touchedTop,
         };
@@ -203,11 +209,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         const {clientX          , clientY        } = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
         prevFloatingPos.current                    = { clientX, clientY };
         const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
-        const {left: touchedLeft, top: touchedTop} = listItemTouchedPosition.current;
+        const {left: touchedLeft, top: touchedTop} = listItemTouchedPositionRef.current;
         
         
         
-        // update:
+        // live update for first rerender of <ListItemWithOrderable>, vanilla way, without causing busy re-render:
         listItemInlineStyle.left = `${clientX - baseLeft - touchedLeft}px`;
         listItemInlineStyle.top  = `${clientY - baseTop  - touchedTop }px`;
     });
@@ -221,7 +227,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         false     : active (inside wrong drop target)
         true      : active (inside right drop target)
     */
-    const isDraggingActive = (isDragging !== undefined);
+    const isDraggingActive    = (isDragging !== undefined);
     const isDraggingActiveRef = useRef<boolean>(isDraggingActive);
     useEffect(() => {
         // conditions:
@@ -241,32 +247,56 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
-        const listItemInlineStyle = listItemRef.current?.style;
-        if (listItemInlineStyle) {
-            if (isDraggingActive) {
-                listItemInlineStyle.position      = 'relative';
-                listItemInlineStyle.zIndex        = `${globalStacks.dragOverlay}`;
-                listItemInlineStyle.left          = '';
-                listItemInlineStyle.top           = '';
-                listItemInlineStyle.pointerEvents = 'none';
-            }
-            else {
-                // setTimeout(() => {
-                listItemInlineStyle.position      = '';
-                listItemInlineStyle.zIndex        = '';
-                listItemInlineStyle.left          = '';
-                listItemInlineStyle.top           = '';
-                listItemInlineStyle.pointerEvents = '';
-                // }, 0);
-                prevFloatingPos.current = undefined;
-            }
-        } // if
+        if (!isDraggingActive) {
+            prevFloatingPos.current   = undefined;
+            
+            const listItemInlineStyle = listItemRef.current?.style;
+            if (listItemInlineStyle) {
+                listItemInlineStyle.left = '';
+                listItemInlineStyle.top  = '';
+            } // if
+        }
     }, [isDraggingActive]);
     
     useIsomorphicLayoutEffect(() => {
         // update pos:
         handleUpdateFloatingPos();
-    }, [refresh])
+    }, [refresh]);
+    
+    
+    
+    // refs:
+    const mergedOuterRef = useMergeRefs(
+        // preserves the original `outerRef` from `listItemComponent`:
+        listItemComponent.props.outerRef,
+        
+        
+        
+        // preserves the original `outerRef` from `props`:
+        props.outerRef,
+        
+        
+        
+        listItemRef,
+    );
+    
+    
+    
+    // classes:
+    const mergedStateClasses = useMergeClasses(
+        // preserves the original `stateClasses` from `listItemComponent`:
+        listItemComponent.props.stateClasses,
+        
+        
+        
+        // preserves the original `stateClasses` from `props`:
+        props.stateClasses,
+        
+        
+        
+        // states:
+        ((isDraggingActive || null) && styleSheet.main),
+    );
     
     
     
@@ -282,12 +312,12 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             // refs:
-            outerRef : listItemRef, // TODO: remove this test
+            outerRef     : mergedOuterRef,
             
             
             
-            // variants:
-            // outlined : (isDragging !== undefined) ? true : undefined, // TODO: remove this test
+            // classes:
+            stateClasses : mergedStateClasses,
             
             
             

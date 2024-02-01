@@ -152,7 +152,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     let   [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
     
     const overlayRef                  = useRef<HTMLDivElement|null>(null);
-    const overlayPositionRef          = useRef<React.CSSProperties>({ left: '', top: '' });
     
     
     
@@ -201,11 +200,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                     // calculate pointer coordinate (relative to screen viewport):
                     const left = `${clientX}px`;
                     const top  = `${clientY}px`;
-                    
-                    
-                    
-                    // update for the first render of <DragOverlay>:
-                    overlayPositionRef.current = { left, top };
                     
                     
                     
@@ -308,11 +302,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                     
                     // classes:
                     className={styleSheet.main}
-                    
-                    
-                    
-                    // styles:
-                    style={overlayPositionRef.current}
                 >
                     {(typeof(dragComponent) === 'function') ? dragComponent() : dragComponent}
                 </div>
