@@ -18,6 +18,7 @@ import {
     
     
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
@@ -52,13 +53,23 @@ export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLE
         Required<ListItemComponentProps<TElement>>
 {
     // positions:
-    listIndex : number
+    listIndex  : number
+    
+    
+    
+    // appearances:
+    refresh   ?: object // declarative way to refresh()
 }
 export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement>(props: ListItemWithOrderableProps<TElement>): JSX.Element|null => {
     // rest props:
     const {
         // positions:
         listIndex,
+        
+        
+        
+        // appearances:
+        refresh,
         
         
         
@@ -131,9 +142,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             });
         },
     });
-    const {
-        isDropping,
-    } = useDroppable<TElement>({
+    useDroppable<TElement>({
         enabled  : true,
         dropData : {
             type : dragNDropId,
@@ -180,7 +189,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         draggable.handleTouchStart(event);
     });
     
-    const handleUpdateFloatingPos = useEvent((event: MouseEvent): void => {
+    const prevFloatingPos         = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
+    const handleUpdateFloatingPos = useEvent((event?: MouseEvent): void => {
         // conditions:
         const listItemInlineStyle = listItemRef.current?.style;
         if (!listItemInlineStyle) return;
@@ -190,7 +200,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // calculate pos:
-        const {clientX          , clientY        } = event;
+        const {clientX          , clientY        } = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
+        prevFloatingPos.current                    = { clientX, clientY };
         const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
         const {left: touchedLeft, top: touchedTop} = listItemTouchedPosition.current;
         
@@ -247,9 +258,15 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 listItemInlineStyle.top           = '';
                 listItemInlineStyle.pointerEvents = '';
                 // }, 0);
+                prevFloatingPos.current = undefined;
             }
         } // if
     }, [isDraggingActive]);
+    
+    useIsomorphicLayoutEffect(() => {
+        // update pos:
+        handleUpdateFloatingPos();
+    }, [refresh])
     
     
     

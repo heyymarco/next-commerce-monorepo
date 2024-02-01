@@ -8,7 +8,6 @@ import {
     // hooks:
     useMemo,
     useState,
-    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -147,7 +146,13 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                     // theme: 'danger', // for *visual* debugging purpose
                 },
             ),
-            mutatedChildren[fromIndex],
+            React.cloneElement<ListItemWithOrderableProps<HTMLElement>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement>>,
+                // props:
+                {
+                    refresh : {}, // declarative way to refresh()
+                    // theme   : 'success', // for *visual* debugging purpose
+                },
+            ),
         ];
         setDraftChildren({
             children : mutatedChildren,
