@@ -16,6 +16,7 @@ import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useEvent,
+    useMergeEvents,
     useMergeRefs,
     useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
@@ -164,7 +165,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // handlers:
-    const handlePointerStart = useEvent(({clientX, clientY}: MouseEvent) => {
+    const handlePointerStart       = useEvent(({clientX, clientY}: MouseEvent) => {
         // conditions:
         const listItemParentElm = listItemParentRef.current;
         if (!listItemParentElm) return;
@@ -180,11 +181,25 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             top  : touchedTop,
         };
     });
-    const handleMouseDown  = useEvent<React.MouseEventHandler<TElement>>((event) => {
+    const handleMouseDownInternal  = useEvent<React.MouseEventHandler<TElement>>((event) => {
         handlePointerStart(event.nativeEvent);
         draggable.handleMouseDown(event);
     });
-    const handleTouchStart = useEvent<React.TouchEventHandler<TElement>>((event) => {
+    const handleMouseDown          = useMergeEvents(
+        // preserves the original `onMouseDown` from `listItemComponent`:
+        listItemComponent.props.onMouseDown,
+        
+        
+        
+        // preserves the original `onMouseDown` from `props`:
+        props.onMouseDown,
+        
+        
+        
+        // actions:
+        handleMouseDownInternal,
+    );
+    const handleTouchStartInternal = useEvent<React.TouchEventHandler<TElement>>((event) => {
         // simulates the TouchMove as MouseMove:
         handlePointerStart({
             ...event,
@@ -194,9 +209,23 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         } as unknown as MouseEvent);
         draggable.handleTouchStart(event);
     });
+    const handleTouchStart         = useMergeEvents(
+        // preserves the original `onTouchStart` from `listItemComponent`:
+        listItemComponent.props.onTouchStart,
+        
+        
+        
+        // preserves the original `onTouchStart` from `props`:
+        props.onTouchStart,
+        
+        
+        
+        // actions:
+        handleTouchStartInternal,
+    );
     
-    const prevFloatingPos         = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
-    const handleUpdateFloatingPos = useEvent((event?: MouseEvent): void => {
+    const prevFloatingPos          = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
+    const handleUpdateFloatingPos  = useEvent((event?: MouseEvent): void => {
         // conditions:
         const listItemInlineStyle = listItemRef.current?.style;
         if (!listItemInlineStyle) return;
@@ -322,8 +351,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             // handlers:
-            onMouseDown  : handleMouseDown,  // TODO: use mergeEvents
-            onTouchStart : handleTouchStart, // TODO: use mergeEvents
+            onMouseDown  : handleMouseDown,
+            onTouchStart : handleTouchStart,
         },
         
         
