@@ -135,18 +135,19 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
         
         
         
+        // mutate:
+        const fromIndex       = listMap.get(from) ?? from;
+        const toIndex         = listMap.get(to)   ?? to;
         const mutatedChildren = wrappedChildren.slice(0); // copy
-        [mutatedChildren[from], mutatedChildren[to]] = [
-            (() => {
-                return React.cloneElement<ListItemWithOrderableProps<HTMLElement>>(mutatedChildren[to] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement>>,
-                    // props:
-                    {
-                        listIndex : -1,
-                        theme: 'danger', // for *visual* debugging purpose
-                    },
-                );
-            })(),
-            mutatedChildren[from],
+        [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [
+            React.cloneElement<ListItemWithOrderableProps<HTMLElement>>(mutatedChildren[toIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement>>,
+                // props:
+                {
+                    listIndex : -1,
+                    theme: 'danger', // for *visual* debugging purpose
+                },
+            ),
+            mutatedChildren[fromIndex],
         ];
         setDraftChildren({
             children : mutatedChildren,
@@ -156,8 +157,14 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     const handleDropped      = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         to = draftChildren?.to ?? to; // cancel out effect of moved draftChildren (if any)
         if (from === to) return; // useless move => ignore
+        
+        
+        
+        // mutate:
+        const fromIndex       = listMap.get(from) ?? from;
+        const toIndex         = listMap.get(to)   ?? to;
         const mutatedChildren = children.slice(0); // copy
-        [mutatedChildren[from], mutatedChildren[to]] = [mutatedChildren[to], mutatedChildren[from]];
+        [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
         triggerChildrenChange(mutatedChildren);
     });
     
@@ -165,9 +172,10 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     // children:
     const listComponentChildren = listComponent.props.children;
-    const wrappedChildren = useMemo<React.ReactNode[]>(() => {
+    const [wrappedChildren, listMap] = useMemo<readonly [React.ReactNode[], Map<number, number>]>(() => {
         let listIndex = -1;
-        return (
+        const listMap = new Map<number, number>();
+        const wrappedChildren = (
             listComponentChildren
             ? flattenChildren(listComponentChildren)
             : flattenChildren(children)
@@ -179,6 +187,11 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                 
                 // a valid listItem counter:
                 listIndex++; // only count of <ListItem>s, ignores of foreign nodes
+                
+                
+                
+                // mapping listIndex => childIndex:
+                listMap.set(listIndex, childIndex);
                 
                 
                 
@@ -229,6 +242,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                 );
             })
         );
+        return [wrappedChildren, listMap];
     }, [listComponentChildren, children]);
     
     
