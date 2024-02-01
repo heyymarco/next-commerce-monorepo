@@ -7,7 +7,6 @@ import {
     
     // hooks:
     useRef,
-    useEffect,
     useMemo,
 }                           from 'react'
 
@@ -258,7 +257,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     */
     const isDraggingActive    = (isDragging !== undefined);
     const isDraggingActiveRef = useRef<boolean>(isDraggingActive);
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         // conditions:
         if (isDraggingActiveRef.current === isDraggingActive) return; // already the same => ignore
         isDraggingActiveRef.current = isDraggingActive;               // sync
