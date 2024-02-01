@@ -118,10 +118,11 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     // handlers:
+    const [draftChildren, setDraftChildren] = useState<React.ReactNode[]|undefined>(undefined);
     const lastMovedTo = useRef<number|undefined>(undefined);
     const handleDragStartEnd = useEvent((): void => {
-        lastMovedTo.current = undefined; // clear the last draftTo index
         setDraftChildren(undefined);     // if dragging is completed|canceled|out_of_drop => resets draftChildren
+        lastMovedTo.current = undefined; // clear the last draftTo index
     });
     const handleDragMove     = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:
@@ -130,14 +131,10 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
         }
         else if (to < 0) {
             // restore to original place;
-            lastMovedTo.current = undefined;
             setDraftChildren(undefined);
+            lastMovedTo.current = undefined;
             return;
         } // if
-        
-        
-        
-        lastMovedTo.current = to;
         
         
         
@@ -155,6 +152,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
             mutatedChildren[from],
         ];
         setDraftChildren(mutatedChildren);
+        lastMovedTo.current = to;
     });
     const handleDropped      = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         to = lastMovedTo.current ?? to; // cancel out effect of moved draftChildren (if any)
@@ -233,10 +231,6 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
             })
         );
     }, [listComponentChildren, children]);
-    
-    
-    
-    const [draftChildren, setDraftChildren] = useState<React.ReactNode[]|undefined>(undefined);
     
     
     
