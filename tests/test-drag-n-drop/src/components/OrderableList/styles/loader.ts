@@ -10,4 +10,4 @@ import {
 import './styles'; // TODO: remove this on production
 export const useListItemWithOrderableStyleSheet = dynamicStyleSheet(
     () => import(/* webpackPrefetch: true */ './styles')
-, { specificityWeight: 0, id: 'r04l1lsujh' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
+, { specificityWeight: 3, id: 'r04l1lsujh' }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
