@@ -1,9 +1,3 @@
-// react:
-import type {
-    // react:
-    default as React,
-}                           from 'react'
-
 // internals:
 import type {
     DragNDropData,
