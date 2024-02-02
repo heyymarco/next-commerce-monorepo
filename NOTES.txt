@@ -8,3 +8,29 @@ contexts:
     Partial<AdapterUser>    value={props.model}
     IArticleContext         value={supContextProp}
 
+
+=========================================================================================
+
+
+
+dragData = Map {
+  'text/plain' => 'hello world',
+  'text/html'  => '<b>booh</b>',
+}
+
+
+
+draggable.onDragStart()                isDragging=null|false|true
+draggable.onDragEnd()                  isDragging=undefined
+draggable.onDrag()                     onDragMove()|onDragHandshake()|onDropHandshake()
+
+
+droppable.onDragOver()                 onDragHandshake()|onDropHandshake()      preventDefault()
+droppable.onDrop()                     onDragged()|onDropped()                  preventDefault()
+
+droppable.onDragEnter => :hover        isDragging|isDropping=false|true         preventDefault()
+droppable.onDragLeave => :not(:hover)  isDragging|isDropping=null|undefined
+
+
+TODO:
+add mouseEvent on onDragHandshake()|onDragged()|onDropped()
