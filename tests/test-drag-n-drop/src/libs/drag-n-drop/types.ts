@@ -5,8 +5,8 @@ export type DragNDropData = Map<unknown, unknown>
 
 // events:
 export interface DragMoveEvent extends MouseEvent {
-    dropData : undefined|DragNDropData
-    response : undefined|boolean
+    readonly dropData : undefined|DragNDropData
+    readonly response : undefined|boolean
 }
 export interface DragHandshakeEvent extends MouseEvent {
     dropData : DragNDropData
