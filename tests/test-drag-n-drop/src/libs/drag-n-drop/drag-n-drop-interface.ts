@@ -46,9 +46,13 @@ export class DroppableHook {
 const droppableMap      = new Map<Element, DroppableHook>();
 let activeDroppableHook : null|DroppableHook = null;
 
-export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (event: DragHandshakeEvent) => void|Promise<void>, dragData: DragNDropData): Promise<null|boolean> => {
-    let handshakeResult : null|boolean       = null; // firstly mark as NOT_YET having handshake
-    let interactedHook  : null|DroppableHook = null;
+export interface AttachedDroppableHookResult {
+    response : null|boolean
+    dropData : undefined|DragNDropData
+}
+export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (event: DragHandshakeEvent) => void|Promise<void>, dragData: DragNDropData): Promise<AttachedDroppableHookResult> => {
+    let response       : null|boolean       = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
+    let interactedHook : null|DroppableHook = null;
     
     
     
@@ -96,20 +100,20 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
         
         // handshake interacted as REFUSED:
         if (!dragResponse || !dropResponse) { // false => refuses to be dragged|dropped
-            handshakeResult = false;          // handshake REFUSED by drop target and/or drag source
+            response = false;                 // handshake REFUSED by drop target and/or drag source
             break;                            // no need to scan other droppables
         } // if
         
         
         
         // handshake interacted as ACCEPTED:
-        handshakeResult = true;       // handshake ACCEPTED by both drop target and drag source
-        break;                        // no need to scan other droppables
+        response = true;                      // handshake ACCEPTED by both drop target and drag source
+        break;                                // no need to scan other droppables
     } // for
     
     
     
-    activeDroppableHook = handshakeResult ? interactedHook : null; // set or release
+    activeDroppableHook = response ? interactedHook : null; // true => set -or- null|false => release
     
     
     
@@ -122,7 +126,7 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
              * false     : has dropping activity on this dropping target but the source/target refuses to be dragged/dropped.  
              * true      : has dropping activity on this dropping target and the source/target wants   to be dragged/dropped.  
              */
-            droppableHook.setIsDropping(!!handshakeResult);
+            droppableHook.setIsDropping(!!response);
         }
         else {
             /*
@@ -137,7 +141,10 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
     
     
     
-    return handshakeResult;
+    return {
+        response,
+        dropData : interactedHook?.dropData,
+    };
 };
 export const detachDroppableHook = (): void => {
     activeDroppableHook = null; // release

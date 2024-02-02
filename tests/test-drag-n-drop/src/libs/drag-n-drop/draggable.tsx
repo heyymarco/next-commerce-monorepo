@@ -54,6 +54,7 @@ import type {
     DraggedEvent,
 }                           from './types'
 import {
+    AttachedDroppableHookResult,
     attachDroppableHook,
     detachDroppableHook,
     getActiveDroppableHook,
@@ -200,6 +201,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
         },
         async onPointerCaptureMove(event) {
+            let attachedDroppableHookResult: AttachedDroppableHookResult|undefined = undefined;
             try {
                 // update pointer pos:
                 {
@@ -220,7 +222,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 
                 
                 // update drag & drop states:
-                const handshakeResult = await attachDroppableHook(event, handleDragHandshake, dragData);
+                attachedDroppableHookResult = await attachDroppableHook(event, handleDragHandshake, dragData);
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 /*
                 * undefined : NEVER HERE.  
@@ -228,11 +230,16 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
                 * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
                 */
-                if (isDragging !== handshakeResult) setIsDragging(isDragging = handshakeResult);
-                if ((handshakeResult === null) && (dropData !== undefined)) setDropData(dropData = undefined); // outside of dropping area
+                const response = attachedDroppableHookResult.response;
+                if (isDragging !== response) setIsDragging(isDragging = response);
+                if ((response === null) && (dropData !== undefined)) setDropData(dropData = undefined); // outside of dropping area
             }
             finally {
-                onDragMove?.(event);
+                onDragMove?.({
+                    ...event,
+                    dropData : attachedDroppableHookResult?.dropData,
+                    response : attachedDroppableHookResult?.response ?? undefined,
+                });
             } // try
         },
     });
