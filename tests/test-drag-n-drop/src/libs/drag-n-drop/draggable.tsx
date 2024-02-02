@@ -235,11 +235,12 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 if ((response === null) && (dropData !== undefined)) setDropData(dropData = undefined); // outside of dropping area
             }
             finally {
-                onDragMove?.({
-                    ...event,
-                    dropData : attachedDroppableHookResult?.dropData,
-                    response : attachedDroppableHookResult?.response ?? undefined,
-                });
+                if (onDragMove) {
+                    onDragMove(Object.defineProperties<DragMoveEvent>(event as any, {
+                        dropData : { value : attachedDroppableHookResult?.dropData              },
+                        response : { value : attachedDroppableHookResult?.response ?? undefined },
+                    }));
+                } // if
             } // try
         },
     });
