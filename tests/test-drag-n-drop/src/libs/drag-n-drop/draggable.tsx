@@ -163,9 +163,9 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     // handlers:
-    const handleDragHandshake = useEvent(async (event: DragHandshakeEvent) => {
+    const handleDragHandshake = useEvent(async (event: DragHandshakeEvent): Promise<void> => {
         try {
-            return await onDragHandshake(event);
+            await onDragHandshake(event);
         }
         finally {
             const newDropData = event.dropData;

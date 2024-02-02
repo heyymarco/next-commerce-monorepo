@@ -9,3 +9,7 @@ export interface DragHandshakeEvent extends MouseEvent {
     dropData : DragNDropData
     response : undefined|boolean|Promise<undefined|boolean>
 }
+export interface DropHandshakeEvent extends MouseEvent {
+    dragData: DragNDropData
+    response : undefined|boolean|Promise<undefined|boolean>
+}

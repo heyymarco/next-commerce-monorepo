@@ -19,7 +19,13 @@ import {
 
 // internals:
 import type {
+    // data:
     DragNDropData,
+    
+    
+    
+    // events:
+    DropHandshakeEvent,
 }                           from './types'
 import {
     DroppableHook,
@@ -50,7 +56,7 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     
     // handlers:
-    onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
+    onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>
     onDropped       ?: (dragData: DragNDropData) => void
 }
 export interface DroppableApi {
@@ -100,11 +106,12 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // handlers:
-    const handleDropHandshake = useEvent<typeof onDropHandshake>(async (newDragData) => {
+    const handleDropHandshake = useEvent(async (event: DropHandshakeEvent): Promise<void> => {
         try {
-            return await onDropHandshake(newDragData);
+            await onDropHandshake(event);
         }
         finally {
+            const newDragData = event.dragData;
             if (!Object.is(dragData, newDragData)) setDragData(dragData = newDragData);
         } // try
     });

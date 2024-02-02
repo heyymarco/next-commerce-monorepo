@@ -7,6 +7,7 @@ import type {
     
     // events:
     DragHandshakeEvent,
+    DropHandshakeEvent,
 }                           from './types'
 
 
@@ -14,7 +15,7 @@ import type {
 export class DroppableHook {
     enabled          : boolean
     dropData         : DragNDropData
-    onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
+    onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>
     onDropped        : ((dragData: DragNDropData) => void)|undefined
     setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     
@@ -27,7 +28,7 @@ export class DroppableHook {
     } : {
         enabled          : boolean,
         dropData         : DragNDropData,
-        onDropHandshake  : (dragData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>,
+        onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>,
         onDropped        : ((dragData: DragNDropData) => void)|undefined,
         setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     }) {
@@ -71,7 +72,15 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
                 await onDragHandshake(dragHandshakeEvent);
                 return dragHandshakeEvent.response;
             })(),
-            droppableHook.onDropHandshake(dragData),
+            (async (): Promise<undefined|boolean> => {
+                const dropHandshakeEvent : DropHandshakeEvent = {
+                    ...event,
+                    dragData : dragData,
+                    response : undefined,
+                };
+                await droppableHook.onDropHandshake(dropHandshakeEvent);
+                return dropHandshakeEvent.response;
+            })(),
         ]);
         if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
         if (dragResponse === undefined) continue; // undefined => NO_RESPONSE => see other draggables

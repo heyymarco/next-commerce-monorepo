@@ -159,9 +159,15 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             [dragNDropId, listIndex],
         ]),
         dropRef  : listItemParentRef,
-        onDropHandshake(dropData) {
-            if (!Array.from(dropData.keys()).includes(dragNDropId)) return false; // wrong drag source
-            return true; // yes drop there (drop to self source|target is allowed)
+        onDropHandshake(event) {
+            if (!Array.from(event.dragData.keys()).includes(dragNDropId)) { // wrong drag source
+                event.response = false;
+                return;
+            } // if
+            
+            
+            
+            event.response = true; // yes drop there (drop to self source|target is allowed)
         },
     });
     
