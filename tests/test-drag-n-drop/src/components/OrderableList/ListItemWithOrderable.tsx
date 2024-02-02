@@ -115,7 +115,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     // capabilities:
     const {
         // data:
-        dropData : dropData,
+        dropData : unverifiedDropData, // TODO: remove this
         // states:
         isDragging,
     ...draggable} = useDraggable<TElement>({
@@ -128,11 +128,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             return true; // yes drop there (drop to self source|target is allowed)
         },
         onDragMove(event) {
-            if (dropData) {
+            if (unverifiedDropData) {
                 handleDragMove({
                     ...event,
                     from : listIndex,
-                    to   : dropData.get(dragNDropId) as number,
+                    to   : unverifiedDropData.get(dragNDropId) as number,
                 });
             } // if
             

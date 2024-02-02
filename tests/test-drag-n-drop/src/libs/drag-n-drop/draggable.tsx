@@ -43,7 +43,13 @@ import {
     useDragOverlayStyleSheet,
 }                           from './styles/loader'
 import type {
+    // data:
     DragNDropData,
+    
+    
+    
+    // events:
+    DragMoveEvent,
 }                           from './types'
 import {
     attachDroppableHook,
@@ -80,7 +86,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     // handlers:
-    onDragMove      ?: (event: MouseEvent) => void
+    onDragMove      ?: (event: DragMoveEvent) => void
     onDragHandshake  : (dropData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
     onDragged       ?: (dropData: DragNDropData) => void
 }
