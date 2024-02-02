@@ -1,7 +1,9 @@
 // cssfn:
 import {
     // writes css in javascript:
+    children,
     style,
+    scope,
 }                           from '@cssfn/core'                  // writes css in javascript
 
 // reusable-ui core:
@@ -15,10 +17,56 @@ import {
     globalStacks,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// reusable-ui components:
+import {
+    // configs:
+    basics,
+}                           from '@reusable-ui/basic'           // a styled basic building block of Reusable-UI components
+import {
+    // elements:
+    wrapperElm,
+    
+    
+    
+    // configs:
+    lists,
+}                           from '@reusable-ui/list'            // represents a series of content
+
 
 
 // styles:
-export const usesListItemWithOrderableLayout = () => {
+export const usesOrderableListLayout = () => {
+    return style({
+        // children:
+        ...children(wrapperElm, {
+            // animations:
+            transition : [
+                // original:
+                [lists.transition],
+                
+                // overwrites:
+                
+                // borders:
+                ['border-width' , '0s'], // does not support transition on border width , because we use it to make a separator
+                ['border-radius', '0s'], // does not support transition on border radius, because we remove border radius while dragging
+            ],
+            ...children('*', {
+                // animations:
+                transition : [
+                    // original:
+                    [basics.transition],
+                    
+                    // overwrites:
+                    
+                    // borders:
+                    ['border-width' , '0s'], // does not support transition on border width , because we use it to make a separator
+                    ['border-radius', '0s'], // does not support transition on border radius, because we remove border radius while dragging
+                ],
+            }),
+        }),
+    });
+};
+export const usesOrderableListItemLayout = () => {
     // dependencies:
     
     // features:
@@ -50,10 +98,32 @@ export const usesListItemWithOrderableLayout = () => {
         [borderVars.borderEndStartRadius  ] : '0px',
         [borderVars.borderEndEndRadius    ] : '0px',
         margin : `calc(0px - ${borderVars.borderWidth})`, // a compensate for borderWidth to preserve the original size
+        
+        
+        
+        // animations:
+        transition : [
+            // original:
+            [lists.itemTransition],
+            
+            // overwrites:
+            
+            // borders:
+            ['border-width' , '0s'], // does not support transition on border width , because we use it to make a separator
+            ['border-radius', '0s'], // does not support transition on border radius, because we remove border radius while dragging
+        ],
     });
 };
 
-export default () => style({
-    // layouts:
-    ...usesListItemWithOrderableLayout(),
-});
+
+
+export default () => [
+    scope('orderableList', {
+        // layouts:
+        ...usesOrderableListLayout(),
+    }, { specificityWeight: 2 }),
+    scope('orderableListItem', {
+        // layouts:
+        ...usesOrderableListItemLayout(),
+    }, { specificityWeight: 3 }),
+];

@@ -30,7 +30,7 @@ import type {
 
 // internals:
 import {
-    useListItemWithOrderableStyleSheet,
+    useOrderableListStyleSheet,
 }                           from './styles/loader'
 import {
     // states:
@@ -63,7 +63,7 @@ export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLE
 }
 export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement>(props: ListItemWithOrderableProps<TElement>): JSX.Element|null => {
     // styles:
-    const styleSheet = useListItemWithOrderableStyleSheet();
+    const styleSheet = useOrderableListStyleSheet();
     
     
     
@@ -331,7 +331,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // states:
-        ((isDraggingActive || null) && styleSheet.main),
+        ((isDraggingActive || null) && styleSheet.orderableListItem),
     );
     
     

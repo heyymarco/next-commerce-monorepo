@@ -19,6 +19,7 @@ import {
     
     // react helper hooks:
     useEvent,
+    useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -39,6 +40,9 @@ import {
 }                           from '@reusable-ui/list'            // represents a series of content
 
 // internals:
+import {
+    useOrderableListStyleSheet,
+}                           from './styles/loader'
 import {
     // states:
     useControllableAndUncontrollable,
@@ -89,6 +93,11 @@ export interface OrderableListProps<TElement extends Element = HTMLElement>
     onChildrenChange ?: (children: React.ReactNode[]) => void
 }
 const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableListProps<TElement>): JSX.Element|null => {
+    // styles:
+    const styleSheet = useOrderableListStyleSheet();
+    
+    
+    
     // rest props:
     const {
         // components:
@@ -250,6 +259,24 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     
     
     
+    // classes:
+    const mergedClasses = useMergeClasses(
+        // preserves the original `classes` from `listComponent`:
+        listComponent.props.classes,
+        
+        
+        
+        // preserves the original `classes` from `props`:
+        props.classes,
+        
+        
+        
+        // layouts:
+        styleSheet.orderableList,
+    );
+    
+    
+    
     // jsx:
     return (
         <OrderableListStateProvider
@@ -266,6 +293,11 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
                     // other props:
                     ...restListProps,
                     ...listComponent.props, // overwrites restListProps (if any conflics)
+                    
+                    
+                    
+                    // classes:
+                    classes : mergedClasses,
                 },
                 
                 
