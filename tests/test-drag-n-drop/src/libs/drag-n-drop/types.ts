@@ -17,8 +17,8 @@ export interface DropHandshakeEvent extends MouseEvent {
     /*mutable*/ response : undefined|boolean
 }
 export interface DraggedEvent {
-    dropData : DragNDropData
+    readonly    dropData : DragNDropData
 }
 export interface DroppedEvent {
-    dragData : DragNDropData
+    readonly    dragData : DragNDropData
 }
