@@ -50,6 +50,7 @@ import type {
     
     // events:
     DragMoveEvent,
+    DragHandshakeEvent,
 }                           from './types'
 import {
     attachDroppableHook,
@@ -87,7 +88,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     // handlers:
     onDragMove      ?: (event: DragMoveEvent) => void
-    onDragHandshake  : (dropData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>
+    onDragHandshake  : (event: DragHandshakeEvent) => void|Promise<void>
     onDragged       ?: (dropData: DragNDropData) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
@@ -162,11 +163,12 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     // handlers:
-    const handleDragHandshake = useEvent<typeof onDragHandshake>(async (newDropData) => {
+    const handleDragHandshake = useEvent(async (event: DragHandshakeEvent) => {
         try {
-            return await onDragHandshake(newDropData);
+            return await onDragHandshake(event);
         }
         finally {
+            const newDropData = event.dropData;
             if (!Object.is(dropData, newDropData)) setDropData(dropData = newDropData);
         } // try
     });
@@ -194,18 +196,11 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         },
         async onPointerCaptureMove(event) {
             try {
-                const {
-                    clientX,
-                    clientY,
-                } = event;
-                
-                
-                
                 // update pointer pos:
                 {
                     // calculate pointer coordinate (relative to screen viewport):
-                    const left = `${clientX}px`;
-                    const top  = `${clientY}px`;
+                    const left = `${event.clientX}px`;
+                    const top  = `${event.clientY}px`;
                     
                     
                     
@@ -220,7 +215,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 
                 
                 // update drag & drop states:
-                const handshakeResult = await attachDroppableHook(document.elementsFromPoint(clientX, clientY), handleDragHandshake, dragData);
+                const handshakeResult = await attachDroppableHook(event, handleDragHandshake, dragData);
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 /*
                 * undefined : NEVER HERE.  

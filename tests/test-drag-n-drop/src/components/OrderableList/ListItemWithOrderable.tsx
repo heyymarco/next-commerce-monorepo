@@ -123,9 +123,15 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         dragData : new Map<symbol, number>([
             [dragNDropId, listIndex],
         ]),
-        onDragHandshake(dropData) {
-            if (!Array.from(dropData.keys()).includes(dragNDropId)) return false; // wrong drop target
-            return true; // yes drop there (drop to self source|target is allowed)
+        onDragHandshake(event) {
+            if (!Array.from(event.dropData.keys()).includes(dragNDropId)) { // wrong drop target
+                event.response = false;
+                return;
+            } // if
+            
+            
+            
+            event.response = true; // yes drop there (drop to self source|target is allowed)
         },
         onDragMove(event) {
             if (unverifiedDropData) {

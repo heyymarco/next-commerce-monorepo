@@ -1,6 +1,12 @@
 // internals:
 import type {
+    // data:
     DragNDropData,
+    
+    
+    
+    // events:
+    DragHandshakeEvent,
 }                           from './types'
 
 
@@ -38,30 +44,38 @@ export class DroppableHook {
 const droppableMap      = new Map<Element, DroppableHook>();
 let activeDroppableHook : null|DroppableHook = null;
 
-export const attachDroppableHook = async (elements: Element[], onDragHandshake: (dropData: DragNDropData) => undefined|boolean|Promise<undefined|boolean>, dragData: DragNDropData): Promise<null|boolean> => {
+export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (event: DragHandshakeEvent) => void|Promise<void>, dragData: DragNDropData): Promise<null|boolean> => {
     let handshakeResult : null|boolean       = null; // firstly mark as NOT_YET having handshake
     let interactedHook  : null|DroppableHook = null;
     
     
     
-    for (const element of elements) {
+    for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
         // conditions:
         // test for valid droppable hook:
         const droppableHook = droppableMap.get(element);
         if (!droppableHook)         continue; // not having droppable hook => see other droppables
-        if (!droppableHook.enabled) continue; // disabled => noop         => see other droppables
+        if (!droppableHook.enabled) continue; // disabled => noop          => see other droppables
         
         
         
         // conditions:
         // handshake interacted as NO_RESPONSE:
-        const [dragNego, dropNego] = await Promise.all([
-            onDragHandshake(droppableHook.dropData),
+        const [dragResponse, dropResponse] = await Promise.all([
+            (async (): Promise<undefined|boolean> => {
+                const dragHandshakeEvent : DragHandshakeEvent = {
+                    ...event,
+                    dropData : droppableHook.dropData,
+                    response : undefined,
+                };
+                await onDragHandshake(dragHandshakeEvent);
+                return dragHandshakeEvent.response;
+            })(),
             droppableHook.onDropHandshake(dragData),
         ]);
-        if (!droppableHook.enabled) continue; // disabled => noop         => see other droppables
-        if (dragNego === undefined) continue; // undefined => NO_RESPONSE  => see other draggables
-        if (dropNego === undefined) continue; // undefined => NO_RESPONSE  => see other droppables
+        if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
+        if (dragResponse === undefined) continue; // undefined => NO_RESPONSE => see other draggables
+        if (dropResponse === undefined) continue; // undefined => NO_RESPONSE => see other droppables
         
         
         
@@ -71,9 +85,9 @@ export const attachDroppableHook = async (elements: Element[], onDragHandshake: 
         
         
         // handshake interacted as REFUSED:
-        if (!dragNego || !dropNego) { // false => refuses to be dragged|dropped
-            handshakeResult = false;  // handshake REFUSED by drop target and/or drag source
-            break;                    // no need to scan other droppables
+        if (!dragResponse || !dropResponse) { // false => refuses to be dragged|dropped
+            handshakeResult = false;          // handshake REFUSED by drop target and/or drag source
+            break;                            // no need to scan other droppables
         } // if
         
         
