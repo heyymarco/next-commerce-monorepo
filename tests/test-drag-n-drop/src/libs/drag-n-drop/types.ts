@@ -1,4 +1,1 @@
-export interface DragNDropData {
-    type  : unknown
-    data ?: unknown
-}
+export type DragNDropData = Map<unknown, unknown>

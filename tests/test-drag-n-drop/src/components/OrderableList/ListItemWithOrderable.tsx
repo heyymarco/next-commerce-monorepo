@@ -120,12 +120,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         isDragging,
     ...draggable} = useDraggable<TElement>({
         enabled  : true,
-        dragData : {
-            type : dragNDropId,
-            data : listIndex,
-        },
-        onDragHandshake({type, data: toListIndex}) {
-            if (type !== dragNDropId) return false; // wrong drop target
+        dragData : new Map<symbol, number>([
+            [dragNDropId, listIndex],
+        ]),
+        onDragHandshake(dropData) {
+            if (!Array.from(dropData.keys()).includes(dragNDropId)) return false; // wrong drop target
             return true; // yes drop there (drop to self source|target is allowed)
         },
         onDragMove(event) {
@@ -133,7 +132,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 handleDragMove({
                     ...event,
                     from : listIndex,
-                    to   : dropData.data as number,
+                    to   : dropData.get(dragNDropId) as number,
                 });
             } // if
             
@@ -144,19 +143,18 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         onDragged(dropData) {
             handleDropped({
                 from : listIndex,
-                to   : dropData.data as number,
+                to   : dropData.get(dragNDropId) as number,
             });
         },
     });
     useDroppable<TElement>({
         enabled  : true,
-        dropData : {
-            type : dragNDropId,
-            data : listIndex,
-        },
+        dropData : new Map<symbol, number>([
+            [dragNDropId, listIndex],
+        ]),
         dropRef  : listItemParentRef,
-        onDropHandshake({type, data: fromListIndex}) {
-            if (type !== dragNDropId) return false; // wrong drag source
+        onDropHandshake(dropData) {
+            if (!Array.from(dropData.keys()).includes(dragNDropId)) return false; // wrong drag source
             return true; // yes drop there (drop to self source|target is allowed)
         },
     });
