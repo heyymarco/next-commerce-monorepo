@@ -236,7 +236,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             }
             finally {
                 if (onDragMove) {
-                    onDragMove(Object.defineProperties<DragMoveEvent>(event as any, {
+                    onDragMove(Object.defineProperties<DragMoveEvent>(new MouseEvent('dragMove', event) as any, {
                         dropData : { value : attachedDroppableHookResult?.dropData              },
                         response : { value : attachedDroppableHookResult?.response ?? undefined },
                     }));
