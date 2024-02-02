@@ -146,7 +146,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             handleUpdateFloatingPos(event);
         },
-        onDragged(dropData) {
+        onDragged({dropData}) {
             handleDropped({
                 from : listIndex,
                 to   : dropData.get(dragNDropId) as number,

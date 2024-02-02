@@ -26,6 +26,7 @@ import type {
     
     // events:
     DropHandshakeEvent,
+    DroppedEvent,
 }                           from './types'
 import {
     DroppableHook,
@@ -57,7 +58,7 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     // handlers:
     onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>
-    onDropped       ?: (dragData: DragNDropData) => void
+    onDropped       ?: (event: DroppedEvent) => void
 }
 export interface DroppableApi {
     // data:

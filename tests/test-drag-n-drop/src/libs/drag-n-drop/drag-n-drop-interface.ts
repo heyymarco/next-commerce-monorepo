@@ -8,6 +8,7 @@ import type {
     // events:
     DragHandshakeEvent,
     DropHandshakeEvent,
+    DroppedEvent,
 }                           from './types'
 
 
@@ -16,7 +17,7 @@ export class DroppableHook {
     enabled          : boolean
     dropData         : DragNDropData
     onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>
-    onDropped        : ((dragData: DragNDropData) => void)|undefined
+    onDropped        : ((event: DroppedEvent) => void)|undefined
     setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     
     constructor({
@@ -29,7 +30,7 @@ export class DroppableHook {
         enabled          : boolean,
         dropData         : DragNDropData,
         onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>,
-        onDropped        : ((dragData: DragNDropData) => void)|undefined,
+        onDropped        : ((event: DroppedEvent) => void)|undefined,
         setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     }) {
         this.enabled         = enabled;

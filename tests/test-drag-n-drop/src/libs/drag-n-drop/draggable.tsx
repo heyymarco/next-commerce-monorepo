@@ -51,6 +51,7 @@ import type {
     // events:
     DragMoveEvent,
     DragHandshakeEvent,
+    DraggedEvent,
 }                           from './types'
 import {
     attachDroppableHook,
@@ -89,7 +90,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     // handlers:
     onDragMove      ?: (event: DragMoveEvent) => void
     onDragHandshake  : (event: DragHandshakeEvent) => void|Promise<void>
-    onDragged       ?: (dropData: DragNDropData) => void
+    onDragged       ?: (event: DraggedEvent) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
     // data:
@@ -183,8 +184,12 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
                 const activeDroppableHook = getActiveDroppableHook();
                 if (activeDroppableHook?.enabled) {
-                    onDragged?.(activeDroppableHook.dropData);
-                    activeDroppableHook.onDropped?.(dragData);
+                    onDragged?.({
+                        dropData: activeDroppableHook.dropData,
+                    });
+                    activeDroppableHook.onDropped?.({
+                        dragData: dragData,
+                    });
                 } // if
             } // if
             
