@@ -69,20 +69,18 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
         // handshake interacted as NO_RESPONSE:
         const [dragResponse, dropResponse] = await Promise.all([
             (async (): Promise<undefined|boolean> => {
-                const dragHandshakeEvent : DragHandshakeEvent = {
-                    ...event,
-                    dropData : droppableHook.dropData,
-                    response : undefined,
-                };
+                const dragHandshakeEvent = Object.defineProperties<DragHandshakeEvent>(new MouseEvent('dragMove', event) as any, {
+                    dropData : { value : droppableHook.dropData     },
+                    response : { value : undefined, writable : true },
+                });
                 await onDragHandshake(dragHandshakeEvent);
                 return dragHandshakeEvent.response;
             })(),
             (async (): Promise<undefined|boolean> => {
-                const dropHandshakeEvent : DropHandshakeEvent = {
-                    ...event,
-                    dragData : dragData,
-                    response : undefined,
-                };
+                const dropHandshakeEvent = Object.defineProperties<DropHandshakeEvent>(new MouseEvent('dragMove', event) as any, {
+                    dragData : { value : dragData                   },
+                    response : { value : undefined, writable : true },
+                });
                 await droppableHook.onDropHandshake(dropHandshakeEvent);
                 return dropHandshakeEvent.response;
             })(),
