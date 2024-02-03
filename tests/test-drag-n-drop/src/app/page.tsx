@@ -18,7 +18,8 @@ export default function Home() {
         <OrderableListItem<HTMLElement, number> key='222' data={2}>222</OrderableListItem>,
         <OrderableListItem<HTMLElement, number> key='333' data={3}
             onOrderStart={(event) => {
-                event.response = (event.target as Element|null)?.classList.contains('grip') ?? false;
+                console.log('custom event: ', event);
+                event.response = (event.target as Element).classList.contains('grip') ?? false;
             }}
         >
             <span>333</span>

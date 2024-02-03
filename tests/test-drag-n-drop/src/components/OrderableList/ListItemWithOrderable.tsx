@@ -50,6 +50,11 @@ import type {
     OrderableListItemProps,
 }                           from './OrderableListItem'
 
+// utilities:
+import {
+    createSyntheticEvent,
+}                           from '@/libs/hooks'
+
 
 
 // react components:
@@ -212,10 +217,12 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         if (!listItemParentElm) return false;
         
         if (onOrderStart) {
-            const orderableListItemDragStartEvent = Object.defineProperties<OrderableListItemDragStartEvent>(new MouseEvent('orderablelistitemdragstart', event) as any, {
-                response : { value : true, writable : true },
-                target   : { value : event.target          },
-            });
+            const orderableListItemDragStartEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as OrderableListItemDragStartEvent<TElement>;
+            // @ts-ignore
+            orderableListItemDragStartEvent.type = 'orderablelistitemdragstart';
+            // @ts-ignore
+            orderableListItemDragStartEvent.currentTarget = listItemRef.current;
+            orderableListItemDragStartEvent.response = true;
             await onOrderStart(orderableListItemDragStartEvent);
             if (!orderableListItemDragStartEvent.response) return false; // abort this event handler
         } // if
