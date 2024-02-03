@@ -23,8 +23,6 @@ import {
 // reusable-ui components:
 import type {
     // react components:
-    ListItemProps,
-    
     ListItemComponentProps,
 }                           from '@reusable-ui/list'            // represents a series of content
 
@@ -58,7 +56,7 @@ import type {
 export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLElement>
     extends
         // bases:
-        ListItemProps<TElement>,
+        OrderableListItemProps<TElement>,
         
         // components:
         Required<ListItemComponentProps<TElement>>
@@ -97,11 +95,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // components:
         listItemComponent,
-    ...restListItemProps} = props;
-    const {
+        
+        
+        
+        // handlers:
         onOrderStart,
         onOrderHandshake,
-    } = listItemComponent.props;
+    ...restListItemProps} = props;
     
     
     
@@ -187,7 +187,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             if (onOrderHandshake) {
                 const orderableListItemDropHandshakeEvent = Object.defineProperties<OrderableListItemDropHandshakeEvent>(new MouseEvent('orderablelistitemdrophandshake', event) as any, {
-                    response : { value : undefined, writable : true },
+                    response : { value : true, writable : true },
+                    target   : { value : event.target          },
                 });
                 await onOrderHandshake(orderableListItemDropHandshakeEvent);
                 if (!orderableListItemDropHandshakeEvent.response) {
@@ -212,7 +213,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         if (onOrderStart) {
             const orderableListItemDragStartEvent = Object.defineProperties<OrderableListItemDragStartEvent>(new MouseEvent('orderablelistitemdragstart', event) as any, {
-                response : { value : undefined, writable : true },
+                response : { value : true, writable : true },
+                target   : { value : event.target          },
             });
             await onOrderStart(orderableListItemDragStartEvent);
             if (!orderableListItemDragStartEvent.response) return false; // abort this event handler
@@ -384,7 +386,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // jsx:
     /* <ListItem> */
-    return React.cloneElement<ListItemProps<TElement>>(listItemComponent,
+    return React.cloneElement<OrderableListItemProps<TElement>>(listItemComponent,
         // props:
         {
             // other props:
