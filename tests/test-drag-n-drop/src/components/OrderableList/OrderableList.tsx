@@ -62,11 +62,15 @@ import {
     ListItemWithOrderableProps,
     ListItemWithOrderable,
 }                           from './ListItemWithOrderable'
+import type {
+    // react components:
+    OrderableListItemProps,
+}                           from './OrderableListItem'
 
 
 
 // react components:
-export interface OrderableListProps<TElement extends Element = HTMLElement>
+export interface OrderableListProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
     extends
         // bases:
         Omit<ListProps<TElement>,
@@ -88,11 +92,11 @@ export interface OrderableListProps<TElement extends Element = HTMLElement>
         >
 {
     // children:
-    defaultChildren  ?: React.ReactNode
-    children         ?: React.ReactNode
-    onChildrenChange ?: (children: React.ReactNode[]) => void
+    defaultChildren  ?: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]|React.ReactNode
+    children         ?: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]|React.ReactNode
+    onChildrenChange ?: (children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]) => void
 }
-const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableListProps<TElement>): JSX.Element|null => {
+const OrderableList = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(props: OrderableListProps<TElement, TData>): JSX.Element|null => {
     // styles:
     const styleSheet = useOrderableListStyleSheet();
     
@@ -120,7 +124,7 @@ const OrderableList = <TElement extends Element = HTMLElement>(props: OrderableL
     } = useControllableAndUncontrollable<React.ReactNode[]>({
         defaultValue       : (defaultUncontrollableChildren !== undefined) ? flattenChildren(defaultUncontrollableChildren) : [],
         value              : (controllableChildren          !== undefined) ? flattenChildren(controllableChildren         ) : undefined,
-        onValueChange      : onControllableChildrenChange,
+        onValueChange      : onControllableChildrenChange as ((children: React.ReactNode) => void),
     });
     
     

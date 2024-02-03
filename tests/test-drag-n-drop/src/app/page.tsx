@@ -6,12 +6,12 @@ import { OrderableList, OrderableListItem, OrderableListItemProps } from '@/comp
 
 
 export default function Home() {
-    const [items, setItems] = useState<React.ReactComponentElement<any, OrderableListItemProps>[]>([
-        <OrderableListItem key='000' data={0}>000</OrderableListItem>,
-        <OrderableListItem key='111' data={1}>111</OrderableListItem>,
-        <OrderableListItem key='222' data={2}>222</OrderableListItem>,
-        <OrderableListItem key='333' data={3}>333</OrderableListItem>,
-        <OrderableListItem key='444' data={4}>444</OrderableListItem>,
+    const [items, setItems] = useState<React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, number>>[]>([
+        <OrderableListItem<HTMLElement, number> key='000' data={0}>000</OrderableListItem>,
+        <OrderableListItem<HTMLElement, number> key='111' data={1}>111</OrderableListItem>,
+        <OrderableListItem<HTMLElement, number> key='222' data={2}>222</OrderableListItem>,
+        <OrderableListItem<HTMLElement, number> key='333' data={3}>333</OrderableListItem>,
+        <OrderableListItem<HTMLElement, number> key='444' data={4}>444</OrderableListItem>,
     ]);
     return (
         <main>
@@ -25,8 +25,8 @@ export default function Home() {
             
             <hr />
             
-            <OrderableList theme='primary' mild={false}
-                onChildrenChange={setItems as any}
+            <OrderableList<HTMLElement, number> theme='primary' mild={false}
+                onChildrenChange={setItems}
             >
                 {items}
             </OrderableList>
