@@ -60,7 +60,7 @@ import {
 export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLElement>
     extends
         // bases:
-        OrderableListItemProps<TElement>,
+        OrderableListItemProps<TElement, unknown>,
         
         // components:
         Required<ListItemComponentProps<TElement>>
@@ -396,7 +396,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // jsx:
     /* <ListItem> */
-    return React.cloneElement<OrderableListItemProps<TElement>>(listItemComponent,
+    return React.cloneElement<OrderableListItemProps<TElement, unknown>>(listItemComponent,
         // props:
         {
             // other props:
