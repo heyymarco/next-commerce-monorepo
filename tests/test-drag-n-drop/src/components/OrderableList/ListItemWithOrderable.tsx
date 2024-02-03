@@ -191,10 +191,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             if (onOrderHandshake) {
-                const orderableListItemDropHandshakeEvent = Object.defineProperties<OrderableListItemDropHandshakeEvent>(new MouseEvent('orderablelistitemdrophandshake', event) as any, {
-                    response : { value : true, writable : true },
-                    target   : { value : event.target          },
-                });
+                const orderableListItemDropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as OrderableListItemDropHandshakeEvent<TElement>;
+                // @ts-ignore
+                orderableListItemDropHandshakeEvent.type = 'orderablelistitemdrophandshake';
+                // @ts-ignore
+                orderableListItemDropHandshakeEvent.currentTarget = listItemRef.current;
+                // @ts-ignore
+                orderableListItemDropHandshakeEvent.target        = listItemRef.current;
+                orderableListItemDropHandshakeEvent.response = true;
                 await onOrderHandshake(orderableListItemDropHandshakeEvent);
                 if (!orderableListItemDropHandshakeEvent.response) {
                     event.response = false; // abort this event handler
