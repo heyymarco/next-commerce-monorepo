@@ -16,15 +16,12 @@ import {
     ListItemComponentProps,
 }                           from '@reusable-ui/list'            // represents a series of content
 
-
-
-// events:
-export interface OrderableListItemDragStartEvent<TElement extends Element = HTMLElement> extends React.SyntheticEvent<TElement, MouseEvent> {
-    /*mutable*/ response : boolean
-}
-export interface OrderableListItemDropHandshakeEvent<TElement extends Element = HTMLElement> extends React.SyntheticEvent<TElement, MouseEvent> {
-    /*mutable*/ response : boolean
-}
+// internals:
+import type {
+    // events:
+    OrderableListItemDragStartEvent,
+    OrderableListItemDropHandshakeEvent,
+}                           from './types'
 
 
 

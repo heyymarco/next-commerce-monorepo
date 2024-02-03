@@ -27,6 +27,11 @@ import type {
 }                           from '@reusable-ui/list'            // represents a series of content
 
 // internals:
+import type {
+    // events:
+    OrderableListItemDragStartEvent,
+    OrderableListItemDropHandshakeEvent,
+}                           from './types'
 import {
     useOrderableListStyleSheet,
 }                           from './styles/loader'
@@ -40,12 +45,6 @@ import {
     useDroppable,
 }                           from '@/libs/drag-n-drop'
 import type {
-    // events:
-    OrderableListItemDragStartEvent,
-    OrderableListItemDropHandshakeEvent,
-    
-    
-    
     // react components:
     OrderableListItemProps,
 }                           from './OrderableListItem'
