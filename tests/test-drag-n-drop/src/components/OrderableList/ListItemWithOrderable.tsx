@@ -158,7 +158,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         onDragMove(event) {
             if (event.response) {
                 handleDragMove({
-                    ...event,
+                    ...event.nativeEvent,
                     from : listIndex,
                     to   : event.dropData?.get(dragNDropId) as number,
                 });
@@ -166,7 +166,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
-            handleUpdateFloatingPos(event);
+            handleUpdateFloatingPos(event.nativeEvent);
         },
         onDragged({dropData}) {
             handleDropped({
@@ -190,7 +190,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             if (onOrderHandshake) {
-                const orderableListItemDropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as OrderableListItemDropHandshakeEvent<TElement>;
+                const orderableListItemDropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event.nativeEvent) as unknown as OrderableListItemDropHandshakeEvent<TElement>;
                 // @ts-ignore
                 orderableListItemDropHandshakeEvent.type = 'orderablelistitemdrophandshake';
                 // @ts-ignore

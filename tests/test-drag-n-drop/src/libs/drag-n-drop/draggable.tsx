@@ -60,6 +60,11 @@ import {
     getActiveDroppableHook,
 }                           from './drag-n-drop-interface'
 
+// utilities:
+import {
+    createSyntheticEvent,
+}                           from '@/libs/hooks'
+
 
 
 // types:
@@ -89,8 +94,8 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     // handlers:
-    onDragMove      ?: (event: DragMoveEvent) => void
-    onDragHandshake  : (event: DragHandshakeEvent) => void|Promise<void>
+    onDragMove      ?: (event: DragMoveEvent<TElement>) => void
+    onDragHandshake  : (event: DragHandshakeEvent<TElement>) => void|Promise<void>
     onDragged       ?: (event: DraggedEvent) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
@@ -165,7 +170,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     // handlers:
-    const handleDragHandshake = useEvent(async (event: DragHandshakeEvent): Promise<void> => {
+    const handleDragHandshake = useEvent(async (event: DragHandshakeEvent<TElement>): Promise<void> => {
         try {
             await onDragHandshake(event);
         }
@@ -236,10 +241,14 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             }
             finally {
                 if (onDragMove) {
-                    onDragMove(Object.defineProperties<DragMoveEvent>(new MouseEvent('dragmove', event) as any, {
-                        dropData : { value : attachedDroppableHookResult?.dropData              },
-                        response : { value : attachedDroppableHookResult?.response ?? undefined },
-                    }));
+                    const dragMoveEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DragMoveEvent<TElement>;
+                    // @ts-ignore
+                    dragMoveEvent.type = 'dragmove';
+                    // @ts-ignore
+                    dragMoveEvent.dropData = attachedDroppableHookResult?.dropData;
+                    // @ts-ignore
+                    dragMoveEvent.response = attachedDroppableHookResult?.response ?? undefined;
+                    onDragMove(dragMoveEvent);
                 } // if
             } // try
         },

@@ -11,12 +11,17 @@ import type {
     DroppedEvent,
 }                           from './types'
 
+// utilities:
+import {
+    createSyntheticEvent,
+}                           from '@/libs/hooks'
 
 
-export class DroppableHook {
+
+export class DroppableHook<TElement extends Element = HTMLElement> {
     enabled          : boolean
     dropData         : DragNDropData
-    onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>
+    onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
     onDropped        : ((event: DroppedEvent) => void)|undefined
     setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     
@@ -29,7 +34,7 @@ export class DroppableHook {
     } : {
         enabled          : boolean,
         dropData         : DragNDropData,
-        onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>,
+        onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>,
         onDropped        : ((event: DroppedEvent) => void)|undefined,
         setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     }) {
@@ -43,23 +48,23 @@ export class DroppableHook {
 
 
 
-const droppableMap      = new Map<Element, DroppableHook>();
-let activeDroppableHook : null|DroppableHook = null;
+const droppableMap      = new Map<Element, DroppableHook<Element>>();
+let activeDroppableHook : null|DroppableHook<Element> = null;
 
 export interface AttachedDroppableHookResult {
     response : null|boolean
     dropData : undefined|DragNDropData
 }
-export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (event: DragHandshakeEvent) => void|Promise<void>, dragData: DragNDropData): Promise<AttachedDroppableHookResult> => {
-    let response       : null|boolean       = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
-    let interactedHook : null|DroppableHook = null;
+export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, onDragHandshake: (event: DragHandshakeEvent<TElement>) => void|Promise<void>, dragData: DragNDropData): Promise<AttachedDroppableHookResult> => {
+    let response       : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
+    let interactedHook : null|DroppableHook<TElement> = null;
     
     
     
     for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
         // conditions:
         // test for valid droppable hook:
-        const droppableHook = droppableMap.get(element);
+        const droppableHook = droppableMap.get(element) as DroppableHook<TElement>|undefined;
         if (!droppableHook)         continue; // not having droppable hook => see other droppables
         if (!droppableHook.enabled) continue; // disabled => noop          => see other droppables
         
@@ -69,20 +74,24 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
         // handshake interacted as NO_RESPONSE:
         const [dragResponse, dropResponse] = await Promise.all([
             (async (): Promise<undefined|boolean> => {
-                const dragHandshakeEvent = Object.defineProperties<DragHandshakeEvent>(new MouseEvent('draghandshake', event) as any, {
-                    dropData : { value : droppableHook.dropData     },
-                    response : { value : undefined, writable : true },
-                });
+                const dragHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DragHandshakeEvent<TElement>;
+                // @ts-ignore
+                dragHandshakeEvent.type = 'draghandshake';
+                // @ts-ignore
+                dragHandshakeEvent.dropData = droppableHook.dropData;
+                dragHandshakeEvent.response = undefined; // initially no response
                 await onDragHandshake(dragHandshakeEvent);
-                return dragHandshakeEvent.response;
+                return dragHandshakeEvent.response;      // get the modified response
             })(),
             (async (): Promise<undefined|boolean> => {
-                const dropHandshakeEvent = Object.defineProperties<DropHandshakeEvent>(new MouseEvent('drophandshake', event) as any, {
-                    dragData : { value : dragData                   },
-                    response : { value : undefined, writable : true },
-                });
+                const dropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DropHandshakeEvent<TElement>;
+                // @ts-ignore
+                dropHandshakeEvent.type = 'drophandshake';
+                // @ts-ignore
+                dropHandshakeEvent.dragData = dragData;
+                dropHandshakeEvent.response = undefined; // initially no response
                 await droppableHook.onDropHandshake(dropHandshakeEvent);
-                return dropHandshakeEvent.response;
+                return dropHandshakeEvent.response;      // get the modified response
             })(),
         ]);
         if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
@@ -111,7 +120,7 @@ export const attachDroppableHook = async (event: MouseEvent, onDragHandshake: (e
     
     
     
-    activeDroppableHook = response ? interactedHook : null; // true => set -or- null|false => release
+    activeDroppableHook = response ? (interactedHook as DroppableHook<Element>|null) : null; // true => set -or- null|false => release
     
     
     
@@ -154,17 +163,17 @@ export const detachDroppableHook = (): void => {
         droppableHook.setIsDropping(undefined); // no  dropping activity
     } // for
 };
-export const getActiveDroppableHook = (): null|DroppableHook => {
+export const getActiveDroppableHook = (): null|DroppableHook<Element> => {
     return activeDroppableHook;
 };
 
 
 
-export const registerDroppableHook   = (element: Element, droppableHook: DroppableHook): void => {
+export const registerDroppableHook   = <TElement extends Element = HTMLElement>(element: Element, droppableHook: DroppableHook<TElement>): void => {
     droppableHook.enabled = true; // mount
-    droppableMap.set(element, droppableHook);
+    droppableMap.set(element, droppableHook as DroppableHook<Element>);
 };
-export const unregisterDroppableHook = (element: Element): null|DroppableHook => {
+export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(element: Element): null|DroppableHook<TElement> => {
     const droppableHook = droppableMap.get(element); // backup
     if (droppableHook) droppableHook.enabled = false; // unmount
     droppableMap.delete(element);

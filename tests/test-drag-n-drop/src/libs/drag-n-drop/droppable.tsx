@@ -57,7 +57,7 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     
     // handlers:
-    onDropHandshake  : (event: DropHandshakeEvent) => void|Promise<void>
+    onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
     onDropped       ?: (event: DroppedEvent) => void
 }
 export interface DroppableApi {
@@ -107,7 +107,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // handlers:
-    const handleDropHandshake = useEvent(async (event: DropHandshakeEvent): Promise<void> => {
+    const handleDropHandshake = useEvent(async (event: DropHandshakeEvent<TElement>): Promise<void> => {
         try {
             await onDropHandshake(event);
         }
@@ -130,8 +130,8 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // stable droppableHook:
-    const droppableHook = useMemo((): DroppableHook =>
-        new DroppableHook({
+    const droppableHook = useMemo((): DroppableHook<TElement> =>
+        new DroppableHook<TElement>({
             enabled         : enabled,
             dropData        : dropData,
             onDropHandshake : handleDropHandshake, // stable ref
