@@ -57,10 +57,10 @@ import {
 
 
 // react components:
-export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLElement>
+export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown>
     extends
         // bases:
-        OrderableListItemProps<TElement, unknown>,
+        OrderableListItemProps<TElement, TData>,
         
         // components:
         Required<ListItemComponentProps<TElement>>
@@ -77,9 +77,9 @@ export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLE
     
     // components:
     // a more specific of <ListItem> is needed:
-    listItemComponent : React.ReactComponentElement<any, OrderableListItemProps<TElement, unknown>>
+    listItemComponent : React.ReactComponentElement<any, OrderableListItemProps<TElement, TData>>
 }
-export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement>(props: ListItemWithOrderableProps<TElement>): JSX.Element|null => {
+export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown>(props: ListItemWithOrderableProps<TElement, TData>): JSX.Element|null => {
     // styles:
     const styleSheet = useOrderableListStyleSheet();
     
@@ -396,7 +396,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // jsx:
     /* <ListItem> */
-    return React.cloneElement<OrderableListItemProps<TElement, unknown>>(listItemComponent,
+    return React.cloneElement<OrderableListItemProps<TElement, TData>>(listItemComponent,
         // props:
         {
             // other props:

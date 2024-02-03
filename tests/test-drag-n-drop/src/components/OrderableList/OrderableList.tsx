@@ -152,14 +152,14 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         const toIndex         = listMap.get(to)   ?? to;
         const mutatedChildren = wrappedChildren.slice(0); // copy
         [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [
-            React.cloneElement<ListItemWithOrderableProps<HTMLElement>>(mutatedChildren[toIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement>>,
+            React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
                 // props:
                 {
                     listIndex : -1,
                     // theme: 'danger', // for *visual* debugging purpose
                 },
             ),
-            React.cloneElement<ListItemWithOrderableProps<HTMLElement>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement>>,
+            React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
                 // props:
                 {
                     refresh : {}, // declarative way to refresh()
@@ -221,7 +221,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                 // jsx:
                 return (
                     /* wrap child with <ListItemWithOrderable> */
-                    <ListItemWithOrderable<HTMLElement>
+                    <ListItemWithOrderable<HTMLElement, TData>
                         // other props:
                         {...listItemProps} // steals all listItem's props, so the <Owner> can recognize the <ListItemWithOrderable> as <TheirChild>
                         
