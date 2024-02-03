@@ -18,6 +18,16 @@ import {
 
 
 
+// events:
+export interface OrderableListItemDragStartEvent extends MouseEvent {
+    /*mutable*/ response : boolean
+}
+export interface OrderableListItemDropHandshakeEvent extends MouseEvent {
+    /*mutable*/ response : boolean
+}
+
+
+
 // react components:
 export interface OrderableListItemProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
     extends
@@ -28,18 +38,30 @@ export interface OrderableListItemProps<TElement extends Element = HTMLElement, 
         ListItemComponentProps<TElement>
 {
     // data:
-    data ?: TData
+    data             ?: TData
+    
+    
+    
+    // handlers:
+    onOrderStart     ?: (event: OrderableListItemDragStartEvent    ) => void|Promise<void>
+    onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent) => void|Promise<void>
 }
 export const OrderableListItem       = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(props: OrderableListItemProps<TElement, TData>): JSX.Element|null => {
     // rest props:
     const {
         // data:
-        data : _data, // remove
+        data             : _data,             // remove
         
         
         
         // components:
         listItemComponent = (<ListItem<TElement> /> as React.ReactComponentElement<any, ListItemProps<TElement>>),
+        
+        
+        
+        // handlers:
+        onOrderStart     : _onOrderStart,     // remove
+        onOrderHandshake : _onOrderHandshake, // remove
     ...restListItemProps} = props;
     
     
