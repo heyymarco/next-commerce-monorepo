@@ -14,6 +14,13 @@ import {
 
 
 
+// types:
+export interface TriggerValueChangeOptions {
+    runsOnMacrotask ?: boolean
+}
+
+
+
 export interface ControllableAndUncontrollableProps<TValue extends any> {
     // values:
     defaultValue       : TValue
@@ -23,7 +30,7 @@ export interface ControllableAndUncontrollableProps<TValue extends any> {
 export interface ControllableAndUncontrollableApi<TValue extends any> {
     // values:
     value              : TValue
-    triggerValueChange : (newValue: TValue) => void
+    triggerValueChange : (newValue: TValue, options?: TriggerValueChangeOptions) => void
 }
 export const useControllableAndUncontrollable = <TValue extends any>(props: ControllableAndUncontrollableProps<TValue>): ControllableAndUncontrollableApi<TValue> => {
     // props:
@@ -62,11 +69,17 @@ export const useControllableAndUncontrollable = <TValue extends any>(props: Cont
     
     // stable callbacks:
     const scheduleTriggerEvent            = useScheduleTriggerEvent();
-    const triggerValueChange              = useEvent((newValue: TValue): void => {
-        if (handleValueChange) scheduleTriggerEvent(() => { // runs the `on(Controllable|Uncontrollable)ValueChange` event *next after* current macroTask completed
+    const triggerValueChange              = useEvent((newValue: TValue, options?: TriggerValueChangeOptions): void => {
+        if (options?.runsOnMacrotask ?? true) {
+            if (handleValueChange) scheduleTriggerEvent(() => { // runs the `on(Controllable|Uncontrollable)ValueChange` event *next after* current macroTask completed
+                // fire `on(Controllable|Uncontrollable)ValueChange` react event:
+                handleValueChange(newValue);
+            });
+        }
+        else {
             // fire `on(Controllable|Uncontrollable)ValueChange` react event:
-            handleValueChange(newValue);
-        });
+            handleValueChange?.(newValue);
+        } // if
     });
     
     

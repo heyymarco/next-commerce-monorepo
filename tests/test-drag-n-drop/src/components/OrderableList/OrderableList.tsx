@@ -183,7 +183,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         const toIndex         = listMap.get(to)   ?? to;
         const mutatedChildren = children.slice(0); // copy
         [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
-        triggerChildrenChange(mutatedChildren);
+        triggerChildrenChange(mutatedChildren, { runsOnMacrotask: false });
     });
     
     
