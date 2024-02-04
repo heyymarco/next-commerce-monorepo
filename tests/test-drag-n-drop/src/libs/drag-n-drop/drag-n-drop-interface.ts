@@ -112,6 +112,11 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                 return dragHandshakeEvent.response;      // get the modified response
             })(),
             (async (): Promise<undefined|boolean> => {
+                // conditions:
+                if (registeredDragData === undefined) return undefined; // already `unregisterDragData()` => no need to response
+                
+                
+                
                 const dropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DropHandshakeEvent<TElement>;
                 // @ts-ignore
                 dropHandshakeEvent.type = 'drophandshake';
