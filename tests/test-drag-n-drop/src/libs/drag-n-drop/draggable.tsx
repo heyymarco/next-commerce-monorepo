@@ -204,25 +204,13 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             detachDroppableHook();                                               // no  dropping activity
             if (isDragging !== undefined) setIsDragging(isDragging = undefined); // no  dragging activity
             if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
+            prevFloatingPos.current = undefined;                                 // cleanup floating pos
         },
         async onPointerCaptureMove(event) {
             let attachedDroppableHookResult: AttachedDroppableHookResult|undefined = undefined;
             try {
                 // update pointer pos:
-                {
-                    // calculate pointer coordinate (relative to screen viewport):
-                    const left = `${event.clientX}px`;
-                    const top  = `${event.clientY}px`;
-                    
-                    
-                    
-                    // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
-                    const overlayInlineStyle = overlayRef.current?.style;
-                    if (overlayInlineStyle) {
-                        overlayInlineStyle.left = left;
-                        overlayInlineStyle.top  = top;
-                    } // if
-                }
+                handleUpdateFloatingPos(event);
                 
                 
                 
@@ -257,7 +245,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     
     // handlers:
-    const handleMouseDown  = useEvent<React.MouseEventHandler<TElement>>((event) => {
+    const handleMouseDown         = useEvent<React.MouseEventHandler<TElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
         event.preventDefault(); // now we handled the event
@@ -266,7 +254,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         pointerCapturable.handleMouseDown(event);
     });
-    const handleTouchStart = useEvent<React.TouchEventHandler<TElement>>((event) => {
+    const handleTouchStart        = useEvent<React.TouchEventHandler<TElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
         event.preventDefault(); // now we handled the event
@@ -274,6 +262,27 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         
         pointerCapturable.handleTouchStart(event);
+    });
+    
+    const prevFloatingPos         = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
+    const handleUpdateFloatingPos = useEvent((event?: MouseEvent): void => {
+        // calculate pos:
+        const {clientX, clientY} = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
+        prevFloatingPos.current  = {clientX, clientY};
+        
+        
+        
+        // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
+        const overlayInlineStyle = overlayRef.current?.style;
+        if (overlayInlineStyle) {
+            overlayInlineStyle.left = `${clientX}px`;
+            overlayInlineStyle.top  = `${clientY}px`;
+        } // if
+    });
+    
+    const handleSetOverlayRef     = useEvent((newRef: HTMLDivElement|null) => {
+        overlayRef.current = newRef;
+        if (newRef) handleUpdateFloatingPos();
     });
     
     
@@ -319,7 +328,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             return createPortal(
                 <div
                     // refs:
-                    ref={overlayRef}
+                    ref={handleSetOverlayRef}
                     
                     
                     
