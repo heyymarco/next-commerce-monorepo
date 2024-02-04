@@ -301,7 +301,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // calculate pos:
         const {clientX          , clientY        } = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
-        prevFloatingPos.current                    = { clientX, clientY };
+        prevFloatingPos.current                    = {clientX, clientY};
         const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
         const {left: touchedLeft, top: touchedTop} = listItemTouchedPositionRef.current;
         
