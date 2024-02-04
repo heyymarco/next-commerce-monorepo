@@ -223,3 +223,57 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
     
     return droppableHook ?? null; // found | not found
 };
+
+
+
+// draggable files:
+if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
+    let   globalDragEnterCounter = 0;
+    const handleGlobalDragEnter = (event: DragEvent) => {
+        // conditions:
+        globalDragEnterCounter++; // count bubbling from nested elements
+        if (globalDragEnterCounter !== 1) return; // ignore bubbling from nested elements
+        
+        const items = event.dataTransfer?.items;
+        if (!items?.length) return;
+        
+        
+        
+        const dragData = new Map<string, any|File|string>();
+        for (const item of items) {
+            const isFile = (
+                (item.kind === 'file')
+                ? item.getAsFile()
+                : false
+            );
+            if (isFile === false) {
+                item.getAsString((value) => {
+                    dragData.set(item.kind, value);
+                });
+            }
+            else {
+                dragData.set('file', isFile);
+            } // if
+        } // for
+        if (!dragData.size) return;
+        
+        
+        
+        registerDragData(dragData);
+    };
+    const handleGlobalDragLeave = (event: DragEvent) => {
+        // conditions:
+        if (globalDragEnterCounter === 0) return; // protect from negative value
+        globalDragEnterCounter--; // uncount bubbling from nested elements
+        if (globalDragEnterCounter !== 0) return; // ignore bubbling from nested elements
+        
+        
+        
+        unregisterDragData();
+    };
+    
+    
+    
+    document.addEventListener('dragenter', handleGlobalDragEnter);
+    document.addEventListener('dragleave', handleGlobalDragLeave);
+} // if
