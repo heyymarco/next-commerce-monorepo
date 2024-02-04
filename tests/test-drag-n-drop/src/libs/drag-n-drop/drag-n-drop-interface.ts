@@ -108,7 +108,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
             })(),
             (async (): Promise<undefined|boolean> => {
                 // conditions:
-                if (registeredDragData === undefined) return undefined; // already `unregisterDragData()` => no need to response
+                if (registeredDragData === undefined) return undefined; // already `leaveDroppableHook()` => no need to response
                 
                 
                 
