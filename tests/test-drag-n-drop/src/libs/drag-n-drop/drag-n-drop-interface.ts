@@ -331,6 +331,8 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     
     
     
+    // side effects:
+    // but marked as `"sideEffects": false` on package.json:
     document.addEventListener('dragenter', handleGlobalDragEnter);
     document.addEventListener('dragleave', handleGlobalDragLeave);
     document.addEventListener('dragover' , handleGlobalDragOver );
