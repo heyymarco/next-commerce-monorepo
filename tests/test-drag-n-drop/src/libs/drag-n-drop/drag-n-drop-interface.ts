@@ -225,14 +225,15 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
 
 // draggable files:
 if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
+    // states:
     let   globalDragEnterCounter = 0;
-    const handleGlobalDragEnter = (event: DragEvent): void => {
-        // conditions:
-        globalDragEnterCounter++; // count bubbling from nested elements
-        if (globalDragEnterCounter !== 1) return; // ignore bubbling from nested elements
-        
-        const items = event.dataTransfer?.items;
-        if (!items?.length) return;
+    
+    
+    
+    // utilities:
+    const createDragData = (dataTransfer: DataTransfer|null): Map<string, any|File|string>|null => {
+        const items = dataTransfer?.items;
+        if (!items?.length) return null;
         
         
         
@@ -254,7 +255,20 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                 fileCounter++;
             } // if
         } // for
-        if (!dragData.size) return;
+        if (!dragData.size) return null;
+        return dragData;
+    };
+    
+    
+    
+    // global handlers:
+    const handleGlobalDragEnter = (event: DragEvent): void => {
+        // conditions:
+        globalDragEnterCounter++; // count bubbling from nested elements
+        if (globalDragEnterCounter !== 1) return; // ignore bubbling from nested elements
+        
+        const dragData = createDragData(event.dataTransfer);
+        if (!dragData) return;
         
         
         
@@ -270,7 +284,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         leaveDroppableHook();
     };
-    const handleGlobalDragOver = async (event: DragEvent): Promise<void> => {
+    const handleGlobalDragOver  = async (event: DragEvent): Promise<void> => {
         // conditions:
         if (event.defaultPrevented) return;
         event.preventDefault();
@@ -291,10 +305,34 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             dataTransfer.dropEffect = (response === true) ? 'copy' : 'none';
         } // if
     };
+    const handleGlobalDrop      = (event: DragEvent): void => {
+        // conditions:
+        if (event.defaultPrevented) return;
+        event.preventDefault();
+        
+        
+        
+        // actions:
+        const activeDroppableHook = getActiveDroppableHook();
+        if (activeDroppableHook?.enabled) {
+            const dragData = createDragData(event.dataTransfer);
+            if (dragData) {
+                activeDroppableHook.onDropped?.({
+                    dragData: dragData,
+                });
+            } // if
+        } // if
+        
+        if (globalDragEnterCounter) {
+            globalDragEnterCounter = 0; // reset counter
+            leaveDroppableHook();
+        } // if
+    };
     
     
     
     document.addEventListener('dragenter', handleGlobalDragEnter);
     document.addEventListener('dragleave', handleGlobalDragLeave);
     document.addEventListener('dragover' , handleGlobalDragOver );
+    document.addEventListener('drop'     , handleGlobalDrop     );
 } // if
