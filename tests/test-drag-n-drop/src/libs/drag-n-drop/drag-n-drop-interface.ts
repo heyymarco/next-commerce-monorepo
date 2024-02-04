@@ -61,12 +61,12 @@ let registeredDragData        : undefined|DragNDropData     = undefined;
 
 // draggable sides:
 export const enterDroppableHook  = (dragData: DragNDropData) => {
-    registeredDragData = dragData;
+    registeredDragData = dragData; // has  related drag data
     
     
     
     for (const droppableHook of registeredDroppableHook.values()) {
-        droppableHook.setDragData(dragData);
+        droppableHook.setDragData(dragData); // has  related drag data
     } // for
 };
 export interface AttachedDroppableHookResult {
@@ -183,14 +183,14 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
 };
 export const leaveDroppableHook  = (): void => {
     activeDroppableHook = null;      // release
-    registeredDragData  = undefined; // no  related data
+    registeredDragData  = undefined; // no  related drag data
     
     
     
     for (const droppableHook of registeredDroppableHook.values()) {
         // actions:
         droppableHook.setIsDropping(undefined); // no  dropping activity
-        droppableHook.setDragData(undefined);   // no  related data
+        droppableHook.setDragData(undefined);   // no  related drag data
     } // for
 };
 
