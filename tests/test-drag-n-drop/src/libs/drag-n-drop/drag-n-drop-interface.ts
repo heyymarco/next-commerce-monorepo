@@ -226,7 +226,7 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
 // draggable files:
 if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     // states:
-    let   globalDragEnterCounter = 0;
+    let globalDragEnterCounter = 0;
     
     
     
