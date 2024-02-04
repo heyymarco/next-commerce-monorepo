@@ -272,22 +272,24 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         
+        // actions:
         enterDroppableHook(dragData);
     };
     const handleGlobalDragLeave = (): void => {
         // conditions:
-        if (globalDragEnterCounter === 0) return; // protect from negative value
-        globalDragEnterCounter--; // uncount bubbling from nested elements
+        if (globalDragEnterCounter === 0) return; // protect from making negative value
+        globalDragEnterCounter--;                 // uncount bubbling from nested elements
         if (globalDragEnterCounter !== 0) return; // ignore bubbling from nested elements
         
         
         
+        // actions:
         leaveDroppableHook();
     };
     const handleGlobalDragOver  = async (event: DragEvent): Promise<void> => {
         // conditions:
-        if (event.defaultPrevented) return;
-        event.preventDefault();
+        if (event.defaultPrevented) return; // already handled => ignore
+        event.preventDefault();             // now handled
         
         
         
@@ -307,8 +309,10 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     };
     const handleGlobalDrop      = (event: DragEvent): void => {
         // conditions:
-        if (event.defaultPrevented) return;
-        event.preventDefault();
+        if (event.defaultPrevented) return; // already handled => ignore
+        event.preventDefault();             // now handled
+        
+        if (globalDragEnterCounter <= 0) return; // not our drop => ignore
         
         
         
@@ -323,10 +327,8 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             } // if
         } // if
         
-        if (globalDragEnterCounter) {
-            globalDragEnterCounter = 0; // reset counter
-            leaveDroppableHook();
-        } // if
+        globalDragEnterCounter = 0; // reset counter
+        leaveDroppableHook();
     };
     
     
