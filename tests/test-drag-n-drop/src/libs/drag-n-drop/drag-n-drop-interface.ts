@@ -251,7 +251,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                 });
             }
             else {
-                dragData.set(`file[${fileCounter}]`, isFile);
+                dragData.set(`file/${fileCounter}`, isFile);
                 fileCounter++;
             } // if
         } // for
