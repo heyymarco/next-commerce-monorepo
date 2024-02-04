@@ -266,7 +266,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     const prevFloatingPos         = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
     const handleUpdateFloatingPos = useEvent((event?: MouseEvent): void => {
-        // calculate & memorize pos:
+        // calculate & memorize floating pos:
         const {clientX, clientY} = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
         prevFloatingPos.current  = {clientX, clientY};
         
