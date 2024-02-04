@@ -280,7 +280,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         } // if
     });
     
-    const handleSetOverlayRef     = useEvent((newRef: HTMLDivElement|null) => {
+    const handleSetOverlayRef     = useEvent((newRef: HTMLDivElement|null): void => {
         overlayRef.current = newRef;
         if (newRef) handleUpdateFloatingPos();
     });
