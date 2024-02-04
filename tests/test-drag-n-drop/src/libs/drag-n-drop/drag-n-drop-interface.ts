@@ -60,7 +60,7 @@ let registeredDragData        : undefined|DragNDropData     = undefined;
 
 
 // draggable sides:
-export const registerDragData   = (dragData: DragNDropData) => {
+export const enterDroppableHook  = (dragData: DragNDropData) => {
     registeredDragData = dragData;
     
     
@@ -69,21 +69,11 @@ export const registerDragData   = (dragData: DragNDropData) => {
         droppableHook.setDragData(dragData);
     } // for
 };
-export const unregisterDragData = () => {
-    registeredDragData = undefined;
-    
-    
-    
-    for (const droppableHook of registeredDroppableHook.values()) {
-        droppableHook.setDragData(undefined);
-    } // for
-};
-
 export interface AttachedDroppableHookResult {
     response : null|boolean
     dropData : undefined|DragNDropData
 }
-export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, onDragHandshake: (event: DragHandshakeEvent<TElement>) => void|Promise<void>): Promise<AttachedDroppableHookResult> => {
+export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, onDragHandshake?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>): Promise<AttachedDroppableHookResult> => {
     let response       : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
     let interactedHook : null|DroppableHook<TElement> = null;
     
@@ -102,6 +92,11 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         // handshake interacted as NO_RESPONSE:
         const [dragResponse, dropResponse] = await Promise.all([
             (async (): Promise<undefined|boolean> => {
+                // conditions:
+                if (onDragHandshake === undefined) return true; // if no `onDragHandshake` => assumes always approved
+                
+                
+                
                 const dragHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DragHandshakeEvent<TElement>;
                 // @ts-ignore
                 dragHandshakeEvent.type = 'draghandshake';
@@ -186,14 +181,16 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         dropData : interactedHook?.dropData,
     };
 };
-export const detachDroppableHook = (): void => {
-    activeDroppableHook = null; // release
+export const leaveDroppableHook  = (): void => {
+    activeDroppableHook = null;      // release
+    registeredDragData  = undefined; // no  related data
     
     
     
     for (const droppableHook of registeredDroppableHook.values()) {
         // actions:
         droppableHook.setIsDropping(undefined); // no  dropping activity
+        droppableHook.setDragData(undefined);   // no  related data
     } // for
 };
 
@@ -229,7 +226,7 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
 // draggable files:
 if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     let   globalDragEnterCounter = 0;
-    const handleGlobalDragEnter = (event: DragEvent) => {
+    const handleGlobalDragEnter = (event: DragEvent): void => {
         // conditions:
         globalDragEnterCounter++; // count bubbling from nested elements
         if (globalDragEnterCounter !== 1) return; // ignore bubbling from nested elements
@@ -240,6 +237,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         const dragData = new Map<string, any|File|string>();
+        let fileCounter = 0;
         for (const item of items) {
             const isFile = (
                 (item.kind === 'file')
@@ -252,16 +250,17 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                 });
             }
             else {
-                dragData.set('file', isFile);
+                dragData.set(`file[${fileCounter}]`, isFile);
+                fileCounter++;
             } // if
         } // for
         if (!dragData.size) return;
         
         
         
-        registerDragData(dragData);
+        enterDroppableHook(dragData);
     };
-    const handleGlobalDragLeave = (event: DragEvent) => {
+    const handleGlobalDragLeave = (): void => {
         // conditions:
         if (globalDragEnterCounter === 0) return; // protect from negative value
         globalDragEnterCounter--; // uncount bubbling from nested elements
@@ -269,11 +268,33 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         
-        unregisterDragData();
+        leaveDroppableHook();
+    };
+    const handleGlobalDragOver = async (event: DragEvent): Promise<void> => {
+        // conditions:
+        if (event.defaultPrevented) return;
+        event.preventDefault();
+        
+        
+        
+        // actions:
+        const attachedDroppableHookResult = await attachDroppableHook(event);
+        /*
+        * undefined : NEVER HERE.  
+        * null      : has dragging activity but outside all dropping targets.  
+        * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
+        * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
+        */
+        const dataTransfer = event.dataTransfer;
+        if (dataTransfer) {
+            const response = attachedDroppableHookResult.response;
+            dataTransfer.dropEffect = (response === true) ? 'copy' : 'none';
+        } // if
     };
     
     
     
     document.addEventListener('dragenter', handleGlobalDragEnter);
     document.addEventListener('dragleave', handleGlobalDragLeave);
+    document.addEventListener('dragover' , handleGlobalDragOver );
 } // if
