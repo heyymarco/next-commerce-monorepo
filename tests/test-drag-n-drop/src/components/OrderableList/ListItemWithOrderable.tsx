@@ -342,7 +342,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         if (!isDraggingActive) {
-            prevFloatingPos.current   = undefined;
+            prevFloatingPos.current   = undefined; // cleanup floating pos
             
             const listItemInlineStyle = listItemRef.current?.style;
             if (listItemInlineStyle) {
