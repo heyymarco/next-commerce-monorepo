@@ -288,8 +288,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     const prevFloatingPos          = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
     const handleUpdateFloatingPos  = useEvent((event?: MouseEvent): void => {
+        // conditions:
+        const recentPos = event ?? prevFloatingPos.current;
+        if (!recentPos) return;
+        
+        
+        
         // calculate & memorize floating pos:
-        const {clientX, clientY} = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
+        const {clientX, clientY} = recentPos;
         prevFloatingPos.current  = {clientX, clientY};
         
         
@@ -307,6 +313,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         const {left: touchedLeft, top: touchedTop} = listItemTouchedPositionRef.current ?? {left: 0, top: 0};
         listItemInlineStyle.left = `${clientX - baseLeft - touchedLeft}px`;
         listItemInlineStyle.top  = `${clientY - baseTop  - touchedTop }px`;
+    });
+    
+    const handleSetListItemRef     = useEvent((newRef: TElement|null): void => {
+        listItemRef.current = newRef;
+        if (newRef) handleUpdateFloatingPos();
     });
     
     
@@ -369,7 +380,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
-        listItemRef,
+        handleSetListItemRef,
     );
     
     
