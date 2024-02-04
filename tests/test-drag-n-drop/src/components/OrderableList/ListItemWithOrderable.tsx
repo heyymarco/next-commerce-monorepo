@@ -291,23 +291,23 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     const prevFloatingPos          = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
     const handleUpdateFloatingPos  = useEvent((event?: MouseEvent): void => {
+        // calculate & memorize pos:
+        const {clientX, clientY} = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
+        prevFloatingPos.current  = {clientX, clientY};
+        
+        
+        
         // conditions:
         const listItemInlineStyle = listItemRef.current?.style;
         if (!listItemInlineStyle) return;
         const listItemParentElm   = listItemParentRef.current;
-        if (!listItemParentElm) return;
-        
-        
-        
-        // calculate pos:
-        const {clientX          , clientY        } = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
-        prevFloatingPos.current                    = {clientX, clientY};
-        const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
-        const {left: touchedLeft, top: touchedTop} = listItemTouchedPositionRef.current;
+        if (!listItemParentElm  ) return;
         
         
         
         // live update for first rerender of <ListItemWithOrderable>, vanilla way, without causing busy re-render:
+        const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
+        const {left: touchedLeft, top: touchedTop} = listItemTouchedPositionRef.current;
         listItemInlineStyle.left = `${clientX - baseLeft - touchedLeft}px`;
         listItemInlineStyle.top  = `${clientY - baseTop  - touchedTop }px`;
     });
