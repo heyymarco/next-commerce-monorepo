@@ -124,7 +124,15 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         
         // actions:
         setIsDropping(isDropping = newIsDropping);
-        if (((newIsDropping === undefined) || (newIsDropping === null)) && (dragData !== undefined)) setDragData(dragData = undefined); // clean up unused dragData after no_dropping_activity -or- outside_of_dropping_area
+    });
+    const handleSetDragData   = useEvent((newDragData: DragNDropData|undefined): void => {
+        // conditions:
+        if (Object.is(dragData, newDragData)) return; // already the same => nothing to update
+        
+        
+        
+        // actions:
+        setDragData(dragData = newDragData);
     });
     
     
@@ -137,6 +145,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             onDropHandshake : handleDropHandshake, // stable ref
             onDropped       : onDropped,
             setIsDropping   : handleSetIsDropping,
+            setDragData     : handleSetDragData,
         })
     , []);
     droppableHook.enabled   = enabled;

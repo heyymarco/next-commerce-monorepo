@@ -54,9 +54,13 @@ import type {
     DraggedEvent,
 }                           from './types'
 import {
+    registerDragData,
+    unregisterDragData,
+    
     AttachedDroppableHookResult,
     attachDroppableHook,
     detachDroppableHook,
+    
     getActiveDroppableHook,
 }                           from './drag-n-drop-interface'
 
@@ -186,6 +190,9 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const {portalElm, ensureTopMost} = useGlobalStackable(props);
     const pointerCapturable          = usePointerCapturable<TElement>({
         enabled,
+        onPointerCaptureStart() {
+            registerDragData(dragData);
+        },
         onPointerCaptureEnd() {
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
                 const activeDroppableHook = getActiveDroppableHook();
@@ -205,6 +212,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (isDragging !== undefined) setIsDragging(isDragging = undefined); // no  dragging activity
             if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
             prevFloatingPos.current = undefined;                                 // cleanup floating pos
+            
+            unregisterDragData();
         },
         async onPointerCaptureMove(event) {
             let attachedDroppableHookResult: AttachedDroppableHookResult|undefined = undefined;
@@ -215,7 +224,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 
                 
                 // update drag & drop states:
-                attachedDroppableHookResult = await attachDroppableHook(event, handleDragHandshake, dragData);
+                attachedDroppableHookResult = await attachDroppableHook(event, handleDragHandshake);
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 /*
                 * undefined : NEVER HERE.  
