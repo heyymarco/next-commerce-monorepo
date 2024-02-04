@@ -266,18 +266,21 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     const prevFloatingPos         = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
     const handleUpdateFloatingPos = useEvent((event?: MouseEvent): void => {
-        // calculate pos:
+        // calculate & memorize pos:
         const {clientX, clientY} = event ?? prevFloatingPos.current ?? { clientX: 0, clientY: 0 };
         prevFloatingPos.current  = {clientX, clientY};
         
         
         
-        // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
+        // conditions:
         const overlayInlineStyle = overlayRef.current?.style;
-        if (overlayInlineStyle) {
-            overlayInlineStyle.left = `${clientX}px`;
-            overlayInlineStyle.top  = `${clientY}px`;
-        } // if
+        if (!overlayInlineStyle) return;
+        
+        
+        
+        // live update for first rerender of <DragOverlay>, vanilla way, without causing busy re-render:
+        overlayInlineStyle.left = `${clientX}px`;
+        overlayInlineStyle.top  = `${clientY}px`;
     });
     
     const handleSetOverlayRef     = useEvent((newRef: HTMLDivElement|null): void => {
