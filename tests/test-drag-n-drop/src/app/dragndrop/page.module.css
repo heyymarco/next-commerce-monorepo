@@ -1,0 +1,16 @@
+.panel {
+    width: 150px;
+    height: 150px;
+    display: grid !important;
+    grid-template:
+        "title" min-content
+        "info" 1fr
+        /
+        1fr;
+    grid-auto-flow: row;
+}
+
+.info {
+    justify-self: stretch;
+    font-size: smaller !important;
+}
