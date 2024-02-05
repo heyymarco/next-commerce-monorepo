@@ -231,27 +231,35 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     
     
     // utilities:
-    const createDragData = async (dataTransfer: DataTransfer|null): Promise<Map<string, string|File|null>|null> => {
+    const createDragData = async (dataTransfer: DataTransfer|null, hasAccess = false): Promise<Map<string, string|File|undefined>|null> => {
         const items = dataTransfer?.items;
         if (!items?.length) return null; // empty data => nothing to transform
         
         
         
-        const dragData = new Map<string, string|File|null>();
+        const dragData = new Map<string, string|File|undefined>();
         let fileIndexCounter = 0;
         for (const item of items) {
-            const isFile : false|File|null = (
+            const isFile : false|File|undefined = (
                 (item.kind === 'file')
-                ? item.getAsFile() // a File if has access, otherwise null
+                ? (hasAccess ? (item.getAsFile() ?? undefined) : undefined) // a File if has access, otherwise undefined
                 : false            // false if a string
             );
             if (isFile === false) {
-                dragData.set(item.kind, await new Promise<string>((resolved) => {
-                    item.getAsString((aString) => resolved(aString));
-                }));
+                dragData.set(
+                    item.kind,
+                    hasAccess
+                    ? await new Promise<string>((resolved) => {
+                        item.getAsString((aString) => resolved(aString));
+                    })
+                    : undefined
+                );
             }
-            else { // File -or- null
-                dragData.set(`file/${fileIndexCounter}`, isFile);
+            else { // File -or- undefined
+                dragData.set(
+                    `file/${fileIndexCounter}`,
+                    isFile
+                );
                 fileIndexCounter++;
             } // if
         } // for
@@ -267,7 +275,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         globalNestedDragEnterCounter++;                 // count bubbling from nested elements
         if (globalNestedDragEnterCounter !== 1) return; // ignores bubbling from nested elements (0: main dragLeave, 1: main dragEnter, 2+: nested dragEnter)
         
-        const dragData = await createDragData(event.dataTransfer);
+        const dragData = await createDragData(event.dataTransfer, /*hasAccess: */false);
         if (!dragData) return; // ignores if no data to drop
         
         
@@ -321,7 +329,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         // actions:
         const activeDroppableHook = getActiveDroppableHook();
         if (activeDroppableHook?.enabled) {
-            const dragData = await createDragData(event.dataTransfer);
+            const dragData = await createDragData(event.dataTransfer, /*hasAccess: */true);
             if (dragData) {
                 activeDroppableHook.onDropped?.({
                     dragData: dragData,
