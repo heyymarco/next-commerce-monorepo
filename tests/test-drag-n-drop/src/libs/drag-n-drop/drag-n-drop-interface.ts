@@ -240,27 +240,28 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         const dragData = new Map<string, string|File|undefined>();
         let fileIndexCounter = 0;
         for (const item of items) {
-            const isFile : false|File|undefined = (
-                (item.kind === 'file')
-                ? (hasAccess ? (item.getAsFile() ?? undefined) : undefined) // a File if has access, otherwise undefined
-                : false            // false if a string
-            );
-            if (isFile === false) {
-                dragData.set(
-                    item.kind,
-                    hasAccess
-                    ? await new Promise<string>((resolved) => {
-                        item.getAsString((aString) => resolved(aString));
-                    })
-                    : undefined
-                );
-            }
-            else { // File -or- undefined
+            if (item.kind === 'file') { // File
                 dragData.set(
                     `file/${fileIndexCounter}`,
-                    isFile
+                    (
+                        hasAccess
+                        ? (item.getAsFile() ?? undefined)
+                        : undefined
+                    )
                 );
                 fileIndexCounter++;
+            }
+            else { // string
+                dragData.set(
+                    item.kind,
+                    (
+                        hasAccess
+                        ? await new Promise<string>((resolved) => {
+                            item.getAsString((aString) => resolved(aString));
+                        })
+                        : undefined
+                    )
+                );
             } // if
         } // for
         if (!dragData.size) return null;
