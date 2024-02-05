@@ -211,6 +211,13 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
             prevFloatingPos.current = undefined;                                 // cleanup floating pos
         },
+        // TODO: implement cancel event:
+        // onPointerCaptureCancel() {
+        //     leaveDroppableHook();                                                // no  dropping activity
+        //     if (isDragging !== undefined) setIsDragging(isDragging = undefined); // no  dragging activity
+        //     if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
+        //     prevFloatingPos.current = undefined;                                 // cleanup floating pos
+        // }
         async onPointerCaptureMove(event) {
             let attachedDroppableHookResult: AttachedDroppableHookResult|undefined = undefined;
             try {
