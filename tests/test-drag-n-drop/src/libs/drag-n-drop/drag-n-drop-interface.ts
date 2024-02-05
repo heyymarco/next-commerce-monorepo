@@ -231,28 +231,28 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     
     
     // utilities:
-    const createDragData = (dataTransfer: DataTransfer|null): Map<string, any|File|string>|null => {
+    const createDragData = async (dataTransfer: DataTransfer|null): Promise<Map<string, string|File|null>|null> => {
         const items = dataTransfer?.items;
-        if (!items?.length) return null;
+        if (!items?.length) return null; // empty data => nothing to transform
         
         
         
-        const dragData = new Map<string, any|File|string>();
-        let fileCounter = 0;
+        const dragData = new Map<string, string|File|null>();
+        let fileIndexCounter = 0;
         for (const item of items) {
-            const isFile = (
+            const isFile : false|File|null = (
                 (item.kind === 'file')
-                ? item.getAsFile()
-                : false
+                ? item.getAsFile() // a File if has access, otherwise null
+                : false            // false if a string
             );
             if (isFile === false) {
-                item.getAsString((value) => {
-                    dragData.set(item.kind, value);
-                });
+                dragData.set(item.kind, await new Promise<string>((resolved) => {
+                    item.getAsString((aString) => resolved(aString));
+                }));
             }
-            else {
-                dragData.set(`file/${fileCounter}`, isFile);
-                fileCounter++;
+            else { // File -or- null
+                dragData.set(`file/${fileIndexCounter}`, isFile);
+                fileIndexCounter++;
             } // if
         } // for
         if (!dragData.size) return null;
@@ -262,12 +262,12 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     
     
     // global handlers:
-    const handleGlobalDragEnter = (event: DragEvent): void => {
+    const handleGlobalDragEnter = async (event: DragEvent): Promise<void> => {
         // conditions:
         globalDragEnterCounter++; // count bubbling from nested elements
         if (globalDragEnterCounter !== 1) return; // ignore bubbling from nested elements
         
-        const dragData = createDragData(event.dataTransfer);
+        const dragData = await createDragData(event.dataTransfer);
         if (!dragData) return;
         
         
@@ -307,7 +307,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             dataTransfer.dropEffect = (response === true) ? 'copy' : 'none';
         } // if
     };
-    const handleGlobalDrop      = (event: DragEvent): void => {
+    const handleGlobalDrop      = async (event: DragEvent): Promise<void> => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
         event.preventDefault();             // now handled
@@ -319,7 +319,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         // actions:
         const activeDroppableHook = getActiveDroppableHook();
         if (activeDroppableHook?.enabled) {
-            const dragData = createDragData(event.dataTransfer);
+            const dragData = await createDragData(event.dataTransfer);
             if (dragData) {
                 activeDroppableHook.onDropped?.({
                     dragData: dragData,
