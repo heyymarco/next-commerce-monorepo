@@ -226,7 +226,7 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
 // draggable files:
 if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     // states:
-    let globalDragEnterCounter = 0;
+    let globalNestedDragEnterCounter = 0;
     
     
     
@@ -264,11 +264,11 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     // global handlers:
     const handleGlobalDragEnter = async (event: DragEvent): Promise<void> => {
         // conditions:
-        globalDragEnterCounter++; // count bubbling from nested elements
-        if (globalDragEnterCounter !== 1) return; // ignore bubbling from nested elements
+        globalNestedDragEnterCounter++;                 // count bubbling from nested elements
+        if (globalNestedDragEnterCounter !== 1) return; // ignores bubbling from nested elements (0: main dragLeave, 1: main dragEnter, 2+: nested dragEnter)
         
         const dragData = await createDragData(event.dataTransfer);
-        if (!dragData) return;
+        if (!dragData) return; // ignores if no data to drop
         
         
         
@@ -277,9 +277,9 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
     };
     const handleGlobalDragLeave = (): void => {
         // conditions:
-        if (globalDragEnterCounter === 0) return; // protect from making negative value
-        globalDragEnterCounter--;                 // uncount bubbling from nested elements
-        if (globalDragEnterCounter !== 0) return; // ignore bubbling from nested elements
+        if (globalNestedDragEnterCounter === 0) return; // protect from making negative value
+        globalNestedDragEnterCounter--;                 // uncount bubbling from nested elements
+        if (globalNestedDragEnterCounter !== 0) return; // ignores bubbling from nested elements (0: main dragLeave, 1+: main|nested dragEnter)
         
         
         
@@ -312,7 +312,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         if (event.defaultPrevented) return; // already handled => ignore
         event.preventDefault();             // now handled
         
-        if (globalDragEnterCounter <= 0) return; // not our drop => ignore
+        if (globalNestedDragEnterCounter <= 0) return; // not our drop => ignore
         
         
         
@@ -327,7 +327,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             } // if
         } // if
         
-        globalDragEnterCounter = 0; // reset counter
+        globalNestedDragEnterCounter = 0; // reset counter
         leaveDroppableHook();
     };
     
