@@ -58,7 +58,7 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     // handlers:
     onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
-    onDropped       ?: (event: DroppedEvent) => void
+    onDropped       ?: (event: DroppedEvent<TElement>) => void
 }
 export interface DroppableApi {
     // data:
@@ -142,17 +142,20 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         new DroppableHook<TElement>({
             enabled         : enabled,
             dropData        : dropData,
+            dropRef         : dropRef,
             onDropHandshake : handleDropHandshake, // stable ref
             onDropped       : onDropped,
-            setIsDropping   : handleSetIsDropping,
-            setDragData     : handleSetDragData,
+            setIsDropping   : handleSetIsDropping, // stable ref
+            setDragData     : handleSetDragData,   // stable ref
         })
     , []);
     droppableHook.enabled   = enabled;
     droppableHook.dropData  = dropData;
+    droppableHook.dropRef   = dropRef;
     // droppableHook.onDropHandshake = handleDropHandshake; // stable ref
     droppableHook.onDropped = onDropped;
-    // droppableHook.setIsDropping = handleSetIsDropping; // stable ref
+    // droppableHook.setIsDropping = handleSetIsDropping;   // stable ref
+    // droppableHook.setDragData = handleSetDragData;       // stable ref
     
     
     

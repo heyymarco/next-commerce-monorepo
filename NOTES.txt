@@ -33,4 +33,4 @@ droppable.onDragLeave => :not(:hover)  isDragging|isDropping=null|undefined
 
 
 TODO:
-add mouseEvent on onDragHandshake()|onDragged()|onDropped()
+fix currentTarget & target for onDragged()|onDropped()

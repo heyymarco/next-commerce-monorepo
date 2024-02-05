@@ -24,7 +24,7 @@ const DraggableComponent = (props: DraggableComponentProps) => {
         dragData : props.dragData,
         onDragHandshake : props.onDragHandshake,
         onDragged(event) {
-            console.log('onDragged: ', event.dropData);
+            console.log('onDragged: ', event, event.dropData);
         },
         dragComponent : () => <Basic theme='warning'>
             {(() => {
@@ -79,7 +79,7 @@ const DroppableComponent = (props: DroppableComponentProps) => {
         dropRef  : dropRef,
         onDropHandshake: props.onDropHandshake,
         onDropped(event) {
-            console.log('onDropped: ', event.dragData);
+            console.log('onDropped: ', event, event.dragData);
         },
     });
     return (

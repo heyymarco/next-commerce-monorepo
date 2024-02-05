@@ -52,6 +52,7 @@ import type {
     DragMoveEvent,
     DragHandshakeEvent,
     DraggedEvent,
+    DroppedEvent,
 }                           from './types'
 import {
     AttachedDroppableHookResult,
@@ -98,7 +99,7 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     // handlers:
     onDragMove      ?: (event: DragMoveEvent<TElement>) => void
     onDragHandshake  : (event: DragHandshakeEvent<TElement>) => void|Promise<void>
-    onDragged       ?: (event: DraggedEvent) => void
+    onDragged       ?: (event: DraggedEvent<TElement>) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
     // data:
@@ -191,16 +192,43 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         onPointerCaptureStart() {
             enterDroppableHook(dragData); // has  dragging activity
         },
-        onPointerCaptureEnd() {
+        onPointerCaptureEnd(event) {
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
                 const activeDroppableHook = getActiveDroppableHook();
                 if (activeDroppableHook?.enabled) {
-                    onDragged?.({
-                        dropData: activeDroppableHook.dropData,
-                    });
-                    activeDroppableHook.onDropped?.({
-                        dragData: dragData,
-                    });
+                    if (onDragged) {
+                        const draggedEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DraggedEvent<TElement>;
+                        // @ts-ignore
+                        draggedEvent.type = 'dragged';
+                        
+                        // TODO: fix this
+                        // // @_ts-ignore
+                        // draggedEvent.currentTarget = <DraggableComponent>;
+                        
+                        // TODO: fix this
+                        // draggedEvent.target = <ElmFromPoint>
+                        
+                        // @ts-ignore
+                        draggedEvent.dropData = activeDroppableHook.dropData;
+                        onDragged(draggedEvent);
+                    } // if
+                    
+                    if (activeDroppableHook.onDropped) {
+                        const droppedEvent = createSyntheticEvent<Element, MouseEvent>(event) as unknown as DroppedEvent<Element>;
+                        // @ts-ignore
+                        droppedEvent.type = 'dropped';
+                        const dropRef = activeDroppableHook.dropRef;
+                        const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                        // @ts-ignore
+                        if (dropElm) droppedEvent.currentTarget = dropElm;
+                        
+                        // TODO: fix this
+                        // droppedEvent.target = <ElmFromPoint>
+                        
+                        // @ts-ignore
+                        droppedEvent.dragData = dragData;
+                        activeDroppableHook.onDropped(droppedEvent);
+                    } // if
                 } // if
             } // if
             

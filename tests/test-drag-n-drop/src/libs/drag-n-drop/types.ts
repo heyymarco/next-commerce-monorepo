@@ -16,9 +16,9 @@ export interface DropHandshakeEvent<TElement extends Element = HTMLElement> exte
     readonly    dragData : DragNDropData
     /*mutable*/ response : undefined|boolean
 }
-export interface DraggedEvent {
+export interface DraggedEvent<TElement extends Element = HTMLElement> extends React.SyntheticEvent<TElement, MouseEvent> {
     readonly    dropData : DragNDropData
 }
-export interface DroppedEvent {
+export interface DroppedEvent<TElement extends Element = HTMLElement> extends React.SyntheticEvent<TElement, MouseEvent> {
     readonly    dragData : DragNDropData
 }

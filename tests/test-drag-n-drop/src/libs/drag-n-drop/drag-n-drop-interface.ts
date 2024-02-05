@@ -21,14 +21,16 @@ import {
 export class DroppableHook<TElement extends Element = HTMLElement> {
     enabled          : boolean
     dropData         : DragNDropData
+    dropRef          : React.RefObject<TElement>|TElement|null // getter ref
     onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
-    onDropped        : ((event: DroppedEvent) => void)|undefined
+    onDropped        : ((event: DroppedEvent<TElement>) => void)|undefined
     setIsDropping    : (newIsDropping: undefined|null|boolean) => void
     setDragData      : (newDragData: DragNDropData|undefined) => void
     
     constructor({
         enabled,
         dropData,
+        dropRef,
         onDropHandshake,
         onDropped,
         setIsDropping,
@@ -36,13 +38,15 @@ export class DroppableHook<TElement extends Element = HTMLElement> {
     } : {
         enabled          : boolean
         dropData         : DragNDropData
+        dropRef          : React.RefObject<TElement>|TElement|null // getter ref
         onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
-        onDropped        : ((event: DroppedEvent) => void)|undefined
+        onDropped        : ((event: DroppedEvent<TElement>) => void)|undefined
         setIsDropping    : (newIsDropping: undefined|null|boolean) => void
         setDragData      : (newDragData: DragNDropData|undefined) => void
     }) {
         this.enabled         = enabled;
         this.dropData        = dropData;
+        this.dropRef         = dropRef;
         this.onDropHandshake = onDropHandshake;
         this.onDropped       = onDropped;
         this.setIsDropping   = setIsDropping;
@@ -154,7 +158,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     
     for (const droppableHook of registeredDroppableHook.values()) {
         // actions:
-        if (droppableHook === interactedHook) {
+        if (droppableHook === (interactedHook as null|DroppableHook<Element>)) {
             /*
              * undefined : NEVER HERE.  
              * null      : NEVER HERE.  
@@ -203,7 +207,7 @@ export const getActiveDroppableHook = (): null|DroppableHook<Element> => {
 // droppable sides:
 export const registerDroppableHook   = <TElement extends Element = HTMLElement>(element: Element, droppableHook: DroppableHook<TElement>): void => {
     droppableHook.enabled = true; // mount
-    registeredDroppableHook.set(element, droppableHook as DroppableHook<Element>);
+    registeredDroppableHook.set(element, droppableHook as unknown as DroppableHook<Element>);
 };
 export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(element: Element): null|DroppableHook<TElement> => {
     const droppableHook = registeredDroppableHook.get(element); // backup
@@ -218,7 +222,7 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
     
     
     
-    return droppableHook ?? null; // found | not found
+    return (droppableHook ?? null) as null|DroppableHook<TElement>; // found | not found
 };
 
 
@@ -334,9 +338,18 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         if (activeDroppableHook?.enabled) {
             const dragData = createDragData(event.dataTransfer, /*hasAccess: */true);
             if (dragData) {
-                activeDroppableHook.onDropped?.({
-                    dragData: dragData,
-                });
+                if (activeDroppableHook.onDropped) {
+                    const droppedEvent = createSyntheticEvent<Element, MouseEvent>(event) as unknown as DroppedEvent<Element>;
+                    // @ts-ignore
+                    droppedEvent.type = 'dropped';
+                    const dropRef = activeDroppableHook.dropRef;
+                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    // @ts-ignore
+                    if (dropElm) droppedEvent.currentTarget = dropElm;
+                    // @ts-ignore
+                    droppedEvent.dragData = dragData;
+                    activeDroppableHook.onDropped(droppedEvent);
+                } // if
             } // if
         } // if
         
