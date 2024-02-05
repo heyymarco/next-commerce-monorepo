@@ -189,7 +189,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const pointerCapturable          = usePointerCapturable<TElement>({
         enabled,
         onPointerCaptureStart() {
-            enterDroppableHook(dragData);
+            enterDroppableHook(dragData); // has  dragging activity
         },
         onPointerCaptureEnd() {
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
@@ -206,7 +206,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             
             
             
-            leaveDroppableHook();                                               // no  dropping activity
+            leaveDroppableHook();                                                // no  dropping activity
             if (isDragging !== undefined) setIsDragging(isDragging = undefined); // no  dragging activity
             if (dropData   !== undefined) setDropData(dropData     = undefined); // no  dragging activity
             prevFloatingPos.current = undefined;                                 // cleanup floating pos

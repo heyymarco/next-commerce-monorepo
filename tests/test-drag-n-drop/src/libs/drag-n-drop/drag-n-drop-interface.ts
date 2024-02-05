@@ -273,7 +273,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         // actions:
-        enterDroppableHook(dragData); // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
+        enterDroppableHook(dragData);     // has  dragging activity // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
     };
     const handleGlobalDragLeave = (): void => {
         // conditions:
@@ -284,7 +284,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         // actions:
-        leaveDroppableHook();         // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
+        leaveDroppableHook();             // no  dropping activity  // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
     };
     const handleGlobalDragOver  = async (event: DragEvent): Promise<void> => {
         // conditions:
@@ -329,8 +329,8 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             } // if
         } // if
         
+        leaveDroppableHook();             // no  dropping activity  // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
         globalNestedDragEnterCounter = 0; // reset counter
-        leaveDroppableHook();
     };
     
     
