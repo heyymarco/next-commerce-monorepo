@@ -294,15 +294,17 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         // actions:
+        // always try to attach no matter the existance of `dataTransfer`:
         const attachedDroppableHookResult = await attachDroppableHook(event);
-        /*
-        * undefined : NEVER HERE.  
-        * null      : has dragging activity but outside all dropping targets.  
-        * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
-        * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
-        */
+        
         const dataTransfer = event.dataTransfer;
         if (dataTransfer) {
+            /*
+            * undefined : NEVER HERE.  
+            * null      : has dragging activity but outside all dropping targets.  
+            * false     : has dragging activity on a dropping target but the source/target refuses to be dragged/dropped.  
+            * true      : has dragging activity on a dropping target and the source/target wants   to be dragged/dropped.  
+            */
             const response = attachedDroppableHookResult.response;
             dataTransfer.dropEffect = (response === true) ? 'copy' : 'none';
         } // if
