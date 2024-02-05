@@ -273,7 +273,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         // actions:
-        enterDroppableHook(dragData);
+        enterDroppableHook(dragData); // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
     };
     const handleGlobalDragLeave = (): void => {
         // conditions:
@@ -284,7 +284,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         
         
         // actions:
-        leaveDroppableHook();
+        leaveDroppableHook();         // calling `leaveDroppableHook()` *more* than calling `enterDroppableHook()` is ok
     };
     const handleGlobalDragOver  = async (event: DragEvent): Promise<void> => {
         // conditions:
