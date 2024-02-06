@@ -86,6 +86,11 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     
+    // refs:
+    dragRef         ?: React.RefObject<TElement>|TElement|null // getter ref
+    
+    
+    
     // states:
     enabled         ?: boolean
     
@@ -137,6 +142,11 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const {
         // data:
         dragData,
+        
+        
+        
+        // refs:
+        dragRef,
         
         
         
@@ -200,10 +210,9 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                         const draggedEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DraggedEvent<TElement>;
                         // @ts-ignore
                         draggedEvent.type = 'dragged';
-                        
-                        // TODO: fix this
-                        // // @_ts-ignore
-                        // draggedEvent.currentTarget = <DraggableComponent>;
+                        const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                        // @ts-ignore
+                        if (dragElm) draggedEvent.currentTarget = dragElm;
                         
                         // TODO: fix this
                         // draggedEvent.target = <ElmFromPoint>

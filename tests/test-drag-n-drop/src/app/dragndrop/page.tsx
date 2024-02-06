@@ -14,6 +14,7 @@ interface DraggableComponentProps {
     onDragHandshake : DraggableProps['onDragHandshake']
 }
 const DraggableComponent = (props: DraggableComponentProps) => {
+    const dragRef = useRef<HTMLElement|null>(null);
     const {
         dropData,
         isDragging,
@@ -22,6 +23,7 @@ const DraggableComponent = (props: DraggableComponentProps) => {
         DragOverlay,
     } = useDraggable({
         dragData : props.dragData,
+        dragRef,
         onDragHandshake : props.onDragHandshake,
         onDragged(event) {
             console.log('onDragged: ', event, event.dropData);
@@ -41,6 +43,7 @@ const DraggableComponent = (props: DraggableComponentProps) => {
     return (
         <>
             <Indicator
+                elmRef={dragRef}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
                 
@@ -70,13 +73,13 @@ interface DroppableComponentProps {
     onDropHandshake : DroppableProps['onDropHandshake']
 }
 const DroppableComponent = (props: DroppableComponentProps) => {
-    const dropRef = useRef<HTMLButtonElement|null>(null);
+    const dropRef = useRef<HTMLElement|null>(null);
     const {
         dragData,
         isDropping,
     } = useDroppable({
         dropData : props.dropData,
-        dropRef  : dropRef,
+        dropRef,
         onDropHandshake: props.onDropHandshake,
         onDropped(event) {
             console.log('onDropped: ', event, event.dragData);
