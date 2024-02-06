@@ -73,11 +73,14 @@ export const enterDroppableHook  = (dragData: DragNDropData) => {
         droppableHook.setDragData(dragData); // has  related drag data
     } // for
 };
+export interface AttachedDroppableHookOptions<TElement extends Element = HTMLElement> {
+    onDragHandshake?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>
+}
 export interface AttachedDroppableHookResult {
     response : null|boolean
     dropData : undefined|DragNDropData
 }
-export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, onDragHandshake?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>): Promise<AttachedDroppableHookResult> => {
+export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, options?: AttachedDroppableHookOptions<TElement>): Promise<AttachedDroppableHookResult> => {
     let response       : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
     let interactedHook : null|DroppableHook<TElement> = null;
     
@@ -97,6 +100,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         const [dragResponse, dropResponse] = await Promise.all([
             (async (): Promise<undefined|boolean> => {
                 // conditions:
+                const onDragHandshake = options?.onDragHandshake;
                 if (onDragHandshake === undefined) return true; // if no `onDragHandshake` => assumes always approved
                 
                 
