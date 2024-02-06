@@ -61,6 +61,7 @@ import {
     leaveDroppableHook,
     
     getActiveDroppableHook,
+    getActiveDroppableTarget,
 }                           from './drag-n-drop-interface'
 
 // utilities:
@@ -206,6 +207,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
                 const activeDroppableHook = getActiveDroppableHook();
                 if (activeDroppableHook?.enabled) {
+                    const activeDroppableTarget = getActiveDroppableTarget();
+                    
                     if (onDragged) {
                         const draggedEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DraggedEvent<TElement>;
                         // @ts-ignore
@@ -213,10 +216,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                         const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
                         // @ts-ignore
                         if (dragElm) draggedEvent.currentTarget = dragElm;
-                        
-                        // TODO: fix this
-                        // draggedEvent.target = <ElmFromPoint>
-                        
+                        // @ts-ignore
+                        if (activeDroppableTarget) draggedEvent.target = activeDroppableTarget;
                         // @ts-ignore
                         draggedEvent.dropData = activeDroppableHook.dropData;
                         onDragged(draggedEvent);
@@ -230,10 +231,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                         const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
                         // @ts-ignore
                         if (dropElm) droppedEvent.currentTarget = dropElm;
-                        
-                        // TODO: fix this
-                        // droppedEvent.target = <ElmFromPoint>
-                        
+                        // @ts-ignore
+                        if (activeDroppableTarget) droppedEvent.target = activeDroppableTarget;
                         // @ts-ignore
                         droppedEvent.dragData = dragData;
                         activeDroppableHook.onDropped(droppedEvent);
@@ -264,7 +263,8 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 
                 // update drag & drop states:
                 attachedDroppableHookResult = await attachDroppableHook(event, {
-                    onDragHandshake: handleDragHandshake,
+                    onDragHandshake : handleDragHandshake,
+                    ignoreElements  : [overlayRef.current],
                 });
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 /*

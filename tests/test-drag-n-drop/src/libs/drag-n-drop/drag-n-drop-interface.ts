@@ -59,6 +59,7 @@ export class DroppableHook<TElement extends Element = HTMLElement> {
 // states:
 const registeredDroppableHook = new Map<Element, DroppableHook<Element>>();
 let activeDroppableHook       : null|DroppableHook<Element> = null;
+let activeDroppableTarget     : null|Element                = null;
 let registeredDragData        : undefined|DragNDropData     = undefined;
 
 
@@ -74,20 +75,26 @@ export const enterDroppableHook  = (dragData: DragNDropData) => {
     } // for
 };
 export interface AttachedDroppableHookOptions<TElement extends Element = HTMLElement> {
-    onDragHandshake?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>
+    onDragHandshake ?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>
+    ignoreElements  ?: (Element|null|undefined)[]
 }
 export interface AttachedDroppableHookResult {
     response : null|boolean
     dropData : undefined|DragNDropData
 }
 export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, options?: AttachedDroppableHookOptions<TElement>): Promise<AttachedDroppableHookResult> => {
-    let response       : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
-    let interactedHook : null|DroppableHook<TElement> = null;
+    let response          : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
+    let interactedHook    : null|DroppableHook<TElement> = null;
+    let interactedElement : null|Element                 = null;
     
     
     
+    const ignoreElements = options?.ignoreElements;
     for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
         // conditions:
+        // test for ignore elements:
+        if (ignoreElements?.length && ignoreElements?.some((ignoreElement) => !!ignoreElement && ignoreElement.contains(element))) continue;
+        
         // test for valid droppable hook:
         const droppableHook = registeredDroppableHook.get(element) as DroppableHook<TElement>|undefined;
         if (!droppableHook)         continue; // not having droppable hook => see other droppables
@@ -137,7 +144,8 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         
         
         // handshake interacted as REFUSED|ACCEPTED:
-        interactedHook = droppableHook;
+        interactedHook    = droppableHook;
+        interactedElement = element;
         
         
         
@@ -156,7 +164,8 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     
     
     
-    activeDroppableHook = response ? (interactedHook as DroppableHook<Element>|null) : null; // true => set -or- null|false => release
+    activeDroppableHook   = response ? (interactedHook as null|DroppableHook<Element>) : null; // true => set -or- null|false => release
+    activeDroppableTarget = response ? interactedElement                               : null; // true => set -or- null|false => release
     
     
     
@@ -190,8 +199,9 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     };
 };
 export const leaveDroppableHook  = (): void => {
-    activeDroppableHook = null;      // release
-    registeredDragData  = undefined; // no  related drag data
+    activeDroppableHook   = null;      // release
+    activeDroppableTarget = null;      // release
+    registeredDragData    = undefined; // no  related drag data
     
     
     
@@ -202,8 +212,11 @@ export const leaveDroppableHook  = (): void => {
     } // for
 };
 
-export const getActiveDroppableHook = (): null|DroppableHook<Element> => {
+export const getActiveDroppableHook   = (): null|DroppableHook<Element> => {
     return activeDroppableHook;
+};
+export const getActiveDroppableTarget = (): null|Element => {
+    return activeDroppableTarget;
 };
 
 
@@ -221,7 +234,8 @@ export const unregisterDroppableHook = <TElement extends Element = HTMLElement>(
     
     
     if (droppableHook && (droppableHook === activeDroppableHook)) {
-        activeDroppableHook = null; // release
+        activeDroppableHook   = null; // release
+        activeDroppableTarget = null; // release
     } // if
     
     
