@@ -30,7 +30,3 @@ droppable.onDrop()                     onDragged()|onDropped()                  
 
 droppable.onDragEnter => :hover        isDragging|isDropping=false|true         preventDefault()
 droppable.onDragLeave => :not(:hover)  isDragging|isDropping=null|undefined
-
-
-TODO:
-fix currentTarget & target for onDragged()|onDropped()
