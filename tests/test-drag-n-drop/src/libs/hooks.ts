@@ -165,13 +165,11 @@ export const createSyntheticUIEvent    = <TElement extends Element, TEvent exten
     } satisfies React.UIEvent<TElement, TEvent>;
 };
 
-export interface CreateSyntheticMouseEventOptions<TElement extends Element, TEvent extends MouseEvent> {
-    type              : string,
-    
-    currentTarget    ?: TElement,
-    target           ?: EventTarget,
-    
-    nativeEvent       : TEvent,
+export interface CreateSyntheticMouseEventOptions<TElement extends Element, TEvent extends MouseEvent>
+    extends
+        // bases:
+        CreateSyntheticUIEventOptions<TElement, TEvent>
+{
 }
 export const createSyntheticMouseEvent = <TElement extends Element, TEvent extends MouseEvent>(options: CreateSyntheticMouseEventOptions<TElement, TEvent>): React.MouseEvent<TElement, TEvent> => {
     const {
@@ -183,10 +181,13 @@ export const createSyntheticMouseEvent = <TElement extends Element, TEvent exten
         // pointers:
         clientX,
         clientY,
+        
         screenX,
         screenY,
+        
         pageX,
         pageY,
+        
         movementX,
         movementY,
         
@@ -195,10 +196,12 @@ export const createSyntheticMouseEvent = <TElement extends Element, TEvent exten
         // buttons:
         button,
         buttons,
+        
         ctrlKey,
         shiftKey,
         altKey,
         metaKey,
+        
         getModifierState,
     } = options.nativeEvent;
     
@@ -219,10 +222,13 @@ export const createSyntheticMouseEvent = <TElement extends Element, TEvent exten
         // pointers:
         clientX,
         clientY,
+        
         screenX,
         screenY,
+        
         pageX,
         pageY,
+        
         movementX,
         movementY,
         
@@ -231,61 +237,12 @@ export const createSyntheticMouseEvent = <TElement extends Element, TEvent exten
         // buttons:
         button,
         buttons,
+        
         ctrlKey,
         shiftKey,
         altKey,
         metaKey,
+        
         getModifierState,
     } satisfies React.MouseEvent<TElement, TEvent>;
 };
-
-
-
-/*
-USELESS:
-_reactName
-_targetInst
-
-
-TESTS:
-    isDefaultPrevented
-    defaultPrevented
-    isPropagationStopped
-
-
-STANDARD:
-    type
-    currentTarget
-    target
-    nativeEvent
-                                    relatedTarget
-
-
-
-clientX
-clientY
-screenX
-screenY
-pageX
-pageY
-movementX
-movementY
-
-button
-buttons
-ctrlKey
-shiftKey
-altKey
-metaKey
-getModifierState
-
-    isTrusted
-    timeStamp
-
-    eventPhase
-    bubbles
-    cancelable
-
-                                detail
-                                view
-*/
