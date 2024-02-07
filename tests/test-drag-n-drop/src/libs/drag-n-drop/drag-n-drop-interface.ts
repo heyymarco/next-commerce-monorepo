@@ -13,7 +13,7 @@ import type {
 
 // utilities:
 import {
-    createSyntheticEvent,
+    createSyntheticMouseEvent,
 }                           from '@/libs/hooks'
 
 
@@ -86,6 +86,7 @@ export const enterDroppableHook  = (dragData: DragNDropData) => {
     } // for
 };
 export interface AttachedDroppableHookOptions<TElement extends Element = HTMLElement> {
+    dragRef         ?: React.RefObject<TElement>|TElement|null // getter ref
     onDragHandshake ?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>
     ignoreElements  ?: (Element|null|undefined)[]
 }
@@ -94,13 +95,18 @@ export interface AttachedDroppableHookResult {
     dropData : undefined|DragNDropData
 }
 export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, options?: AttachedDroppableHookOptions<TElement>): Promise<AttachedDroppableHookResult> => {
+    const {
+        dragRef,
+        onDragHandshake,
+        ignoreElements,
+    } = options ?? {};
+    
     let response          : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
     let interactedHook    : null|DroppableHook<TElement> = null;
     let interactedElement : null|Element                 = null;
     
     
     
-    const ignoreElements = options?.ignoreElements;
     const inspectedElements = new Set<Element>();
     for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
         // conditions:
@@ -128,14 +134,19 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
             const [dragResponse, dropResponse] = await Promise.all([
                 (async (): Promise<undefined|boolean> => {
                     // conditions:
-                    const onDragHandshake = options?.onDragHandshake;
                     if (onDragHandshake === undefined) return true; // if no `onDragHandshake` => assumes always approved
                     
                     
                     
-                    const dragHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DragHandshakeEvent<TElement>;
-                    // @ts-ignore
-                    dragHandshakeEvent.type = 'draghandshake';
+                    const dragElm            = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                    const dragHandshakeEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
+                        type              : 'draghandshake',
+                        
+                        currentTarget     : dragElm ?? undefined,               // point to <DragElm> itself
+                        target            : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        
+                        nativeEvent       : event,
+                    }) as unknown as DragHandshakeEvent<TElement>;
                     // @ts-ignore
                     dragHandshakeEvent.dropData = droppableHook.dropData;
                     dragHandshakeEvent.response = undefined; // initially no response
@@ -148,9 +159,16 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                     
                     
                     
-                    const dropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as DropHandshakeEvent<TElement>;
-                    // @ts-ignore
-                    dropHandshakeEvent.type = 'drophandshake';
+                    const dropRef            = droppableHook.dropRef;
+                    const dropElm            = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    const dropHandshakeEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
+                        type              : 'drophandshake',
+                        
+                        currentTarget     : dropElm ?? undefined,               // point to <DropElm> itself
+                        target            : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        
+                        nativeEvent       : event,
+                    }) as unknown as DropHandshakeEvent<TElement>;
                     // @ts-ignore
                     dropHandshakeEvent.dragData = registeredDragData;
                     dropHandshakeEvent.response = undefined; // initially no response
@@ -379,13 +397,16 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             const dragData = createDragData(event.dataTransfer, /*hasAccess: */true);
             if (dragData) {
                 if (activeDroppableHook.onDropped) {
-                    const droppedEvent = createSyntheticEvent<Element, MouseEvent>(event) as unknown as DroppedEvent<Element>;
-                    // @ts-ignore
-                    droppedEvent.type = 'dropped';
-                    const dropRef = activeDroppableHook.dropRef;
-                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    // @ts-ignore
-                    if (dropElm) droppedEvent.currentTarget = dropElm;
+                    const dropRef      = activeDroppableHook.dropRef;
+                    const dropElm      = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    const droppedEvent = createSyntheticMouseEvent<Element, MouseEvent>({
+                        type              : 'dropped',
+                        
+                        currentTarget     : dropElm ?? undefined,               // point to <DropElm> itself
+                        target            : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        
+                        nativeEvent       : event,
+                    }) as unknown as DroppedEvent<Element>;
                     // @ts-ignore
                     droppedEvent.dragData = dragData;
                     activeDroppableHook.onDropped(droppedEvent);

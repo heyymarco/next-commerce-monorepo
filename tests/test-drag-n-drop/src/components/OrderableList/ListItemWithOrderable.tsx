@@ -51,7 +51,7 @@ import type {
 
 // utilities:
 import {
-    createSyntheticEvent,
+    createSyntheticMouseEvent,
 }                           from '@/libs/hooks'
 
 
@@ -190,13 +190,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             if (onOrderHandshake) {
-                const orderableListItemDropHandshakeEvent = createSyntheticEvent<TElement, MouseEvent>(event.nativeEvent) as unknown as OrderableListItemDropHandshakeEvent<TElement>;
-                // @ts-ignore
-                orderableListItemDropHandshakeEvent.type = 'orderablelistitemdrophandshake';
-                // @ts-ignore
-                orderableListItemDropHandshakeEvent.currentTarget = listItemRef.current;
-                // @ts-ignore
-                orderableListItemDropHandshakeEvent.target        = listItemRef.current;
+                const orderableListItemDropHandshakeEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
+                    type              : 'orderablelistitemdrophandshake',
+                    
+                    currentTarget     : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
+                    target            : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                    
+                    nativeEvent       : event.nativeEvent,
+                }) as unknown as OrderableListItemDropHandshakeEvent<TElement>;
                 orderableListItemDropHandshakeEvent.response = true;
                 await onOrderHandshake(orderableListItemDropHandshakeEvent);
                 if (!orderableListItemDropHandshakeEvent.response) {
@@ -220,11 +221,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         if (!listItemParentElm) return false;
         
         if (onOrderStart) {
-            const orderableListItemDragStartEvent = createSyntheticEvent<TElement, MouseEvent>(event) as unknown as OrderableListItemDragStartEvent<TElement>;
-            // @ts-ignore
-            orderableListItemDragStartEvent.type = 'orderablelistitemdragstart';
-            // @ts-ignore
-            orderableListItemDragStartEvent.currentTarget = listItemRef.current;
+            const orderableListItemDragStartEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
+                type              : 'orderablelistitemdragstart',
+                
+                currentTarget     : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
+                target            : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                
+                nativeEvent       : event,
+            }) as unknown as OrderableListItemDragStartEvent<TElement>;
             orderableListItemDragStartEvent.response = true;
             await onOrderStart(orderableListItemDragStartEvent);
             if (!orderableListItemDragStartEvent.response) return false; // abort this event handler

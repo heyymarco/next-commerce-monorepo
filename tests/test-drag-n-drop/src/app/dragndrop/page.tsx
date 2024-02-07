@@ -119,6 +119,10 @@ export default function Home() {
             gap: '3rem',
             padding: '1rem',
         }}>
+            <div onMouseUp={(event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+                event.persist();
+                console.log(event);
+            }}>test</div>
             <DraggableComponent text='Drag Universal' dragData={new Map<string, unknown>(Object.entries({'drag/universal': 123}))}       onDragHandshake={(event) => {event.response = true}} />
             <DraggableComponent text='Drag Specific'  dragData={new Map<string, unknown>(Object.entries({'drag/specific': 'abc-333'}))} onDragHandshake={(event) => {event.response = event.dropData.has('drop/specific')}} />
             
