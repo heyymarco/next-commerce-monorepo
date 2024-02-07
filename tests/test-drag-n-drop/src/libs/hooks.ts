@@ -11,18 +11,46 @@ function functionThatNoop() {
 
 
 export interface CreateSyntheticEventOptions<TElement extends Element, TEvent extends Event> {
-    type              : string
-    
-    currentTarget    ?: TElement
-    target           ?: EventTarget
-    
+    /**
+     * The underlying original native event.  
+     * Required.
+     */
     nativeEvent       : TEvent
+    
+    /**
+     * The event type.  
+     * Optional: If omitted => internally use `nativeEvent.type`.
+     */
+    type             ?: string
+    
+    /**
+     * The DOM reference whose event listener's callback is currently being invoked (the triggering element).  
+     * Optional: If omitted => internally use `nativeEvent.currentTarget`.
+     */
+    currentTarget    ?: TElement
+    /**
+     * The DOM reference which event is dispatched (the affected element).  
+     * Optional: If omitted => internally use `nativeEvent.target`.
+     */
+    target           ?: EventTarget
 }
 export const createSyntheticEvent      = <TElement extends Element, TEvent extends Event>(options: CreateSyntheticEventOptions<TElement, TEvent>): React.SyntheticEvent<TElement, TEvent> => {
+    // options:
+    const {
+        // standards:
+        nativeEvent,
+        
+        type          = nativeEvent.type,
+        
+        currentTarget = (nativeEvent.currentTarget as TElement|null)!,
+        target        = nativeEvent.target!,
+    ...restOptions} = options;
+    
+    
+    
     // tests:
-    const nativeEvent = options.nativeEvent;
     const isDefaultPrevented : boolean = (
-        (nativeEvent.defaultPrevented != null)
+        (typeof(nativeEvent.defaultPrevented) === 'boolean')
         ? nativeEvent.defaultPrevented
         // @ts-ignore
         : (nativeEvent.returnValue === false)
@@ -31,14 +59,14 @@ export const createSyntheticEvent      = <TElement extends Element, TEvent exten
     
     
     // synthetic event:
-    const {
-        // standards:
-        currentTarget = (nativeEvent.currentTarget as TElement|null)!,
-        target        = nativeEvent.target!,
-    } = options;
     const syntheticEvent : React.SyntheticEvent<TElement, TEvent> = {
         // standards:
-        ...options,
+        ...restOptions,
+        
+        nativeEvent,
+        
+        type,
+        
         currentTarget,
         target,
         
