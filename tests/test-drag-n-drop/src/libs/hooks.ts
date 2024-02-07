@@ -137,31 +137,29 @@ export const createSyntheticEvent      = <TElement extends Element, TEvent exten
     return syntheticEvent;
 };
 
-export interface CreateSyntheticUIEventOptions<TElement extends Element, TEvent extends UIEvent> {
-    type              : string
-    
-    currentTarget    ?: TElement
-    target           ?: EventTarget
-    
-    nativeEvent       : TEvent
+export interface CreateSyntheticUIEventOptions<TElement extends Element, TEvent extends UIEvent>
+    extends
+        // bases:
+        CreateSyntheticEventOptions<TElement, TEvent>
+{
 }
 export const createSyntheticUIEvent    = <TElement extends Element, TEvent extends UIEvent>(options: CreateSyntheticUIEventOptions<TElement, TEvent>): React.UIEvent<TElement, TEvent> => {
     const {
-        // uis:
+        // UIs:
         detail,
         view,
     } = options.nativeEvent;
     
     
     
-    // synthetic ui event:
+    // synthetic UI event:
     return {
         // bases:
         ...createSyntheticEvent<TElement, TEvent>(options),
         
         
         
-        // uis:
+        // UIs:
         detail,
         view : view as unknown as React.AbstractView,
     } satisfies React.UIEvent<TElement, TEvent>;
