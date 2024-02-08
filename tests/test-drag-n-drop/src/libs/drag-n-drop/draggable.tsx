@@ -229,10 +229,11 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                         } satisfies DraggedEvent<TElement>);
                     } // if
                     
-                    if (activeDroppableHook.onDropped) {
+                    const onDropped = activeDroppableHook.onDropped;
+                    if (onDropped) {
                         const dropRef = activeDroppableHook.dropRef;
                         const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                        activeDroppableHook.onDropped({
+                        onDropped({
                             // bases:
                             ...createSyntheticMouseEvent<Element, MouseEvent>({
                                 nativeEvent    : event,
