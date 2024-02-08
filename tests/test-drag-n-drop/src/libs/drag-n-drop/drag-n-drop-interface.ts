@@ -411,7 +411,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                 if (activeDroppableHook.onDropped) {
                     const dropRef = activeDroppableHook.dropRef;
                     const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    const droppedEvent : DroppedEvent<Element> = {
+                    activeDroppableHook.onDropped({
                         // bases:
                         ...createSyntheticMouseEvent<Element, MouseEvent>({
                             nativeEvent    : event,
@@ -426,8 +426,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                         
                         // data:
                         dragData           : dragData,
-                    };
-                    activeDroppableHook.onDropped(droppedEvent);
+                    } satisfies DroppedEvent<Element>);
                 } // if
             } // if
         } // if
