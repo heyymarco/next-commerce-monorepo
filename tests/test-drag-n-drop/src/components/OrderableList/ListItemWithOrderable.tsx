@@ -280,6 +280,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         handleMouseDownInternal,
     );
     const handleTouchStartInternal = useEvent<React.TouchEventHandler<TElement>>(async (event) => {
+        // conditions:
+        if (event.touches.length !== 1) return; // only single touch
+        
+        
+        
         // simulates the TouchMove as MouseMove:
         if (!(await handlePointerStart(new MouseEvent('mousemove', {
             // simulates for `onOrderStart(event)`:
