@@ -139,19 +139,25 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                     
                     
                     const dragElm            = (dragRef instanceof Element) ? dragRef : dragRef?.current;
-                    const dragHandshakeEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
-                        type              : 'draghandshake',
+                    const dragHandshakeEvent : DragHandshakeEvent<TElement> = {
+                        // bases:
+                        ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                            nativeEvent    : event,
+                            
+                            type           : 'draghandshake',
+                            
+                            currentTarget  : dragElm ?? undefined,               // point to <DragElm> itself
+                            target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        }),
                         
-                        currentTarget     : dragElm ?? undefined,               // point to <DragElm> itself
-                        target            : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
                         
-                        nativeEvent       : event,
-                    }) as unknown as DragHandshakeEvent<TElement>;
-                    // @ts-ignore
-                    dragHandshakeEvent.dropData = droppableHook.dropData;
-                    dragHandshakeEvent.response = undefined; // initially no response
+                        
+                        // data:
+                        dropData           : droppableHook.dropData,
+                        response           : undefined, // initially no response
+                    };
                     await onDragHandshake(dragHandshakeEvent);
-                    return dragHandshakeEvent.response;      // get the modified response
+                    return dragHandshakeEvent.response; // get the modified response
                 })(),
                 (async (): Promise<undefined|boolean> => {
                     // conditions:
@@ -161,19 +167,25 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                     
                     const dropRef            = droppableHook.dropRef;
                     const dropElm            = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    const dropHandshakeEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
-                        type              : 'drophandshake',
+                    const dropHandshakeEvent : DropHandshakeEvent<TElement> = {
+                        // bases:
+                        ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                            nativeEvent    : event,
+                            
+                            type           : 'drophandshake',
+                            
+                            currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
+                            target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        }),
                         
-                        currentTarget     : dropElm ?? undefined,               // point to <DropElm> itself
-                        target            : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
                         
-                        nativeEvent       : event,
-                    }) as unknown as DropHandshakeEvent<TElement>;
-                    // @ts-ignore
-                    dropHandshakeEvent.dragData = registeredDragData;
-                    dropHandshakeEvent.response = undefined; // initially no response
+                        
+                        // data:
+                        dragData           : registeredDragData,
+                        response           : undefined, // initially no response
+                    };
                     await droppableHook.onDropHandshake(dropHandshakeEvent);
-                    return dropHandshakeEvent.response;      // get the modified response
+                    return dropHandshakeEvent.response; // get the modified response
                 })(),
             ]);
             if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
@@ -397,18 +409,24 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
             const dragData = createDragData(event.dataTransfer, /*hasAccess: */true);
             if (dragData) {
                 if (activeDroppableHook.onDropped) {
-                    const dropRef      = activeDroppableHook.dropRef;
-                    const dropElm      = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    const droppedEvent = createSyntheticMouseEvent<Element, MouseEvent>({
-                        type              : 'dropped',
+                    const dropRef = activeDroppableHook.dropRef;
+                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    const droppedEvent : DroppedEvent<Element> = {
+                        // bases:
+                        ...createSyntheticMouseEvent<Element, MouseEvent>({
+                            nativeEvent    : event,
+                            
+                            type           : 'dropped',
+                            
+                            currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
+                            target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        }),
                         
-                        currentTarget     : dropElm ?? undefined,               // point to <DropElm> itself
-                        target            : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
                         
-                        nativeEvent       : event,
-                    }) as unknown as DroppedEvent<Element>;
-                    // @ts-ignore
-                    droppedEvent.dragData = dragData;
+                        
+                        // data:
+                        dragData           : dragData,
+                    };
                     activeDroppableHook.onDropped(droppedEvent);
                 } // if
             } // if
