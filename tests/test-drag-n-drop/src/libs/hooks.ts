@@ -15,24 +15,24 @@ export interface CreateSyntheticEventOptions<TElement extends Element, TEvent ex
      * The underlying original native event.  
      * Required.
      */
-    nativeEvent       : TEvent
+    nativeEvent    : TEvent
     
     /**
      * The event type.  
      * Optional: If omitted => internally use `nativeEvent.type`.
      */
-    type             ?: string
+    type          ?: string
     
     /**
      * The DOM reference whose event listener's callback is currently being invoked (the triggering element).  
      * Optional: If omitted => internally use `nativeEvent.currentTarget`.
      */
-    currentTarget    ?: TElement
+    currentTarget ?: TElement
     /**
      * The DOM reference which event is dispatched (the affected element).  
      * Optional: If omitted => internally use `nativeEvent.target`.
      */
-    target           ?: EventTarget
+    target        ?: EventTarget
 }
 export const createSyntheticEvent      = <TElement extends Element, TEvent extends Event>(options: CreateSyntheticEventOptions<TElement, TEvent>): React.SyntheticEvent<TElement, TEvent> => {
     // options:
