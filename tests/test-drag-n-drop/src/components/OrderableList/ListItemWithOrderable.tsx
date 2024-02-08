@@ -190,15 +190,22 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             if (onOrderHandshake) {
-                const orderableListItemDropHandshakeEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
-                    type              : 'orderablelistitemdrophandshake',
+                const orderableListItemDropHandshakeEvent : OrderableListItemDropHandshakeEvent<TElement> = {
+                    // bases:
+                    ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                        nativeEvent    : event.nativeEvent,
+                        
+                        type           : 'orderablelistitemdrophandshake',
+                        
+                        currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
+                        target         : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                    }),
                     
-                    currentTarget     : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
-                    target            : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
                     
-                    nativeEvent       : event.nativeEvent,
-                }) as unknown as OrderableListItemDropHandshakeEvent<TElement>;
-                orderableListItemDropHandshakeEvent.response = true;
+                    
+                    // data:
+                    response           : true, // initial response status
+                };
                 await onOrderHandshake(orderableListItemDropHandshakeEvent);
                 if (!orderableListItemDropHandshakeEvent.response) {
                     event.response = false; // abort this event handler
@@ -221,15 +228,22 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         if (!listItemParentElm) return false;
         
         if (onOrderStart) {
-            const orderableListItemDragStartEvent = createSyntheticMouseEvent<TElement, MouseEvent>({
-                type              : 'orderablelistitemdragstart',
-                
-                currentTarget     : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
-                target            : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
-                
-                nativeEvent       : event,
-            }) as unknown as OrderableListItemDragStartEvent<TElement>;
-            orderableListItemDragStartEvent.response = true;
+                const orderableListItemDragStartEvent : OrderableListItemDragStartEvent<TElement> = {
+                    // bases:
+                    ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                        nativeEvent    : event,
+                        
+                        type           : 'orderablelistitemdragstart',
+                        
+                        currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
+                        target         : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                    }),
+                    
+                    
+                    
+                    // data:
+                    response           : true, // initial response status
+                };
             await onOrderStart(orderableListItemDragStartEvent);
             if (!orderableListItemDragStartEvent.response) return false; // abort this event handler
         } // if
@@ -267,12 +281,26 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     );
     const handleTouchStartInternal = useEvent<React.TouchEventHandler<TElement>>(async (event) => {
         // simulates the TouchMove as MouseMove:
-        if (!(await handlePointerStart({
-            ...event,
-            clientX : event.touches[0].clientX,
-            clientY : event.touches[0].clientY,
-            buttons : 1, // primary button (usually the left button)
-        } as unknown as MouseEvent))) return; // abort if returned false
+        if (!(await handlePointerStart(new MouseEvent('mousemove', {
+            // simulates for `onOrderStart(event)`:
+            ...event.nativeEvent,
+            ...(() => {
+                const touch = event?.touches?.[0];
+                return {
+                    clientX : touch?.clientX ?? 0,
+                    clientY : touch?.clientY ?? 0,
+                    
+                    screenX : touch?.screenX ?? 0,
+                    screenY : touch?.screenY ?? 0,
+                    
+                    pageX   : touch?.pageX   ?? 0,
+                    pageY   : touch?.pageY   ?? 0,
+                    
+                    button  : 1, // primary button (usually the left button)
+                    buttons : 1, // primary button (usually the left button)
+                };
+            })(),
+        })))) return; // abort if returned false
         draggable.handleTouchStart(event);
     });
     const handleTouchStart         = useMergeEvents(
