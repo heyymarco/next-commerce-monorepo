@@ -101,9 +101,9 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         ignoreElements,
     } = options ?? {};
     
-    let response          : null|boolean                 = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
-    let interactedHook    : null|DroppableHook<TElement> = null;
-    let interactedElement : null|Element                 = null;
+    let response          : null|boolean                = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
+    let interactedHook    : null|DroppableHook<Element> = null;
+    let interactedElement : null|Element                = null;
     
     
     
@@ -123,7 +123,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
             inspectedElements.add(inspectElement);
             
             // test for valid droppable hook:
-            const droppableHook = registeredDroppableHook.get(inspectElement) as DroppableHook<TElement>|undefined;
+            const droppableHook = registeredDroppableHook.get(inspectElement);
             if (!droppableHook)         continue; // not having droppable hook => see other droppables
             if (!droppableHook.enabled) continue; // disabled => noop          => see other droppables
             
@@ -165,11 +165,11 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                     
                     
                     
-                    const dropRef            = droppableHook.dropRef;
-                    const dropElm            = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    const dropHandshakeEvent : DropHandshakeEvent<TElement> = {
+                    const dropRef = droppableHook.dropRef;
+                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    const dropHandshakeEvent : DropHandshakeEvent<Element> = {
                         // bases:
-                        ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                        ...createSyntheticMouseEvent<Element, MouseEvent>({
                             nativeEvent    : event,
                             
                             type           : 'drophandshake',
@@ -216,14 +216,14 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     
     
     
-    activeDroppableHook   = response ? (interactedHook as null|DroppableHook<Element>) : null; // true => set -or- null|false => release
-    activeDroppableTarget = response ? interactedElement                               : null; // true => set -or- null|false => release
+    activeDroppableHook   = response ? interactedHook    : null; // true => set -or- null|false => release
+    activeDroppableTarget = response ? interactedElement : null; // true => set -or- null|false => release
     
     
     
     for (const droppableHook of registeredDroppableHook.values()) {
         // actions:
-        if (droppableHook === (interactedHook as null|DroppableHook<Element>)) {
+        if (droppableHook === interactedHook) {
             /*
              * undefined : NEVER HERE.  
              * null      : NEVER HERE.  
