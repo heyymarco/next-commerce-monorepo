@@ -218,7 +218,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
             
             // handshake interacted as REFUSED|ACCEPTED:
             interactedHook    = droppableHook;
-            interactedElement = element;
+            interactedElement = element; // equivalent to `interactedElement = pointedElement;`
             
             
             
@@ -234,6 +234,12 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
             response = true;                      // handshake ACCEPTED by both drop target and drag source
             break;                                // no need to scan other droppables
         } // for
+        
+        
+        
+        // we're not interested to inspect the elements below the `pointedElement`:
+        // the elements below the `pointedElement` is considered *hidden* by `pointedElement`.
+        break;
     } // for
     
     
