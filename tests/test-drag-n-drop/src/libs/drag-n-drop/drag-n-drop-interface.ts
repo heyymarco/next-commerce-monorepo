@@ -161,8 +161,12 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         
         
         
-        // conditions:
-        // handshake interacted as NO_RESPONSE:
+        // getting responses:
+        const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+        
+        const dropRef = droppableHook.dropRef;
+        const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+        
         const [dragResponse, dropResponse] = await Promise.all([
             (async (): Promise<undefined|boolean> => {
                 // conditions:
@@ -170,7 +174,6 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                 
                 
                 
-                const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
                 const dragHandshakeEvent : DragHandshakeEvent<TElement> = {
                     // bases:
                     ...createSyntheticMouseEvent<TElement, MouseEvent>({
@@ -180,6 +183,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                         
                         currentTarget  : dragElm ?? undefined,               // point to <DragElm> itself
                         target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        relatedTarget  : dropElm ?? undefined,               // the opposite side <DropElm> as related/paired element
                     }),
                     
                     
@@ -197,8 +201,6 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                 
                 
                 
-                const dropRef = droppableHook.dropRef;
-                const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
                 const dropHandshakeEvent : DropHandshakeEvent<Element> = {
                     // bases:
                     ...createSyntheticMouseEvent<Element, MouseEvent>({
@@ -208,6 +210,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                         
                         currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
                         target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        relatedTarget  : dragElm ?? undefined,               // the opposite side <DragElm> as related/paired element
                     }),
                     
                     
@@ -220,6 +223,10 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                 return dropHandshakeEvent.response; // get the modified response
             })(),
         ]);
+        
+        
+        
+        // handshake interacted as NO_RESPONSE:
         if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
         if (dragResponse === undefined) continue; // undefined => NO_RESPONSE => see other draggables
         if (dropResponse === undefined) continue; // undefined => NO_RESPONSE => see other droppables
@@ -453,6 +460,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                             
                             currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
                             target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                            relatedTarget  : null,                               // no related/paired element
                         }),
                         
                         
