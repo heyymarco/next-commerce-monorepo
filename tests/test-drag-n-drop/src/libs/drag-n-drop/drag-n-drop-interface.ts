@@ -91,8 +91,9 @@ export interface AttachedDroppableHookOptions<TElement extends Element = HTMLEle
     ignoreDropElements ?: (React.RefObject<Element>|Element|null|undefined)[]
 }
 export interface AttachedDroppableHookResult {
-    response : null|boolean
-    dropData : undefined|DragNDropData
+    response       : null|boolean
+    dropData       : undefined|DragNDropData
+    pointedElement : null|Element
 }
 export const attachDroppableHook = async <TElement extends Element = HTMLElement>(event: MouseEvent, options?: AttachedDroppableHookOptions<TElement>): Promise<AttachedDroppableHookResult> => {
     const {
@@ -100,6 +101,8 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         onDragHandshake,
         ignoreDropElements,
     } = options ?? {};
+    
+    let pointedElement    : null|Element                = null;
     
     let response          : null|boolean                = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
     let interactedHook    : null|DroppableHook<Element> = null;
@@ -126,6 +129,11 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
             // tests:
             return ignoreDropElementElm.contains(element);
         })) continue;
+        
+        
+        
+        // remember the top_most element pointed by the cursor (regradless having droppable hook or not):
+        if (pointedElement === null) pointedElement = element;
         
         
         
@@ -262,6 +270,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     return {
         response,
         dropData : interactedHook?.dropData,
+        pointedElement,
     };
 };
 export const leaveDroppableHook  = (): void => {
