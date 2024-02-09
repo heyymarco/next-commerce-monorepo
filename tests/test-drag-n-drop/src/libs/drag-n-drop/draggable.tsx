@@ -8,6 +8,7 @@ import {
     // hooks:
     useState,
     useRef,
+    useMemo,
 }                           from 'react'
 import {
     createPortal,
@@ -83,29 +84,30 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
         GlobalStackableProps
 {
     // data:
-    dragData         : DragNDropData
+    dragData            : DragNDropData
     
     
     
     // refs:
-    dragRef         ?: React.RefObject<TElement>|TElement|null // getter ref
+    dragRef            ?: React.RefObject<TElement>|TElement|null // getter ref
+    ignoreDropElements ?: (React.RefObject<Element>|Element|null|undefined)[]
     
     
     
     // states:
-    enabled         ?: boolean
+    enabled            ?: boolean
     
     
     
     // components:
-    dragComponent   ?: React.ReactComponentElement<any, GenericProps<TElement>>|(() => React.ReactComponentElement<any, GenericProps<TElement>>)
+    dragComponent      ?: React.ReactComponentElement<any, GenericProps<TElement>>|(() => React.ReactComponentElement<any, GenericProps<TElement>>)
     
     
     
     // handlers:
-    onDragMove      ?: (event: DragMoveEvent<TElement>) => void
-    onDragHandshake  : (event: DragHandshakeEvent<TElement>) => void|Promise<void>
-    onDragged       ?: (event: DraggedEvent<TElement>) => void
+    onDragMove         ?: (event: DragMoveEvent<TElement>) => void
+    onDragHandshake     : (event: DragHandshakeEvent<TElement>) => void|Promise<void>
+    onDragged          ?: (event: DraggedEvent<TElement>) => void
 }
 export interface DraggableApi<TElement extends Element = HTMLElement> {
     // data:
@@ -148,6 +150,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
         
         // refs:
         dragRef,
+        ignoreDropElements,
         
         
         
@@ -179,8 +182,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     let   [isDragging, setIsDragging] = useState<undefined|null|boolean>(undefined);
     let   [dropData  , setDropData  ] = useState<DragNDropData|undefined>(undefined);
     
-    const overlayRef                  = useRef<HTMLDivElement|null>(null);
-    
     
     
     // handlers:
@@ -193,6 +194,15 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (!Object.is(dropData, newDropData)) setDropData(dropData = newDropData);
         } // try
     });
+    
+    
+    
+    // refs:
+    const overlayRef               = useRef<HTMLDivElement|null>(null);
+    const mergedIgnoreDropElements = useMemo<(React.RefObject<Element>|Element|null|undefined)[]>(() => [
+        ...(ignoreDropElements ?? []),
+        overlayRef,
+    ], [ignoreDropElements, overlayRef]);
     
     
     
@@ -278,7 +288,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 attachedDroppableHookResult = await attachDroppableHook(event, {
                     dragRef            : dragRef,
                     onDragHandshake    : handleDragHandshake,
-                    ignoreDropElements : [overlayRef],
+                    ignoreDropElements : mergedIgnoreDropElements,
                 });
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 /*
