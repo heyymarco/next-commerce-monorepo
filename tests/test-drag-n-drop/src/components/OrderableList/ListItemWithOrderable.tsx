@@ -141,10 +141,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         // states:
         isDragging,
     ...draggable} = useDraggable<TElement>({
-        enabled  : true,
-        dragData : new Map<symbol, number>([
+        enabled            : true,
+        dragData           : new Map<symbol, number>([
             [dragNDropId, listIndex],
         ]),
+        ignoreDropElements : [listItemRef],
         onDragHandshake(event) {
             if (!Array.from(event.dropData.keys()).includes(dragNDropId)) { // wrong drop target
                 event.response = false;

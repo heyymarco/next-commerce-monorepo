@@ -81,11 +81,6 @@ export const usesOrderableListItemLayout = () => {
         
         
         
-        // accessibilities:
-        pointerEvents : 'none', // ghost mode
-        
-        
-        
         // borders:
         border                 : borderVars.border,       // restore border stripped out by `inheritBorderFromParent`
      // borderRadius           : borderVars.borderRadius, // restore border stripped out by `inheritBorderFromParent`
