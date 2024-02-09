@@ -170,11 +170,16 @@ export interface CreateSyntheticMouseEventOptions<TElement extends Element, TEve
         // bases:
         CreateSyntheticUIEventOptions<TElement, TEvent>
 {
+    /**
+     * The DOM reference of the secondary target for the mouse event, if there is one.  
+     * Optional: If omitted => internally use `nativeEvent.relatedTarget`.
+     */
+    relatedTarget ?: EventTarget|null
 }
 export const createSyntheticMouseEvent = <TElement extends Element, TEvent extends MouseEvent>(options: CreateSyntheticMouseEventOptions<TElement, TEvent>): React.MouseEvent<TElement, TEvent> => {
     const {
         // standards:
-        relatedTarget,
+        relatedTarget : nativeRelatedTarget,
         
         
         
@@ -207,10 +212,18 @@ export const createSyntheticMouseEvent = <TElement extends Element, TEvent exten
     
     
     
+    // options:
+    const {
+        // standards:
+        relatedTarget = nativeRelatedTarget,
+    ...restOptions} = options;
+    
+    
+    
     // synthetic mouse event:
     return {
         // bases:
-        ...createSyntheticUIEvent<TElement, TEvent>(options),
+        ...createSyntheticUIEvent<TElement, TEvent>(restOptions),
         
         
         
