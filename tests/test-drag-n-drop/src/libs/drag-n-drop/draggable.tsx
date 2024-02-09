@@ -217,10 +217,16 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
                 const activeDroppableHook = getActiveDroppableHook();
                 if (activeDroppableHook?.enabled) {
+                    const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                    
+                    const dropRef = activeDroppableHook.dropRef;
+                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    
                     const activeDroppableTarget = getActiveDroppableTarget();
                     
+                    
+                    
                     if (onDragged) {
-                        const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
                         onDragged({
                             // bases:
                             ...createSyntheticMouseEvent<TElement, MouseEvent>({
@@ -230,6 +236,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                                 
                                 currentTarget  : dragElm ?? undefined,               // point to <DragElm> itself
                                 target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                                relatedTarget  : dropElm ?? undefined,               // the opposite side <DropElm> as related/paired element
                             }),
                             
                             
@@ -241,8 +248,6 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                     
                     const onDropped = activeDroppableHook.onDropped;
                     if (onDropped) {
-                        const dropRef = activeDroppableHook.dropRef;
-                        const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
                         onDropped({
                             // bases:
                             ...createSyntheticMouseEvent<Element, MouseEvent>({
@@ -252,6 +257,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                                 
                                 currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
                                 target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                                relatedTarget  : dragElm ?? undefined,               // the opposite side <DragElm> as related/paired element
                             }),
                             
                             
@@ -313,6 +319,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                             
                             currentTarget  : dragElm ?? undefined,                                     // point to <DragElm> itself
                             target         : attachedDroppableHookResult?.pointedElement ?? undefined, // point to <AnyElement> below the cursor, excepts <OverlayElm>
+                            relatedTarget  : null,                                                     // no related/paired element
                         }),
                         
                         
