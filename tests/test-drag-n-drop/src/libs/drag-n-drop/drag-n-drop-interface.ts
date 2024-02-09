@@ -170,7 +170,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                 
                 
                 
-                const dragElm            = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
                 const dragHandshakeEvent : DragHandshakeEvent<TElement> = {
                     // bases:
                     ...createSyntheticMouseEvent<TElement, MouseEvent>({
