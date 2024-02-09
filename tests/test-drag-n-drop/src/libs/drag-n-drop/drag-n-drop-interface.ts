@@ -102,7 +102,48 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         ignoreDropElements,
     } = options ?? {};
     
-    let pointedElement    : null|Element                = null;
+    
+    
+    const pointedElement = (
+        // get all elements below the cursor, from top_most to bottom_most:
+        document.elementsFromPoint(event.clientX, event.clientY)
+        
+        // get the top_most element below the cursor:
+        .find((element): boolean => {
+            // conditions:
+            if (!ignoreDropElements?.length) return true; // empty blacklist => always match
+            
+            
+            
+            // test for blacklist:
+            for (const ignoreDropElement of ignoreDropElements) {
+                // conditions:
+                if (!ignoreDropElement) continue; // ignore nullish
+                
+                const ignoreDropElementElm = (ignoreDropElement instanceof Element) ? ignoreDropElement : ignoreDropElement?.current;
+                if (!ignoreDropElementElm) continue; // ignore nullish
+                
+                
+                
+                // tests:
+                if (ignoreDropElementElm.contains(element)) return false; // blacklisted => false
+            } // for
+            return true; // passed => true
+        })
+        
+        ??
+        null // null if not found (instead of undefined)
+    );
+    
+    
+    
+    if (!pointedElement) return {
+        response       : null,
+        dropData       : undefined,
+        pointedElement : null,
+    };
+    
+    
     
     let response          : null|boolean                = null; // firstly mark as NOT_YET having handshake (null: has dragging activity but outside all dropping targets)
     let interactedHook    : null|DroppableHook<Element> = null;
@@ -110,131 +151,98 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     
     
     
-    for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
+    // search for *nearest* droppable hook in self & ancestors:
+    for (const inspectElement of selfAndAncestors(pointedElement)) {
         // conditions:
-        // test for ignore elements:
-        if (ignoreDropElements?.length && ignoreDropElements?.some((ignoreDropElement) => {
-            // conditions:
-            if (!ignoreDropElement) return false; // ignore nullish
-            
-            
-            
-            // conditions:
-            const ignoreDropElementElm = (ignoreDropElement instanceof Element) ? ignoreDropElement : ignoreDropElement?.current;
-            if (!ignoreDropElementElm) return false; // ignore nullish
-            
-            
-            
-            // tests:
-            return ignoreDropElementElm.contains(element);
-        })) continue;
+        // test for valid droppable hook:
+        const droppableHook = registeredDroppableHook.get(inspectElement);
+        if (!droppableHook)         continue; // not having droppable hook => see other droppables
+        if (!droppableHook.enabled) continue; // disabled => noop          => see other droppables
         
         
         
-        // remember the top_most element pointed by the cursor (regradless having droppable hook or not):
-        if (pointedElement === null) pointedElement = element;
-        
-        
-        
-        // search for *nearest* droppable hook in self & ancestors:
-        for (const inspectElement of selfAndAncestors(element)) {
-            // conditions:
-            // test for valid droppable hook:
-            const droppableHook = registeredDroppableHook.get(inspectElement);
-            if (!droppableHook)         continue; // not having droppable hook => see other droppables
-            if (!droppableHook.enabled) continue; // disabled => noop          => see other droppables
-            
-            
-            
-            // conditions:
-            // handshake interacted as NO_RESPONSE:
-            const [dragResponse, dropResponse] = await Promise.all([
-                (async (): Promise<undefined|boolean> => {
-                    // conditions:
-                    if (onDragHandshake === undefined) return true; // if no `onDragHandshake` => assumes always approved
+        // conditions:
+        // handshake interacted as NO_RESPONSE:
+        const [dragResponse, dropResponse] = await Promise.all([
+            (async (): Promise<undefined|boolean> => {
+                // conditions:
+                if (onDragHandshake === undefined) return true; // if no `onDragHandshake` => assumes always approved
+                
+                
+                
+                const dragElm            = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                const dragHandshakeEvent : DragHandshakeEvent<TElement> = {
+                    // bases:
+                    ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                        nativeEvent    : event,
+                        
+                        type           : 'draghandshake',
+                        
+                        currentTarget  : dragElm ?? undefined,               // point to <DragElm> itself
+                        target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                    }),
                     
                     
                     
-                    const dragElm            = (dragRef instanceof Element) ? dragRef : dragRef?.current;
-                    const dragHandshakeEvent : DragHandshakeEvent<TElement> = {
-                        // bases:
-                        ...createSyntheticMouseEvent<TElement, MouseEvent>({
-                            nativeEvent    : event,
-                            
-                            type           : 'draghandshake',
-                            
-                            currentTarget  : dragElm ?? undefined,               // point to <DragElm> itself
-                            target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
-                        }),
+                    // data:
+                    dropData           : droppableHook.dropData,
+                    response           : undefined, // initially no response
+                };
+                await onDragHandshake(dragHandshakeEvent);
+                return dragHandshakeEvent.response; // get the modified response
+            })(),
+            (async (): Promise<undefined|boolean> => {
+                // conditions:
+                if (registeredDragData === undefined) return undefined; // already `leaveDroppableHook()` => no need to response
+                
+                
+                
+                const dropRef = droppableHook.dropRef;
+                const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                const dropHandshakeEvent : DropHandshakeEvent<Element> = {
+                    // bases:
+                    ...createSyntheticMouseEvent<Element, MouseEvent>({
+                        nativeEvent    : event,
                         
+                        type           : 'drophandshake',
                         
-                        
-                        // data:
-                        dropData           : droppableHook.dropData,
-                        response           : undefined, // initially no response
-                    };
-                    await onDragHandshake(dragHandshakeEvent);
-                    return dragHandshakeEvent.response; // get the modified response
-                })(),
-                (async (): Promise<undefined|boolean> => {
-                    // conditions:
-                    if (registeredDragData === undefined) return undefined; // already `leaveDroppableHook()` => no need to response
+                        currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
+                        target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                    }),
                     
                     
                     
-                    const dropRef = droppableHook.dropRef;
-                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    const dropHandshakeEvent : DropHandshakeEvent<Element> = {
-                        // bases:
-                        ...createSyntheticMouseEvent<Element, MouseEvent>({
-                            nativeEvent    : event,
-                            
-                            type           : 'drophandshake',
-                            
-                            currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
-                            target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
-                        }),
-                        
-                        
-                        
-                        // data:
-                        dragData           : registeredDragData,
-                        response           : undefined, // initially no response
-                    };
-                    await droppableHook.onDropHandshake(dropHandshakeEvent);
-                    return dropHandshakeEvent.response; // get the modified response
-                })(),
-            ]);
-            if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
-            if (dragResponse === undefined) continue; // undefined => NO_RESPONSE => see other draggables
-            if (dropResponse === undefined) continue; // undefined => NO_RESPONSE => see other droppables
-            
-            
-            
-            // handshake interacted as REFUSED|ACCEPTED:
-            interactedHook    = droppableHook;
-            interactedElement = element; // equivalent to `interactedElement = pointedElement;`
-            
-            
-            
-            // handshake interacted as REFUSED:
-            if (!dragResponse || !dropResponse) { // false => refuses to be dragged|dropped
-                response = false;                 // handshake REFUSED by drop target and/or drag source
-                break;                            // no need to scan other droppables
-            } // if
-            
-            
-            
-            // handshake interacted as ACCEPTED:
-            response = true;                      // handshake ACCEPTED by both drop target and drag source
-            break;                                // no need to scan other droppables
-        } // for
+                    // data:
+                    dragData           : registeredDragData,
+                    response           : undefined, // initially no response
+                };
+                await droppableHook.onDropHandshake(dropHandshakeEvent);
+                return dropHandshakeEvent.response; // get the modified response
+            })(),
+        ]);
+        if (!droppableHook.enabled    ) continue; // disabled => noop         => see other droppables
+        if (dragResponse === undefined) continue; // undefined => NO_RESPONSE => see other draggables
+        if (dropResponse === undefined) continue; // undefined => NO_RESPONSE => see other droppables
         
         
         
-        // we're not interested to inspect the elements below the `pointedElement`:
-        // the elements below the `pointedElement` is considered *hidden* by `pointedElement`.
-        break;
+        // handshake interacted as REFUSED|ACCEPTED:
+        interactedHook    = droppableHook;
+        interactedElement = pointedElement;
+        
+        
+        
+        // handshake interacted as REFUSED:
+        if (!dragResponse || !dropResponse) { // false => refuses to be dragged|dropped
+            response = false;                 // handshake REFUSED by drop target and/or drag source
+            break;                            // no need to scan other droppables
+        } // if
+        
+        
+        
+        // handshake interacted as ACCEPTED:
+        response = true;                      // handshake ACCEPTED by both drop target and drag source
+        break;                                // no need to scan other droppables
     } // for
     
     
