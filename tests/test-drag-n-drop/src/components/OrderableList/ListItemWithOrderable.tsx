@@ -198,7 +198,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                         type           : 'orderablelistitemdrophandshake',
                         
                         currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
-                        target         : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                        target         : event.target,                     // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself, excepts <OverlayElm>
                     }),
                     
                     
