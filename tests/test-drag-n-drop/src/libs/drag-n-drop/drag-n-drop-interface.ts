@@ -110,7 +110,6 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     
     
     
-    const inspectedElements = new Set<Element>();
     for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
         // conditions:
         // test for ignore elements:
@@ -140,10 +139,6 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         // search for *nearest* droppable hook in self & ancestors:
         for (const inspectElement of selfAndAncestors(element)) {
             // conditions:
-            // skip if already inspected:
-            if (inspectedElements.has(inspectElement)) continue;
-            inspectedElements.add(inspectElement);
-            
             // test for valid droppable hook:
             const droppableHook = registeredDroppableHook.get(inspectElement);
             if (!droppableHook)         continue; // not having droppable hook => see other droppables
