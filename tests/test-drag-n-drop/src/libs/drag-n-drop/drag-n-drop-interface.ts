@@ -408,10 +408,11 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
         if (activeDroppableHook?.enabled) {
             const dragData = createDragData(event.dataTransfer, /*hasAccess: */true);
             if (dragData) {
-                if (activeDroppableHook.onDropped) {
+                const onDropped = activeDroppableHook.onDropped;
+                if (onDropped) {
                     const dropRef = activeDroppableHook.dropRef;
                     const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
-                    activeDroppableHook.onDropped({
+                    onDropped({
                         // bases:
                         ...createSyntheticMouseEvent<Element, MouseEvent>({
                             nativeEvent    : event,
