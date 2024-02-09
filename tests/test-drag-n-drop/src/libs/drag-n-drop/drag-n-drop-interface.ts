@@ -88,7 +88,7 @@ export const enterDroppableHook  = (dragData: DragNDropData) => {
 export interface AttachedDroppableHookOptions<TElement extends Element = HTMLElement> {
     dragRef            ?: React.RefObject<TElement>|TElement|null // getter ref
     onDragHandshake    ?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>
-    ignoreDropElements ?: (Element|null|undefined)[]
+    ignoreDropElements ?: (React.RefObject<Element>|Element|null|undefined)[]
 }
 export interface AttachedDroppableHookResult {
     response : null|boolean
@@ -111,7 +111,21 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
     for (const element of document.elementsFromPoint(event.clientX, event.clientY)) {
         // conditions:
         // test for ignore elements:
-        if (ignoreDropElements?.length && ignoreDropElements?.some((ignoreDropElement) => !!ignoreDropElement && ignoreDropElement.contains(element))) continue;
+        if (ignoreDropElements?.length && ignoreDropElements?.some((ignoreDropElement) => {
+            // conditions:
+            if (!ignoreDropElement) return false; // ignore nullish
+            
+            
+            
+            // conditions:
+            const ignoreDropElementElm = (ignoreDropElement instanceof Element) ? ignoreDropElement : ignoreDropElement?.current;
+            if (!ignoreDropElementElm) return false; // ignore nullish
+            
+            
+            
+            // tests:
+            return ignoreDropElementElm.contains(element);
+        })) continue;
         
         
         

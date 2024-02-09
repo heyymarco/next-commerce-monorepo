@@ -278,7 +278,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                 attachedDroppableHookResult = await attachDroppableHook(event, {
                     dragRef            : dragRef,
                     onDragHandshake    : handleDragHandshake,
-                    ignoreDropElements : [overlayRef.current],
+                    ignoreDropElements : [overlayRef],
                 });
                 if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
                 /*
