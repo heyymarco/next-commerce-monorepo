@@ -312,7 +312,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
                             type           : 'dragmove',
                             
                             currentTarget  : dragElm ?? undefined,                                     // point to <DragElm> itself
-                            target         : attachedDroppableHookResult?.pointedElement ?? undefined, // point to <AnyElement> below the pointer, excepts <OverlayElm>
+                            target         : attachedDroppableHookResult?.pointedElement ?? undefined, // point to <AnyElement> below the cursor, excepts <OverlayElm>
                         }),
                         
                         
