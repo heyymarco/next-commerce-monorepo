@@ -134,6 +134,10 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     const handleDragStartEnd = useEvent((): void => {
         setDraftChildren(undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
     });
+    
+    const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromIndex: number, toIndex: number): void => {
+        [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
+    });
     const handleDragMove     = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:
         if (to === from) {
@@ -148,25 +152,26 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         // mutate:
-        const fromIndex       = listMap.get(from) ?? from;
-        const toIndex         = listMap.get(to)   ?? to;
-        const mutatedChildren = wrappedChildren.slice(0); // copy
-        [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [
-            React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                // props:
-                {
-                    listIndex : -1,
-                    // theme: 'danger', // for *visual* debugging purpose
-                },
-            ),
-            React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                // props:
-                {
-                    refresh : {}, // declarative way to refresh()
-                    // theme   : 'success', // for *visual* debugging purpose
-                },
-            ),
-        ];
+        const fromIndex            = listMap.get(from) ?? from;
+        const toIndex              = listMap.get(to)   ?? to;
+        const mutatedChildren      = wrappedChildren.slice(0); // copy
+        
+        mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+            // props:
+            {
+                refresh : {}, // declarative way to refresh()
+                // theme   : 'success', // for *visual* debugging purpose
+            },
+        );
+        mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+            // props:
+            {
+                listIndex : -1,
+                // theme: 'danger', // for *visual* debugging purpose
+            },
+        );
+        
+        handleMutateChildren(mutatedChildren, fromIndex, toIndex);
         setDraftChildren({
             children : mutatedChildren,
             to       : to,
@@ -179,10 +184,12 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         // mutate:
-        const fromIndex       = listMap.get(from) ?? from;
-        const toIndex         = listMap.get(to)   ?? to;
-        const mutatedChildren = children.slice(0); // copy
-        [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
+        const fromIndex            = listMap.get(from) ?? from;
+        const toIndex              = listMap.get(to)   ?? to;
+        
+        const mutatedChildren      = children.slice(0); // copy
+        
+        handleMutateChildren(mutatedChildren, fromIndex, toIndex);
         triggerChildrenChange(mutatedChildren, { runsOnMacrotask: false });
     });
     
