@@ -24,6 +24,9 @@ const DraggableComponent = (props: DraggableComponentProps) => {
     } = useDraggable({
         dragData : props.dragData,
         dragRef,
+        // onDragMove(event) {
+        //     console.log('onDragMove: ', event);
+        // },
         onDragHandshake : props.onDragHandshake,
         onDragged(event) {
             console.log('onDragged: ', event, event.dropData);
@@ -119,15 +122,23 @@ export default function Home() {
             gap: '3rem',
             padding: '1rem',
         }}>
-            <div onMouseUp={(event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-                event.persist();
+            <DraggableComponent text='Drag Universal' dragData={new Map<string, unknown>(Object.entries({'drag/universal': 123}))}       onDragHandshake={(event) => {
                 console.log(event);
-            }}>test</div>
-            <DraggableComponent text='Drag Universal' dragData={new Map<string, unknown>(Object.entries({'drag/universal': 123}))}       onDragHandshake={(event) => {event.response = true}} />
-            <DraggableComponent text='Drag Specific'  dragData={new Map<string, unknown>(Object.entries({'drag/specific': 'abc-333'}))} onDragHandshake={(event) => {event.response = event.dropData.has('drop/specific')}} />
+                event.response = true;
+            }} />
+            <DraggableComponent text='Drag Specific'  dragData={new Map<string, unknown>(Object.entries({'drag/specific': 'abc-333'}))} onDragHandshake={(event) => {
+                console.log(event);
+                event.response = event.dropData.has('drop/specific');
+            }} />
             
-            <DroppableComponent text='Drop Universal' dropData={new Map<string, unknown>(Object.entries({'drop/universal': 456}))}       onDropHandshake={(event) => {event.response = true}} />
-            <DroppableComponent text='Drop Specific'  dropData={new Map<string, unknown>(Object.entries({'drop/specific': 'def-666'}))} onDropHandshake={(event) => {event.response = event.dragData.has('drag/specific')}} />
+            <DroppableComponent text='Drop Universal' dropData={new Map<string, unknown>(Object.entries({'drop/universal': 456}))}       onDropHandshake={(event) => {
+                console.log(event);
+                event.response = true;
+            }} />
+            <DroppableComponent text='Drop Specific'  dropData={new Map<string, unknown>(Object.entries({'drop/specific': 'def-666'}))} onDropHandshake={(event) => {
+                console.log(event);
+                event.response = event.dragData.has('drag/specific');
+            }} />
         </main>
     )
 }
