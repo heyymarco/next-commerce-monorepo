@@ -200,6 +200,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                         
                         currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
                         target         : event.target,                     // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself, excepts <OverlayElm>
+                        relatedTarget  : event.relatedTarget,              // the opposite side <DragElm> as related/paired element
                     }),
                     
                     
@@ -237,7 +238,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                         type           : 'orderablelistitemdragstart',
                         
                         currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
-                        target         : undefined,                        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                        target         : event.target ?? undefined,        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                        relatedTarget  : null,                             // no related/paired element
                     }),
                     
                     
