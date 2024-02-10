@@ -40,6 +40,10 @@ import {
 }                           from '@reusable-ui/list'            // represents a series of content
 
 // internals:
+import type {
+    // types:
+    OrderMode,
+}                           from './types'
 import {
     useOrderableListStyleSheet,
 }                           from './styles/loader'
@@ -91,6 +95,11 @@ export interface OrderableListProps<TElement extends Element = HTMLElement, TDat
             |'listItems' // we redefined `children` prop as <ListItem>(s)
         >
 {
+    // behaviors:
+    orderMode        ?: OrderMode
+    
+    
+    
     // children:
     defaultChildren  ?: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]|React.ReactNode
     children         ?: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]|React.ReactNode
@@ -104,6 +113,11 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     
     // rest props:
     const {
+        // behaviors:
+        orderMode = 'shift',
+        
+        
+        
         // components:
         listComponent = (<List<TElement> /> as React.ReactComponentElement<any, ListProps<TElement>>),
         
@@ -136,7 +150,13 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     });
     
     const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromIndex: number, toIndex: number): void => {
-        [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
+        if (orderMode === 'swap') {
+            [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
+        }
+        else {
+            const movedItem = mutatedChildren.splice(fromIndex, 1);
+            mutatedChildren.splice(toIndex, 0, ...movedItem);
+        } // if
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:

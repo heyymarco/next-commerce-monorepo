@@ -1,3 +1,10 @@
+// types:
+export type OrderMode =
+    |'swap'
+    |'shift'
+
+
+
 // events:
 export interface OrderableListItemDragStartEvent<TElement extends Element = HTMLElement> extends React.MouseEvent<TElement, MouseEvent> {
     /*mutable*/ response   : boolean
