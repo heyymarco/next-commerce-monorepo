@@ -160,7 +160,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
-            if (!(await handleOrderHandshake(event))) {
+            if (!(await handleOrderHandshake(event, /*isDragging: */true))) {
                 event.response = false; // abort this event handler
                 return;
             } // if
@@ -203,7 +203,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
-            if (!(await handleOrderHandshake(event))) {
+            if (!(await handleOrderHandshake(event, /*isDragging: */false))) {
                 event.response = false; // abort this event handler
                 return;
             } // if
@@ -217,7 +217,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // handlers:
-    const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>): Promise<boolean> => {
+    const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, isDragging: boolean): Promise<boolean> => {
         // conditions:
         if (!onOrderHandshake) return true; // if no `onOrderHandshake` defined, assumes as allowed
         
@@ -232,12 +232,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 
                 currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
                 target         : event.target,                     // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself, excepts <OverlayElm>
-                relatedTarget  : event.relatedTarget,              // the opposite side <DragElm> as related/paired element
+                relatedTarget  : event.relatedTarget,              // the opposite side <DragElm>|<DropElm> as related/paired element
             }),
             
             
             
             // data:
+            isDragging         : isDragging,
             response           : true, // initial response status
         };
         await onOrderHandshake(orderableListItemDropHandshakeEvent);
