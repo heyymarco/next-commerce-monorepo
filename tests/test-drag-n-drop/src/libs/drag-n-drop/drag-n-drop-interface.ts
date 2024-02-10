@@ -181,9 +181,9 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                         
                         type           : 'draghandshake',
                         
-                        currentTarget  : dragElm ?? undefined,               // point to <DragElm> itself
-                        target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
-                        relatedTarget  : dropElm ?? undefined,               // the opposite side <DropElm> as related/paired element
+                        currentTarget  : dragElm ?? undefined,        // point to <DragElm> itself
+                        target         : pointedElement ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        relatedTarget  : dropElm ?? undefined,        // the opposite side <DropElm> as related/paired element
                     }),
                     
                     
@@ -208,9 +208,9 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                         
                         type           : 'drophandshake',
                         
-                        currentTarget  : dropElm ?? undefined,               // point to <DropElm> itself
-                        target         : activeDroppableTarget ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
-                        relatedTarget  : dragElm ?? undefined,               // the opposite side <DragElm> as related/paired element
+                        currentTarget  : dropElm ?? undefined,        // point to <DropElm> itself
+                        target         : pointedElement ?? undefined, // point to <DropElm>'s descendant (if any) -or- <DropElm> itself, excepts <OverlayElm>
+                        relatedTarget  : dragElm ?? undefined,        // the opposite side <DragElm> as related/paired element
                     }),
                     
                     
