@@ -147,11 +147,38 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         // states:
         isDragging,
     ...draggable} = useDraggable<TElement>({
-        enabled            : true,
+        // data:
         dragData           : new Map<symbol, number>([
             [dragNDropId, listIndex],
         ]),
+        
+        
+        
+        // refs:
+        dragRef            : listItemRef,
         ignoreDropElements : [listItemRef],
+        
+        
+        
+        // states:
+        enabled            : true,
+        
+        
+        
+        // handlers:
+        onDragMove(event) {
+            if (event.response) {
+                handleDragMove({
+                    ...event.nativeEvent,
+                    from : listIndex,
+                    to   : event.dropData?.get(dragNDropId) as number,
+                });
+            } // if
+            
+            
+            
+            handleUpdateFloatingPos(event.nativeEvent);
+        },
         async onDragHandshake(event) {
             if (!Array.from(event.dropData.keys()).includes(dragNDropId)) { // wrong drop target
                 event.response = false;
@@ -169,19 +196,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             event.response = true; // yes drop there (drop to self source|target is allowed)
         },
-        onDragMove(event) {
-            if (event.response) {
-                handleDragMove({
-                    ...event.nativeEvent,
-                    from : listIndex,
-                    to   : event.dropData?.get(dragNDropId) as number,
-                });
-            } // if
-            
-            
-            
-            handleUpdateFloatingPos(event.nativeEvent);
-        },
         onDragged({dropData}) {
             handleDropped({
                 from : listIndex,
@@ -190,11 +204,24 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         },
     });
     useDroppable<TElement>({
-        enabled  : true,
+        // data:
         dropData : new Map<symbol, number>([
             [dragNDropId, listIndex],
         ]),
-        dropRef  : listItemParentRef,
+        
+        
+        
+        // refs:
+        dropRef  : listItemParentRef, // we use `listItemParentRef` instead of `listItemRef`, because the `listItemParentRef` doesn't moving while `onDragMove() => handleUpdateFloatingPos()` triggered
+        
+        
+        
+        // states:
+        enabled  : true,
+        
+        
+        
+        // handlers:
         async onDropHandshake(event) {
             if (!Array.from(event.dragData.keys()).includes(dragNDropId)) { // wrong drag source
                 event.response = false;
