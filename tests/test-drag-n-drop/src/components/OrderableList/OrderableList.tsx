@@ -131,14 +131,14 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     
     // handlers:
     const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], to: number }|undefined>(undefined);
-    const handleDragStartEnd = useEvent((): void => {
+    const handleDragStartEnd   = useEvent((): void => {
         setDraftChildren(undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
     });
     
     const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromIndex: number, toIndex: number): void => {
         [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
     });
-    const handleDragMove     = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
+    const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:
         if (to === from) {
             return; // useless move => ignore
@@ -177,7 +177,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             to       : to,
         });
     });
-    const handleDropped      = useEvent(({from, to}: OrderableListDroppedEvent): void => {
+    const handleDropped        = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         to = draftChildren?.to ?? to; // cancel out effect of moved draftChildren (if any)
         if (from === to) return; // useless move => ignore
         
