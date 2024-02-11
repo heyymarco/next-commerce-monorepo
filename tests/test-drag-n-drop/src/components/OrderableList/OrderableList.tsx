@@ -172,8 +172,8 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             
             
             // mutate:
-            const isFromBigger         = from < absTo;
-            const backTo               = absTo + (isFromBigger ? -1 : 1);
+            const isToBigger           = from < absTo;
+            const backTo               = absTo + (isToBigger ? -1 : 1);
             const fromIndex            = listMap.get(from)   ?? from;   // convert listIndex => childIndex
             const toIndex              = listMap.get(backTo) ?? backTo; // convert listIndex => childIndex
             const mutatedChildren      = wrappedChildren.slice(0);      // copy
