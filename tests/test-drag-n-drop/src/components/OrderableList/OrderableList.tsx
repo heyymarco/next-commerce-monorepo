@@ -161,10 +161,9 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
         // conditions:
-        if (to === from) {
-            return; // useless move => ignore
-        }
-        else if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
+        if (to === from) return; // useless move => ignore
+        
+        if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
             // conditions:
             const absTo = -to; // remove negative sign
             if (absTo === from) return; // useless move => ignore
@@ -242,8 +241,9 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         });
     });
     const handleDropped        = useEvent(({from, to}: OrderableListDroppedEvent): void => {
+        // conditions:
         to = draftChildren?.to ?? to; // cancel out effect of moved draftChildren (if any)
-        if (from === to) return; // useless move => ignore
+        if (to === from) return; // useless move => ignore
         
         
         
