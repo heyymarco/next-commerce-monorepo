@@ -253,7 +253,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         const mutatedChildren      = children.slice(0);         // copy
         
         handleMutateChildren(mutatedChildren, fromIndex, toIndex);
-        triggerChildrenChange(mutatedChildren, { runsOnMacrotask: false });
+        triggerChildrenChange(mutatedChildren, { triggerAt: 'microtask' });
     });
     
     

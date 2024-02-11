@@ -9,14 +9,18 @@ import {
     // react helper hooks:
     useEvent,
     useMergeEvents,
-    useScheduleTriggerEvent,
+    useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 
 
 // types:
+export type TriggerAt =
+    |'immediately'
+    |'microtask'
+    |'macrotask'
 export interface TriggerValueChangeOptions {
-    runsOnMacrotask ?: boolean
+    triggerAt ?: TriggerAt
 }
 
 
@@ -68,18 +72,50 @@ export const useControllableAndUncontrollable = <TValue extends any>(props: Cont
     
     
     // stable callbacks:
-    const scheduleTriggerEvent            = useScheduleTriggerEvent();
+    const isMounted                       = useMountedFlag();
     const triggerValueChange              = useEvent((newValue: TValue, options?: TriggerValueChangeOptions): void => {
-        if (options?.runsOnMacrotask ?? true) {
-            if (handleValueChange) scheduleTriggerEvent(() => { // runs the `on(Controllable|Uncontrollable)ValueChange` event *next after* current macroTask completed
+        // conditions:
+        if (!handleValueChange) return; // no callback handler => nothing to trigger
+        
+        
+        
+        // options:
+        const {
+            triggerAt = 'macrotask',
+        } = options ?? {};
+        
+        
+        
+        switch (triggerAt) {
+            case 'macrotask':
+                setTimeout(() => {
+                    // conditions:
+                    if (!isMounted.current) return;
+                    
+                    
+                    
+                    // fire `on(Controllable|Uncontrollable)ValueChange` react event:
+                    handleValueChange(newValue);
+                }, 0); // runs the callback *next after* current macrotask completed
+                break;
+            
+            case 'microtask':
+                queueMicrotask(() => {
+                    // conditions:
+                    if (!isMounted.current) return;
+                    
+                    
+                    
+                    // fire `on(Controllable|Uncontrollable)ValueChange` react event:
+                    handleValueChange(newValue);
+                }); // runs the callback *next after* current microtask completed
+                break;
+            
+            default:
                 // fire `on(Controllable|Uncontrollable)ValueChange` react event:
                 handleValueChange(newValue);
-            });
-        }
-        else {
-            // fire `on(Controllable|Uncontrollable)ValueChange` react event:
-            handleValueChange?.(newValue);
-        } // if
+                break;
+        } // switch
     });
     
     
