@@ -141,12 +141,13 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         onValueChange      : onControllableChildrenChange as ((children: React.ReactNode) => void),
     });
     
+    const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], to: number }|undefined>(undefined);
+    
     
     
     // handlers:
-    const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], to: number }|undefined>(undefined);
     const handleDragStartEnd   = useEvent((): void => {
-        setDraftChildren(undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
+        setDraftChildren(undefined); // if dragging is completed|canceled => resets draftChildren
     });
     
     const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromIndex: number, toIndex: number): void => {
@@ -154,8 +155,8 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
         }
         else {
-            const movedItem = mutatedChildren.splice(fromIndex, 1);
-            mutatedChildren.splice(toIndex, 0, ...movedItem);
+            const movedItems = mutatedChildren.splice(fromIndex, /*just one child to remove: */1); // remove <SelectedChild> from children
+            mutatedChildren.splice(toIndex, /*no deleted child: */0, ...movedItems);               // then insert <SelectedChild> to children
         } // if
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
@@ -163,7 +164,6 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         if (to === from) {
             return; // useless move => ignore
         }
-        // else if (to < 0) {
         else if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
             // conditions:
             const absTo = -to; // remove negative sign
