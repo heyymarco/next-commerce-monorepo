@@ -187,7 +187,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                 },
             );
             
-            // no need to restore, because we re-copy from unmodified `wrappedChildren`
+            // no need to restore, because we're re-copy from unmodified `wrappedChildren`
             // // the restored item (may the same index as the dragging item above):
             // mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
             //     // props:
