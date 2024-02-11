@@ -144,9 +144,9 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     
     
     // handlers:
-    let   [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], to: number }|undefined>(undefined);
+    const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], to: number }|undefined>(undefined);
     const handleDragStartEnd   = useEvent((): void => {
-        setDraftChildren(draftChildren = undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
+        setDraftChildren(undefined); // if dragging is completed|canceled|out_of_drop => resets draftChildren
     });
     
     const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromIndex: number, toIndex: number): void => {
@@ -165,32 +165,43 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         }
         // else if (to < 0) {
         else if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
-            // restore to original placement:
-            to                         = -to; // remove negative sign
-            const fromIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
-            const toIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
-            const mutatedChildren      = draftChildren?.children.slice(0) ?? wrappedChildren.slice(0); // get mutated -or- copy
-            
-            mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                // props:
-                {
-                    refresh : {}, // declarative way to refresh()
-                    theme   : 'dark', // for *visual* debugging purpose
-                },
-            );
-            mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                // props:
-                {
-                    // preserve the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
-                    listIndex : to,
-                    theme     : 'warning', // for *visual* debugging purpose
-                },
-            );
-            
-            handleMutateChildren(mutatedChildren, toIndex, fromIndex);
-            setDraftChildren(draftChildren = {
-                children : mutatedChildren,
-                to       : from,
+            setDraftChildren((currentDraftChildren) => {
+                // conditions:
+                if (!currentDraftChildren?.children) return undefined;
+                
+                
+                
+                // restore to original placement:
+                const originalTo           = to;
+                to                         = -to; // remove negative sign
+                const fromIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
+                const toIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
+                
+                console.log('prev is: ', (currentDraftChildren.children[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>).props.listIndex)
+                if (!Object.is((currentDraftChildren.children[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>).props.listIndex, originalTo)) return currentDraftChildren;
+                
+                const mutatedChildren      = currentDraftChildren.children.slice(0); // copy
+                mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+                    // props:
+                    {
+                        refresh : {}, // declarative way to refresh()
+                        theme   : 'dark', // for *visual* debugging purpose
+                    },
+                );
+                mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+                    // props:
+                    {
+                        // *restore* the draft to original placement:
+                        listIndex : to,
+                        theme     : 'warning', // for *visual* debugging purpose
+                    },
+                );
+                
+                handleMutateChildren(mutatedChildren, toIndex, fromIndex);
+                return {
+                    children : mutatedChildren,
+                    to       : from,
+                };
             });
             
             return; // no further mutation
@@ -213,14 +224,14 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
             // props:
             {
-                // preserve the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
+                // *preserve* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
                 listIndex : -to,
                 theme     : 'success', // for *visual* debugging purpose
             },
         );
         
         handleMutateChildren(mutatedChildren, fromIndex, toIndex);
-        setDraftChildren(draftChildren = {
+        setDraftChildren({
             children : mutatedChildren,
             to       : to,
         });
