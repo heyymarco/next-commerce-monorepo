@@ -167,7 +167,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         else if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
             // conditions:
             const absTo = -to; // remove negative sign
-            if (from === absTo) return; // useless move => ignore
+            if (absTo === from) return; // useless move => ignore
             
             
             
