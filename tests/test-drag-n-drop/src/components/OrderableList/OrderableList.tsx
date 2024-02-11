@@ -165,44 +165,46 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         }
         // else if (to < 0) {
         else if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
-            setDraftChildren((currentDraftChildren) => {
-                // conditions:
-                if (!currentDraftChildren?.children) return undefined;
-                
-                
-                
-                // restore to original placement:
-                const originalTo           = to;
-                to                         = -to; // remove negative sign
-                const fromIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
-                const toIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
-                
-                console.log('prev is: ', (currentDraftChildren.children[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>).props.listIndex)
-                if (!Object.is((currentDraftChildren.children[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>).props.listIndex, originalTo)) return currentDraftChildren;
-                
-                const mutatedChildren      = currentDraftChildren.children.slice(0); // copy
-                mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                    // props:
-                    {
-                        refresh : {}, // declarative way to refresh()
-                        theme   : 'dark', // for *visual* debugging purpose
-                    },
-                );
-                mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                    // props:
-                    {
-                        // *restore* the draft to original placement:
-                        listIndex : to,
-                        theme     : 'warning', // for *visual* debugging purpose
-                    },
-                );
-                
-                handleMutateChildren(mutatedChildren, toIndex, fromIndex);
-                return {
-                    children : mutatedChildren,
-                    to       : from,
-                };
+            // conditions:
+            const absTo = -to; // remove negative sign
+            if (from === absTo) return; // useless move => ignore
+            
+            
+            
+            // mutate:
+            const isFromBigger         = from < absTo;
+            const backTo               = absTo + (isFromBigger ? -1 : 1);
+            const fromIndex            = listMap.get(from)   ?? from;   // convert listIndex => childIndex
+            const toIndex              = listMap.get(backTo) ?? backTo; // convert listIndex => childIndex
+            const mutatedChildren      = wrappedChildren.slice(0);      // copy
+            
+            // the dragging item:
+            mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+                // props:
+                {
+                    refresh : {}, // declarative way to refresh()
+                    // theme   : 'dark', // for *visual* debugging purpose
+                },
+            );
+            
+            // no need to restore, because we re-copy from unmodified `wrappedChildren`
+            // // the restored item (may the same index as the dragging item above):
+            // mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+            //     // props:
+            //     {
+            //         // *restore* the draft to original placement:
+            //         listIndex : backTo,
+            //         theme     : 'warning', // for *visual* debugging purpose
+            //     },
+            // );
+            
+            handleMutateChildren(mutatedChildren, fromIndex, toIndex);
+            setDraftChildren({
+                children : mutatedChildren,
+                to       : backTo,
             });
+            
+            
             
             return; // no further mutation
         } // if
@@ -214,19 +216,22 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         const toIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
         const mutatedChildren      = wrappedChildren.slice(0);  // copy
         
+        // the dragging item:
         mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
             // props:
             {
                 refresh : {}, // declarative way to refresh()
-                theme   : 'danger', // for *visual* debugging purpose
+                // theme   : 'danger', // for *visual* debugging purpose
             },
         );
+        
+        // the backup item:
         mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
             // props:
             {
-                // *preserve* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
+                // *backup* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
                 listIndex : -to,
-                theme     : 'success', // for *visual* debugging purpose
+                // theme     : 'success', // for *visual* debugging purpose
             },
         );
         
