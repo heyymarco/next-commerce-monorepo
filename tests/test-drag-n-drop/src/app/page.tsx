@@ -65,6 +65,16 @@ export default function Home() {
             
             <hr />
             
+            <OrderableList theme='primary' mild={false} orderMode='swap' defaultChildren={<>
+                <OrderableListItem data={0}>000</OrderableListItem>
+                <OrderableListItem data={1}>111</OrderableListItem>
+                <OrderableListItem data={2}>222</OrderableListItem>
+                <OrderableListItem data={3}>333</OrderableListItem>
+                <OrderableListItem data={4}>444</OrderableListItem>
+            </>} />
+            
+            <hr />
+            
             <OrderableList<HTMLElement, number> theme='primary' mild={false}
                 onChildrenChange={setItems}
             >
