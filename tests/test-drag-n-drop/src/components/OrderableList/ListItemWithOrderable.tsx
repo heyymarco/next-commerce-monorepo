@@ -58,7 +58,7 @@ import type {
 // utilities:
 import {
     createSyntheticMouseEvent,
-}                           from '@/libs/hooks'
+}                           from '@/libs/events'
 
 
 
