@@ -71,7 +71,7 @@ export const useControllableAndUncontrollable = <TValue extends any>(props: Cont
     
     
     // stable callbacks:
-    const scheduleTriggerEvent = useScheduleTriggerEvent();
+    const scheduleTriggerEvent            = useScheduleTriggerEvent();
     const triggerValueChange              = useEvent((newValue: TValue, options?: ScheduleTriggerEventOptions): void => {
         // conditions:
         if (!handleValueChange) return; // no callback handler => nothing to trigger
