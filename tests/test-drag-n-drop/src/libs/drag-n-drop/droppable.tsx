@@ -35,7 +35,7 @@ import {
     
     registerDroppableHook,
     unregisterDroppableHook,
-}                           from './drag-n-drop-interfaces'
+}                           from './drag-n-drop'
 
 
 

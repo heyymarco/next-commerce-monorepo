@@ -69,7 +69,7 @@ import {
     
     getActiveDroppableHook,
     getActiveDroppableTarget,
-}                           from './drag-n-drop-interfaces'
+}                           from './drag-n-drop'
 
 
 
