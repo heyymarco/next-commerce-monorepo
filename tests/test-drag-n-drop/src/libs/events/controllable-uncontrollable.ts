@@ -54,7 +54,7 @@ export const useControllableAndUncontrollable = <TValue extends any>(props: Cont
     
     
     // handlers:
-    const handleUncontrollableValueChange = useEvent((newValue: TValue) => {
+    const handleUncontrollableValueChange = useEvent((newValue: TValue): void => {
         // update value if uncontrollable:
         if (!isControllableValue) setUncontrollableValue(newValue);
     });
