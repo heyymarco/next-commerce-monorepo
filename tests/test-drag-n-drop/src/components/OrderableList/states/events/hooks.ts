@@ -20,6 +20,7 @@ export interface ScheduleTriggerEventOptions {
 export type ScheduledTriggerEventCallback = () => void
 export type ScheduleTriggerEventFunction  = (scheduledTriggerEventCallback: ScheduledTriggerEventCallback|null|undefined, options?: ScheduleTriggerEventOptions) => void
 export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
+    // states:
     const isMounted = useMountedFlag();
     
     
