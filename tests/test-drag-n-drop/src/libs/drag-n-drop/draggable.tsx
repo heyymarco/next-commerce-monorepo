@@ -73,11 +73,6 @@ import {
 
 
 
-// types:
-export type PointerPositionRef = React.RefObject<{ clientX: number, clientY: number }>
-
-
-
 // react components:
 export interface DraggableProps<TElement extends Element = HTMLElement>
     extends
