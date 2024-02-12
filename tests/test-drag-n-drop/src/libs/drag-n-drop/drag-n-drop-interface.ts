@@ -1,3 +1,9 @@
+// heymarco:
+import {
+    // utilities:
+    createSyntheticMouseEvent,
+}                           from '@heymarco/events'
+
 // internals:
 import type {
     // data:
@@ -10,11 +16,6 @@ import type {
     DropHandshakeEvent,
     DroppedEvent,
 }                           from './types'
-
-// utilities:
-import {
-    createSyntheticMouseEvent,
-}                           from '@/libs/events'
 
 
 

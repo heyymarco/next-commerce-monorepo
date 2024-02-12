@@ -2,7 +2,7 @@
 import {
     // react helper hooks:
     useMountedFlag,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/hooks'           // react helper hooks
 
 
 

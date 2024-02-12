@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@cssfn/cssfn-dom": "^3.2.0",
+    "@heymarco/events": "^6.5.0",
     "@reusable-ui/components": "^6.11.0",
     "@reusable-ui/core": "^6.9.0"
   }

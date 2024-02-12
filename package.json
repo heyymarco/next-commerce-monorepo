@@ -11,6 +11,7 @@
   "type": "module",
   "workspaces": [
     "components/*",
+    "utilities/*",
     "websites_/*",
     "tests/*"
   ],

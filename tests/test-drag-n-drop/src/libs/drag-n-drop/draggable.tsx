@@ -33,6 +33,12 @@ import {
     usePointerCapturable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // utilities:
+    createSyntheticMouseEvent,
+}                           from '@heymarco/events'
+
 // reusable-ui components:
 import type {
     // react components:
@@ -64,11 +70,6 @@ import {
     getActiveDroppableHook,
     getActiveDroppableTarget,
 }                           from './drag-n-drop-interface'
-
-// utilities:
-import {
-    createSyntheticMouseEvent,
-}                           from '@/libs/events'
 
 
 

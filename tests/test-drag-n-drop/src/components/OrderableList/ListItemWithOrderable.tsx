@@ -20,6 +20,12 @@ import {
     useMergeClasses,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // utilities:
+    createSyntheticMouseEvent,
+}                           from '@heymarco/events'
+
 // reusable-ui components:
 import type {
     // react components:
@@ -54,11 +60,6 @@ import type {
     // react components:
     OrderableListItemProps,
 }                           from './OrderableListItem'
-
-// utilities:
-import {
-    createSyntheticMouseEvent,
-}                           from '@/libs/events'
 
 
 
