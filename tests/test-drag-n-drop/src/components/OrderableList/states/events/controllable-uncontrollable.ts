@@ -12,16 +12,11 @@ import {
     useMountedFlag,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
-
-
-// types:
-export type TriggerAt =
-    |'immediately'
-    |'microtask'
-    |'macrotask'
-export interface TriggerValueChangeOptions {
-    triggerAt ?: TriggerAt
-}
+// internals:
+import type {
+    // types:
+    TriggerValueChangeOptions,
+}                           from './types'
 
 
 
