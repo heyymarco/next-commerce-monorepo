@@ -41,7 +41,7 @@ export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
             case 'macrotask':
                 setTimeout(() => {
                     // conditions:
-                    if (!isMounted.current) return;
+                    if (!isMounted.current) return; // the component was unloaded before macrotask is executed => do nothing
                     
                     
                     
@@ -53,7 +53,7 @@ export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
             case 'microtask':
                 queueMicrotask(() => {
                     // conditions:
-                    if (!isMounted.current) return;
+                    if (!isMounted.current) return; // the component was unloaded before microtask is executed => do nothing
                     
                     
                     
