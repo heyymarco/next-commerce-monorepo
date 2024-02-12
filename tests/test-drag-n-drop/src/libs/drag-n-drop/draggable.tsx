@@ -38,17 +38,6 @@ import {
     // utilities:
     createSyntheticMouseEvent,
 }                           from '@heymarco/events'
-
-// reusable-ui components:
-import type {
-    // react components:
-    GenericProps,
-}                           from '@reusable-ui/generic'         // a base component
-
-// internals:
-import {
-    useDragOverlayStyleSheet,
-}                           from './styles/loader'
 import {
     // data:
     DragNDropData,
@@ -72,6 +61,17 @@ import {
     getActiveDroppableHook,
     getActiveDroppableTarget,
 }                           from '@heymarco/drag-n-drop'        // a shared interface for enabling drag and drop operations
+
+// reusable-ui components:
+import type {
+    // react components:
+    GenericProps,
+}                           from '@reusable-ui/generic'         // a base component
+
+// internals:
+import {
+    useDragOverlayStyleSheet,
+}                           from './styles/loader'
 
 
 
