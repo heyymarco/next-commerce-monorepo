@@ -15,7 +15,7 @@ import type {
     DragHandshakeEvent,
     DropHandshakeEvent,
     DroppedEvent,
-}                           from './types'
+}                           from './types.js'
 
 
 

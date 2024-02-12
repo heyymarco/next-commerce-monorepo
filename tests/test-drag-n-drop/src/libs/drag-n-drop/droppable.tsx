@@ -18,7 +18,7 @@ import {
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // internals:
-import type {
+import {
     // data:
     DragNDropData,
     
@@ -27,15 +27,18 @@ import type {
     // events:
     DropHandshakeEvent,
     DroppedEvent,
-}                           from './types'
-import {
+    
+    
+    
+    // hooks:
     DroppableHook,
     
     
     
+    // droppable sides:
     registerDroppableHook,
     unregisterDroppableHook,
-}                           from './drag-n-drop'
+}                           from '@heymarco/drag-n-drop'        // a shared interface for enabling drag and drop operations
 
 
 

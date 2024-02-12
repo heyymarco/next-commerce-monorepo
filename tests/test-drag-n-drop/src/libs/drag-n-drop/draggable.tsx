@@ -49,7 +49,7 @@ import type {
 import {
     useDragOverlayStyleSheet,
 }                           from './styles/loader'
-import type {
+import {
     // data:
     DragNDropData,
     
@@ -60,16 +60,18 @@ import type {
     DragHandshakeEvent,
     DraggedEvent,
     DroppedEvent,
-}                           from './types'
-import {
-    AttachedDroppableHookResult,
+    
+    
+    
+    // draggable sides:
     enterDroppableHook,
+    AttachedDroppableHookResult,
     attachDroppableHook,
     leaveDroppableHook,
     
     getActiveDroppableHook,
     getActiveDroppableTarget,
-}                           from './drag-n-drop'
+}                           from '@heymarco/drag-n-drop'        // a shared interface for enabling drag and drop operations
 
 
 

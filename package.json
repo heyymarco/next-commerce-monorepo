@@ -12,6 +12,7 @@
   "workspaces": [
     "components/*",
     "utilities/*",
+    "capabilities/*",
     "websites_/*",
     "tests/*"
   ],
