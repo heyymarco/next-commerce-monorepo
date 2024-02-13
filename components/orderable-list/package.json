@@ -1,0 +1,58 @@
+{
+  "name": "@heymarco/orderable-list",
+  "version": "6.5.0",
+  "description": "Represents a series of content that the order can be rearranged.",
+  "keywords": [
+    "list",
+    "group",
+    "series",
+    "order",
+    "rearranged",
+    "layout",
+    "container",
+    "component",
+    "styled",
+    "react",
+    "reusable-ui"
+  ],
+  "author": "HeyMarco <31385284+heyymarco@users.noreply.github.com>",
+  "homepage": "https://reusableui.com",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reusable-ui/reusable-ui-monorepo.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./index": "./dist/index.js",
+    "./index.js": "./dist/index.js"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "tsc:watch": "tsc --watch",
+    "ncu": "ncu --peer",
+    "ncu:upgrade": "ncu --peer --upgrade",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
+  },
+  "dependencies": {
+    "@cssfn/core": "^3.2.0",
+    "@cssfn/cssfn-react": "^3.2.0",
+    "@heymarco/draggable": "^6.5.1",
+    "@heymarco/droppable": "^6.5.0",
+    "@heymarco/events": "^6.5.1",
+    "@reusable-ui/basic": "^6.5.0",
+    "@reusable-ui/core": "^6.9.0",
+    "@reusable-ui/list": "^6.5.1"
+  },
+  "peerDependencies": {
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0"
+  }
+}

@@ -48,11 +48,11 @@ import {
 // internals:
 import type {
     // types:
-    OrderMode,
-}                           from './types'
+    OrderableListOrderMode,
+}                           from './types.js'
 import {
     useOrderableListStyleSheet,
-}                           from './styles/loader'
+}                           from './styles/loader.js'
 import {
     // types:
     OrderableListDragMoveEvent,
@@ -62,16 +62,16 @@ import {
     
     // react components:
     OrderableListStateProvider,
-}                           from './states/orderableListState'
+}                           from './states/orderableListState.js'
 import {
     // react components:
     ListItemWithOrderableProps,
     ListItemWithOrderable,
-}                           from './ListItemWithOrderable'
+}                           from './ListItemWithOrderable.js'
 import type {
     // react components:
     OrderableListItemProps,
-}                           from './OrderableListItem'
+}                           from './OrderableListItem.js'
 
 
 
@@ -98,7 +98,7 @@ export interface OrderableListProps<TElement extends Element = HTMLElement, TDat
         >
 {
     // behaviors:
-    orderMode        ?: OrderMode
+    orderMode        ?: OrderableListOrderMode
     
     
     

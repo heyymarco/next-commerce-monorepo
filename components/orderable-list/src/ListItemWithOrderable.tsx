@@ -55,18 +55,18 @@ import type {
     // events:
     OrderableListItemDragStartEvent,
     OrderableListItemDropHandshakeEvent,
-}                           from './types'
+}                           from './types.js'
 import {
     useOrderableListStyleSheet,
-}                           from './styles/loader'
+}                           from './styles/loader.js'
 import {
     // states:
     useOrderableListState,
-}                           from './states/orderableListState'
+}                           from './states/orderableListState.js'
 import type {
     // react components:
     OrderableListItemProps,
-}                           from './OrderableListItem'
+}                           from './OrderableListItem.js'
 
 
 

@@ -21,7 +21,7 @@ import type {
     // events:
     OrderableListItemDragStartEvent,
     OrderableListItemDropHandshakeEvent,
-}                           from './types'
+}                           from './types.js'
 
 
 

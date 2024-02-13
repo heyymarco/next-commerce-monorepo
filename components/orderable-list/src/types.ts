@@ -1,5 +1,5 @@
 // types:
-export type OrderMode =
+export type OrderableListOrderMode =
     |'swap'
     |'shift'
 

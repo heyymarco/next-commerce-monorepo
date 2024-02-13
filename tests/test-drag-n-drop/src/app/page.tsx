@@ -1,7 +1,7 @@
 'use client'
 
 import {useState} from 'react'
-import { OrderableList, OrderableListItem, OrderableListItemProps } from '@/components/OrderableList'
+import { OrderableList, OrderableListItem, OrderableListItemProps } from '@heymarco/orderable-list'
 import { Basic } from '@reusable-ui/components';
 
 
