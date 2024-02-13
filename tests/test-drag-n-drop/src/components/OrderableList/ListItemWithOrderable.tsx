@@ -25,6 +25,24 @@ import {
     // utilities:
     createSyntheticMouseEvent,
 }                           from '@heymarco/events'
+import {
+    // types:
+    DragHandshakeEvent,
+    
+    
+    
+    // hooks:
+    useDraggable,
+}                           from '@heymarco/draggable'
+import {
+    // types:
+    DropHandshakeEvent,
+    
+    
+    
+    // hooks:
+    useDroppable,
+}                           from '@heymarco/droppable'
 
 // reusable-ui components:
 import type {
@@ -45,17 +63,6 @@ import {
     // states:
     useOrderableListState,
 }                           from './states/orderableListState'
-import {
-    // types:
-    DragHandshakeEvent,
-    DropHandshakeEvent,
-    
-    
-    
-    // hooks:
-    useDraggable,
-    useDroppable,
-}                           from '@/libs/drag-n-drop'
 import type {
     // react components:
     OrderableListItemProps,

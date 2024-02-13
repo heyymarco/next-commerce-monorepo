@@ -16,22 +16,22 @@ import {
 
 // reusable-ui core:
 import {
-    // react helper hooks:
+    // hooks:
     useIsomorphicLayoutEffect,
     useEvent,
     useMountedFlag,
-    
-    
-    
-    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
+}                           from '@reusable-ui/hooks'               // react helper hooks
+
+import {
+    // capabilities:
     GlobalStackableProps,
     useGlobalStackable,
-    
-    
-    
-    // a capability of UI to capture the mouse/touch event inside & outside the UI itself:
+}                           from '@reusable-ui/global-stackable'    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context
+
+import {
+    // capabilities:
     usePointerCapturable,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/pointer-capturable'  // a capability of UI to capture the mouse/touch event inside & outside the UI itself
 
 // heymarco:
 import {
@@ -60,18 +60,18 @@ import {
     
     getActiveDroppableHook,
     getActiveDroppableTarget,
-}                           from '@heymarco/drag-n-drop'        // a shared interface for enabling drag and drop operations
+}                           from '@heymarco/drag-n-drop'            // a shared interface for enabling drag and drop operations
 
 // reusable-ui components:
 import type {
     // react components:
     GenericProps,
-}                           from '@reusable-ui/generic'         // a base component
+}                           from '@reusable-ui/generic'             // a base component
 
 // internals:
 import {
     useDragOverlayStyleSheet,
-}                           from './styles/loader'
+}                           from './styles/loader.js'
 
 
 

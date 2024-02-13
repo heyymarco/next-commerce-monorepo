@@ -4,7 +4,8 @@ import styles from './page.module.css';
 
 import { useRef } from 'react'
 import { Basic, Indicator } from '@reusable-ui/components';
-import { DragNDropData, DraggableProps, useDraggable, DroppableProps, useDroppable } from '@/libs/drag-n-drop';
+import { DragNDropData, DraggableProps, useDraggable } from '@heymarco/draggable';
+import { DroppableProps, useDroppable } from '@heymarco/droppable';
 
 
 

@@ -1,13 +1,12 @@
 {
-  "name": "@heymarco/drag-n-drop",
-  "version": "6.5.1",
-  "description": "A shared interface for enabling drag and drop operations.",
+  "name": "@heymarco/draggable",
+  "version": "6.5.0",
+  "description": "Enables drag operations.",
   "keywords": [
     "react",
     "utility",
     "drag",
     "dragging",
-    "drop",
     "dropping",
     "drag-n-drop"
   ],
@@ -24,9 +23,7 @@
   "exports": {
     ".": "./dist/index.js",
     "./index": "./dist/index.js",
-    "./index.js": "./dist/index.js",
-    "./types": "./dist/types.js",
-    "./types.js": "./dist/types.js"
+    "./index.js": "./dist/index.js"
   },
   "sideEffects": false,
   "publishConfig": {
@@ -40,6 +37,19 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/events": "^6.5.0"
+    "@cssfn/core": "^3.2.0",
+    "@cssfn/cssfn-react": "^3.2.0",
+    "@heymarco/events": "^6.5.0",
+    "@reusable-ui/generic": "^6.5.0",
+    "@reusable-ui/global-stackable": "^6.6.0",
+    "@reusable-ui/hooks": "^6.5.0",
+    "@reusable-ui/pointer-capturable": "^6.6.0"
+  },
+  "peerDependencies": {
+    "@heymarco/drag-n-drop": "^6.5.1",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }

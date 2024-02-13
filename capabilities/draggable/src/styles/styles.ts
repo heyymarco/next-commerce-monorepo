@@ -7,9 +7,9 @@ import {
 
 // reusable-ui core:
 import {
-    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context:
+    // capabilities:
     globalStacks,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
+}                           from '@reusable-ui/global-stackable'    // a capability of UI to stack on top-most of another UI(s) regardless of DOM's stacking context
 
 
 
