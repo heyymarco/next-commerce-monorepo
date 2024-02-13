@@ -17,17 +17,17 @@ import {
 
 
 
-export interface ControllableProps<TValue extends any> {
+export interface ControllableProps<TValue extends unknown> {
     // values:
     value              : TValue
     onValueChange      : ((newValue: TValue) => void)|undefined
 }
-export interface ControllableApi<TValue extends any> {
+export interface ControllableApi<TValue extends unknown> {
     // values:
     value              : TValue
     triggerValueChange : (newValue: TValue, options?: ScheduleTriggerEventOptions) => void
 }
-export const useControllable = <TValue extends any>(props: ControllableProps<TValue>): ControllableApi<TValue> => {
+export const useControllable = <TValue extends unknown>(props: ControllableProps<TValue>): ControllableApi<TValue> => {
     // props:
     const {
         // values:

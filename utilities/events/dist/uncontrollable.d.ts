@@ -1,9 +1,9 @@
 import { ScheduleTriggerEventOptions } from './hooks.js';
-export interface UncontrollableProps<TValue extends any> {
+export interface UncontrollableProps<TValue extends unknown> {
     defaultValue: TValue;
     onValueChange: ((newValue: TValue) => void) | undefined;
 }
-export interface UncontrollableApi<TValue extends any> {
+export interface UncontrollableApi<TValue extends unknown> {
     value: TValue;
     triggerValueChange: (newValue: TValue, options?: ScheduleTriggerEventOptions) => void;
 }

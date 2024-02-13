@@ -24,18 +24,18 @@ import {
 
 
 
-export interface ControllableAndUncontrollableProps<TValue extends any> {
+export interface ControllableAndUncontrollableProps<TValue extends unknown> {
     // values:
     defaultValue       : TValue
     value              : TValue|undefined
     onValueChange      : ((newValue: TValue) => void)|undefined
 }
-export interface ControllableAndUncontrollableApi<TValue extends any> {
+export interface ControllableAndUncontrollableApi<TValue extends unknown> {
     // values:
     value              : TValue
     triggerValueChange : (newValue: TValue, options?: ScheduleTriggerEventOptions) => void
 }
-export const useControllableAndUncontrollable = <TValue extends any>(props: ControllableAndUncontrollableProps<TValue>): ControllableAndUncontrollableApi<TValue> => {
+export const useControllableAndUncontrollable = <TValue extends unknown>(props: ControllableAndUncontrollableProps<TValue>): ControllableAndUncontrollableApi<TValue> => {
     // props:
     const {
         // values:
