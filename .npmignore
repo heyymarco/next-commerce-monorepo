@@ -2,6 +2,10 @@ node_modules/
 
 components/*/src/
 components/*/__tests__/
+utilities/*/src/
+utilities/*/__tests__/
+capabilities/*/src/
+capabilities/*/__tests__/
 websites/*/src/
 websites/*/__tests__/
 
