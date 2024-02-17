@@ -32,6 +32,11 @@ import type {
 
 // contexts:
 export interface OrderableListItemRegistration<TElement extends Element = HTMLElement> {
+    // behaviors:
+    orderable         : boolean
+    
+    
+    
     // handlers:
     onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>    ) => void|Promise<void>
     onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement>) => void|Promise<void>
@@ -39,15 +44,13 @@ export interface OrderableListItemRegistration<TElement extends Element = HTMLEl
 export interface OrderableListItemState<TElement extends Element = HTMLElement>
 {
     // registrations:
-    registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): void
-    unregisterOrderableListItem(registration: OrderableListItemRegistration<TElement>): void
+    registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): () => void
 }
 
 const noopHandler = () => { throw Error('not inside <ListItemWithOrderable>'); };
 const OrderableListItemStateContext = createContext<OrderableListItemState<Element>>({
     // registrations:
-    registerOrderableListItem   : noopHandler,
-    unregisterOrderableListItem : noopHandler,
+    registerOrderableListItem : noopHandler,
 });
 OrderableListItemStateContext.displayName  = 'OrderableListItemState';
 
@@ -61,15 +64,13 @@ export const useOrderableListItemState = <TElement extends Element = HTMLElement
 export interface OrderableListItemStateProps<TElement extends Element = HTMLElement>
 {
     // registrations:
-    registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): void
-    unregisterOrderableListItem(registration: OrderableListItemRegistration<TElement>): void
+    registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): () => void
 }
 const OrderableListItemStateProvider = <TElement extends Element = HTMLElement>(props: React.PropsWithChildren<OrderableListItemStateProps<TElement>>): JSX.Element|null => {
     // props:
     const {
         // registrations:
         registerOrderableListItem,
-        unregisterOrderableListItem,
         
         
         
@@ -82,8 +83,7 @@ const OrderableListItemStateProvider = <TElement extends Element = HTMLElement>(
     // states:
     const orderableListItemState = useMemo<OrderableListItemState<TElement>>(() => ({
         // handlers:
-        registerOrderableListItem,   // stable ref
-        unregisterOrderableListItem, // stable ref
+        registerOrderableListItem, // stable ref
     }), []);
     
     

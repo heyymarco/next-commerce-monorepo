@@ -256,10 +256,17 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // registrations:
-    const [onOrderStartSubscribers]     = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>());
+    const [orderableSubscribers       ] = useState<Map<symbol, boolean>>(() => new Map<symbol, boolean>());
+    const orderableSubscribersCache     = useRef<boolean>(false);
+    const [onOrderStartSubscribers    ] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>());
     const [onOrderHandshakeSubscribers] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>());
-    const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement>): void => {
+    const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement>): () => void => {
         const {
+            // behaviors:
+            orderable,
+            
+            
+            
             // handlers:
             onOrderStart,
             onOrderHandshake,
@@ -268,21 +275,25 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // registrations:
+        const orderableKey = Symbol();
+        orderableSubscribers.set(orderableKey, orderable);
+        
+        orderableSubscribersCache.current = !Array.from(orderableSubscribers.values()).some((orderable) => !orderable); // if contains a/some `orderable={false}` => not orderable
+        
         if (onOrderStart)     onOrderStartSubscribers.add(onOrderStart);
         if (onOrderHandshake) onOrderHandshakeSubscribers.add(onOrderHandshake);
-    });
-    const unregisterOrderableListItem   = useEvent((registration: OrderableListItemRegistration<TElement>): void => {
-        const {
-            // handlers:
-            onOrderStart,
-            onOrderHandshake,
-        } = registration;
         
         
         
         // unregistrations:
-        if (onOrderStart)     onOrderStartSubscribers.delete(onOrderStart);
-        if (onOrderHandshake) onOrderHandshakeSubscribers.delete(onOrderHandshake);
+        return () => {
+            orderableSubscribers.delete(orderableKey);
+            
+            orderableSubscribersCache.current = !Array.from(orderableSubscribers.values()).some((orderable) => !orderable); // if contains a/some `orderable={false}` => not orderable
+            
+            if (onOrderStart)     onOrderStartSubscribers.delete(onOrderStart);
+            if (onOrderHandshake) onOrderHandshakeSubscribers.delete(onOrderHandshake);
+        };
     });
     
     
@@ -302,7 +313,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     // handlers:
     const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, isDragging: boolean): Promise<boolean> => {
         // conditions:
-        if (!onOrderHandshakeSubscribers.size) return true; // if no `onOrderHandshake` defined, assumes as allowed
+        if (!orderableSubscribersCache.current) return false; // `orderable={false}` => not orderable => prevents to be dropped
+        if (!onOrderHandshakeSubscribers.size)  return true;  // if no `onOrderHandshake` defined, assumes as allowed
         
         
         
@@ -330,6 +342,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     const handlePointerStart       = useEvent(async (event: MouseEvent): Promise<boolean> => {
         // conditions:
+        if (!orderableSubscribersCache.current) return false; // `orderable={false}` => not orderable => prevents from dragging
+        
         const listItemParentElm = listItemParentRef.current;
         if (!listItemParentElm) return false;
         
@@ -552,7 +566,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         <OrderableListItemStateProvider<TElement>
             // registrations:
             registerOrderableListItem={registerOrderableListItem}
-            unregisterOrderableListItem={unregisterOrderableListItem}
         >
             {/* <ListItem> */}
             {React.cloneElement<OrderableListItemProps<TElement, TData>>(listItemComponent,

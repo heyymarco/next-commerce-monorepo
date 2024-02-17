@@ -58,7 +58,7 @@ export default function Home() {
             <OrderableList theme='primary' mild={false} defaultChildren={<>
                 <OrderableListItem data={0}>000</OrderableListItem>
                 <OrderableListItem data={1}>111</OrderableListItem>
-                <OrderableListItem data={2}>222</OrderableListItem>
+                <OrderableListItem data={2} orderable={false}>unmoveable</OrderableListItem>
                 <OrderableListItem data={3}>333</OrderableListItem>
                 <OrderableListItem data={4}>444</OrderableListItem>
             </>} />

@@ -48,6 +48,11 @@ export interface OrderableListItemProps<TElement extends Element = HTMLElement, 
     
     
     
+    // behaviors:
+    orderable       ?: boolean
+    
+    
+    
     // handlers:
     onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>    ) => void|Promise<void>
     onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement>) => void|Promise<void>
@@ -56,7 +61,12 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
     // rest props:
     const {
         // data:
-        data             : _data, // remove
+        data              : _data, // remove
+        
+        
+        
+        // behaviors:
+        orderable         = true,  // take
         
         
         
@@ -66,8 +76,8 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         
         
         // handlers:
-        onOrderStart,             // take
-        onOrderHandshake,         // take
+        onOrderStart,              // take
+        onOrderHandshake,          // take
     ...restListItemProps} = props;
     
     
@@ -76,7 +86,6 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
     const {
         // registrations:
         registerOrderableListItem,
-        unregisterOrderableListItem,
     } = useOrderableListItemState<TElement>();
     
     
@@ -84,7 +93,12 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
     // effects:
     useEffect(() => {
         // setups:
-        registerOrderableListItem({
+        const unregisterOrderableListItem = registerOrderableListItem({
+            // behaviors:
+            orderable,
+            
+            
+            
             // handlers:
             onOrderStart,
             onOrderHandshake,
@@ -94,13 +108,9 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         
         // cleanups:
         return () => {
-            unregisterOrderableListItem({
-                // handlers:
-                onOrderStart,
-                onOrderHandshake,
-            });
+            unregisterOrderableListItem();
         };
-    }, [onOrderStart, onOrderHandshake]);
+    }, [orderable, onOrderStart, onOrderHandshake]);
     
     
     
