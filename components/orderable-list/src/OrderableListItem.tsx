@@ -56,7 +56,7 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
     // rest props:
     const {
         // data:
-        data             : _data,             // remove
+        data             : _data, // remove
         
         
         
@@ -66,8 +66,8 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         
         
         // handlers:
-        onOrderStart,     // take
-        onOrderHandshake, // take
+        onOrderStart,             // take
+        onOrderHandshake,         // take
     ...restListItemProps} = props;
     
     
