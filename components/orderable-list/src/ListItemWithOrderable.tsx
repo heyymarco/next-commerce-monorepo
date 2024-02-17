@@ -8,6 +8,7 @@ import {
     // hooks:
     useRef,
     useMemo,
+    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -63,6 +64,15 @@ import {
     // states:
     useOrderableListState,
 }                           from './states/orderableListState.js'
+import {
+    // types:
+    OrderableListItemRegistration,
+    
+    
+    
+    // react components:
+    OrderableListItemStateProvider,
+}                           from './states/orderableListItemState.js'
 import type {
     // react components:
     OrderableListItemProps,
@@ -113,12 +123,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // components:
         listItemComponent,
-        
-        
-        
-        // handlers:
-        onOrderStart,
-        onOrderHandshake,
     ...restListItemProps} = props;
     
     
@@ -251,10 +255,54 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     
+    // registrations:
+    const [onOrderStartSubscribers]     = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>());
+    const [onOrderHandshakeSubscribers] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>());
+    const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement>): void => {
+        const {
+            // handlers:
+            onOrderStart,
+            onOrderHandshake,
+        } = registration;
+        
+        
+        
+        // registrations:
+        if (onOrderStart)     onOrderStartSubscribers.add(onOrderStart);
+        if (onOrderHandshake) onOrderHandshakeSubscribers.add(onOrderHandshake);
+    });
+    const unregisterOrderableListItem   = useEvent((registration: OrderableListItemRegistration<TElement>): void => {
+        const {
+            // handlers:
+            onOrderStart,
+            onOrderHandshake,
+        } = registration;
+        
+        
+        
+        // unregistrations:
+        if (onOrderStart)     onOrderStartSubscribers.delete(onOrderStart);
+        if (onOrderHandshake) onOrderHandshakeSubscribers.delete(onOrderHandshake);
+    });
+    
+    
+    
+    // event emmiters:
+    const onOrderStart     = useEvent<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>(async (event) => {
+        // actions:
+        await Promise.all(Array.from(onOrderStartSubscribers).map((subscriber) => subscriber(event)));
+    });
+    const onOrderHandshake = useEvent<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>(async (event) => {
+        // actions:
+        await Promise.all(Array.from(onOrderHandshakeSubscribers).map((subscriber) => subscriber(event)));
+    });
+    
+    
+    
     // handlers:
     const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, isDragging: boolean): Promise<boolean> => {
         // conditions:
-        if (!onOrderHandshake) return true; // if no `onOrderHandshake` defined, assumes as allowed
+        if (!onOrderHandshakeSubscribers.size) return true; // if no `onOrderHandshake` defined, assumes as allowed
         
         
         
@@ -285,7 +333,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         const listItemParentElm = listItemParentRef.current;
         if (!listItemParentElm) return false;
         
-        if (onOrderStart) {
+        if (onOrderStartSubscribers.size) {
                 const orderableListItemDragStartEvent : OrderableListItemDragStartEvent<TElement> = {
                     // bases:
                     ...createSyntheticMouseEvent<TElement, MouseEvent>({
@@ -500,34 +548,42 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // jsx:
-    /* <ListItem> */
-    return React.cloneElement<OrderableListItemProps<TElement, TData>>(listItemComponent,
-        // props:
-        {
-            // other props:
-            ...restListItemProps,
-            ...listItemComponent.props, // overwrites restListItemProps (if any conflics)
-            
-            
-            
-            // refs:
-            outerRef     : mergedOuterRef,
-            
-            
-            
-            // classes:
-            stateClasses : mergedStateClasses,
-            
-            
-            
-            // handlers:
-            onMouseDown  : handleMouseDown,
-            onTouchStart : handleTouchStart,
-        },
-        
-        
-        
-        // children:
-        listItemComponent.props.children ?? props.children,
+    return (
+        <OrderableListItemStateProvider<TElement>
+            // registrations:
+            registerOrderableListItem={registerOrderableListItem}
+            unregisterOrderableListItem={unregisterOrderableListItem}
+        >
+            {/* <ListItem> */}
+            {React.cloneElement<OrderableListItemProps<TElement, TData>>(listItemComponent,
+                // props:
+                {
+                    // other props:
+                    ...restListItemProps,
+                    ...listItemComponent.props, // overwrites restListItemProps (if any conflics)
+                    
+                    
+                    
+                    // refs:
+                    outerRef     : mergedOuterRef,
+                    
+                    
+                    
+                    // classes:
+                    stateClasses : mergedStateClasses,
+                    
+                    
+                    
+                    // handlers:
+                    onMouseDown  : handleMouseDown,
+                    onTouchStart : handleTouchStart,
+                },
+                
+                
+                
+                // children:
+                listItemComponent.props.children ?? props.children,
+            )}
+        </OrderableListItemStateProvider>
     );
 };

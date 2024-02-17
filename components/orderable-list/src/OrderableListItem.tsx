@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useEffect,
 }                           from 'react'
 
 // reusable-ui components:
@@ -22,6 +27,10 @@ import type {
     OrderableListItemDragStartEvent,
     OrderableListItemDropHandshakeEvent,
 }                           from './types.js'
+import {
+    // states:
+    useOrderableListItemState,
+}                           from './states/orderableListItemState.js'
 
 
 
@@ -57,9 +66,41 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         
         
         // handlers:
-        onOrderStart     : _onOrderStart,     // remove
-        onOrderHandshake : _onOrderHandshake, // remove
+        onOrderStart,     // take
+        onOrderHandshake, // take
     ...restListItemProps} = props;
+    
+    
+    
+    // states:
+    const {
+        // registrations:
+        registerOrderableListItem,
+        unregisterOrderableListItem,
+    } = useOrderableListItemState<TElement>();
+    
+    
+    
+    // effects:
+    useEffect(() => {
+        // setups:
+        registerOrderableListItem({
+            // handlers:
+            onOrderStart,
+            onOrderHandshake,
+        });
+        
+        
+        
+        // cleanups:
+        return () => {
+            unregisterOrderableListItem({
+                // handlers:
+                onOrderStart,
+                onOrderHandshake,
+            });
+        };
+    }, [onOrderStart, onOrderHandshake]);
     
     
     

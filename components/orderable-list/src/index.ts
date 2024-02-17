@@ -1,6 +1,7 @@
 export type *       from './types.js'
 
 export *            from './states/orderableListState.js'
+export *            from './states/orderableListItemState.js'
 
 export *            from './styles/styles.js'
 export *            from './OrderableList.js'
