@@ -49,7 +49,7 @@ export interface OrderableListItemProps<TElement extends Element = HTMLElement, 
     
     
     // behaviors:
-    orderable       ?: boolean
+    orderable        ?: boolean
     
     
     

@@ -47,7 +47,7 @@ export interface OrderableListItemState<TElement extends Element = HTMLElement>
     registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): () => void
 }
 
-const noopHandler = () => { throw Error('not inside <ListItemWithOrderable>'); };
+const noopHandler = () => { throw Error('not inside <OrderableList>'); }; // actually 'not inside <ListItemWithOrderable>'
 const OrderableListItemStateContext = createContext<OrderableListItemState<Element>>({
     // registrations:
     registerOrderableListItem : noopHandler,

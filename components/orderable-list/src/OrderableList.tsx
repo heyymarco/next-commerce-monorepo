@@ -98,6 +98,7 @@ export interface OrderableListProps<TElement extends Element = HTMLElement, TDat
         >
 {
     // behaviors:
+    orderable        ?: boolean
     orderMode        ?: OrderableListOrderMode
     
     
@@ -116,6 +117,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     // rest props:
     const {
         // behaviors:
+        orderable : parentOrderable = true,
         orderMode = 'shift',
         
         
@@ -309,6 +311,11 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                         
                         
                         
+                        // behaviors:
+                        parentOrderable={parentOrderable}
+                        
+                        
+                        
                         // components:
                         listItemComponent={
                             // clone listItem element with (almost) blank props:
@@ -321,6 +328,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                                 //#region restore conflicting props
                                 {...{
                                     ...(('listIndex'         in listItemProps) ? { listIndex         : listItemProps.listIndex         } : undefined),
+                                    ...(('parentOrderable'   in listItemProps) ? { parentOrderable   : listItemProps.parentOrderable   } : undefined),
                                     ...(('listItemComponent' in listItemProps) ? { listItemComponent : listItemProps.listItemComponent } : undefined),
                                 }}
                                 //#endregion restore conflicting props
@@ -331,7 +339,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             })
         );
         return [wrappedChildren, listMap];
-    }, [listComponentChildren, children]);
+    }, [listComponentChildren, children, parentOrderable]);
     
     
     

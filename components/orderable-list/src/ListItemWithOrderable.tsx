@@ -99,6 +99,11 @@ export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLE
     
     
     
+    // behaviors:
+    parentOrderable   : boolean
+    
+    
+    
     // components:
     // a more specific of <ListItem> is needed:
     listItemComponent : React.ReactComponentElement<any, OrderableListItemProps<TElement, TData>>
@@ -118,6 +123,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // appearances:
         refresh,
+        
+        
+        
+        // behaviors:
+        parentOrderable,
         
         
         
@@ -313,6 +323,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     // handlers:
     const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, isDragging: boolean): Promise<boolean> => {
         // conditions:
+        if (!parentOrderable)                   return false; // `<OrderableList orderable={false}>` => not orderable => prevents to be dropped
         if (!orderableSubscribersCache.current) return false; // `orderable={false}` => not orderable => prevents to be dropped
         if (!onOrderHandshakeSubscribers.size)  return true;  // if no `onOrderHandshake` defined, assumes as allowed
         
@@ -342,6 +353,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     const handlePointerStart       = useEvent(async (event: MouseEvent): Promise<boolean> => {
         // conditions:
+        if (!parentOrderable)                   return false; // `<OrderableList orderable={false}>` => not orderable => prevents from dragging
         if (!orderableSubscribersCache.current) return false; // `orderable={false}` => not orderable => prevents from dragging
         
         const listItemParentElm = listItemParentRef.current;
