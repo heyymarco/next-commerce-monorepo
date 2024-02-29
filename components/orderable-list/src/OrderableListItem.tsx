@@ -50,6 +50,8 @@ export interface OrderableListItemProps<TElement extends Element = HTMLElement, 
     
     // behaviors:
     orderable        ?: boolean
+    draggable        ?: boolean
+    droppable        ?: boolean
     
     
     
@@ -67,6 +69,8 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         
         // behaviors:
         orderable         = true,  // take
+        draggable         = orderable,
+        droppable         = orderable,
         
         
         
@@ -95,7 +99,8 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         // setups:
         const unregisterOrderableListItem = registerOrderableListItem({
             // behaviors:
-            orderable,
+            draggable,
+            droppable,
             
             
             
@@ -110,7 +115,7 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
         return () => {
             unregisterOrderableListItem();
         };
-    }, [orderable, onOrderStart, onOrderHandshake]);
+    }, [draggable, droppable, onOrderStart, onOrderHandshake]);
     
     
     

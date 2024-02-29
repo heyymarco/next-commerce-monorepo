@@ -33,7 +33,8 @@ import type {
 // contexts:
 export interface OrderableListItemRegistration<TElement extends Element = HTMLElement> {
     // behaviors:
-    orderable         : boolean
+    draggable         : boolean
+    droppable         : boolean
     
     
     

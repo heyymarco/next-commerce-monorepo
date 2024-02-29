@@ -266,14 +266,19 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // registrations:
-    const [orderableSubscribers       ] = useState<Map<symbol, boolean>>(() => new Map<symbol, boolean>());
-    const orderableSubscribersCache     = useRef<boolean>(false);
+    const [draggableSubscribers       ] = useState<Map<symbol, boolean>>(() => new Map<symbol, boolean>());
+    const draggableSubscribersCache     = useRef<boolean>(false);
+    
+    const [droppableSubscribers       ] = useState<Map<symbol, boolean>>(() => new Map<symbol, boolean>());
+    const droppableSubscribersCache     = useRef<boolean>(false);
+    
     const [onOrderStartSubscribers    ] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>());
     const [onOrderHandshakeSubscribers] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>());
     const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement>): () => void => {
         const {
             // behaviors:
-            orderable,
+            draggable,
+            droppable,
             
             
             
@@ -285,10 +290,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // registrations:
-        const orderableKey = Symbol();
-        orderableSubscribers.set(orderableKey, orderable);
+        const draggableKey = Symbol();
+        draggableSubscribers.set(draggableKey, draggable);
+        draggableSubscribersCache.current = !Array.from(draggableSubscribers.values()).some((draggable) => !draggable); // if contains a/some `draggable={false}` => not draggable
         
-        orderableSubscribersCache.current = !Array.from(orderableSubscribers.values()).some((orderable) => !orderable); // if contains a/some `orderable={false}` => not orderable
+        const droppableKey = Symbol();
+        droppableSubscribers.set(droppableKey, droppable);
+        droppableSubscribersCache.current = !Array.from(droppableSubscribers.values()).some((droppable) => !droppable); // if contains a/some `droppable={false}` => not droppable
         
         if (onOrderStart)     onOrderStartSubscribers.add(onOrderStart);
         if (onOrderHandshake) onOrderHandshakeSubscribers.add(onOrderHandshake);
@@ -297,9 +305,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // unregistrations:
         return () => {
-            orderableSubscribers.delete(orderableKey);
+            draggableSubscribers.delete(draggableKey);
+            draggableSubscribersCache.current = !Array.from(draggableSubscribers.values()).some((draggable) => !draggable); // if contains a/some `draggable={false}` => not draggable
             
-            orderableSubscribersCache.current = !Array.from(orderableSubscribers.values()).some((orderable) => !orderable); // if contains a/some `orderable={false}` => not orderable
+            droppableSubscribers.delete(droppableKey);
+            droppableSubscribersCache.current = !Array.from(droppableSubscribers.values()).some((droppable) => !droppable); // if contains a/some `droppable={false}` => not droppable
             
             if (onOrderStart)     onOrderStartSubscribers.delete(onOrderStart);
             if (onOrderHandshake) onOrderHandshakeSubscribers.delete(onOrderHandshake);
@@ -324,7 +334,16 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, isDragging: boolean): Promise<boolean> => {
         // conditions:
         if (!parentOrderable)                   return false; // `<OrderableList orderable={false}>` => not orderable => prevents to be dropped
-        if (!orderableSubscribersCache.current) return false; // `orderable={false}` => not orderable => prevents to be dropped
+        if (!droppableSubscribersCache.current) {
+            if (
+                !isDragging /* === isDropping */                                            // if the dropping_side
+                &&                                                                          // AND
+                (('dragData' in event) && (event.dragData.get(dragNDropId) !== listIndex))  // not_dropped_by_itself
+            ) {
+                console.log(Date.now(), 'prevent from dropping', event);
+                return false; // `droppable={false}` => not droppable => prevents to be dropped
+            } // if
+        } // if
         if (!onOrderHandshakeSubscribers.size)  return true;  // if no `onOrderHandshake` defined, assumes as allowed
         
         
@@ -354,7 +373,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     const handlePointerStart       = useEvent(async (event: MouseEvent): Promise<boolean> => {
         // conditions:
         if (!parentOrderable)                   return false; // `<OrderableList orderable={false}>` => not orderable => prevents from dragging
-        if (!orderableSubscribersCache.current) return false; // `orderable={false}` => not orderable => prevents from dragging
+        if (!draggableSubscribersCache.current) return false; // `draggable={false}` => not draggable => prevents from dragging
         
         const listItemParentElm = listItemParentRef.current;
         if (!listItemParentElm) return false;

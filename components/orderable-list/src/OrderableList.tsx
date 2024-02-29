@@ -273,7 +273,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             : flattenChildren(children)
             .map<React.ReactNode>((listItem, childIndex) => {
                 // conditions:
-                if (!React.isValidElement<ListItemProps<HTMLElement>>(listItem)) return listItem; // not a <ListItem> => place it anyway
+                if (!React.isValidElement<Omit<ListItemProps<HTMLElement>, 'draggable'>>(listItem)) return listItem; // not a <ListItem> => place it anyway
                 
                 
                 

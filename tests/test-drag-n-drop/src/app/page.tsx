@@ -61,6 +61,11 @@ export default function Home() {
                 <OrderableListItem data={2} orderable={false}>unmoveable</OrderableListItem>
                 <OrderableListItem data={3}>333</OrderableListItem>
                 <OrderableListItem data={4}>444</OrderableListItem>
+                <OrderableListItem data={4} draggable={false}>not draggable</OrderableListItem>
+                <OrderableListItem data={4}>666</OrderableListItem>
+                <OrderableListItem data={4}>777</OrderableListItem>
+                <OrderableListItem data={4} droppable={false}>not droppable</OrderableListItem>
+                <OrderableListItem data={4}>990</OrderableListItem>
             </>} />
             
             <hr />
