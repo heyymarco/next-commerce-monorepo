@@ -1,6 +1,7 @@
 node_modules/
 
 components/*/dist/
+editor-components/*/dist/
 utilities/*/dist/
 capabilities/*/dist/
 websites/*/dist/

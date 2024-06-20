@@ -11,6 +11,7 @@
   "type": "module",
   "workspaces": [
     "components/*",
+    "editor-components/*",
     "utilities/*",
     "capabilities/*",
     "websites_/*",
