@@ -27,7 +27,7 @@ export interface TextEditorProps<out TElement extends Element = HTMLSpanElement,
 {
 }
 const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: TextEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
-    // rest props:
+    // props:
     const {
         // values:
         onChange,

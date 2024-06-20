@@ -40,7 +40,7 @@ export interface EditorProps<out TElement extends Element = HTMLSpanElement, in 
     onChangeAsText ?: EditorChangeEventHandler<TChangeEvent, string>
 }
 const Editor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: EditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
-    // rest props:
+    // props:
     const {
         // values:
         defaultValue,         // take  , to be normalized: null => empty string, TValue => toString
