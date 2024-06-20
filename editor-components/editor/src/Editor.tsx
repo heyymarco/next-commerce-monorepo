@@ -25,7 +25,7 @@ import {
 
 
 // react components:
-export interface EditorProps<out TElement extends Element = HTMLSpanElement, in TEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in out TValue extends unknown = string>
+export interface EditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in out TValue extends unknown = string>
     extends
         // bases:
         Omit<InputProps<TElement>,
@@ -36,10 +36,10 @@ export interface EditorProps<out TElement extends Element = HTMLSpanElement, in 
     // values:
     defaultValue   ?: TValue
     value          ?: TValue
-    onChange       ?: EditorChangeEventHandler<TEvent, TValue>
-    onChangeAsText ?: EditorChangeEventHandler<TEvent, string>
+    onChange       ?: EditorChangeEventHandler<TChangeEvent, TValue>
+    onChangeAsText ?: EditorChangeEventHandler<TChangeEvent, string>
 }
-const Editor = <TElement extends Element = HTMLSpanElement, TEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: EditorProps<TElement, TEvent, TValue>): JSX.Element|null => {
+const Editor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: EditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // rest props:
     const {
         // values:
@@ -57,7 +57,7 @@ const Editor = <TElement extends Element = HTMLSpanElement, TEvent extends React
     
     
     // handlers:
-    const handleValueChange = useEvent<React.EventHandler<TEvent & React.ChangeEvent<HTMLInputElement>>>((event) => {
+    const handleValueChange = useEvent<React.EventHandler<TChangeEvent & React.ChangeEvent<HTMLInputElement>>>((event) => {
         onChangeAsText?.(event.target.value, event);
     });
     
@@ -85,8 +85,8 @@ export {
 
 
 
-export interface EditorComponentProps<out TElement extends Element = HTMLSpanElement, in TEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in out TValue extends unknown = string>
+export interface EditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in out TValue extends unknown = string>
 {
     // components:
-    editorComponent ?: React.ReactElement<EditorProps<TElement, TEvent, TValue>>
+    editorComponent ?: React.ReactElement<EditorProps<TElement, TChangeEvent, TValue>>
 }
