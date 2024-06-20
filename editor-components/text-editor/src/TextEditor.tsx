@@ -10,7 +10,7 @@ import {
     useMergeEvents,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
-// internals:
+// heymarco components:
 import {
     // react components:
     type EditorProps,
