@@ -82,3 +82,11 @@ export {
     Editor,            // named export for readibility
     Editor as default, // default export to support React.lazy
 }
+
+
+
+export interface EditorComponentProps<TElement extends Element = HTMLSpanElement, TValue extends unknown = string, TEvent = React.ChangeEvent<HTMLInputElement>>
+{
+    // components:
+    editorComponent ?: React.ReactElement<EditorProps<TElement, TValue, TEvent>>
+}
