@@ -1,5 +1,4 @@
 {
-  "private": true,
   "name": "@heymarco/select-dropdown-editor",
   "version": "6.8.0",
   "description": "A selectable editor component.",
@@ -47,6 +46,7 @@
     "@cssfn/cssfn-react": "^3.2.0",
     "@heymarco/editor": "^6.8.0",
     "@heymarco/events": "^6.6.0",
+    "@heymarco/radio-decorator": "^6.7.0",
     "@reusable-ui/button": "^6.5.0",
     "@reusable-ui/button-icon": "^6.5.0",
     "@reusable-ui/core": "^6.11.0",

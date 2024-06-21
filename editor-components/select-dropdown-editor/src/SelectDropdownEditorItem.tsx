@@ -21,13 +21,13 @@ import {
     type ListItemComponentProps,
 }                           from '@reusable-ui/list'            // represents a series of content
 
-// internal components:
+// heymarco components:
 import {
     type RadioDecoratorProps,
     RadioDecorator,
     
     type RadioDecoratorComponentProps,
-}                           from '@/components/RadioDecorator'
+}                           from '@heymarco/radio-decorator'    // a decoration UI for the user to select single option
 
 
 
