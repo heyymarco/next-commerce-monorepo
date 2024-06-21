@@ -13,15 +13,9 @@ import {
 // reusable-ui components:
 import {
     // layout-components:
-    ListItemProps,
-    ListItem,
-    ListItemComponentProps,
-    
-    
-    
-    // menu-components:
-    DropdownListExpandedChangeEvent,
-}                           from '@reusable-ui/components'
+    type ListItemProps,
+    type ListItemComponentProps,
+}                           from '@reusable-ui/list'            // represents a series of content
 
 
 
@@ -35,8 +29,8 @@ export interface ListItemWithClickHandlerProps<TElement extends Element = HTMLEl
         Required<ListItemComponentProps<TElement>>
 {
 }
-const ListItemWithClickHandler = <TElement extends Element = HTMLElement, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<any> = DropdownListExpandedChangeEvent<any>>(props: ListItemWithClickHandlerProps<TElement>): JSX.Element|null => {
-    // rest props:
+const ListItemWithClickHandler = <TElement extends Element = HTMLElement>(props: ListItemWithClickHandlerProps<TElement>): JSX.Element|null => {
+    // props:
     const {
         // components:
         listItemComponent,
@@ -44,7 +38,7 @@ const ListItemWithClickHandler = <TElement extends Element = HTMLElement, TDropd
         
         
         // other props:
-        ...restListItemWithClickHandler
+        ...restListItemWithClickHandlerProps
     } = props;
     
     
@@ -68,7 +62,7 @@ const ListItemWithClickHandler = <TElement extends Element = HTMLElement, TDropd
         // props:
         {
             // other props:
-            ...restListItemWithClickHandler,
+            ...restListItemWithClickHandlerProps,
             
             
             
@@ -78,6 +72,6 @@ const ListItemWithClickHandler = <TElement extends Element = HTMLElement, TDropd
     );
 };
 export {
-    ListItemWithClickHandler,
-    ListItemWithClickHandler as default,
+    ListItemWithClickHandler,            // named export for readibility
+    ListItemWithClickHandler as default, // default export to support React.lazy
 }

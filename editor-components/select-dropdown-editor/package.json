@@ -1,4 +1,5 @@
 {
+  "private": true,
   "name": "@heymarco/select-dropdown-editor",
   "version": "6.8.0",
   "description": "A selectable editor component.",
@@ -42,9 +43,19 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
+    "@cssfn/core": "^3.2.0",
+    "@cssfn/cssfn-react": "^3.2.0",
     "@heymarco/editor": "^6.8.0",
     "@heymarco/events": "^6.6.0",
-    "@reusable-ui/core": "^6.11.0"
+    "@reusable-ui/button": "^6.5.0",
+    "@reusable-ui/button-icon": "^6.5.0",
+    "@reusable-ui/core": "^6.11.0",
+    "@reusable-ui/dropdown": "^6.6.2",
+    "@reusable-ui/dropdown-list": "^6.6.2",
+    "@reusable-ui/dropdown-list-button": "^6.6.2",
+    "@reusable-ui/editable-button": "^6.7.0",
+    "@reusable-ui/icon": "^6.5.0",
+    "@reusable-ui/list": "^6.5.3"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",

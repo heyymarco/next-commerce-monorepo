@@ -1,7 +1,7 @@
 // cssfn:
 import {
     // cssfn css specific types:
-    CssKnownProps,
+    type CssKnownProps,
     
     
     

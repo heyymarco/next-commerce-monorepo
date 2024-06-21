@@ -4,6 +4,11 @@ import {
     default as React,
 }                           from 'react'
 
+// styles:
+import {
+    useSelectDropdownEditorItemStyleSheet,
+}                           from './styles/loader.js'
+
 // reusable-ui components:
 import {
     // layout-components:
@@ -11,23 +16,18 @@ import {
     
     useListState,
     
-    ListItemProps,
+    type ListItemProps,
     ListItem,
-    ListItemComponentProps,
+    type ListItemComponentProps,
 }                           from '@reusable-ui/list'            // represents a series of content
 
 // internal components:
 import {
-    RadioDecoratorProps,
+    type RadioDecoratorProps,
     RadioDecorator,
     
-    RadioDecoratorComponentProps,
+    type RadioDecoratorComponentProps,
 }                           from '@/components/RadioDecorator'
-
-// styles:
-import {
-    useSelectDropdownEditorItemStyleSheet,
-}                           from './styles/loader'
 
 
 
@@ -36,7 +36,7 @@ export interface SelectDropdownEditorItemProps<TElement extends Element = HTMLEl
     extends
         // bases:
         ListItemProps<TElement>,
-        ListItemComponentProps<Element>,
+        ListItemComponentProps<TElement>,
         
         // components:
         RadioDecoratorComponentProps
@@ -59,8 +59,8 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
         
         
         // components:
-        listItemComponent       = (<ListItem />       as React.ReactComponentElement<any, ListItemProps<Element>>),
-        radioDecoratorComponent = (<RadioDecorator /> as React.ReactComponentElement<any, RadioDecoratorProps<Element>>),
+        listItemComponent       = (<ListItem />       as React.ReactElement<ListItemProps<TElement>>),
+        radioDecoratorComponent = (<RadioDecorator /> as React.ReactElement<RadioDecoratorProps<Element>>),
         
         
         
@@ -70,7 +70,7 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
         
         
         // other props:
-        ...restSelectDropdownEditorItem
+        ...restSelectDropdownEditorItemProps
     } = props;
     
     
@@ -84,17 +84,17 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
     // default props:
     const {
         // classes:
-        mainClass                           = (
+        mainClass = (
             actionCtrl
-            ? `${styleSheet.main} ${actionStyleSheet.main}`
-            : styleSheet.main
-        ),                                                 // defaults to internal styleSheet
+            ? `${styleSheet.main} ${actionStyleSheet.main}` // defaults to internal styleSheet
+            : styleSheet.main                               // defaults to internal styleSheet
+        ),
         
         
         
         // other props:
         ...restListItemProps
-    } = restSelectDropdownEditorItem;
+    } = restSelectDropdownEditorItemProps;
     
     const {
         // classes:
@@ -109,11 +109,12 @@ const SelectDropdownEditorItem = <TElement extends Element = HTMLElement>(props:
     
     
     // jsx:
-    return React.cloneElement<ListItemProps<Element>>(listItemComponent,
+    return React.cloneElement<ListItemProps<TElement>>(listItemComponent,
         // props:
         {
             // other props:
             ...restListItemProps,
+            ...listItemComponent.props, // overwrites restListItemProps (if any conflics)
             
             
             

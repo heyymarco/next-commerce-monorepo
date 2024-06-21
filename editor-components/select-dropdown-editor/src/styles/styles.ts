@@ -19,7 +19,7 @@ import {
 // reusable-ui core:
 import {
     // a capability of UI to rotate its layout:
-    OrientationableOptions,
+    type OrientationableOptions,
     
     
     
@@ -41,7 +41,7 @@ import {
     // configs:
     selectDropdownEditors,
     cssSelectDropdownEditorConfig,
-}                           from './config'
+}                           from './config.js'
 
 
 

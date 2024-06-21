@@ -20,7 +20,7 @@ import {
     
     
     // a capability of UI to rotate its layout:
-    OrientationName,
+    type OrientationName,
     useOrientationableWithDirection,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
@@ -34,31 +34,31 @@ import {
 }                           from '@reusable-ui/button'                  // a button component for initiating an action
 import {
     // simple-components:
-    type ButtonIconProps,
-    ButtonIcon,
-}                           from '@reusable-ui/button-icon'             // a button component with a nice icon
-import {
-    // simple-components:
     type EditableButtonProps,
     EditableButton,
     
     type EditableButtonComponentProps,
 }                           from '@reusable-ui/editable-button'         // a button with validation indicator
 import {
+    // simple-components:
+    type ButtonIconProps,
+    ButtonIcon,
+}                           from '@reusable-ui/button-icon'             // a button component with a nice icon
+import {
     // layout-components:
-    ListItemProps,
-    ListItemComponentProps,
+    type ListItemProps,
+    type ListItemComponentProps,
 }                           from '@reusable-ui/list'                    // represents a series of content
-import type {
-    DropdownProps,
+import {
+    type DropdownProps,
 }                           from '@reusable-ui/dropdown'                // overlays contextual element such as lists, menus, and more
-import type {
-    DropdownListProps,
+import {
+    type DropdownListProps,
 }                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
 import {
     // menu-components:
-    DropdownListExpandedChangeEvent,
-    DropdownListButtonProps,
+    type DropdownListExpandedChangeEvent,
+    type DropdownListButtonProps,
     DropdownListButton,
     
     
@@ -67,12 +67,7 @@ import {
     defaultOrientationableWithDirectionOptions,
 }                           from '@reusable-ui/dropdown-list-button'    // a button component with a dropdown list UI
 
-// internal components:
-import {
-    SelectDropdownEditorItem,
-}                           from './SelectDropdownEditorItem'
-
-// heymarco:
+// heymarco core:
 import {
     // types:
     type ValueChangeEventHandler,
@@ -89,15 +84,22 @@ import {
     type EditorProps,
 }                           from '@heymarco/editor'
 
+// internal components:
+import {
+    // react components:
+    SelectDropdownEditorItem,
+}                           from './SelectDropdownEditorItem.js'
+
 // internals:
 import {
+    // react components:
     ListItemWithClickHandler,
-}                           from './ListItemWithClickHandler'
+}                           from './ListItemWithClickHandler.js'
 import {
     // states:
-    SelectValidatorProps,
+    type SelectValidatorProps,
     useSelectValidator,
-}                           from './states/SelectValidator'
+}                           from './states/SelectValidator.js'
 
 
 
@@ -236,7 +238,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLSpanElement, TChang
     
     
     // states:
-    const selectValidator  = useSelectValidator<TValue>({
+    const selectValidator  = useSelectValidator<TChangeEvent, TValue>({
         // values:
         valueOptions,
         excludedValueOptions,
@@ -473,7 +475,6 @@ const SelectDropdownEditor = <TElement extends Element = HTMLSpanElement, TChang
             
             // variants:
             floatingPlacement={floatingPlacement}
-            
             
             
             

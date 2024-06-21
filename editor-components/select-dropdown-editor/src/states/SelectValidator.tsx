@@ -1,10 +1,5 @@
 // react:
 import {
-    // react:
-    default as React,
-    
-    
-    
     // hooks:
     useRef,
     useEffect,
@@ -21,28 +16,29 @@ import {
     // react helper hooks:
     useTriggerRender,
     useEvent,
-    EventHandler,
+    type EventHandler,
     useMountedFlag,
     
     
     
     // a validation management system:
-    Result as ValResult,
+    type Result as ValResult,
     
     
     
     // a possibility of UI having an invalid state:
-    ValidityChangeEvent,
+    type ValidityChangeEvent,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco components:
 import {
     type EditorChangeEventHandler
-}                           from '@/components/editors/Editor'
+}                           from '@heymarco/editor'
 
 // internals:
 import {
     type ValueOptions,
-}                           from '../types'
+}                           from '../types.js'
 
 
 
@@ -51,7 +47,7 @@ import {
 // states:
 
 //#region SelectValidator
-export const isSelectionValid = <TValue extends unknown>(props: SelectValidatorProps<TValue>, finalValueOptions: TValue[]|undefined, value: TValue): ValResult => {
+export const isSelectionValid = <TValue extends unknown = string>(props: SelectValidatorProps<TValue>, finalValueOptions: TValue[]|undefined, value: TValue): ValResult => {
     // props:
     const {
         // values:
@@ -67,13 +63,13 @@ export const isSelectionValid = <TValue extends unknown>(props: SelectValidatorP
     
     
     // conditions:
-    if (!finalValueOptions) return null; // no finalValueOptions => cannot perform check => *uncheck*
-    
     if ((value === undefined) || (value === null) || (value === '')) { // blank value
         return !required; // blank value & required => *invalid*
     } // if
     
     if (freeTextInput) return true; // *valid* for any value
+    
+    if (!finalValueOptions) return null; // no finalValueOptions => cannot perform check => *uncheck*
     
     
     
@@ -91,7 +87,7 @@ export const isSelectionValid = <TValue extends unknown>(props: SelectValidatorP
     return true; // *valid*
 };
 
-export interface SelectValidatorProps<TValue> {
+export interface SelectValidatorProps<TValue extends unknown = string> {
     // values:
     valueOptions             : ValueOptions<TValue> // required! because it's a <SELECT> component
     excludedValueOptions    ?: ValueOptions<TValue>
@@ -103,12 +99,12 @@ export interface SelectValidatorProps<TValue> {
     freeTextInput           ?: boolean
     equalityValueComparison ?: (a: TValue, b: TValue) => boolean
 }
-export interface SelectValidatorApi<TValue extends unknown> {
+export interface SelectValidatorApi<in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string> {
     handleValidation : EventHandler<ValidityChangeEvent>
-    handleInit       : EditorChangeEventHandler<TValue>
-    handleChange     : EditorChangeEventHandler<TValue>
+    handleInit       : EventHandler<TValue>
+    handleChange     : EditorChangeEventHandler<TChangeEvent, TValue>
 }
-export const useSelectValidator = <TValue extends unknown>(props: SelectValidatorProps<TValue>): SelectValidatorApi<TValue> => {
+export const useSelectValidator = <TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string>(props: SelectValidatorProps<TValue>): SelectValidatorApi<TChangeEvent, TValue> => {
     // props:
     const {
         // values:
@@ -170,7 +166,7 @@ export const useSelectValidator = <TValue extends unknown>(props: SelectValidato
     
     const validate = (value: TValue): void => {
         // remember the validation result:
-        const newIsValid = isSelectionValid(props, finalValueOptions, value);
+        const newIsValid = isSelectionValid<TValue>(props, finalValueOptions, value);
         if (isValid.current !== newIsValid) {
             isValid.current = newIsValid;
             
@@ -202,7 +198,7 @@ export const useSelectValidator = <TValue extends unknown>(props: SelectValidato
         event.isValid = isValid.current;
     });
     
-    const handleInitOrChange = useEvent<EditorChangeEventHandler<TValue>>((value) => {
+    const handleInitOrChange = useEvent<EventHandler<TValue>>((value) => {
         validate(value);
     });
     
