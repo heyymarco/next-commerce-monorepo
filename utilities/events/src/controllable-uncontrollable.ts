@@ -80,7 +80,7 @@ export const useControllableAndUncontrollable = <TValue extends unknown, TChange
         // actions:
         scheduleTriggerEvent(() => {
             // fire `on(Controllable|Uncontrollable)ValueChange` react event:
-            handleValueChange(newValue, options?.event);
+            handleValueChange(newValue, options?.event /* an optional event object passed from the options */);
         }, options);
     });
     

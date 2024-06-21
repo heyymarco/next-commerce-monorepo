@@ -77,7 +77,7 @@ export const useUncontrollable = <TValue extends unknown, TChangeEvent extends u
         // actions:
         scheduleTriggerEvent(() => {
             // fire `onUncontrollableValueChange` react event:
-            handleValueChange(newValue, options?.event);
+            handleValueChange(newValue, options?.event /* an optional event object passed from the options */);
         }, options);
     });
     

@@ -18,7 +18,7 @@ export interface TriggerValueChangeEventOptions<out TChangeEvent extends unknown
         // bases:
         ScheduleTriggerEventOptions
 {
-    event ?: TChangeEvent
+    event ?: TChangeEvent // an optional event object
 }
 export type TriggerValueChangeCallback<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, options?: TriggerValueChangeEventOptions<TChangeEvent>) => void
-export type ValueChangeEventHandler<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, event: TChangeEvent|undefined) => void
+export type ValueChangeEventHandler<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, event: TChangeEvent|undefined /* an optional event object passed from the options */) => void

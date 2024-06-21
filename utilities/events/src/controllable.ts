@@ -42,13 +42,13 @@ export const useControllable = <TValue extends unknown, TChangeEvent extends unk
     
     
     // handlers:
-    const handleValueChange    = onControllableValueChange;
+    const handleValueChange               = onControllableValueChange;
     
     
     
     // stable callbacks:
-    const scheduleTriggerEvent = useScheduleTriggerEvent();
-    const triggerValueChange   = useEvent<TriggerValueChangeCallback<TValue, TChangeEvent>>((newValue, options) => {
+    const scheduleTriggerEvent            = useScheduleTriggerEvent();
+    const triggerValueChange              = useEvent<TriggerValueChangeCallback<TValue, TChangeEvent>>((newValue, options) => {
         // conditions:
         if (!handleValueChange) return; // no callback handler => nothing to trigger
         
@@ -57,7 +57,7 @@ export const useControllable = <TValue extends unknown, TChangeEvent extends unk
         // actions:
         scheduleTriggerEvent(() => {
             // fire `onControllableValueChange` react event:
-            handleValueChange(newValue, options?.event);
+            handleValueChange(newValue, options?.event /* an optional event object passed from the options */);
         }, options);
     });
     
