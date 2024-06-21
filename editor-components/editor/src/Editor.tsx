@@ -25,7 +25,7 @@ import {
 
 
 // react components:
-export interface EditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in out TValue extends unknown = string>
+export interface EditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
     extends
         // bases:
         Omit<InputProps<TElement>,
@@ -85,7 +85,7 @@ export {
 
 
 
-export interface EditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in out TValue extends unknown = string>
+export interface EditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
 {
     // components:
     editorComponent ?: React.ReactElement<EditorProps<TElement, TChangeEvent, TValue>>
