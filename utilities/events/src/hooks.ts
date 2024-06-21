@@ -3,6 +3,7 @@ import {
     // react helper hooks:
     useMountedFlag,
 }                           from '@reusable-ui/hooks'           // react helper hooks
+
 // internals:
 import {
     type ScheduleTriggerEventFunction,
@@ -19,6 +20,7 @@ export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
     return (scheduledTriggerEventCallback, options) => {
         // conditions:
         if (!scheduledTriggerEventCallback) return; // no event_delegator_callback => nothing to trigger
+        if (!isMounted.current) return; // the component was unloaded before the scheduler is called => do nothing
         
         
         
