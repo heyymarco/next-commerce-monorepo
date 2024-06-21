@@ -3,22 +3,13 @@ import {
     // react helper hooks:
     useMountedFlag,
 }                           from '@reusable-ui/hooks'           // react helper hooks
+// internals:
+import {
+    type ScheduleTriggerEventFunction,
+}                           from './types.js'
 
 
 
-// types:
-export type TriggerAt =
-    |'immediately'
-    |'microtask'
-    |'macrotask'
-export interface ScheduleTriggerEventOptions {
-    triggerAt ?: TriggerAt
-}
-
-
-
-export type ScheduledTriggerEventCallback = () => void
-export type ScheduleTriggerEventFunction  = (scheduledTriggerEventCallback: ScheduledTriggerEventCallback|null|undefined, options?: ScheduleTriggerEventOptions) => void
 export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
     // states:
     const isMounted = useMountedFlag();
@@ -33,7 +24,7 @@ export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
         
         // options:
         const {
-            triggerAt = 'macrotask',
+            triggerAt = 'immediately',
         } = options ?? {};
         
         

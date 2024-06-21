@@ -6,28 +6,27 @@ import {
 
 // internals:
 import {
-    // types:
-    ScheduleTriggerEventOptions,
-    
-    
-    
+    type TriggerValueChangeCallback,
+    type ValueChangeEventHandler,
+}                           from './types.js'
+import {
     // hooks:
     useScheduleTriggerEvent,
 }                           from './hooks.js'
 
 
 
-export interface ControllableProps<TValue extends unknown> {
+export interface ControllableProps<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
     // values:
     value              : TValue
-    onValueChange      : ((newValue: TValue) => void)|undefined
+    onValueChange      : ValueChangeEventHandler<TValue, TChangeEvent>|undefined
 }
-export interface ControllableApi<TValue extends unknown> {
+export interface ControllableApi<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
     // values:
     value              : TValue
-    triggerValueChange : (newValue: TValue, options?: ScheduleTriggerEventOptions) => void
+    triggerValueChange : TriggerValueChangeCallback<TValue, TChangeEvent>
 }
-export const useControllable = <TValue extends unknown>(props: ControllableProps<TValue>): ControllableApi<TValue> => {
+export const useControllable = <TValue extends unknown, TChangeEvent extends unknown = unknown>(props: ControllableProps<TValue, TChangeEvent>): ControllableApi<TValue, TChangeEvent> => {
     // props:
     const {
         // values:
@@ -49,7 +48,7 @@ export const useControllable = <TValue extends unknown>(props: ControllableProps
     
     // stable callbacks:
     const scheduleTriggerEvent = useScheduleTriggerEvent();
-    const triggerValueChange   = useEvent((newValue: TValue, options?: ScheduleTriggerEventOptions): void => {
+    const triggerValueChange   = useEvent<TriggerValueChangeCallback<TValue, TChangeEvent>>((newValue, options) => {
         // conditions:
         if (!handleValueChange) return; // no callback handler => nothing to trigger
         
@@ -58,7 +57,7 @@ export const useControllable = <TValue extends unknown>(props: ControllableProps
         // actions:
         scheduleTriggerEvent(() => {
             // fire `onControllableValueChange` react event:
-            handleValueChange(newValue);
+            handleValueChange(newValue, options?.event);
         }, options);
     });
     

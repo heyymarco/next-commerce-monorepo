@@ -13,29 +13,28 @@ import {
 
 // internals:
 import {
-    // types:
-    ScheduleTriggerEventOptions,
-    
-    
-    
+    type TriggerValueChangeCallback,
+    type ValueChangeEventHandler,
+}                           from './types.js'
+import {
     // hooks:
     useScheduleTriggerEvent,
 }                           from './hooks.js'
 
 
 
-export interface ControllableAndUncontrollableProps<TValue extends unknown> {
+export interface ControllableAndUncontrollableProps<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
     // values:
     defaultValue       : TValue
     value              : TValue|undefined
-    onValueChange      : ((newValue: TValue) => void)|undefined
+    onValueChange      : ValueChangeEventHandler<TValue, TChangeEvent>|undefined
 }
-export interface ControllableAndUncontrollableApi<TValue extends unknown> {
+export interface ControllableAndUncontrollableApi<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
     // values:
     value              : TValue
-    triggerValueChange : (newValue: TValue, options?: ScheduleTriggerEventOptions) => void
+    triggerValueChange : TriggerValueChangeCallback<TValue, TChangeEvent>
 }
-export const useControllableAndUncontrollable = <TValue extends unknown>(props: ControllableAndUncontrollableProps<TValue>): ControllableAndUncontrollableApi<TValue> => {
+export const useControllableAndUncontrollable = <TValue extends unknown, TChangeEvent extends unknown = unknown>(props: ControllableAndUncontrollableProps<TValue, TChangeEvent>): ControllableAndUncontrollableApi<TValue, TChangeEvent> => {
     // props:
     const {
         // values:
@@ -54,7 +53,7 @@ export const useControllableAndUncontrollable = <TValue extends unknown>(props: 
     
     
     // handlers:
-    const handleUncontrollableValueChange = useEvent((newValue: TValue): void => {
+    const handleUncontrollableValueChange = useEvent<ValueChangeEventHandler<TValue, TChangeEvent>>((newValue) => {
         // update value if uncontrollable:
         if (!isControllableValue) setUncontrollableValue(newValue);
     });
@@ -72,7 +71,7 @@ export const useControllableAndUncontrollable = <TValue extends unknown>(props: 
     
     // stable callbacks:
     const scheduleTriggerEvent            = useScheduleTriggerEvent();
-    const triggerValueChange              = useEvent((newValue: TValue, options?: ScheduleTriggerEventOptions): void => {
+    const triggerValueChange              = useEvent<TriggerValueChangeCallback<TValue, TChangeEvent>>((newValue, options) => {
         // conditions:
         if (!handleValueChange) return; // no callback handler => nothing to trigger
         
@@ -81,7 +80,7 @@ export const useControllableAndUncontrollable = <TValue extends unknown>(props: 
         // actions:
         scheduleTriggerEvent(() => {
             // fire `on(Controllable|Uncontrollable)ValueChange` react event:
-            handleValueChange(newValue);
+            handleValueChange(newValue, options?.event);
         }, options);
     });
     
