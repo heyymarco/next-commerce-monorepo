@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/name-editor",
-  "version": "6.8.0",
+  "version": "6.9.0",
   "description": "A name editor component.",
   "keywords": [
     "name",
@@ -40,7 +40,7 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/text-editor": "^6.8.0"
+    "@heymarco/text-editor": "^6.9.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
