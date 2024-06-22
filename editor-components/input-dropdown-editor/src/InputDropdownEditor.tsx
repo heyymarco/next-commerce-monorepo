@@ -37,6 +37,7 @@ import {
 }                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
 import {
     // react components:
+    type GroupProps,
     Group,
 }                           from '@reusable-ui/group'                   // groups a list of components as a single component
 
@@ -81,7 +82,54 @@ import {
 export interface InputDropdownEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        InputEditorProps<TElement, TChangeEvent, TValue>,
+        Pick<GroupProps<TElement>,
+            // refs:
+            |'outerRef'       // moved to <Group>
+            
+            // identifiers:
+            |'id'             // moved to <Group>
+            
+            // variants:
+            |'size'           // moved to <Group>
+            |'theme'          // moved to <Group>
+            |'gradient'       // moved to <Group>
+            |'outlined'       // moved to <Group>
+            |'mild'           // moved to <Group>
+            
+            // classes:
+            |'mainClass'      // moved to <Group>
+            |'classes'        // moved to <Group>
+            |'variantClasses' // moved to <Group>
+            |'stateClasses'   // moved to <Group>
+            |'className'      // moved to <Group>
+            
+            // styles:
+            |'style'          // moved to <Group>
+        >,
+        Omit<InputEditorProps<Element, TChangeEvent, TValue>,
+            // refs:
+            |'outerRef'       // moved to <Group>
+            
+            // identifiers:
+            |'id'             // moved to <Group>
+            
+            // variants:
+            |'size'           // moved to <Group>
+            |'theme'          // moved to <Group>
+            |'gradient'       // moved to <Group>
+            |'outlined'       // moved to <Group>
+            |'mild'           // moved to <Group>
+            
+            // classes:
+            |'mainClass'      // moved to <Group>
+            |'classes'        // moved to <Group>
+            |'variantClasses' // moved to <Group>
+            |'stateClasses'   // moved to <Group>
+            |'className'      // moved to <Group>
+            
+            // styles:
+            |'style'          // moved to <Group>
+        >,
         Pick<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
             // // // ONLY NECESSARY props:
             // // // variants:
@@ -153,7 +201,7 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
         >,
         
         // components:
-        InputEditorComponentProps<TElement, TChangeEvent, TValue>,
+        InputEditorComponentProps<Element, TChangeEvent, TValue>,
         SelectDropdownEditorComponentProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
 {
     // behaviors:
@@ -237,7 +285,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         listComponent,                                     // take, moved to <SelectDropdownEditor>
         listItemComponent,                                 // take, moved to <SelectDropdownEditor>
         editableButtonComponent,                           // take, moved to <SelectDropdownEditor>
-        inputEditorComponent          = (<InputEditor<TElement, TChangeEvent, TValue> />                                                                                as React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>),
+        inputEditorComponent          = (<InputEditor<Element, TChangeEvent, TValue> />                                                                        as React.ReactElement<InputEditorProps<Element, TChangeEvent, TValue>>),
         selectDropdownEditorComponent = (<SelectDropdownEditor<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent> valueOptions={valueOptions} /> as React.ReactElement<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>),
         
         
@@ -446,7 +494,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         handleValidationInternal,
     );
     
-    const handleInputFocusInternal     = useEvent<React.FocusEventHandler<TElement>>(() => {
+    const handleInputFocusInternal     = useEvent<React.FocusEventHandler<Element>>(() => {
         // conditions:
         if (!autoShowDropdownOnFocus) return; // the autoDropdown is not active => ignore
         if (noAutoShowDropdown.current) {
@@ -474,7 +522,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         handleInputFocusInternal,
     );
     
-    const handleInputClickInternal     = useEvent<React.MouseEventHandler<TElement>>(() => {
+    const handleInputClickInternal     = useEvent<React.MouseEventHandler<Element>>(() => {
         // conditions:
         if (preferFocusOnInputEditor) return; // prefer focus on inputEditor => no need to autoDropdown => ignore
         
@@ -714,7 +762,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             style={style}
         >
             {/* <InputEditor> */}
-            {React.cloneElement<InputEditorProps<TElement, TChangeEvent, TValue>>(inputEditorComponent,
+            {React.cloneElement<InputEditorProps<Element, TChangeEvent, TValue>>(inputEditorComponent,
                 // props:
                 {
                     // other props:
