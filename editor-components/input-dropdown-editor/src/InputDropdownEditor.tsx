@@ -256,7 +256,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // states:
     const handleControllableValueChangeInternal = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
         // normalize: null => empty string, any TValue => toString:
-        onControllableTextChange?.((newValue !== null) ? `${newValue}` : '' /* null => empty string */, event);
+        const newValueStr = (newValue !== null) ? `${newValue}` : '' /* null => empty string */;
+        onControllableTextChange?.(newValueStr, event);
     });
     const handleControllableValueChange         = useMergeEvents(
         // preserves the original `onChange` from `textEditorComponent`:
@@ -389,6 +390,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         if (inputElm) {
             // react *hack*: trigger `onChange` event:
             const oldValue = inputElm.value;                     // react *hack* get_prev_value *before* modifying
+            // normalize: null => empty string, any TValue => toString:
             const newValueStr = (newValue !== null) ? `${newValue}` : '' /* null => empty string */;
             inputElm.value = newValueStr;                        // react *hack* set_value *before* firing `input` event
             (inputElm as any)._valueTracker?.setValue(oldValue); // react *hack* in order to React *see* the changes when `input` event fired
