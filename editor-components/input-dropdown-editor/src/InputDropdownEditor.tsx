@@ -53,13 +53,13 @@ import {
 }                           from '@heymarco/editor'
 import {
     // react components:
-    type TextEditorProps,
-    TextEditor,
+    type InputEditorProps,
+    InputEditor,
     
     
     
-    type TextEditorComponentProps,
-}                           from '@heymarco/text-editor'
+    type InputEditorComponentProps,
+}                           from '@heymarco/input-editor'
 import {
     // validations:
     isSelectionValid,
@@ -81,7 +81,7 @@ import {
 export interface InputDropdownEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        TextEditorProps<TElement, TChangeEvent>,
+        InputEditorProps<TElement, TChangeEvent, TValue>,
         Pick<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
             // // // ONLY NECESSARY props:
             // // // variants:
@@ -153,18 +153,18 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
         >,
         
         // components:
-        TextEditorComponentProps<TElement, TChangeEvent>,
+        InputEditorComponentProps<TElement, TChangeEvent, TValue>,
         SelectDropdownEditorComponentProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
 {
     // behaviors:
-    autoShowDropdownOnFocus ?: boolean
-    preferFocusOnTextEditor ?: boolean
+    autoShowDropdownOnFocus  ?: boolean
+    preferFocusOnInputEditor ?: boolean
 }
 const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: InputDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // refs:
-        elmRef,                              // take, moved to <TextEditor>
+        elmRef,                              // take, moved to <InputEditor>
         outerRef,                            // take, moved to <Group>
         
         
@@ -202,7 +202,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         excludedValueOptions,                // take, moved to <SelectDropdownEditor>
         valueToUi,                           // take, moved to <SelectDropdownEditor>
         
-        defaultValue   : defaultUncontrollableValue = '',
+        defaultValue   : defaultUncontrollableValue = ('' as TValue),
         value          : controllableValue,
         onChange       : onControllableValueChange,
         onChangeAsText : onControllableTextChange,
@@ -210,15 +210,15 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // validations:
-        onValidation,                        // take, moved to <TextEditor>
-        freeTextInput           = true,      // take, to be handled by internal controllableValidator
-        equalityValueComparison = Object.is, // take, to be handled by internal controllableValidator
+        onValidation,                        // take, moved to <InputEditor>
+        freeTextInput            = true,      // take, to be handled by internal controllableValidator
+        equalityValueComparison  = Object.is, // take, to be handled by internal controllableValidator
         
         
         
         // behaviors:
-        autoShowDropdownOnFocus = true,
-        preferFocusOnTextEditor = true,
+        autoShowDropdownOnFocus  = true,
+        preferFocusOnInputEditor = true,
         
         
         
@@ -237,7 +237,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         listComponent,                                     // take, moved to <SelectDropdownEditor>
         listItemComponent,                                 // take, moved to <SelectDropdownEditor>
         editableButtonComponent,                           // take, moved to <SelectDropdownEditor>
-        textEditorComponent           = (<TextEditor<TElement, TChangeEvent> />                                                                                as React.ReactElement<TextEditorProps<TElement, TChangeEvent>>),
+        inputEditorComponent          = (<InputEditor<TElement, TChangeEvent, TValue> />                                                                                as React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>),
         selectDropdownEditorComponent = (<SelectDropdownEditor<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent> valueOptions={valueOptions} /> as React.ReactElement<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>),
         
         
@@ -260,8 +260,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         onControllableTextChange?.(newValueStr, event);
     });
     const handleControllableValueChange         = useMergeEvents(
-        // preserves the original `onChange` from `textEditorComponent`:
-        textEditorComponent.props.onChange,
+        // preserves the original `onChange` from `inputEditorComponent`:
+        inputEditorComponent.props.onChange,
         
         
         
@@ -288,13 +288,13 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     const [isDropdownValid  , setIsDropdownValid  ] = useState<boolean|null>(null);
     
     const enum ShowDropdown {
-        SHOW_BY_TOGGLE     = 2,  // absolute set
-        SHOW_BY_TEXT_FOCUS = 1,  // condition:      if     HIDE_BY_BLUR|HIDE_BY_SELECT
+        SHOW_BY_TOGGLE      = 2,  // absolute set
+        SHOW_BY_INPUT_FOCUS = 1,  // condition:      if     HIDE_BY_BLUR|HIDE_BY_SELECT
         
-        HIDE_BY_TYPING     = -1, // condition:      if NOT HIDE_BY_BLUR
-        HIDE_BY_SELECT     = -2, // condition:      if NOT HIDE_BY_BLUR
-        HIDE_BY_TOGGLE     = -3, // condition:      if NOT HIDE_BY_BLUR
-        HIDE_BY_BLUR       = -4, // absolute reset
+        HIDE_BY_TYPING      = -1, // condition:      if NOT HIDE_BY_BLUR
+        HIDE_BY_SELECT      = -2, // condition:      if NOT HIDE_BY_BLUR
+        HIDE_BY_TOGGLE      = -3, // condition:      if NOT HIDE_BY_BLUR
+        HIDE_BY_BLUR        = -4, // absolute reset
     }
     const [showDropdown     , setShowDropdown     ] = useState<ShowDropdown>(ShowDropdown.HIDE_BY_BLUR);
     
@@ -344,8 +344,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // refs:
     const inputRefInternal      = useRef<HTMLInputElement|null>(null);
     const mergedInputRef        = useMergeRefs(
-        // preserves the original `elmRef` from `textEditorComponent`:
-        textEditorComponent.props.elmRef,
+        // preserves the original `elmRef` from `inputEditorComponent`:
+        inputEditorComponent.props.elmRef,
         
         
         
@@ -380,7 +380,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     
     // handlers:
-    const handleTextChange             = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
+    const handleInputChange            = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
         triggerValueChange(newValue, { triggerAt: 'immediately', event: event });
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
@@ -412,7 +412,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     );
     
     const handleValidationInternal     = useEvent<EventHandler<ValidityChangeEvent>>((event) => {
-        const textIsValid = (() => {
+        const inputIsValid = (() => {
             // conditions:
             if (event.isValid !== true) return event.isValid; // ignore if was *invalid*|*uncheck* (only perform a further_validation if was *valid*)
             if (freeTextInput)          return event.isValid; // if freeTextInput => no further validations needed
@@ -428,12 +428,12 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // updates:
-        if (isDropdownValid === textIsValid) return; // already in sync => ignore
-        setIsDropdownValid(textIsValid); // sync
+        if (isDropdownValid === inputIsValid) return; // already in sync => ignore
+        setIsDropdownValid(inputIsValid); // sync
     });
     const handleValidation             = useMergeEvents(
-        // preserves the original `onValidation` from `textEditorComponent`:
-        textEditorComponent.props.onValidation,
+        // preserves the original `onValidation` from `inputEditorComponent`:
+        inputEditorComponent.props.onValidation,
         
         
         
@@ -446,7 +446,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         handleValidationInternal,
     );
     
-    const handleTextFocusInternal      = useEvent<React.FocusEventHandler<TElement>>(() => {
+    const handleInputFocusInternal     = useEvent<React.FocusEventHandler<TElement>>(() => {
         // conditions:
         if (!autoShowDropdownOnFocus) return; // the autoDropdown is not active => ignore
         if (noAutoShowDropdown.current) {
@@ -457,11 +457,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // actions:
-        if ((showDropdown === ShowDropdown.HIDE_BY_BLUR) || (showDropdown === ShowDropdown.HIDE_BY_SELECT)) setShowDropdown(ShowDropdown.SHOW_BY_TEXT_FOCUS);
+        if ((showDropdown === ShowDropdown.HIDE_BY_BLUR) || (showDropdown === ShowDropdown.HIDE_BY_SELECT)) setShowDropdown(ShowDropdown.SHOW_BY_INPUT_FOCUS);
     });
-    const handleTextFocus              = useMergeEvents(
-        // preserves the original `onFocus` from `textEditorComponent`:
-        textEditorComponent.props.onFocus,
+    const handleInputFocus             = useMergeEvents(
+        // preserves the original `onFocus` from `inputEditorComponent`:
+        inputEditorComponent.props.onFocus,
         
         
         
@@ -471,21 +471,21 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // actions:
-        handleTextFocusInternal,
+        handleInputFocusInternal,
     );
     
-    const handleTextClickInternal      = useEvent<React.MouseEventHandler<TElement>>(() => {
+    const handleInputClickInternal     = useEvent<React.MouseEventHandler<TElement>>(() => {
         // conditions:
-        if (preferFocusOnTextEditor) return; // prefer focus on textEditor => no need to autoDropdown => ignore
+        if (preferFocusOnInputEditor) return; // prefer focus on inputEditor => no need to autoDropdown => ignore
         
         
         
         // actions:
         if ((showDropdown === ShowDropdown.HIDE_BY_BLUR) || (showDropdown === ShowDropdown.HIDE_BY_SELECT) || (showDropdown === ShowDropdown.HIDE_BY_TOGGLE)) setShowDropdown(ShowDropdown.SHOW_BY_TOGGLE);;
     });
-    const handleTextClick              = useMergeEvents(
-        // preserves the original `onClick` from `textEditorComponent`:
-        textEditorComponent.props.onClick,
+    const handleInputClick             = useMergeEvents(
+        // preserves the original `onClick` from `inputEditorComponent`:
+        inputEditorComponent.props.onClick,
         
         
         
@@ -495,7 +495,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // actions:
-        handleTextClickInternal,
+        handleInputClickInternal,
     );
     
     const handleExpandedChangeInternal = useEvent<EventHandler<TDropdownListExpandedChangeEvent>>(({expanded, actionType}) => {
@@ -513,7 +513,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             
             // restore focus to <Input>:
-            if (preferFocusOnTextEditor) {
+            if (preferFocusOnInputEditor) {
                 const performRestoreFocus = () => {
                     const inputElm = inputRefInternal.current;
                     if (inputElm) {
@@ -595,28 +595,28 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // default props:
     const {
         // other props:
-        ...restTextEditorProps
+        ...restInputEditorProps
     } = restSelectDropdownEditorProps;
     
     const {
         // classes:
-        className          : textEditorClassName          = 'fluid',
+        className          : inputEditorClassName          = 'fluid',
         
         
         
         // accessibilities:
-        assertiveFocusable : textEditorAssertiveFocusable = (!preferFocusOnTextEditor ? false : undefined),
+        assertiveFocusable : inputEditorAssertiveFocusable = (!preferFocusOnInputEditor ? false : undefined),
         
         
         
         // values:
-        value              : textEditorValue              = value,
+        value              : inputEditorValue              = value,
         
         
         
         // other props:
-        ...restTextEditorComponentProps
-    } = textEditorComponent.props;
+        ...restInputEditorComponentProps
+    } = inputEditorComponent.props;
     
     const {
         // values:
@@ -650,7 +650,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // auto focusable:
-        autoFocus               : selectDropdownonAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_TEXT_FOCUS) ? !preferFocusOnTextEditor : true, // do NOT autoFocus when (autoDropdown -AND- preferFocusOnTextEditor), otherwise do autoFocus}
+        autoFocus               : selectDropdownonAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_INPUT_FOCUS) ? !preferFocusOnInputEditor : true, // do NOT autoFocus when (autoDropdown -AND- preferFocusOnInputEditor), otherwise do autoFocus}
         restoreFocus            : selectDropdownonRestoreFocus             = false, // use hard coded restore focus
         
         
@@ -713,13 +713,13 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             // styles:
             style={style}
         >
-            {/* <TextEditor> */}
-            {React.cloneElement<TextEditorProps<TElement, TChangeEvent>>(textEditorComponent,
+            {/* <InputEditor> */}
+            {React.cloneElement<InputEditorProps<TElement, TChangeEvent, TValue>>(inputEditorComponent,
                 // props:
                 {
                     // other props:
-                    ...restTextEditorProps,
-                    ...restTextEditorComponentProps, // overwrites restTextEditorProps (if any conflics)
+                    ...restInputEditorProps,
+                    ...restInputEditorComponentProps, // overwrites restInputEditorProps (if any conflics)
                     
                     
                     
@@ -729,18 +729,18 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     
                     
                     // classes:
-                    className          : textEditorClassName,
+                    className          : inputEditorClassName,
                     
                     
                     
                     // accessibilities:
-                    assertiveFocusable : textEditorAssertiveFocusable,
+                    assertiveFocusable : inputEditorAssertiveFocusable,
                     
                     
                     
                     // values:
-                    value              : textEditorValue,  // internally controllable
-                    onChange           : handleTextChange, // internally controllable
+                    value              : inputEditorValue,  // internally controllable
+                    onChange           : handleInputChange, // internally controllable
                     
                     
                     
@@ -750,8 +750,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     
                     
                     // handlers:
-                    onFocus            : handleTextFocus,
-                    onClick            : handleTextClick,
+                    onFocus            : handleInputFocus,
+                    onClick            : handleInputClick,
                 },
             )}
             
