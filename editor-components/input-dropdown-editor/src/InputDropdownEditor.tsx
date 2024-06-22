@@ -434,10 +434,19 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     
     // handlers:
-    const handleInputChange            = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
+    const handleInputChangeInternal    = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
         triggerValueChange(newValue, { triggerAt: 'immediately', event: event });
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
+    const handleInputChange            = useMergeEvents(
+        // preserves the original `onChange` from `inputEditorComponent`:
+        inputEditorComponent.props.onChange,
+        
+        
+        
+        // actions:
+        handleInputChangeInternal,
+    );
     
     const handleDropdownChangeInternal = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue) => {
         const inputElm = inputRefInternal.current;
