@@ -6,8 +6,12 @@ import {
 
 // internals:
 import {
+    type TriggerValueChangeEventOptions,
+    type TriggerValueChangeEventOptionsWithChangeEvent,
     type TriggerValueChangeCallback,
+    type TriggerValueChangeCallbackWithChangeEvent,
     type ValueChangeEventHandler,
+    type ValueChangeEventHandlerWithChangeEvent,
 }                           from './types.js'
 import {
     // hooks:
@@ -16,17 +20,32 @@ import {
 
 
 
-export interface ControllableProps<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
+export interface ControllableProps<TValue extends unknown> {
     // values:
     value              : TValue
-    onValueChange      : ValueChangeEventHandler<TValue, TChangeEvent>|undefined
+    onValueChange      : ValueChangeEventHandler<TValue>|undefined
 }
-export interface ControllableApi<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
+export interface ControllablePropsWithChangeEvent<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
     // values:
     value              : TValue
-    triggerValueChange : TriggerValueChangeCallback<TValue, TChangeEvent>
+    onValueChange      : ValueChangeEventHandlerWithChangeEvent<TValue, TChangeEvent>|undefined
 }
-export const useControllable = <TValue extends unknown, TChangeEvent extends unknown = unknown>(props: ControllableProps<TValue, TChangeEvent>): ControllableApi<TValue, TChangeEvent> => {
+
+export interface ControllableApi<TValue extends unknown> {
+    // values:
+    value              : TValue
+    triggerValueChange : TriggerValueChangeCallback<TValue>
+}
+export interface ControllableApiWithChangeEvent<TValue extends unknown, in TChangeEvent extends unknown = unknown> {
+    // values:
+    value              : TValue
+    triggerValueChange : TriggerValueChangeCallbackWithChangeEvent<TValue, TChangeEvent>
+}
+
+export function useControllable<TValue extends unknown>(props: ControllableProps<TValue>): ControllableApi<TValue>;
+export function useControllable<TValue extends unknown, TChangeEvent extends unknown = unknown>(props: ControllablePropsWithChangeEvent<TValue, TChangeEvent>): ControllableApiWithChangeEvent<TValue, TChangeEvent>;
+
+export function useControllable<TValue extends unknown, TChangeEvent extends unknown = unknown>(props: ControllableProps<TValue>|ControllablePropsWithChangeEvent<TValue, TChangeEvent>): ControllableApi<TValue>|ControllableApiWithChangeEvent<TValue, TChangeEvent> {
     // props:
     const {
         // values:
@@ -42,13 +61,13 @@ export const useControllable = <TValue extends unknown, TChangeEvent extends unk
     
     
     // handlers:
-    const handleValueChange               = onControllableValueChange;
+    const handleValueChange               = onControllableValueChange  as (ValueChangeEventHandler<TValue> & ValueChangeEventHandlerWithChangeEvent<TValue, TChangeEvent>|undefined);
     
     
     
     // stable callbacks:
     const scheduleTriggerEvent            = useScheduleTriggerEvent();
-    const triggerValueChange              = useEvent<TriggerValueChangeCallback<TValue, TChangeEvent>>((newValue, options) => {
+    const triggerValueChange              = useEvent<TriggerValueChangeCallback<TValue>|TriggerValueChangeCallbackWithChangeEvent<TValue, TChangeEvent>>((newValue: TValue, options?: TriggerValueChangeEventOptions|TriggerValueChangeEventOptionsWithChangeEvent<TChangeEvent>) => {
         // conditions:
         if (!handleValueChange) return; // no callback handler => nothing to trigger
         
@@ -57,7 +76,12 @@ export const useControllable = <TValue extends unknown, TChangeEvent extends unk
         // actions:
         scheduleTriggerEvent(() => {
             // fire `onControllableValueChange` react event:
-            handleValueChange(newValue, options?.event /* an optional event object passed from the options */);
+            if (!!options && ('event' in options)) {
+                handleValueChange(newValue, options?.event /* an optional event object passed from the options */);
+            }
+            else {
+                handleValueChange(newValue);
+            } // if
         }, options);
     });
     

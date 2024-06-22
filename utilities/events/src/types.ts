@@ -13,12 +13,22 @@ export type ScheduleTriggerEventFunction  = (scheduledTriggerEventCallback: Sche
 
 
 
-export interface TriggerValueChangeEventOptions<out TChangeEvent extends unknown = unknown>
+export interface TriggerValueChangeEventOptions
     extends
         // bases:
         ScheduleTriggerEventOptions
 {
-    event ?: TChangeEvent // an optional event object
 }
-export type TriggerValueChangeCallback<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, options?: TriggerValueChangeEventOptions<TChangeEvent>) => void
-export type ValueChangeEventHandler<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, event: TChangeEvent|undefined /* an optional event object passed from the options */) => void
+export interface TriggerValueChangeEventOptionsWithChangeEvent<out TChangeEvent extends unknown = unknown>
+    extends
+        // bases:
+        TriggerValueChangeEventOptions
+{
+    event : TChangeEvent // a required event object
+}
+
+export type TriggerValueChangeCallback<in TValue extends unknown> = (value: TValue, options?: TriggerValueChangeEventOptions) => void
+export type TriggerValueChangeCallbackWithChangeEvent<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, options: TriggerValueChangeEventOptionsWithChangeEvent<TChangeEvent> /* a required options for passing event object */) => void
+
+export type ValueChangeEventHandler<in TValue extends unknown> = (value: TValue) => void
+export type ValueChangeEventHandlerWithChangeEvent<in TValue extends unknown, in TChangeEvent extends unknown = unknown> = (value: TValue, event: TChangeEvent /* a required event object passed from the options */) => void

@@ -13,7 +13,6 @@ import {
 import {
     // react helper hooks:
     useIsomorphicLayoutEffect,
-    useEvent,
     useMergeEvents,
     useMountedFlag,
     
@@ -69,11 +68,6 @@ import {
 
 // heymarco core:
 import {
-    // types:
-    type ValueChangeEventHandler,
-    
-    
-    
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
@@ -268,7 +262,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLSpanElement, TChang
     
     
     // states:
-    const handleControllableValueChange    = useMergeEvents(
+    const handleControllableValueChange = useMergeEvents(
         // preserves the original `onChange` from `props`:
         onControllableValueChange,
         
@@ -277,16 +271,13 @@ const SelectDropdownEditor = <TElement extends Element = HTMLSpanElement, TChang
         // validations:
         selectValidator.handleChange,
     );
-    const handleControllableValueChangeRaw = useEvent<ValueChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
-        handleControllableValueChange?.(newValue, event!);
-    });
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : handleControllableValueChangeRaw,
+        onValueChange      : handleControllableValueChange,
     });
     
     
