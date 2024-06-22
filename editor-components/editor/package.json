@@ -40,8 +40,7 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@reusable-ui/core": "^6.11.0",
-    "@reusable-ui/input": "^6.5.4"
+    "@reusable-ui/editable-control": "^6.7.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",

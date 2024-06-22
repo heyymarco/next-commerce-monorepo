@@ -4,18 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
-// reusable-ui core:
-import {
-    // react helper hooks:
-    useEvent,
-}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
-
 // reusable-ui components:
 import {
     // react components:
-    type InputProps,
-    Input,
-}                           from '@reusable-ui/input'           // an interactive control in order to accept data from the user
+    type EditableControlProps,
+    EditableControl,
+}                           from '@reusable-ui/editable-control'    // a base editable UI (with validation indicator) of Reusable-UI components
 
 // internals:
 import {
@@ -28,7 +22,7 @@ import {
 export interface EditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
     extends
         // bases:
-        Omit<InputProps<TElement>,
+        Omit<EditableControlProps<TElement>,
             // values:
             |'defaultValue'|'value'|'onChange' // converted to TValue
         >
@@ -37,44 +31,28 @@ export interface EditorProps<out TElement extends Element = HTMLSpanElement, in 
     defaultValue   ?: TValue
     value          ?: TValue
     onChange       ?: EditorChangeEventHandler<TChangeEvent, TValue>
-    onChangeAsText ?: EditorChangeEventHandler<TChangeEvent, string>
 }
 const Editor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: EditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // values:
-        defaultValue,         // take  , to be normalized: null => empty string, TValue => toString
-        value,                // take  , to be normalized: null => empty string, TValue => toString
-        onChange : _onChange, // remove, will be defined by <SpecificEditor>::onChange(TSpecific)
-        onChangeAsText,       // take  , will be handled by `handleValueChange`
+        defaultValue : _defaultValue, // remove, will be defined by <SpecificEditor>::defaultValue as TSpecific
+        value        : _value,        // remove, will be defined by <SpecificEditor>::value        as TSpecific
+        onChange     : _onChange,     // remove, will be defined by <SpecificEditor>::onChange(as TSpecific)
         
         
         
         // other props:
-        ...restEditorProps
+        ...restEditableControlProps
     } = props;
-    
-    
-    
-    // handlers:
-    const handleValueChange = useEvent<React.EventHandler<TChangeEvent & React.ChangeEvent<HTMLInputElement>>>((event) => {
-        onChangeAsText?.(event.target.value, event);
-    });
     
     
     
     // jsx:
     return (
-        <Input<TElement>
+        <EditableControl<TElement>
             // other props:
-            {...restEditorProps}
-            
-            
-            
-            // values:
-            defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? `${defaultValue}` /* any TValue => toString */ : '' /* null => empty string */) : undefined}
-            value        = {(value        !== undefined) ? ((value        !== null) ? `${value}`        /* any TValue => toString */ : '' /* null => empty string */) : undefined}
-            onChange     = {handleValueChange}
+            {...restEditableControlProps}
         />
     );
 };
