@@ -40,7 +40,7 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/editor": "^6.8.0",
+    "@heymarco/input-editor": "^6.8.0",
     "@reusable-ui/core": "^6.11.0"
   },
   "peerDependencies": {

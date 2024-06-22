@@ -13,9 +13,9 @@ import {
 // heymarco components:
 import {
     // react components:
-    type EditorProps,
-    Editor,
-}                           from '@heymarco/editor'
+    type InputEditorProps,
+    InputEditor,
+}                           from '@heymarco/input-editor'
 
 
 
@@ -23,7 +23,7 @@ import {
 export interface TextEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        EditorProps<TElement, TChangeEvent, string>
+        InputEditorProps<TElement, TChangeEvent, string>
 {
 }
 const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: TextEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
@@ -69,7 +69,7 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
     
     // jsx:
     return (
-        <Editor<TElement, TChangeEvent, string>
+        <InputEditor<TElement, TChangeEvent, string>
             // other props:
             {...restEditorProps}
             
