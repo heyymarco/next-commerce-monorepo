@@ -468,7 +468,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             
             // further validations:
-            const newIsValid = isSelectionValid(props, finalValueOptions, value);
+            const newIsValid = isSelectionValid<TValue>(props, finalValueOptions, value);
             event.isValid = newIsValid;
             return newIsValid;
         })();
@@ -804,6 +804,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             )}
             
             
+            {/* <SelectDropdownEditor> */}
             {React.cloneElement<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>(selectDropdownEditorComponent,
                 // props:
                 {
