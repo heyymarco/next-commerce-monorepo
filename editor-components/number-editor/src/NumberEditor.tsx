@@ -15,13 +15,12 @@ import {
 import {
     // types:
     type EditorChangeEventHandler,
-    
-    
-    
-    // react components:
-    type EditorProps,
-    Editor,
 }                           from '@heymarco/editor'
+import {
+    // react components:
+    type InputEditorProps,
+    InputEditor,
+}                           from '@heymarco/input-editor'
 
 
 
@@ -29,7 +28,7 @@ import {
 export interface NumberEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        Omit<EditorProps<TElement, TChangeEvent, number|null>,
+        Omit<InputEditorProps<TElement, TChangeEvent, number|null>,
             // validations:
             |'minLength'|'maxLength' // text length constraint is not supported
             |'pattern'               // text regex is not supported
@@ -78,7 +77,7 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
     
     // jsx:
     return (
-        <Editor<TElement, TChangeEvent, number|null>
+        <InputEditor<TElement, TChangeEvent, number|null>
             // other props:
             {...restNumberEditorProps}
             
