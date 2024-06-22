@@ -418,6 +418,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     const dropdownRefInternal   = useRef<Element|null>(null);
     const mergedDropdownRef     = useMergeRefs(
+        // preserves the original `dropdownRef` from `selectDropdownEditorComponent`:
+        selectDropdownEditorComponent.props.dropdownRef,
+        
+        
+        
         // preserves the original `dropdownRef` from `props`:
         dropdownRef,
         
@@ -710,7 +715,6 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         buttonComponent         : selectDropdownonButtonComponent          = buttonComponent,
         buttonChildren          : selectDropdownonButtonChildren           = buttonChildren,
         toggleButtonComponent   : selectDropdownonToggleButtonComponent    = toggleButtonComponent,
-        dropdownRef             : selectDropdownonDropdownRef              = mergedDropdownRef,
         dropdownOrientation     : selectDropdownonDropdownOrientation      = dropdownOrientation,
         dropdownComponent       : selectDropdownonDropdownComponent        = dropdownComponent,
         listRef                 : selectDropdownonListRef                  = listRef,
@@ -863,7 +867,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     buttonComponent         : selectDropdownonButtonComponent,
                     buttonChildren          : selectDropdownonButtonChildren,
                     toggleButtonComponent   : selectDropdownonToggleButtonComponent,
-                    dropdownRef             : selectDropdownonDropdownRef,
+                    dropdownRef             : mergedDropdownRef,
                     dropdownOrientation     : selectDropdownonDropdownOrientation,
                     dropdownComponent       : selectDropdownonDropdownComponent,
                     listRef                 : selectDropdownonListRef,
