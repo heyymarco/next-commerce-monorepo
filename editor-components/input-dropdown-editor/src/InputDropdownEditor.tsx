@@ -14,6 +14,7 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
+    useIsomorphicLayoutEffect,
     useEvent,
     type EventHandler,
     useMergeEvents,
@@ -350,7 +351,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     const [finalValueOptions, setFinalValueOptions] = useState<TValue[]|undefined>(undefined);
     const isMounted = useMountedFlag();
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         // setups:
         (async (): Promise<void> => {
             const [resolvedValueOptions, resolvedExcludedValueOptions] = await Promise.all([
