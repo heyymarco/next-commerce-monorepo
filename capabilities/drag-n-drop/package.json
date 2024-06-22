@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/drag-n-drop",
-  "version": "6.5.1",
+  "version": "6.6.0",
   "description": "A shared interface for enabling drag and drop operations.",
   "keywords": [
     "react",
@@ -40,6 +40,6 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/events": "^6.5.0"
+    "@heymarco/events": "^6.7.0"
   }
 }
