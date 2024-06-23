@@ -674,17 +674,17 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     const {
         // classes:
-        className          : inputEditorClassName          = 'fluid',
+        className               : inputEditorClassName                     = 'fluid',
         
         
         
         // accessibilities:
-        assertiveFocusable : inputEditorAssertiveFocusable = (!preferFocusOnInputEditor ? false : undefined),
+        assertiveFocusable      : inputEditorAssertiveFocusable            = (!preferFocusOnInputEditor ? false : undefined),
         
         
         
         // values:
-        value              : inputEditorValue              = value,
+        value                   : inputEditorValue                         = value, // internally controllable
         
         
         
@@ -849,7 +849,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     valueToUi               : selectDropdownEditorValueToUi,
                     
                     value                   : selectDropdownEditorValue, // internally controllable
-                    onChange                : handleDropdownChange,      // internally controllable
+                    onChange                : handleDropdownChange,      // internally controllable (forwards to <Input>'s onChange)
                     
                     
                     
