@@ -44,11 +44,13 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@cssfn/core": "^3.2.0",
-    "@cssfn/cssfn-react": "^3.2.0",
     "@heymarco/editor": "^6.9.0",
+    "@heymarco/events": "^6.7.0",
+    "@heymarco/input-editor": "^6.9.0",
     "@heymarco/select-dropdown-editor": "^6.9.0",
-    "@reusable-ui/core": "^6.11.0"
+    "@reusable-ui/core": "^6.11.0",
+    "@reusable-ui/dropdown-list": "^6.6.2",
+    "@reusable-ui/group": "^6.5.1"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
