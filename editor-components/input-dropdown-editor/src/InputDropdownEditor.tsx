@@ -707,7 +707,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         isValid                 : selectDropdownIsValid                    = isDropdownValid,         // controllable
         inheritValidation       : selectDropdownInheritValidation          = props.inheritValidation, // follows <Editor>
         
-        // onValidation         : selectDropdownOnValidation               = undefined,
+        // onValidation         : selectDropdownOnValidation               = undefined,               // not used => always follows <Editor>'s onValidation
         
         equalityValueComparison : selectDropdownEqualityValueComparison    = equalityValueComparison,
         
@@ -858,7 +858,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     isValid                 : selectDropdownIsValid,           // controllable
                     inheritValidation       : selectDropdownInheritValidation, // follows <Editor>
                     
-                    // onValidation         : selectDropdownOnValidation,
+                    // onValidation         : selectDropdownOnValidation,      // not used => always follows <Editor>'s onValidation
                     
                     equalityValueComparison : selectDropdownEqualityValueComparison,
                     
