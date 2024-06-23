@@ -79,6 +79,11 @@ import {
 
 
 
+// utilities:
+const emptyValueOptions : unknown[] = [];
+
+
+
 // react components:
 export interface InputDropdownEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
@@ -138,7 +143,7 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             // // |'orientation' // the orientation of <Dropdown> __relative_to__ <Button>
             // // 
             // values:
-            |'valueOptions'
+            // |'valueOptions' // changed to optional
             |'excludedValueOptions'
             |'valueToUi'
             // // 
@@ -200,6 +205,10 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             |'listItemComponent'
             |'editableButtonComponent'
         >,
+        Partial<Pick<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
+            // values:
+            |'valueOptions' // changed to optional
+        >>,
         
         // components:
         InputEditorComponentProps<Element, TChangeEvent, TValue>,
@@ -213,43 +222,43 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // props:
     const {
         // refs:
-        elmRef,                              // take, moved to <InputEditor>
-        outerRef,                            // take, moved to <Group>
+        elmRef,                                            // take, moved to <InputEditor>
+        outerRef,                                          // take, moved to <Group>
         
         
         
         // identifiers:
-        id,                                  // take, moved to <Group>
+        id,                                                // take, moved to <Group>
         
         
         
         // variants:
-        size,                                // take, moved to <Group>
-        theme,                               // take, moved to <Group>
-        gradient,                            // take, moved to <Group>
-        outlined,                            // take, moved to <Group>
-        mild,                                // take, moved to <Group>
+        size,                                              // take, moved to <Group>
+        theme,                                             // take, moved to <Group>
+        gradient,                                          // take, moved to <Group>
+        outlined,                                          // take, moved to <Group>
+        mild,                                              // take, moved to <Group>
         
         
         
         // classes:
-        mainClass,                           // take, moved to <Group>
-        classes,                             // take, moved to <Group>
-        variantClasses,                      // take, moved to <Group>
-        stateClasses,                        // take, moved to <Group>
-        className,                           // take, moved to <Group>
+        mainClass,                                         // take, moved to <Group>
+        classes,                                           // take, moved to <Group>
+        variantClasses,                                    // take, moved to <Group>
+        stateClasses,                                      // take, moved to <Group>
+        className,                                         // take, moved to <Group>
         
         
         
         // styles:
-        style,                               // take, moved to <Group>
+        style,                                             // take, moved to <Group>
         
         
         
         // values:
-        valueOptions,                        // take, moved to <SelectDropdownEditor>
-        excludedValueOptions,                // take, moved to <SelectDropdownEditor>
-        valueToUi,                           // take, moved to <SelectDropdownEditor>
+        valueOptions   = (emptyValueOptions as TValue[]),  // take, moved to <SelectDropdownEditor>
+        excludedValueOptions,                              // take, moved to <SelectDropdownEditor>
+        valueToUi,                                         // take, moved to <SelectDropdownEditor>
         
         defaultValue   : defaultUncontrollableValue = ('' as TValue),
         value          : controllableValue,
@@ -259,9 +268,9 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // validations:
-        onValidation,                        // take, moved to <InputEditor>
-        freeTextInput            = true,      // take, to be handled by internal controllableValidator
-        equalityValueComparison  = Object.is, // take, to be handled by internal controllableValidator
+        onValidation,                                      // take, moved to <InputEditor>
+        freeTextInput            = true,                   // take, to be handled by internal controllableValidator
+        equalityValueComparison  = Object.is,              // take, to be handled by internal controllableValidator
         
         
         
@@ -483,7 +492,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             
             // further validations:
-            const newIsValid = isSelectionValid<TValue>(props, finalValueOptions, value);
+            const newIsValid = isSelectionValid<TValue>({valueOptions: valueOptions, ...props}, finalValueOptions, value);
             event.isValid = newIsValid;
             return newIsValid;
         })();
