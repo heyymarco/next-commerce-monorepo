@@ -714,7 +714,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // states:
-        expanded                : selectDropdownexpanded                   = (showDropdown >= 1),
+        expanded                : selectDropdownexpanded                   = (showDropdown >= 1), // positive value: SHOW_BY_**, negative value: HIDE_BY_**, zero value: never
         
         
         
