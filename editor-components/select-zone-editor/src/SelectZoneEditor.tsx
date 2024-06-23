@@ -39,13 +39,21 @@ export interface SelectZoneEditorProps<out TElement extends Element = HTMLDivEle
     modelName : string
 }
 const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: SelectZoneEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
-    // default props:
+    // props:
     const {
         // models:
-        modelName,
+        modelName, // take
         
         
         
+        // other props:
+        ...restSelectZoneEditorProps
+    } = props;
+    
+    
+    
+    // default props:
+    const {
         // accessibilities:
         'aria-label'            : ariaLabel = `Select ${startsCapitalized(modelName)}`,
         placeholder             = ariaLabel,
@@ -59,7 +67,7 @@ const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEven
         
         // other props:
         ...restTextDropdownEditorProps
-    } = props;
+    } = restSelectZoneEditorProps;
     
     
     
