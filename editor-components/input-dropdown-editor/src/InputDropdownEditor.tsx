@@ -609,6 +609,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     
     // effects:
+    
+    // a __custom__ onBlur event by watching onFocus __outside__ of <Group> and <Dropdown>:
     useEffect(() => {
         // conditions:
         if (showDropdown === ShowDropdown.HIDE_BY_BLUR) return; // ignore if already fully hidden
