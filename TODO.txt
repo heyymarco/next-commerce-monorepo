@@ -1,3 +1,4 @@
+add autoComplete for InputDropdownEditor
 add inputWithLabelComponent
 implement <InputWithLabel> to <AddressFields>
 [@heymarco/next-auth] implement loginErrorAttempt
