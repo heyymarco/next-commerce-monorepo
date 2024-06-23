@@ -26,14 +26,6 @@ export interface SelectCityEditorProps<out TElement extends Element = HTMLDivEle
 {
 }
 const SelectCityEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: SelectCityEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
-    // props:
-    const {
-        // other props:
-        ...restSelectCityEditorProps
-    } = props;
-    
-    
-    
     // default props:
     const {
         // models:
@@ -43,7 +35,7 @@ const SelectCityEditor = <TElement extends Element = HTMLDivElement, TChangeEven
         
         // other props:
         ...restSelectZoneEditorProps
-    } = restSelectCityEditorProps;
+    } = props;
     
     
     
