@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/select-state-editor",
-  "version": "6.9.0",
+  "version": "6.9.1",
   "description": "A state-name editor component with a selectable predefined states.",
   "keywords": [
     "state",

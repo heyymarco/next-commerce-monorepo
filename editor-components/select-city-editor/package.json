@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/select-city-editor",
-  "version": "6.9.0",
+  "version": "6.9.1",
   "description": "A city-name editor component with a selectable predefined cities.",
   "keywords": [
     "city",
