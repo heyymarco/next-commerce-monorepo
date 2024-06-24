@@ -38,13 +38,13 @@ export interface DummyTextEditorProps<out TElement extends Element = HTMLSpanEle
 {
 }
 const DummyTextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: DummyTextEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
-    // rest props:
+    // props:
     const {
         // values:
         defaultValue,         // take  , to be normalized: null => empty string, TValue => toString
         value,                // take  , to be normalized: null => empty string, TValue => toString
-        onChange,             // take  , will be handled by `handleValueChange`
-        onChangeAsText,       // take  , will be handled by `handleValueChange`
+        onChange,             // take  , will be handled by `handleValueChange()`
+        onChangeAsText,       // take  , will be handled by `handleValueChange()`
         
         
         
