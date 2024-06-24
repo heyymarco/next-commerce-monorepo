@@ -20,7 +20,7 @@ import {
 import {
     type DummyInputProps,
     DummyInput,
-}                           from './DummyInput'
+}                           from './DummyInput.js'
 
 
 
