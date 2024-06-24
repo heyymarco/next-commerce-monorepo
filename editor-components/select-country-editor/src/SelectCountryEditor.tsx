@@ -25,7 +25,7 @@ import {
 // internals:
 import {
     getCountryDisplay,
-    countryList,
+    defaultCountryList,
 }                           from './utilities.js'
 
 
@@ -46,7 +46,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // values:
-        valueOptions             = countryList,
+        valueOptions             = defaultCountryList,
         valueToUi                = getCountryDisplay,
         
         
