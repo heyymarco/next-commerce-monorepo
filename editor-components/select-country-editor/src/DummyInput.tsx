@@ -61,20 +61,21 @@ const handleChangeDummy : React.ChangeEventHandler<HTMLInputElement> = (_event) 
 
 
 // react components:
-export interface DummyInputProps<TElement extends Element = HTMLSpanElement>
+export interface DummyInputProps<out TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         InputProps<TElement>,
         
         // values:
-        Pick<SelectDropdownEditorProps<TElement, React.SyntheticEvent<unknown, Event>, string, DropdownListExpandedChangeEvent<string>>,
+        Pick<SelectDropdownEditorProps<TElement, React.ChangeEvent<HTMLInputElement>, string, DropdownListExpandedChangeEvent<string>>,
             |'valueToUi'
         >
 {
-    value ?: string // disallow number as value
+    defaultValue ?: string // disallow number as value
+    value        ?: string // disallow number as value
 }
 const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInputProps<TElement>): JSX.Element|null => {
-    // rest props:
+    // props:
     const {
         // refs:
         elmRef,
@@ -96,6 +97,7 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
         
         // values:
         valueToUi,
+        
         defaultValue,
         value,
         onChange, // forwards to `input[type]`
@@ -258,7 +260,7 @@ const DummyInput = <TElement extends Element = HTMLSpanElement>(props: DummyInpu
         >
             {/* the span must be the :first-child in order to be styled like native <input> */}
             <span>
-                {!!value && (valueToUi ? valueToUi(value ?? null) : value)}
+                {!!value && (valueToUi ? valueToUi(value) : value)}
                 { !value && !!placeholder && <span className='placeholder'>{placeholder}</span>}
             </span>
             
