@@ -68,6 +68,7 @@ export interface DummyInputProps<out TElement extends Element = HTMLSpanElement>
         
         // values:
         Pick<SelectDropdownEditorProps<TElement, React.ChangeEvent<HTMLInputElement>, string, DropdownListExpandedChangeEvent<string>>,
+            // values:
             |'valueToUi'
         >
 {

@@ -31,7 +31,7 @@ export interface DummyTextEditorProps<out TElement extends Element = HTMLSpanEle
         TextEditorProps<TElement, TChangeEvent>,
         
         // values:
-        Pick<DummyInputProps,
+        Pick<DummyInputProps<TElement>,
             // values:
             |'valueToUi'
         >
