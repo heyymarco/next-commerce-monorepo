@@ -1,0 +1,64 @@
+{
+  "name": "@heymarco/address-editor",
+  "version": "6.9.0",
+  "description": "A composite editor for editing address data.",
+  "keywords": [
+    "address",
+    "composite",
+    "textbox",
+    "select",
+    "options",
+    "dropdown",
+    "editor",
+    "input",
+    "control",
+    "component",
+    "element",
+    "styled",
+    "react",
+    "reusable-ui"
+  ],
+  "author": "HeyMarco <31385284+heyymarco@users.noreply.github.com>",
+  "homepage": "https://reusableui.com",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heyymarco/next-commerce-monorepo.git"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./index": "./dist/index.js",
+    "./index.js": "./dist/index.js"
+  },
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "tsc:watch": "tsc --watch",
+    "ncu": "ncu --peer",
+    "ncu:upgrade": "ncu --peer --upgrade",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
+  },
+  "dependencies": {
+    "@heymarco/editor": "^6.9.0",
+    "@heymarco/events": "^6.7.0",
+    "@heymarco/name-editor": "^6.9.0",
+    "@heymarco/phone-editor": "^6.9.0",
+    "@heymarco/select-city-editor": "^6.9.1",
+    "@heymarco/select-country-editor": "^6.9.1",
+    "@heymarco/select-state-editor": "^6.9.1",
+    "@heymarco/text-editor": "^6.9.0",
+    "@reusable-ui/core": "^6.11.0",
+    "@reusable-ui/dropdown-list": "^6.6.2",
+    "@reusable-ui/generic": "^6.5.0"
+  },
+  "peerDependencies": {
+    "@types/react": "^18.0.0",
+    "react": "^18.0.0"
+  }
+}
