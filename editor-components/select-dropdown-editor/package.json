@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/select-dropdown-editor",
-  "version": "6.9.0",
+  "version": "6.9.1",
   "description": "A generic selectable dropdown editor component.",
   "keywords": [
     "generic",

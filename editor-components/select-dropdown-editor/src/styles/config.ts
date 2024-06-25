@@ -43,4 +43,4 @@ export const [selectDropdownEditors, selectDropdownEditorValues, cssSelectDropdo
         ...bases,
         ...defaults,
     };
-}, { prefix: 'sddei' });
+}, { prefix: 'sddedit' });

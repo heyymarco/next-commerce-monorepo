@@ -46,9 +46,9 @@ import {
 
 
 // styles:
-export const onAccordionItemStylesChange          = watchChanges(onListStylesChange, cssSelectDropdownEditorConfig.onChange);
+export const onSelectDropdownEditorItemStylesChange = watchChanges(onListStylesChange, cssSelectDropdownEditorConfig.onChange);
 
-export const usesSelectDropdownEditorItemLayout   = (options?: OrientationableOptions) => {
+export const usesSelectDropdownEditorItemLayout     = (options?: OrientationableOptions) => {
     return style({
         // layout:
         ...usesListItemLayout(options), // the options are already handled internally by `usesListItemBaseLayout`
@@ -78,7 +78,7 @@ export const usesSelectDropdownEditorItemLayout   = (options?: OrientationableOp
     });
 };
 
-export const usesSelectDropdownEditorItemVariants = () => {
+export const usesSelectDropdownEditorItemVariants   = () => {
     // dependencies:
     
     // variants:
@@ -93,7 +93,7 @@ export const usesSelectDropdownEditorItemVariants = () => {
     });
 };
 
-export const usesSelectDropdownEditorItemStates   = usesListItemStates;
+export const usesSelectDropdownEditorItemStates     = usesListItemStates;
 
 export default () => style({
     // layouts:
