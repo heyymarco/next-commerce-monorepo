@@ -4,6 +4,11 @@ import {
     default as React,
 }                           from 'react'
 
+// styles:
+import {
+    useAddressEditorStyleSheet,
+}                           from './styles/loader.js'
+
 // reusable-ui core:
 import {
     // react helper hooks:
@@ -191,8 +196,13 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // other props:
-        ...restGenericProps
+        ...restAddressEditorProps
     } = props;
+    
+    
+    
+    // styles:
+    const styleSheet = useAddressEditorStyleSheet();
     
     
     
@@ -326,6 +336,16 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     // default props:
     const {
+        // classes:
+        mainClass = styleSheet.main,
+        
+        
+        
+        // other props:
+        ...restGenericProps
+    } = restAddressEditorProps;
+    
+    const {
         // values:
         value    : countryValue,
         
@@ -453,167 +473,175 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         <Generic<TElement>
             // other props:
             {...restGenericProps}
+            
+            
+            
+            // classes:
+            mainClass={mainClass}
         >
-            {/* <Country> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(countryEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...CountryEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : countryValue,
-                    onChange : handleCountryChange,
-                    
-                    
-                    
-                    // validations:
-                    required : countryRequired,
-                },
-            )}
-            
-            {/* <State> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(stateEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...StateEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : stateValue,
-                    onChange : handleStateChange,
-                    
-                    
-                    
-                    // validations:
-                    required : stateRequired,
-                },
-            )}
-            
-            {/* <City> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(cityEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...CityEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : cityValue,
-                    onChange : handleCityChange,
-                    
-                    
-                    
-                    // validations:
-                    required : cityRequired,
-                },
-            )}
-            
-            {/* <Address> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...AddressEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : addressValue,
-                    onChange : handleAddressChange,
-                    
-                    
-                    
-                    // validations:
-                    required : addressRequired,
-                },
-            )}
-            
-            {/* <Zip> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(zipEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...ZipEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : zipValue,
-                    onChange : handleZipChange,
-                    
-                    
-                    
-                    // validations:
-                    required : zipRequired,
-                },
-            )}
-            
-            
-            {/* <FirstName> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(firstNameEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...FirstNameEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : firstNameValue,
-                    onChange : handleFirstNameChange,
-                    
-                    
-                    
-                    // validations:
-                    required : firstNameRequired,
-                },
-            )}
-            
-            {/* <LastName> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(lastNameEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...LastNameEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : lastNameValue,
-                    onChange : handleLastNameChange,
-                    
-                    
-                    
-                    // validations:
-                    required : lastNameRequired,
-                },
-            )}
-            
-            {/* <Phone> */}
-            {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(phoneEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...PhoneEditorComponentProps,
-                    
-                    
-                    
-                    // values:
-                    value    : phoneValue,
-                    onChange : handlePhoneChange,
-                    
-                    
-                    
-                    // validations:
-                    required : phoneRequired,
-                },
-            )}
+            {/* <ResponsiveContainer> */}
+            <div>
+                {/* <Country> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(countryEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...CountryEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : countryValue,
+                        onChange : handleCountryChange,
+                        
+                        
+                        
+                        // validations:
+                        required : countryRequired,
+                    },
+                )}
+                
+                {/* <State> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(stateEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...StateEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : stateValue,
+                        onChange : handleStateChange,
+                        
+                        
+                        
+                        // validations:
+                        required : stateRequired,
+                    },
+                )}
+                
+                {/* <City> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(cityEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...CityEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : cityValue,
+                        onChange : handleCityChange,
+                        
+                        
+                        
+                        // validations:
+                        required : cityRequired,
+                    },
+                )}
+                
+                {/* <Address> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...AddressEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : addressValue,
+                        onChange : handleAddressChange,
+                        
+                        
+                        
+                        // validations:
+                        required : addressRequired,
+                    },
+                )}
+                
+                {/* <Zip> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(zipEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...ZipEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : zipValue,
+                        onChange : handleZipChange,
+                        
+                        
+                        
+                        // validations:
+                        required : zipRequired,
+                    },
+                )}
+                
+                
+                {/* <FirstName> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(firstNameEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...FirstNameEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : firstNameValue,
+                        onChange : handleFirstNameChange,
+                        
+                        
+                        
+                        // validations:
+                        required : firstNameRequired,
+                    },
+                )}
+                
+                {/* <LastName> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(lastNameEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...LastNameEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : lastNameValue,
+                        onChange : handleLastNameChange,
+                        
+                        
+                        
+                        // validations:
+                        required : lastNameRequired,
+                    },
+                )}
+                
+                {/* <Phone> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(phoneEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...PhoneEditorComponentProps,
+                        
+                        
+                        
+                        // values:
+                        value    : phoneValue,
+                        onChange : handlePhoneChange,
+                        
+                        
+                        
+                        // validations:
+                        required : phoneRequired,
+                    },
+                )}
+            </div>
         </Generic>
     );
 };
