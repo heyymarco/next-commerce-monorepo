@@ -8,6 +8,6 @@ import {
 
 export const addressEditorBreakpoints = {
     sm : 'sm' as BreakpointName,
-    md : 'lg' as BreakpointName,
-    lg : 'xl' as BreakpointName,
+    md : 'md' as BreakpointName,
+    lg : 'lg' as BreakpointName,
 };

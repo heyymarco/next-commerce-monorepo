@@ -183,15 +183,15 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // components:
-        countryEditorComponent   = (<SelectCountryEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>> /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        stateEditorComponent     = (<SelectStateEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>   /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        cityEditorComponent      = (<SelectCityEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        addressEditorComponent   = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> />                                                   as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        zipEditorComponent       = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> />                                                   as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        countryEditorComponent   = (<SelectCountryEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>> />              as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        stateEditorComponent     = (<SelectStateEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>   />              as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        cityEditorComponent      = (<SelectCityEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>    />              as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        addressEditorComponent   = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Street Address'    placeholder='Street Address' />    as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        zipEditorComponent       = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Zip (Postal) Code' placeholder='Zip (Postal) Code' /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         
-        firstNameEditorComponent = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> />                                                   as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        lastNameEditorComponent  = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> />                                                   as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        phoneEditorComponent     = (<PhoneEditor<Element, React.ChangeEvent<HTMLInputElement>> />                                                  as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        firstNameEditorComponent = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='First Name'        placeholder='First Name' />        as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        lastNameEditorComponent  = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Last Name'         placeholder='Last Name' />         as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        phoneEditorComponent     = (<PhoneEditor<Element, React.ChangeEvent<HTMLInputElement>> />                                                               as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         
         
         
@@ -346,13 +346,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = restAddressEditorProps;
     
     const {
+        // classes:
+        className : countryClassName,
+        
+        
+        
         // values:
-        value    : countryValue,
+        value     : countryValue,
         
         
         
         // validations:
-        required : countryRequired = required,
+        required  : countryRequired = required,
         
         
         
@@ -361,13 +366,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = countryEditorComponent.props;
     
     const {
+        // classes:
+        className : stateClassName,
+        
+        
+        
         // values:
-        value    : stateValue,
+        value     : stateValue,
         
         
         
         // validations:
-        required : stateRequired = required,
+        required  : stateRequired = required,
         
         
         
@@ -376,13 +386,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = stateEditorComponent.props;
     
     const {
+        // classes:
+        className : cityClassName,
+        
+        
+        
         // values:
-        value    : cityValue,
+        value     : cityValue,
         
         
         
         // validations:
-        required : cityRequired = required,
+        required  : cityRequired = required,
         
         
         
@@ -391,13 +406,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = cityEditorComponent.props;
     
     const {
+        // classes:
+        className : addressClassName,
+        
+        
+        
         // values:
-        value    : addressValue,
+        value     : addressValue,
         
         
         
         // validations:
-        required : addressRequired = required,
+        required  : addressRequired = required,
         
         
         
@@ -406,13 +426,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = addressEditorComponent.props;
     
     const {
+        // classes:
+        className : zipClassName,
+        
+        
+        
         // values:
-        value    : zipValue,
+        value     : zipValue,
         
         
         
         // validations:
-        required : zipRequired = false,
+        required  : zipRequired = false,
         
         
         
@@ -422,13 +447,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     
     const {
+        // classes:
+        className : firstNameClassName,
+        
+        
+        
         // values:
-        value    : firstNameValue,
+        value     : firstNameValue,
         
         
         
         // validations:
-        required : firstNameRequired = required,
+        required  : firstNameRequired = required,
         
         
         
@@ -437,13 +467,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = firstNameEditorComponent.props;
     
     const {
+        // classes:
+        className : lastNameClassName,
+        
+        
+        
         // values:
-        value    : lastNameValue,
+        value     : lastNameValue,
         
         
         
         // validations:
-        required : lastNameRequired = required,
+        required  : lastNameRequired = required,
         
         
         
@@ -452,13 +487,18 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     } = lastNameEditorComponent.props;
     
     const {
+        // classes:
+        className : phoneClassName,
+        
+        
+        
         // values:
-        value    : phoneValue,
+        value     : phoneValue,
         
         
         
         // validations:
-        required : phoneRequired = required,
+        required  : phoneRequired = required,
         
         
         
@@ -490,14 +530,19 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
+                        // classes:
+                        className : `${countryClassName} country`,
+                        
+                        
+                        
                         // values:
-                        value    : countryValue,
-                        onChange : handleCountryChange,
+                        value     : countryValue,
+                        onChange  : handleCountryChange,
                         
                         
                         
                         // validations:
-                        required : countryRequired,
+                        required  : countryRequired,
                     },
                 )}
                 
@@ -510,14 +555,19 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
+                        // classes:
+                        className : `${stateClassName} state`,
+                        
+                        
+                        
                         // values:
-                        value    : stateValue,
-                        onChange : handleStateChange,
+                        value     : stateValue,
+                        onChange  : handleStateChange,
                         
                         
                         
                         // validations:
-                        required : stateRequired,
+                        required  : stateRequired,
                     },
                 )}
                 
@@ -530,34 +580,19 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
-                        // values:
-                        value    : cityValue,
-                        onChange : handleCityChange,
-                        
-                        
-                        
-                        // validations:
-                        required : cityRequired,
-                    },
-                )}
-                
-                {/* <Address> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
-                    // props:
-                    {
-                        // other props:
-                        ...AddressEditorComponentProps,
+                        // classes:
+                        className : `${cityClassName} city`,
                         
                         
                         
                         // values:
-                        value    : addressValue,
-                        onChange : handleAddressChange,
+                        value     : cityValue,
+                        onChange  : handleCityChange,
                         
                         
                         
                         // validations:
-                        required : addressRequired,
+                        required  : cityRequired,
                     },
                 )}
                 
@@ -570,14 +605,44 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
+                        // classes:
+                        className : `${zipClassName} zip`,
+                        
+                        
+                        
                         // values:
-                        value    : zipValue,
-                        onChange : handleZipChange,
+                        value     : zipValue,
+                        onChange  : handleZipChange,
                         
                         
                         
                         // validations:
-                        required : zipRequired,
+                        required  : zipRequired,
+                    },
+                )}
+                
+                {/* <Address> */}
+                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...AddressEditorComponentProps,
+                        
+                        
+                        
+                        // classes:
+                        className : `${addressClassName} address`,
+                        
+                        
+                        
+                        // values:
+                        value     : addressValue,
+                        onChange  : handleAddressChange,
+                        
+                        
+                        
+                        // validations:
+                        required  : addressRequired,
                     },
                 )}
                 
@@ -591,14 +656,19 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
+                        // classes:
+                        className : `${firstNameClassName} firstName`,
+                        
+                        
+                        
                         // values:
-                        value    : firstNameValue,
-                        onChange : handleFirstNameChange,
+                        value     : firstNameValue,
+                        onChange  : handleFirstNameChange,
                         
                         
                         
                         // validations:
-                        required : firstNameRequired,
+                        required  : firstNameRequired,
                     },
                 )}
                 
@@ -611,14 +681,19 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
+                        // classes:
+                        className : `${lastNameClassName} lastName`,
+                        
+                        
+                        
                         // values:
-                        value    : lastNameValue,
-                        onChange : handleLastNameChange,
+                        value     : lastNameValue,
+                        onChange  : handleLastNameChange,
                         
                         
                         
                         // validations:
-                        required : lastNameRequired,
+                        required  : lastNameRequired,
                     },
                 )}
                 
@@ -631,14 +706,19 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         
+                        // classes:
+                        className : `${phoneClassName} phone`,
+                        
+                        
+                        
                         // values:
-                        value    : phoneValue,
-                        onChange : handlePhoneChange,
+                        value     : phoneValue,
+                        onChange  : handlePhoneChange,
                         
                         
                         
                         // validations:
-                        required : phoneRequired,
+                        required  : phoneRequired,
                     },
                 )}
             </div>

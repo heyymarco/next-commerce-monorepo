@@ -19,6 +19,7 @@ import {
 import {
     // a responsive management system:
     ifContainerWidthAtLeast,
+    ifContainerWidthBetween,
     
     
     
@@ -72,13 +73,13 @@ export const usesAddressEditorLayout   = () => {
                     gridColumnEnd : 'span 3',
                 }),
             }),
-            ...ifContainerWidthAtLeast(addressEditorBreakpoints.md, {
-                ...children(['.zone', '.zip'], {
+            ...ifContainerWidthBetween(addressEditorBreakpoints.sm, addressEditorBreakpoints.md, {
+                ...children(['.country', '.state', '.city', '.zip'], {
                     gridColumnEnd : 'span 3',
                 }),
             }),
             ...ifContainerWidthAtLeast(addressEditorBreakpoints.lg, {
-                ...children(['.city', '.zone', '.zip'], {
+                ...children(['.state', '.city', '.zip'], {
                     gridColumnEnd : 'span 2',
                 }),
             }),
