@@ -714,35 +714,35 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // states:
-        expanded                : selectDropdownexpanded                   = (showDropdown >= 1), // positive value: SHOW_BY_**, negative value: HIDE_BY_**, zero value: never
+        expanded                : selectDropdownExpanded                   = (showDropdown >= 1), // positive value: SHOW_BY_**, negative value: HIDE_BY_**, zero value: never
         
         
         
         // floatable:
-        floatingOn              : selectDropdownonFloatingOn               = outerRefInternal,
+        floatingOn              : selectDropdownFloatingOn               = outerRefInternal,
         
         
         
         // auto focusable:
-        autoFocus               : selectDropdownonAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_INPUT_FOCUS) ? !preferFocusOnInputEditor : true, // do NOT autoFocus when (autoDropdown -AND- preferFocusOnInputEditor), otherwise do autoFocus}
-        restoreFocus            : selectDropdownonRestoreFocus             = false, // use hard coded restore focus
+        autoFocus               : selectDropdownAutoFocus                = (showDropdown === ShowDropdown.SHOW_BY_INPUT_FOCUS) ? !preferFocusOnInputEditor : true, // do NOT autoFocus when (autoDropdown -AND- preferFocusOnInputEditor), otherwise do autoFocus}
+        restoreFocus            : selectDropdownRestoreFocus             = false, // use hard coded restore focus
         
         
         
         // components:
-        buttonRef               : selectDropdownonButtonRef                = buttonRef,
-        buttonOrientation       : selectDropdownonButtonOrientation        = buttonOrientation,
-        buttonComponent         : selectDropdownonButtonComponent          = buttonComponent,
-        buttonChildren          : selectDropdownonButtonChildren           = buttonChildren,
-        toggleButtonComponent   : selectDropdownonToggleButtonComponent    = toggleButtonComponent,
-        dropdownOrientation     : selectDropdownonDropdownOrientation      = dropdownOrientation,
-        dropdownComponent       : selectDropdownonDropdownComponent        = dropdownComponent,
-        listRef                 : selectDropdownonListRef                  = listRef,
-        listOrientation         : selectDropdownonListOrientation          = listOrientation,
-        listStyle               : selectDropdownonListStyle                = listStyle,
-        listComponent           : selectDropdownonListComponent            = listComponent,
-        listItemComponent       : selectDropdownonListItemComponent        = listItemComponent,
-        editableButtonComponent : selectDropdownonEditableButtonComponent  = editableButtonComponent,
+        buttonRef               : selectDropdownButtonRef                = buttonRef,
+        buttonOrientation       : selectDropdownButtonOrientation        = buttonOrientation,
+        buttonComponent         : selectDropdownButtonComponent          = buttonComponent,
+        buttonChildren          : selectDropdownButtonChildren           = buttonChildren,
+        toggleButtonComponent   : selectDropdownToggleButtonComponent    = toggleButtonComponent,
+        dropdownOrientation     : selectDropdownDropdownOrientation      = dropdownOrientation,
+        dropdownComponent       : selectDropdownDropdownComponent        = dropdownComponent,
+        listRef                 : selectDropdownListRef                  = listRef,
+        listOrientation         : selectDropdownListOrientation          = listOrientation,
+        listStyle               : selectDropdownListStyle                = listStyle,
+        listComponent           : selectDropdownListComponent            = listComponent,
+        listItemComponent       : selectDropdownListItemComponent        = listItemComponent,
+        editableButtonComponent : selectDropdownEditableButtonComponent  = editableButtonComponent,
         
         
         
@@ -865,37 +865,37 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     
                     
                     // states:
-                    expanded                : selectDropdownexpanded,
+                    expanded                : selectDropdownExpanded,
                     onExpandedChange        : handleExpandedChange,
                     
                     
                     
                     // floatable:
-                    floatingOn              : selectDropdownonFloatingOn,
+                    floatingOn              : selectDropdownFloatingOn,
                     
                     
                     
                     // auto focusable:
-                    autoFocus               : selectDropdownonAutoFocus,
-                    restoreFocus            : selectDropdownonRestoreFocus,
+                    autoFocus               : selectDropdownAutoFocus,
+                    restoreFocus            : selectDropdownRestoreFocus,
                     
                     
                     
                     // components:
-                    buttonRef               : selectDropdownonButtonRef,
-                    buttonOrientation       : selectDropdownonButtonOrientation,
-                    buttonComponent         : selectDropdownonButtonComponent,
-                    buttonChildren          : selectDropdownonButtonChildren,
-                    toggleButtonComponent   : selectDropdownonToggleButtonComponent,
+                    buttonRef               : selectDropdownButtonRef,
+                    buttonOrientation       : selectDropdownButtonOrientation,
+                    buttonComponent         : selectDropdownButtonComponent,
+                    buttonChildren          : selectDropdownButtonChildren,
+                    toggleButtonComponent   : selectDropdownToggleButtonComponent,
                     dropdownRef             : mergedDropdownRef,
-                    dropdownOrientation     : selectDropdownonDropdownOrientation,
-                    dropdownComponent       : selectDropdownonDropdownComponent,
-                    listRef                 : selectDropdownonListRef,
-                    listOrientation         : selectDropdownonListOrientation,
-                    listStyle               : selectDropdownonListStyle,
-                    listComponent           : selectDropdownonListComponent,
-                    listItemComponent       : selectDropdownonListItemComponent,
-                    editableButtonComponent : selectDropdownonEditableButtonComponent,
+                    dropdownOrientation     : selectDropdownDropdownOrientation,
+                    dropdownComponent       : selectDropdownDropdownComponent,
+                    listRef                 : selectDropdownListRef,
+                    listOrientation         : selectDropdownListOrientation,
+                    listStyle               : selectDropdownListStyle,
+                    listComponent           : selectDropdownListComponent,
+                    listItemComponent       : selectDropdownListItemComponent,
+                    editableButtonComponent : selectDropdownEditableButtonComponent,
                 },
             )}
         </Group>
