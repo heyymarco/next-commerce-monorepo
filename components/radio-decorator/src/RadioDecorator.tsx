@@ -81,6 +81,7 @@ export interface RadioDecoratorProps<out TElement extends Element = HTMLSpanElem
             
             // states:
             |'defaultActive'  // no uncontrollable checked state
+            // |'onActiveChange' // supported (called when `onClick()` and `onKeyDown([space])`)
         >
 {
 }
