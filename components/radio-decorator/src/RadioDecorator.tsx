@@ -132,6 +132,7 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
         
         
         // components:
+        // replace the native <input> with <span> to avoid browser confusing with many <input> => autocomplete broken
         nativeInputComponent = (<DummyInput /> as React.ReactElement<React.InputHTMLAttributes<HTMLInputElement> & React.RefAttributes<HTMLInputElement>>),
         
         
