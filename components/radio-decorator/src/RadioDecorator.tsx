@@ -23,6 +23,11 @@ import {
     Radio,
 }                           from '@reusable-ui/radio'               // a UI for the user to select single option
 
+// internals:
+import {
+    DummyInput,
+}                           from './DummyInput.js'
+
 
 
 // handlers:
@@ -43,7 +48,40 @@ const handleRadioDecorator : React.MouseEventHandler<Element> = (event) => {
 export interface RadioDecoratorProps<TElement extends Element = HTMLSpanElement>
     extends
         // bases:
-        RadioProps<TElement>
+        Omit<RadioProps<TElement>,
+            // accessibilities:
+            |'readOnly'       // always readOnly because no change event because no actual <input>
+            
+            
+            
+            // forms:
+            |'name'           // just a decorator, no actual <input> for <form>
+            |'form'           // just a decorator, no actual <input> for <form>
+            
+            
+            
+            // values:
+            |'defaultValue'   // just a decorator, no actual <input> for <form>
+            |'value'          // just a decorator, no actual <input> for <form>
+            |'onChange'       // no change event because no actual <input>
+            
+            |'defaultChecked' // no internal checked state => no uncontrollable
+            
+            
+            
+            // validations:
+            |'required'       // no internal validation (no access to `validityState`), just an `inheritValidation` from <Parent>
+            
+            
+            
+            // formats:
+            |'type'           // just a decorator, no actual <input> for <form>
+            
+            
+            
+            // states:
+            |'defaultActive'  // no uncontrollable checked state
+        >
 {
 }
 const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: RadioDecoratorProps<TElement>): JSX.Element|null => {
@@ -81,15 +119,20 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
     // default props:
     const {
         // variants:
-        outlined         = true,  // show the <Parent>'s background
-        nude             = true,  // no outer layout
+        outlined             = true,  // show the <Parent>'s background
+        nude                 = true,  // no outer layout
         
         
         
         // accessibilities:
-        enableValidation = false, // no validation
-        inheritActive    = true,  // follows the <Parent>'s active
-        tabIndex         = -1,    // unfocusable, focus on the <Parent>
+        enableValidation     = false, // no validation
+        inheritActive        = true,  // follows the <Parent>'s active
+        tabIndex             = -1,    // unfocusable, always focus on the <Parent>
+        
+        
+        
+        // components:
+        nativeInputComponent = (<DummyInput /> as React.ReactElement<React.InputHTMLAttributes<HTMLInputElement> & React.RefAttributes<HTMLInputElement>>),
         
         
         
@@ -122,6 +165,11 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
             enableValidation={enableValidation}
             inheritActive={inheritActive}
             tabIndex={tabIndex}
+            
+            
+            
+            // components:
+            nativeInputComponent={nativeInputComponent}
             
             
             

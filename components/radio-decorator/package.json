@@ -42,9 +42,9 @@
   "dependencies": {
     "@cssfn/core": "^3.2.0",
     "@cssfn/cssfn-react": "^3.2.0",
-    "@reusable-ui/check": "^6.7.0",
+    "@reusable-ui/check": "^6.8.0",
     "@reusable-ui/core": "^6.11.0",
-    "@reusable-ui/radio": "^6.7.0"
+    "@reusable-ui/radio": "^6.8.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
