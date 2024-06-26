@@ -12,7 +12,6 @@ import {
 // reusable-ui core:
 import {
     // react helper hooks:
-    useMergeEvents,
     useMergeClasses,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 
@@ -27,20 +26,6 @@ import {
 import {
     DummyInput,
 }                           from './DummyInput.js'
-
-
-
-// handlers:
-const handleRadioDecorator : React.MouseEventHandler<Element> = (event) => {
-    // conditions:
-    if (event.defaultPrevented) return; // the event was already handled by user => nothing to do
-    
-    
-    
-    // actions:
-    event.currentTarget.parentElement?.click(); // forwards click to <Parent> while preserving the hover effect (without `pointerEvent: 'none'`)
-    event.preventDefault(); // handled
-}
 
 
 
@@ -104,19 +89,6 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
     
     
     
-    // handlers:
-    const handleClick = useMergeEvents(
-        // preserves the original `onClick` from `props`:
-        props.onClick,
-        
-        
-        
-        // actions:
-        handleRadioDecorator,
-    );
-    
-    
-    
     // default props:
     const {
         // variants:
@@ -125,9 +97,18 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
         
         
         // accessibilities:
-        enableValidation     = false, // change the default 'auto' to 'no_validation' at root level and at <ValidationProvider>
-        inheritActive        = true,  // change the default `false` to `true` => follows the <Parent>'s active
         tabIndex             = -1,    // unfocusable, always focus on the <Parent>
+        
+        
+        
+        // validations:
+        enableValidation     = false, // change the default 'auto' to 'no_validation' at root level and at <ValidationProvider>
+        
+        
+        
+        // states:
+        active               = false, // prevents the *uncontrollable* active by clicking the <RadioDecorator> => `toggleActive()`
+        inheritActive        = true,  // change the default `false` to `true` => follows the <Parent>'s active
         
         
         
@@ -162,19 +143,23 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
             
             
             // accessibilities:
-            enableValidation={enableValidation}
-            inheritActive={inheritActive}
             tabIndex={tabIndex}
+            
+            
+            
+            // validations:
+            enableValidation={enableValidation}
+            
+            
+            
+            // states:
+            active={active}
+            inheritActive={inheritActive}
             
             
             
             // components:
             nativeInputComponent={nativeInputComponent}
-            
-            
-            
-            // handlers:
-            onClick={handleClick}
         />
     );
 };
