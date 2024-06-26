@@ -43,7 +43,7 @@
   "dependencies": {
     "@heymarco/editor": "^6.9.0",
     "@reusable-ui/core": "^6.11.0",
-    "@reusable-ui/input": "^6.5.4"
+    "@reusable-ui/input": "^6.6.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
