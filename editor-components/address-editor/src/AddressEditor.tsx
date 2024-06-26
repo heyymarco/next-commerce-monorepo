@@ -28,9 +28,6 @@ import {
     type GenericProps,
     Generic,
 }                           from '@reusable-ui/generic'                 // an unstyled basic building block of Reusable-UI components
-import {
-    type DropdownListExpandedChangeEvent,
-}                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
 
 // heymarco core:
 import {
@@ -61,15 +58,6 @@ import {
     // react components:
     PhoneEditor,
 }                           from '@heymarco/phone-editor'
-import {
-    SelectCountryEditor,
-}                           from '@heymarco/select-country-editor'
-import {
-    SelectStateEditor,
-}                           from '@heymarco/select-state-editor'
-import {
-    SelectCityEditor,
-}                           from '@heymarco/select-city-editor'
 
 // internals:
 import {
@@ -183,15 +171,15 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // components:
-        countryEditorComponent   = (<SelectCountryEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>> /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        stateEditorComponent     = (<SelectStateEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>   /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        cityEditorComponent      = (<SelectCityEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        zipEditorComponent       = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Zip (Postal) Code'                    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        addressEditorComponent   = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Street Address'                       /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        countryEditorComponent   = (<TextEditor<Element  , React.ChangeEvent<HTMLInputElement>>                                /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        stateEditorComponent     = (<TextEditor<Element  , React.ChangeEvent<HTMLInputElement>>                                /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        cityEditorComponent      = (<TextEditor<Element  , React.ChangeEvent<HTMLInputElement>>                                /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        zipEditorComponent       = (<TextEditor<Element  , React.ChangeEvent<HTMLInputElement>> aria-label='Zip (Postal) Code' /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        addressEditorComponent   = (<TextEditor<Element  , React.ChangeEvent<HTMLInputElement>> aria-label='Street Address'    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         
-        firstNameEditorComponent = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='First Name'                           /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        lastNameEditorComponent  = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Last Name'                            /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        phoneEditorComponent     = (<PhoneEditor<Element, React.ChangeEvent<HTMLInputElement>>                                                  /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        firstNameEditorComponent = (<NameEditor<Element  , React.ChangeEvent<HTMLInputElement>> aria-label='First Name'        /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        lastNameEditorComponent  = (<NameEditor<Element  , React.ChangeEvent<HTMLInputElement>> aria-label='Last Name'         /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        phoneEditorComponent     = (<PhoneEditor<Element , React.ChangeEvent<HTMLInputElement>>                                /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         
         
         
