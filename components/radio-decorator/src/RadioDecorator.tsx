@@ -45,7 +45,7 @@ const handleRadioDecorator : React.MouseEventHandler<Element> = (event) => {
 
 
 // react components:
-export interface RadioDecoratorProps<TElement extends Element = HTMLSpanElement>
+export interface RadioDecoratorProps<out TElement extends Element = HTMLSpanElement>
     extends
         // bases:
         Omit<RadioProps<TElement>,
