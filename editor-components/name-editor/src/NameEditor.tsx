@@ -25,7 +25,6 @@ const NameEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
     const {
         // accessibilities:
         'aria-label' : ariaLabel = 'Name',
-        placeholder              = ariaLabel,
         
         
         
@@ -50,7 +49,6 @@ const NameEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
             
             // accessibilities:
             aria-label={ariaLabel}
-            placeholder={placeholder}
             
             
             
