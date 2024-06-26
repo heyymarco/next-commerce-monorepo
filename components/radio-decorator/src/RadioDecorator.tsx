@@ -50,7 +50,7 @@ export interface RadioDecoratorProps<out TElement extends Element = HTMLSpanElem
         // bases:
         Omit<RadioProps<TElement>,
             // accessibilities:
-            |'readOnly'       // always readOnly because no change event because no actual <input>
+            |'readOnly'       // always readOnly because no actual <input> to trigger `onChange()` event
             
             
             
