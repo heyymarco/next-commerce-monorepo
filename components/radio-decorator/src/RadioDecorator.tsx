@@ -186,8 +186,8 @@ export {
 
 
 
-export interface RadioDecoratorComponentProps
+export interface RadioDecoratorComponentProps<out TElement extends Element = HTMLSpanElement>
 {
     // components:
-    radioDecoratorComponent ?: React.ReactElement<RadioDecoratorProps<Element>>|null
+    radioDecoratorComponent ?: React.ReactElement<RadioDecoratorProps<TElement>>|null
 }
