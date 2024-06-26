@@ -25,7 +25,6 @@ const PhoneEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ex
     const {
         // accessibilities:
         'aria-label' : ariaLabel = 'Phone',
-        placeholder              = ariaLabel,
         
         
         
@@ -50,7 +49,6 @@ const PhoneEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ex
             
             // accessibilities:
             aria-label={ariaLabel}
-            placeholder={placeholder}
             
             
             
