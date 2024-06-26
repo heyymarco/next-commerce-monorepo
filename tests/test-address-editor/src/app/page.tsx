@@ -5,6 +5,9 @@ import styles from "./page.module.css";
 import { Address, AddressEditor } from "@heymarco/address-editor";
 import { Container } from "@reusable-ui/components";
 import { useState } from "react";
+import { SelectCountryEditor } from "@heymarco/select-country-editor";
+import { SelectStateEditor } from "@heymarco/select-state-editor";
+import { SelectCityEditor } from "@heymarco/select-city-editor";
 
 export default function Home() {
   const [address, setAddress] = useState<Address|null>(null);
@@ -13,7 +16,20 @@ export default function Home() {
       <p>
         test
       </p>
-      <AddressEditor value={address} onChange={setAddress} />
+      <AddressEditor
+        countryEditorComponent={
+          <SelectCountryEditor autoComplete="country" />
+        }
+        stateEditorComponent={
+          <SelectStateEditor autoComplete="address-level1" />
+        }
+        cityEditorComponent={
+          <SelectCityEditor autoComplete="address-level2" />
+        }
+        
+        value={address}
+        onChange={setAddress}
+      />
       <hr />
       <p>
         country : {address?.country}<br />
