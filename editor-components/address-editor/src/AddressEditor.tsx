@@ -84,8 +84,8 @@ const emptyAddress : Address = {
     country   : '',
     state     : '',
     city      : '',
-    address   : '',
     zip       : '',
+    address   : '',
     
     firstName : '',
     lastName  : '',
@@ -137,8 +137,8 @@ export interface AddressEditorProps<out TElement extends Element = HTMLDivElemen
     countryEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
     stateEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
     cityEditorComponent      ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    addressEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
     zipEditorComponent       ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
+    addressEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
     
     firstNameEditorComponent ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
     lastNameEditorComponent  ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
@@ -186,8 +186,8 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         countryEditorComponent   = (<SelectCountryEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>> /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         stateEditorComponent     = (<SelectStateEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>   /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         cityEditorComponent      = (<SelectCityEditor<Element, React.ChangeEvent<HTMLInputElement>, DropdownListExpandedChangeEvent<string>>    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        addressEditorComponent   = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Street Address'                       /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         zipEditorComponent       = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Zip (Postal) Code'                    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        addressEditorComponent   = (<TextEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Street Address'                       /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         
         firstNameEditorComponent = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='First Name'                           /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
         lastNameEditorComponent  = (<NameEditor<Element, React.ChangeEvent<HTMLInputElement>> aria-label='Last Name'                            /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
@@ -241,11 +241,11 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     const handleCityChangeInternal      = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
         handleChangeInternal('city', value, event);
     });
-    const handleAddressChangeInternal   = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
-        handleChangeInternal('address', value, event);
-    });
     const handleZipChangeInternal       = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
         handleChangeInternal('zip', value, event);
+    });
+    const handleAddressChangeInternal   = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+        handleChangeInternal('address', value, event);
     });
     
     const handleFirstNameChangeInternal = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
@@ -285,15 +285,6 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         // actions:
         handleCityChangeInternal,
     );
-    const handleAddressChange           = useMergeEvents(
-        // preserves the original `onChange` from `addressEditorComponent`:
-        addressEditorComponent.props.onChange,
-        
-        
-        
-        // actions:
-        handleAddressChangeInternal,
-    );
     const handleZipChange               = useMergeEvents(
         // preserves the original `onChange` from `zipEditorComponent`:
         zipEditorComponent.props.onChange,
@@ -302,6 +293,15 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // actions:
         handleZipChangeInternal,
+    );
+    const handleAddressChange           = useMergeEvents(
+        // preserves the original `onChange` from `addressEditorComponent`:
+        addressEditorComponent.props.onChange,
+        
+        
+        
+        // actions:
+        handleAddressChangeInternal,
     );
     
     const handleFirstNameChange         = useMergeEvents(
@@ -407,26 +407,6 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : addressClassName,
-        
-        
-        
-        // values:
-        value     : addressValue,
-        
-        
-        
-        // validations:
-        required  : addressRequired = required,
-        
-        
-        
-        // other props:
-        ...AddressEditorComponentProps
-    } = addressEditorComponent.props;
-    
-    const {
-        // classes:
         className : zipClassName,
         
         
@@ -444,6 +424,26 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         // other props:
         ...ZipEditorComponentProps
     } = zipEditorComponent.props;
+    
+    const {
+        // classes:
+        className : addressClassName,
+        
+        
+        
+        // values:
+        value     : addressValue,
+        
+        
+        
+        // validations:
+        required  : addressRequired = required,
+        
+        
+        
+        // other props:
+        ...AddressEditorComponentProps
+    } = addressEditorComponent.props;
     
     
     const {

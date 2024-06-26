@@ -2,8 +2,8 @@ export interface Address {
     country   : string
     state     : string
     city      : string
-    address   : string
     zip       : string
+    address   : string
     
     firstName : string
     lastName  : string
