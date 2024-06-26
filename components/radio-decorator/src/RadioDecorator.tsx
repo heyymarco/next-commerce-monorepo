@@ -125,8 +125,8 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
         
         
         // accessibilities:
-        enableValidation     = false, // no validation
-        inheritActive        = true,  // follows the <Parent>'s active
+        enableValidation     = false, // change the default 'auto' to 'no_validation' at root level and at <ValidationProvider>
+        inheritActive        = true,  // change the default `false` to `true` => follows the <Parent>'s active
         tabIndex             = -1,    // unfocusable, always focus on the <Parent>
         
         
