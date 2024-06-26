@@ -56,7 +56,6 @@ const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEven
     const {
         // accessibilities:
         'aria-label'            : ariaLabel = `Select ${startsCapitalized(modelName)}`,
-        placeholder             = ariaLabel,
         
         
         
@@ -81,7 +80,6 @@ const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEven
             
             // accessibilities:
             aria-label={ariaLabel}
-            placeholder={placeholder}
             
             
             
