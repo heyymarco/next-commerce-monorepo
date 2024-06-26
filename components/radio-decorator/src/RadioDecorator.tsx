@@ -121,7 +121,6 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
     const {
         // variants:
         outlined             = true,  // show the <Parent>'s background
-        nude                 = true,  // no outer layout
         
         
         
@@ -153,7 +152,6 @@ const RadioDecorator = <TElement extends Element = HTMLSpanElement>(props: Radio
             
             // variants:
             outlined={outlined}
-            nude={nude}
             
             
             
