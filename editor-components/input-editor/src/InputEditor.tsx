@@ -74,11 +74,29 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ex
     
     
     
+    // default props:
+    const {
+        // accessibilities:
+        placeholder = props['aria-label'],
+        
+        
+        
+        // other props:
+        ...restInputProps
+    } = restInputEditorProps;
+    
+    
+    
     // jsx:
     return (
         <Input<TElement>
             // other props:
-            {...restInputEditorProps}
+            {...restInputProps}
+            
+            
+            
+            // accessibilities:
+            placeholder={placeholder}
             
             
             
