@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/radio-decorator",
-  "version": "6.7.0",
+  "version": "6.8.0",
   "description": "A decoration UI for the user to select single option.",
   "keywords": [
     "decoration",
