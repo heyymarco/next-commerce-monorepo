@@ -11,6 +11,7 @@ import { SelectCityEditor } from "@heymarco/select-city-editor";
 
 export default function Home() {
   const [address, setAddress] = useState<Address|null>(null);
+  const [country, setCountry] = useState<string>('');
   return (
     <Container tag='main' theme='primary' className={styles.main}>
       <p>
@@ -21,10 +22,10 @@ export default function Home() {
           <SelectCountryEditor enableValidation />
         }
         stateEditorComponent={
-          <SelectStateEditor autoComplete="address-level1" />
+          <SelectStateEditor />
         }
         cityEditorComponent={
-          <SelectCityEditor autoComplete="address-level2" />
+          <SelectCityEditor />
         }
         
         value={address}
@@ -40,6 +41,14 @@ export default function Home() {
         firstName : {address?.firstName}<br />
         lastName : {address?.lastName}<br />
         phone : {address?.phone}<br />
+      </p>
+      <hr />
+      <SelectCountryEditor enableValidation />
+      <hr />
+      <SelectCountryEditor enableValidation value={country} onChange={setCountry} />
+      <input type='text' value={country} onChange={(event) => setCountry(event.target.value)} />
+      <p>
+        country: {country}
       </p>
     </Container>
   );
