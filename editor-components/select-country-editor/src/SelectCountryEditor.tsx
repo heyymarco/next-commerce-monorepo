@@ -2,6 +2,11 @@
 import {
     // react:
     default as React,
+    
+    
+    
+    // hooks:
+    useMemo,
 }                           from 'react'
 
 // reusable-ui core:
@@ -14,6 +19,12 @@ import {
 import {
     type DropdownListExpandedChangeEvent,
 }                           from '@reusable-ui/dropdown-list'           // overlays a list element (menu)
+
+// heymarco:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
 
 // heymarco components:
 import {
@@ -52,8 +63,10 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // props:
     const {
         // values:
-        value,
-        onChange,
+        defaultValue   : defaultUncontrollableValue = '',
+        value          : controllableValue,
+        onChange       : onControllableValueChange,
+        onChangeAsText : onControllableTextChange,
         
         
         
@@ -61,28 +74,51 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         ...restSelectCountryEditorProps
     } = props;
     
-    const valueAsCountryName = (
-        getCountryNameByCode(value)
-        ??
-        value
-    );
     
     
-    
-    // handlers:
-    const handleChangeToCountryCode = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
+    // states:
+    const handleControllableValueChange = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((newValue, event) => {
         // conditions:
-        if (!onChange) return;
+        if (!onControllableValueChange && !onControllableTextChange) return;
         
         
         
         // converts:
+        onControllableValueChange?.(newValue, event);
+        onControllableTextChange?.(newValue, event);
+    });
+    const {
+        value              : value,
+        triggerValueChange : triggerValueChange,
+    } = useControllableAndUncontrollable<string, TChangeEvent>({
+        defaultValue       : defaultUncontrollableValue,
+        value              : controllableValue,
+        onValueChange      : handleControllableValueChange,
+    });
+    
+    
+    
+    // converts:
+    const valueAsCountryName = useMemo(() => (
+        getCountryNameByCode(value) // converted to countryName
+        ??
+        value                       // invalid|partial countryCode
+    ), [value]);
+    
+    
+    
+    // handlers:
+    const handleChange = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
+        // converts:
         const valueAsCountryCode = (
             getCountryCodeByName(value) // converted to countryCode
             ??
-            value                       // partial countryName
+            value                       // invalid|partial countryName
         );
-        onChange(valueAsCountryCode, event);
+        
+        
+        
+        triggerValueChange(valueAsCountryCode, { triggerAt: 'immediately', event: event });
     });
     
     
@@ -126,7 +162,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             // values:
             valueOptions={valueOptions}
             value={valueAsCountryName}
-            onChange={handleChangeToCountryCode}
+            onChange={handleChange}
             
             
             
