@@ -36,7 +36,12 @@ const SelectCityEditor = <TElement extends Element = HTMLDivElement, TChangeEven
     // default props:
     const {
         // models:
-        modelName = 'City',
+        modelName    = 'City',
+        
+        
+        
+        // formats:
+        autoComplete = 'address-level2',
         
         
         
@@ -56,6 +61,11 @@ const SelectCityEditor = <TElement extends Element = HTMLDivElement, TChangeEven
             
             // models:
             modelName={modelName}
+            
+            
+            
+            // formats:
+            autoComplete={autoComplete}
         />
     );
 };

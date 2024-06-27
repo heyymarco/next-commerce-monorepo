@@ -36,7 +36,12 @@ const SelectStateEditor = <TElement extends Element = HTMLDivElement, TChangeEve
     // default props:
     const {
         // models:
-        modelName = 'State',
+        modelName    = 'State',
+        
+        
+        
+        // formats:
+        autoComplete = 'address-level1',
         
         
         
@@ -56,6 +61,11 @@ const SelectStateEditor = <TElement extends Element = HTMLDivElement, TChangeEve
             
             // models:
             modelName={modelName}
+            
+            
+            
+            // formats:
+            autoComplete={autoComplete}
         />
     );
 };

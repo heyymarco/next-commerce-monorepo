@@ -135,6 +135,11 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         
+        // formats:
+        autoComplete             = 'country-name',
+        
+        
+        
         // other props:
         ...restSelectZoneEditorProps
     } = restSelectCountryEditorProps;
@@ -163,6 +168,11 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             // validations:
             freeTextInput={freeTextInput}
+            
+            
+            
+            // formats:
+            autoComplete={autoComplete}
         />
     );
 };
