@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     type DropdownListExpandedChangeEvent,
@@ -11,20 +17,17 @@ import {
 
 // heymarco components:
 import {
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+import {
     // react components:
     type SelectZoneEditorProps,
     SelectZoneEditor,
 }                           from '@heymarco/select-zone-editor'
 
-// internal components:
-import {
-    // react components:
-    MirroredInput,
-}                           from './MirroredInput.js'
-
 // internals:
 import {
-    getCountryDisplay,
+    getCountryCodeByName,
     defaultCountryList,
 }                           from './utilities.js'
 
@@ -45,6 +48,34 @@ export interface SelectCountryEditorProps<out TElement extends Element = HTMLDiv
 {
 }
 const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: SelectCountryEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+    // props:
+    const {
+        // values:
+        // value,
+        onChange,
+        
+        
+        
+        // other props:
+        ...restSelectCountryEditorProps
+    } = props;
+    
+    
+    
+    // handlers:
+    const handleChangeToCountryCode = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
+        // conditions:
+        if (!onChange) return;
+        
+        
+        
+        // converts:
+        const valueAsCountryCode = getCountryCodeByName(value) ?? '';
+        onChange(valueAsCountryCode, event);
+    });
+    
+    
+    
     // default props:
     const {
         // models:
@@ -54,35 +85,17 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         // values:
         valueOptions             = defaultCountryList,
-        valueToUi                = getCountryDisplay,
         
         
         
         // validations:
-        minLength                = 2,
-        maxLength                = 2,
-        freeTextInput            = false,
-        
-        
-        
-        // behaviors:
-        preferFocusOnInputEditor = false,
-        
-        
-        
-        // components:
-        nativeInputComponent     = (
-            <MirroredInput
-                // values:
-                valueToUi={valueToUi}
-            />
-        ),
+        freeTextInput            = false, // must select a country in the provided valueOptions
         
         
         
         // other props:
         ...restSelectZoneEditorProps
-    } = props;
+    } = restSelectCountryEditorProps;
     
     
     
@@ -101,24 +114,12 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             // values:
             valueOptions={valueOptions}
-            valueToUi={valueToUi}
+            onChange={handleChangeToCountryCode}
             
             
             
             // validations:
-            minLength={minLength}
-            maxLength={maxLength}
             freeTextInput={freeTextInput}
-            
-            
-            
-            // behaviors:
-            preferFocusOnInputEditor={preferFocusOnInputEditor}
-            
-            
-            
-            // components:
-            nativeInputComponent={nativeInputComponent}
         />
     );
 };

@@ -1,10 +1,35 @@
 // internals:
 import {
-    default as defaultCountryMap
+    defaultCountryNameToCodeMap,
 }                           from './defaultCountryMap.js'
 
 
 
-export const getCountryByCode   = (countryCode: string|null|undefined): string|null => (countryCode ? defaultCountryMap.get(countryCode) : null) ?? null;
-export const getCountryDisplay  = (countryCode: string|null|undefined): string      => (countryCode ? getCountryByCode(countryCode.trim().toUpperCase()) : null) ?? '';
-export const defaultCountryList = Array.from(defaultCountryMap.keys());
+// utilities:
+export const getNormalizedCountryName = (countryName: string|null|undefined): string|null => {
+    if (!countryName) return null; // no input => no output
+    if (defaultCountryNameToCodeMap.has(countryName)) return countryName; // found exact
+    
+    const countryNameLowercase = countryName.trim().toLocaleLowerCase();
+    return (
+        Array.from(defaultCountryNameToCodeMap.keys())
+        .find((countryNameItem) => (countryNameItem.trim().toLowerCase() === countryNameLowercase))
+        ??
+        null
+    );
+}
+export const getCountryCodeByName     = (countryName: string|null|undefined): string|null => {
+    if (!countryName) return null; // no input => no output
+    const normalizedCountryName = getNormalizedCountryName(countryName);
+    if (!normalizedCountryName) return null; // no input => no output
+    return (
+        defaultCountryNameToCodeMap
+        .get(normalizedCountryName)
+        ??
+        null
+    );
+}
+export const getCountryNameByCode     = (countryName: string|null|undefined): string => {
+    return getNormalizedCountryName(countryName) ?? '';
+}
+export const defaultCountryList       = Array.from(defaultCountryNameToCodeMap.keys());

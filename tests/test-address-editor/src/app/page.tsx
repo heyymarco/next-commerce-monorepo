@@ -18,7 +18,7 @@ export default function Home() {
       </p>
       <AddressEditor
         countryEditorComponent={
-          <SelectCountryEditor autoComplete="country" />
+          <SelectCountryEditor enableValidation />
         }
         stateEditorComponent={
           <SelectStateEditor autoComplete="address-level1" />
