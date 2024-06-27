@@ -38,6 +38,7 @@ import {
 
 // internals:
 import {
+    getNormalizedCountryName,
     getCountryCodeByName,
     getCountryNameByCode,
     defaultCountryList,
@@ -96,6 +97,8 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // converts:
     const valueAsCountryName = useMemo(() => (
         getCountryNameByCode(value) // converted to countryName
+        ??
+        getNormalizedCountryName(value) // if valid => normalize the (upper|lower)Case
         ??
         value                       // invalid|partial countryCode
     ), [value]);
