@@ -335,7 +335,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : countryClassName,
+        className : countryClassName   = '',
         
         
         
@@ -345,7 +345,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : countryRequired = required,
+        required  : countryRequired    = required,
         
         
         
@@ -355,7 +355,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : stateClassName,
+        className : stateClassName     = '',
         
         
         
@@ -365,7 +365,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : stateRequired = required,
+        required  : stateRequired      = required,
         
         
         
@@ -375,7 +375,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : cityClassName,
+        className : cityClassName      = '',
         
         
         
@@ -385,7 +385,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : cityRequired = required,
+        required  : cityRequired       = required,
         
         
         
@@ -395,7 +395,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : zipClassName,
+        className : zipClassName       = '',
         
         
         
@@ -405,7 +405,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : zipRequired = false,
+        required  : zipRequired        = false,
         
         
         
@@ -415,7 +415,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : addressClassName,
+        className : addressClassName   = '',
         
         
         
@@ -425,7 +425,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : addressRequired = required,
+        required  : addressRequired    = required,
         
         
         
@@ -436,7 +436,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : firstNameClassName,
+        className : firstNameClassName = '',
         
         
         
@@ -446,7 +446,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : firstNameRequired = required,
+        required  : firstNameRequired  = required,
         
         
         
@@ -456,7 +456,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : lastNameClassName,
+        className : lastNameClassName  = '',
         
         
         
@@ -466,7 +466,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : lastNameRequired = required,
+        required  : lastNameRequired   = required,
         
         
         
@@ -476,7 +476,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : phoneClassName,
+        className : phoneClassName     = '',
         
         
         
@@ -486,7 +486,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // validations:
-        required  : phoneRequired = required,
+        required  : phoneRequired      = required,
         
         
         
