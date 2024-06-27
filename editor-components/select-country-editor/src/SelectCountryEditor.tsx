@@ -70,11 +70,6 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         
-        // states:
-        assertiveFocusable       = false,
-        
-        
-        
         // components:
         nativeInputComponent     = (
             <MirroredInput
@@ -119,11 +114,6 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             // behaviors:
             preferFocusOnInputEditor={preferFocusOnInputEditor}
-            
-            
-            
-            // states:
-            assertiveFocusable={assertiveFocusable}
             
             
             

@@ -107,7 +107,6 @@ const MirroredInput = React.forwardRef((props: MirroredInputProps, ref: React.Fo
             const dummyFocus = (mirrorElm as unknown as HTMLElement)?.focus;
             if (!dummyFocus) return;
             dummyFocus.call(/* this: */mirrorElm, options);
-            console.log('focused on: ', mirrorElm);
         };
     }, []);
     
@@ -126,6 +125,11 @@ const MirroredInput = React.forwardRef((props: MirroredInputProps, ref: React.Fo
                 
                 // accessibilities:
                 tabIndex={tabIndex}
+                
+                
+                
+                // states:
+                data-assertive-focusable={true} // a *hack* for `usesFocusable()`
             >
                 {!!value && (valueToUi ? valueToUi(value) : value)}
                 { !value && !!placeholder && <span className='placeholder'>{placeholder}</span>}
