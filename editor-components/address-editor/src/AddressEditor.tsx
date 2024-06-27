@@ -117,7 +117,7 @@ export interface AddressEditorProps<out TElement extends Element = HTMLDivElemen
         >
 {
     // values:
-    addressType ?: AddressType
+    addressType              ?: AddressType
     
     
     
@@ -144,11 +144,11 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     // props:
     const {
         // values:
-        addressType,
+        addressType       : addressTypeRaw,
         
-        defaultValue            : defaultUncontrollableValue = emptyAddress,
-        value                   : controllableValue,
-        onChange                : onControllableValueChange,
+        defaultValue      : defaultUncontrollableValue = emptyAddress,
+        value             : controllableValue,
+        onChange          : onControllableValueChange,
         
         
         
@@ -186,6 +186,11 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         // other props:
         ...restAddressEditorProps
     } = props;
+    const addressType = (
+        !addressTypeRaw
+        ? ''
+        : `${addressTypeRaw} `
+    );
     
     
     
@@ -335,17 +340,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : countryClassName   = '',
+        className    : countryClassName      = '',
         
         
         
         // values:
-        value     : countryValue,
+        value        : countryValue,
         
         
         
         // validations:
-        required  : countryRequired    = required,
+        required     : countryRequired       = required,
+        
+        
+        
+        // formats:
+        autoComplete : countryAutoComplete   = `${addressType}country-name`,
         
         
         
@@ -355,17 +365,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : stateClassName     = '',
+        className    : stateClassName        = '',
         
         
         
         // values:
-        value     : stateValue,
+        value        : stateValue,
         
         
         
         // validations:
-        required  : stateRequired      = required,
+        required     : stateRequired         = required,
+        
+        
+        
+        // formats:
+        autoComplete : stateAutoComplete     = `${addressType}address-level1`,
         
         
         
@@ -375,17 +390,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : cityClassName      = '',
+        className    : cityClassName         = '',
         
         
         
         // values:
-        value     : cityValue,
+        value        : cityValue,
         
         
         
         // validations:
-        required  : cityRequired       = required,
+        required     : cityRequired          = required,
+        
+        
+        
+        // formats:
+        autoComplete : cityAutoComplete      = `${addressType}address-level2`,
         
         
         
@@ -395,17 +415,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : zipClassName       = '',
+        className    : zipClassName          = '',
         
         
         
         // values:
-        value     : zipValue,
+        value        : zipValue,
         
         
         
         // validations:
-        required  : zipRequired        = false,
+        required     : zipRequired           = false,
+        
+        
+        
+        // formats:
+        autoComplete : zipAutoComplete       = `${addressType}postal-code`,
         
         
         
@@ -415,17 +440,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : addressClassName   = '',
+        className    : addressClassName      = '',
         
         
         
         // values:
-        value     : addressValue,
+        value        : addressValue,
         
         
         
         // validations:
-        required  : addressRequired    = required,
+        required     : addressRequired       = required,
+        
+        
+        
+        // formats:
+        autoComplete : addressAutoComplete   = `${addressType}street-address`,
         
         
         
@@ -436,17 +466,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : firstNameClassName = '',
+        className    : firstNameClassName    = '',
         
         
         
         // values:
-        value     : firstNameValue,
+        value        : firstNameValue,
         
         
         
         // validations:
-        required  : firstNameRequired  = required,
+        required     : firstNameRequired     = required,
+        
+        
+        
+        // formats:
+        autoComplete : firstNameAutoComplete = `${addressType}given-name`,
         
         
         
@@ -456,17 +491,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : lastNameClassName  = '',
+        className    : lastNameClassName     = '',
         
         
         
         // values:
-        value     : lastNameValue,
+        value        : lastNameValue,
         
         
         
         // validations:
-        required  : lastNameRequired   = required,
+        required     : lastNameRequired      = required,
+        
+        
+        
+        // formats:
+        autoComplete : lastNameAutoComplete  = `${addressType}family-name`,
         
         
         
@@ -476,17 +516,22 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const {
         // classes:
-        className : phoneClassName     = '',
+        className    : phoneClassName        = '',
         
         
         
         // values:
-        value     : phoneValue,
+        value        : phoneValue,
         
         
         
         // validations:
-        required  : phoneRequired      = required,
+        required     : phoneRequired         = required,
+        
+        
+        
+        // formats:
+        autoComplete : phoneAutoComplete     = `${addressType}tel`,
         
         
         
@@ -519,18 +564,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${countryClassName} country`,
+                        className    : `${countryClassName} country`,
                         
                         
                         
                         // values:
-                        value     : countryValue,
-                        onChange  : handleCountryChange,
+                        value        : countryValue,
+                        onChange     : handleCountryChange,
                         
                         
                         
                         // validations:
-                        required  : countryRequired,
+                        required     : countryRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : countryAutoComplete,
                     },
                 )}
                 
@@ -544,18 +594,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${stateClassName} state`,
+                        className    : `${stateClassName} state`,
                         
                         
                         
                         // values:
-                        value     : stateValue,
-                        onChange  : handleStateChange,
+                        value        : stateValue,
+                        onChange     : handleStateChange,
                         
                         
                         
                         // validations:
-                        required  : stateRequired,
+                        required     : stateRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : stateAutoComplete,
                     },
                 )}
                 
@@ -569,18 +624,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${cityClassName} city`,
+                        className    : `${cityClassName} city`,
                         
                         
                         
                         // values:
-                        value     : cityValue,
-                        onChange  : handleCityChange,
+                        value        : cityValue,
+                        onChange     : handleCityChange,
                         
                         
                         
                         // validations:
-                        required  : cityRequired,
+                        required     : cityRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : cityAutoComplete,
                     },
                 )}
                 
@@ -594,18 +654,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${zipClassName} zip`,
+                        className    : `${zipClassName} zip`,
                         
                         
                         
                         // values:
-                        value     : zipValue,
-                        onChange  : handleZipChange,
+                        value        : zipValue,
+                        onChange     : handleZipChange,
                         
                         
                         
                         // validations:
-                        required  : zipRequired,
+                        required     : zipRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : zipAutoComplete,
                     },
                 )}
                 
@@ -619,18 +684,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${addressClassName} address`,
+                        className    : `${addressClassName} address`,
                         
                         
                         
                         // values:
-                        value     : addressValue,
-                        onChange  : handleAddressChange,
+                        value        : addressValue,
+                        onChange     : handleAddressChange,
                         
                         
                         
                         // validations:
-                        required  : addressRequired,
+                        required     : addressRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : addressAutoComplete,
                     },
                 )}
                 
@@ -645,18 +715,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${firstNameClassName} firstName`,
+                        className    : `${firstNameClassName} firstName`,
                         
                         
                         
                         // values:
-                        value     : firstNameValue,
-                        onChange  : handleFirstNameChange,
+                        value        : firstNameValue,
+                        onChange     : handleFirstNameChange,
                         
                         
                         
                         // validations:
-                        required  : firstNameRequired,
+                        required     : firstNameRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : firstNameAutoComplete,
                     },
                 )}
                 
@@ -670,18 +745,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${lastNameClassName} lastName`,
+                        className    : `${lastNameClassName} lastName`,
                         
                         
                         
                         // values:
-                        value     : lastNameValue,
-                        onChange  : handleLastNameChange,
+                        value        : lastNameValue,
+                        onChange     : handleLastNameChange,
                         
                         
                         
                         // validations:
-                        required  : lastNameRequired,
+                        required     : lastNameRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : lastNameAutoComplete,
                     },
                 )}
                 
@@ -695,18 +775,23 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                         
                         
                         // classes:
-                        className : `${phoneClassName} phone`,
+                        className    : `${phoneClassName} phone`,
                         
                         
                         
                         // values:
-                        value     : phoneValue,
-                        onChange  : handlePhoneChange,
+                        value        : phoneValue,
+                        onChange     : handlePhoneChange,
                         
                         
                         
                         // validations:
-                        required  : phoneRequired,
+                        required     : phoneRequired,
+                        
+                        
+                        
+                        // formats:
+                        autoComplete : phoneAutoComplete,
                     },
                 )}
             </div>
