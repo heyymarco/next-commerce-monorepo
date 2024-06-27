@@ -19,8 +19,8 @@ import {
 // internal components:
 import {
     // react components:
-    DummyTextEditor,
-}                           from './DummyTextEditor.js'
+    MirroredInput,
+}                           from './MirroredInput.js'
 
 // internals:
 import {
@@ -59,6 +59,8 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // validations:
+        minLength                = 2,
+        maxLength                = 2,
         freeTextInput            = false,
         
         
@@ -68,17 +70,16 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         
+        // states:
+        assertiveFocusable       = false,
+        
+        
+        
         // components:
-        inputEditorComponent     = (
-            <DummyTextEditor<Element, TChangeEvent>
+        nativeInputComponent     = (
+            <MirroredInput
                 // values:
                 valueToUi={valueToUi}
-                
-                
-                
-                // validations:
-                minLength={2}
-                maxLength={2}
             />
         ),
         
@@ -110,6 +111,8 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             
             // validations:
+            minLength={minLength}
+            maxLength={maxLength}
             freeTextInput={freeTextInput}
             
             
@@ -119,8 +122,13 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             
             
+            // states:
+            assertiveFocusable={assertiveFocusable}
+            
+            
+            
             // components:
-            inputEditorComponent={inputEditorComponent}
+            nativeInputComponent={nativeInputComponent}
         />
     );
 };
