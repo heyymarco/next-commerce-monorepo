@@ -78,12 +78,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     // states:
     const handleControllableValueChange = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((newValue, event) => {
-        // conditions:
-        if (!onControllableValueChange && !onControllableTextChange) return;
-        
-        
-        
-        // converts:
+        // forwards:
         onControllableValueChange?.(newValue, event);
         onControllableTextChange?.(newValue, event);
     });
