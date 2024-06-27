@@ -29,7 +29,7 @@ export const getCountryCodeByName     = (countryName: string|null|undefined): st
         null
     );
 }
-export const getCountryNameByCode     = (countryName: string|null|undefined): string => {
-    return getNormalizedCountryName(countryName) ?? '';
+export const getCountryNameByCode     = (countryName: string|null|undefined): string|null => {
+    return getNormalizedCountryName(countryName);
 }
 export const defaultCountryList       = Array.from(defaultCountryNameToCodeMap.keys());

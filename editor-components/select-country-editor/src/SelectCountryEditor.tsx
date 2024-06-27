@@ -28,6 +28,7 @@ import {
 // internals:
 import {
     getCountryCodeByName,
+    getCountryNameByCode,
     defaultCountryList,
 }                           from './utilities.js'
 
@@ -51,7 +52,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
     // props:
     const {
         // values:
-        // value,
+        value,
         onChange,
         
         
@@ -59,6 +60,12 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         // other props:
         ...restSelectCountryEditorProps
     } = props;
+    
+    const valueAsCountryName = (
+        getCountryNameByCode(value)
+        ??
+        value
+    );
     
     
     
@@ -118,6 +125,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             // values:
             valueOptions={valueOptions}
+            value={valueAsCountryName}
             onChange={handleChangeToCountryCode}
             
             
