@@ -1,5 +1,6 @@
 // internals:
 import {
+    defaultCountryCodeToNameMap,
     defaultCountryNameToCodeMap,
 }                           from './defaultCountryMap.js'
 
@@ -7,29 +8,34 @@ import {
 
 // utilities:
 export const getNormalizedCountryName = (countryName: string|null|undefined): string|null => {
-    if (!countryName) return null; // no input => no output
-    if (defaultCountryNameToCodeMap.has(countryName)) return countryName; // found exact
+    // conditions:
+    if (!countryName) return null; // no input => null
     
+    
+    
+    // converts:
     const countryNameLowercase = countryName.trim().toLocaleLowerCase();
-    return (
-        Array.from(defaultCountryNameToCodeMap.keys())
-        .find((countryNameItem) => (countryNameItem.trim().toLowerCase() === countryNameLowercase))
-        ??
-        null
-    );
+    const countryCode = defaultCountryNameToCodeMap.get(countryNameLowercase);
+    if (!countryCode) return null; // not found => null
+    return defaultCountryCodeToNameMap.get(countryCode) ?? null;
 }
 export const getCountryCodeByName     = (countryName: string|null|undefined): string|null => {
-    if (!countryName) return null; // no input => no output
-    const normalizedCountryName = getNormalizedCountryName(countryName);
-    if (!normalizedCountryName) return null; // no input => no output
-    return (
-        defaultCountryNameToCodeMap
-        .get(normalizedCountryName)
-        ??
-        null
-    );
+    // conditions:
+    if (!countryName) return null; // no input => null
+    
+    
+    
+    // converts:
+    const countryNameLowercase = countryName.trim().toLocaleLowerCase();
+    return defaultCountryNameToCodeMap.get(countryNameLowercase) ?? null;
 }
-export const getCountryNameByCode     = (countryName: string|null|undefined): string|null => {
-    return getNormalizedCountryName(countryName);
+export const getCountryNameByCode     = (countryCode: string|null|undefined): string|null => {
+    // conditions:
+    if (!countryCode) return null; // no input => null
+    
+    
+    
+    // converts:
+    return defaultCountryCodeToNameMap.get(countryCode) ?? null;
 }
-export const defaultCountryList       = Array.from(defaultCountryNameToCodeMap.keys());
+export const defaultCountryList       = Array.from(defaultCountryCodeToNameMap.values());
