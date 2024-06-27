@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@heymarco/editor": "^6.9.0",
+    "@heymarco/events": "^6.7.0",
     "@heymarco/select-zone-editor": "^6.9.0",
     "@reusable-ui/core": "^6.11.0",
     "@reusable-ui/dropdown-list": "^6.6.2"
