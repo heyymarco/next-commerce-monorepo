@@ -70,7 +70,11 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // converts:
-        const valueAsCountryCode = getCountryCodeByName(value) ?? '';
+        const valueAsCountryCode = (
+            getCountryCodeByName(value) // converted to countryCode
+            ??
+            value                       // partial countryName
+        );
         onChange(valueAsCountryCode, event);
     });
     
