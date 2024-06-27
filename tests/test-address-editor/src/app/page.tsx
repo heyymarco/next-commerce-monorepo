@@ -18,6 +18,7 @@ export default function Home() {
         test
       </p>
       <AddressEditor
+        addressType='shipping'
         countryEditorComponent={
           <SelectCountryEditor enableValidation />
         }
