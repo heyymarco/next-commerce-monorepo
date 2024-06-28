@@ -345,7 +345,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : countryValue,
+        value        : countryValue          = value?.country ?? '',
         
         
         
@@ -370,7 +370,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : stateValue,
+        value        : stateValue            = value?.state ?? '',
         
         
         
@@ -395,7 +395,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : cityValue,
+        value        : cityValue             = value?.city ?? '',
         
         
         
@@ -420,7 +420,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : zipValue,
+        value        : zipValue              = value?.zip ?? '',
         
         
         
@@ -445,7 +445,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : addressValue,
+        value        : addressValue          = value?.address ?? '',
         
         
         
@@ -471,7 +471,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : firstNameValue,
+        value        : firstNameValue        = value?.firstName ?? '',
         
         
         
@@ -496,7 +496,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : lastNameValue,
+        value        : lastNameValue         = value?.lastName ?? '',
         
         
         
@@ -521,7 +521,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // values:
-        value        : phoneValue,
+        value        : phoneValue            = value?.phone ?? '',
         
         
         

@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/address-editor",
-  "version": "6.10.0",
+  "version": "6.10.1",
   "description": "A composite editor for editing address data.",
   "keywords": [
     "address",
