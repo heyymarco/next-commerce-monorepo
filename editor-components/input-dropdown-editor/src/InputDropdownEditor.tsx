@@ -693,6 +693,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     } = inputEditorComponent.props;
     
     const {
+        // accessibilities:
+        'aria-invalid'          : selectDropdownAriaInvalid                = false, // the <SelectDropdownEditor> ia a __secondary__ control and is __never__ invalid, always refer to <InputEditor> as the __primary__ control
+        
+        
+        
         // values:
         valueOptions            : selectDropdownEditorValueOptions         = valueOptions,
         excludedValueOptions    : selectDropdownEditorExcludedValueOptions = excludedValueOptions,
@@ -840,6 +845,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
                     
                     // variants:
                     ...basicVariantProps,
+                    
+                    
+                    
+                    // accessibilities:
+                    'aria-invalid'          : selectDropdownAriaInvalid,
                     
                     
                     
