@@ -122,15 +122,15 @@ export interface AddressEditorProps<out TElement extends Element = HTMLDivElemen
     
     
     // components:
-    countryEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    stateEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    cityEditorComponent      ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    zipEditorComponent       ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    addressEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
+    countryEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    stateEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    cityEditorComponent      ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    zipEditorComponent       ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    addressEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
     
-    firstNameEditorComponent ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    lastNameEditorComponent  ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
-    phoneEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>
+    firstNameEditorComponent ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    lastNameEditorComponent  ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    phoneEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
 }
 const AddressEditor         = <TElement extends Element = HTMLDivElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
     // jsx:
@@ -253,7 +253,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const handleCountryChange           = useMergeEvents(
         // preserves the original `onChange` from `countryEditorComponent`:
-        countryEditorComponent.props.onChange,
+        countryEditorComponent?.props.onChange,
         
         
         
@@ -262,7 +262,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     );
     const handleStateChange             = useMergeEvents(
         // preserves the original `onChange` from `stateEditorComponent`:
-        stateEditorComponent.props.onChange,
+        stateEditorComponent?.props.onChange,
         
         
         
@@ -271,7 +271,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     );
     const handleCityChange              = useMergeEvents(
         // preserves the original `onChange` from `cityEditorComponent`:
-        cityEditorComponent.props.onChange,
+        cityEditorComponent?.props.onChange,
         
         
         
@@ -280,7 +280,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     );
     const handleZipChange               = useMergeEvents(
         // preserves the original `onChange` from `zipEditorComponent`:
-        zipEditorComponent.props.onChange,
+        zipEditorComponent?.props.onChange,
         
         
         
@@ -289,7 +289,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     );
     const handleAddressChange           = useMergeEvents(
         // preserves the original `onChange` from `addressEditorComponent`:
-        addressEditorComponent.props.onChange,
+        addressEditorComponent?.props.onChange,
         
         
         
@@ -299,7 +299,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     const handleFirstNameChange         = useMergeEvents(
         // preserves the original `onChange` from `firstNameEditorComponent`:
-        firstNameEditorComponent.props.onChange,
+        firstNameEditorComponent?.props.onChange,
         
         
         
@@ -308,7 +308,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     );
     const handleLastNameChange          = useMergeEvents(
         // preserves the original `onChange` from `lastNameEditorComponent`:
-        lastNameEditorComponent.props.onChange,
+        lastNameEditorComponent?.props.onChange,
         
         
         
@@ -317,7 +317,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     );
     const handlePhoneChange             = useMergeEvents(
         // preserves the original `onChange` from `phoneEditorComponent`:
-        phoneEditorComponent.props.onChange,
+        phoneEditorComponent?.props.onChange,
         
         
         
@@ -361,7 +361,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...CountryEditorComponentProps
-    } = countryEditorComponent.props;
+    } = countryEditorComponent?.props ?? {};
     
     const {
         // classes:
@@ -386,7 +386,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...StateEditorComponentProps
-    } = stateEditorComponent.props;
+    } = stateEditorComponent?.props ?? {};
     
     const {
         // classes:
@@ -411,7 +411,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...CityEditorComponentProps
-    } = cityEditorComponent.props;
+    } = cityEditorComponent?.props ?? {};
     
     const {
         // classes:
@@ -436,7 +436,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...ZipEditorComponentProps
-    } = zipEditorComponent.props;
+    } = zipEditorComponent?.props ?? {};
     
     const {
         // classes:
@@ -461,7 +461,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...AddressEditorComponentProps
-    } = addressEditorComponent.props;
+    } = addressEditorComponent?.props ?? {};
     
     
     const {
@@ -487,7 +487,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...FirstNameEditorComponentProps
-    } = firstNameEditorComponent.props;
+    } = firstNameEditorComponent?.props ?? {};
     
     const {
         // classes:
@@ -512,7 +512,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...LastNameEditorComponentProps
-    } = lastNameEditorComponent.props;
+    } = lastNameEditorComponent?.props ?? {};
     
     const {
         // classes:
@@ -537,7 +537,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         // other props:
         ...PhoneEditorComponentProps
-    } = phoneEditorComponent.props;
+    } = phoneEditorComponent?.props ?? {};
     
     
     
@@ -555,7 +555,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
             {/* <ResponsiveContainer> */}
             <div>
                 {/* <Country> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(countryEditorComponent,
+                {!!countryEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(countryEditorComponent,
                     // props:
                     {
                         // other props:
@@ -585,7 +585,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <State> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(stateEditorComponent,
+                {!!stateEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(stateEditorComponent,
                     // props:
                     {
                         // other props:
@@ -615,7 +615,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <City> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(cityEditorComponent,
+                {!!cityEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(cityEditorComponent,
                     // props:
                     {
                         // other props:
@@ -645,7 +645,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <Zip> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(zipEditorComponent,
+                {!!zipEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(zipEditorComponent,
                     // props:
                     {
                         // other props:
@@ -675,7 +675,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <Address> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
+                {!!addressEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
                     // props:
                     {
                         // other props:
@@ -706,7 +706,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 
                 
                 {/* <FirstName> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(firstNameEditorComponent,
+                {!!firstNameEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(firstNameEditorComponent,
                     // props:
                     {
                         // other props:
@@ -736,7 +736,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <LastName> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(lastNameEditorComponent,
+                {!!lastNameEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(lastNameEditorComponent,
                     // props:
                     {
                         // other props:
@@ -766,7 +766,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <Phone> */}
-                {React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(phoneEditorComponent,
+                {!!phoneEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(phoneEditorComponent,
                     // props:
                     {
                         // other props:

@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    rule,
     children,
     style,
     
@@ -66,21 +67,33 @@ export const usesAddressEditorLayout   = () => {
             
             // children:
             ...children('*', {
-                gridColumnEnd     : 'span 6',
+                gridColumnEnd     : 'span 6', // span all fields to maximum wide
             }),
             ...ifContainerWidthAtLeast(addressEditorBreakpoints.sm, {
                 ...children(['.firstName', '.lastName'], {
-                    gridColumnEnd : 'span 3',
+                    gridColumnEnd : 'span 3', // span the [firstName, lastName] to half wide
                 }),
             }),
             ...ifContainerWidthBetween(addressEditorBreakpoints.sm, addressEditorBreakpoints.md, {
                 ...children(['.country', '.state', '.city', '.zip'], {
-                    gridColumnEnd : 'span 3',
+                    gridColumnEnd : 'span 3', // span the [country, state, city, zip] to half wide
+                }),
+                // exception:
+                ...rule(':has(>.city:nth-child(3):last-child)', { // if only having [country, state, city] fields
+                    ...children('.country', {
+                        gridColumnEnd : 'span 6', // span the country to maximum wide, while the last [state, city] is still half wide
+                    }),
                 }),
             }),
             ...ifContainerWidthAtLeast(addressEditorBreakpoints.lg, {
                 ...children(['.state', '.city', '.zip'], {
                     gridColumnEnd : 'span 2',
+                }),
+                // exception:
+                ...rule(':has(>.city:nth-child(3):last-child)', { // if only having [country, state, city] fields
+                    ...children('.country', {
+                        gridColumnEnd : 'span 2', // span the country to 1/3 wide, while the last [state, city] is still 1/3 wide
+                    }),
                 }),
             }),
             

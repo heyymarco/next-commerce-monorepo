@@ -51,6 +51,27 @@ export default function Home() {
       <p>
         country: {country}
       </p>
+      <hr />
+      <AddressEditor
+        addressType='shipping'
+        countryEditorComponent={
+          <SelectCountryEditor enableValidation />
+        }
+        stateEditorComponent={
+          <SelectStateEditor />
+        }
+        cityEditorComponent={
+          <SelectCityEditor />
+        }
+        zipEditorComponent={null}
+        addressEditorComponent={null}
+        firstNameEditorComponent={null}
+        lastNameEditorComponent={null}
+        phoneEditorComponent={null}
+        
+        value={address}
+        onChange={setAddress}
+      />
     </Container>
   );
 }
