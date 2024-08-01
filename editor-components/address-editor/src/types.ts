@@ -5,6 +5,7 @@ export interface Address {
     zip       : string
     address   : string
     
+    company   : string
     firstName : string
     lastName  : string
     phone     : string
