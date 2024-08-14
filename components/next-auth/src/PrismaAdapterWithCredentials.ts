@@ -572,23 +572,25 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             // an atomic transaction of [`find user by username (or email)`, `find passwordResetToken by user id`, `create/update the new passwordResetToken`]:
             const user = await prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|Date|null> => { // AdapterUser: succeeded; Date: reset request is too frequent; null: invalid username or email
                 // find user id by given username (or email):
-                const {id: userId} = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
-                    where   : (
-                        usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
-                        ? {
-                            email        : usernameOrEmail,
-                        }
-                        : {
-                            [mCredentials] : {
-                                username : usernameOrEmail,
-                            },
-                        }
-                    ),
-                    
-                    select : {
-                        id               : true, // required: for id key
-                    },
-                }) ?? {};
+                const userId = (
+                    usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
+                    ? (await ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
+                        where   : {
+                            email    : usernameOrEmail,
+                        },
+                        select  : {
+                            id             : true, // required: for id key
+                        },
+                    }))?.id
+                    : (await ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
+                        where   : {
+                            username : usernameOrEmail,
+                        },
+                        select  : {
+                            [rCredentials] : true, // required: for id key
+                        },
+                    }))?.[rCredentials]
+                );
                 if (userId === undefined) return null;
                 
                 
