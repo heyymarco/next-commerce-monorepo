@@ -708,9 +708,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             return prisma.$transaction(async (prismaTransaction): Promise<ValidatePasswordResetTokenData|null> => {
                 const relatedPasswordResetToken = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).findUnique({
                     where  : {
-                        token        : passwordResetToken,
+                        token     : passwordResetToken,
                         expiresAt : {
-                            gt       : now, // not expired yet (expires in the future)
+                            gt    : now, // not expired yet (expires in the future)
                         },
                     },
                     select : {
@@ -771,69 +771,62 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // an atomic transaction of [`find user id by passwordResetToken`, `delete current passwordResetToken record`, `create/update user's credentials`]:
             return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
-                // find the related user id by given passwordResetToken:
-                const user = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
+                // find the existance of passwordResetToken record by given passwordResetToken:
+                const relatedPasswordResetToken = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).findUnique({
                     where  : {
-                        [mPasswordResetToken] : {
-                            token        : passwordResetToken,
-                            expiresAt : {
-                                gt       : now, // not expired yet (expires in the future)
-                            },
+                        token     : passwordResetToken,
+                        expiresAt : {
+                            gt    : now, // not expired yet (expires in the future)
                         },
-                    },
-                    select : {
-                        id               : true, // required: for id key
-                        emailVerified    : true, // required: for marking user's email has verified
+                    },select : {
+                        id                           : true,
+                        [rPasswordResetToken as any] : true,
                     },
                 });
-                if (!user) { // there is no user with related passwordResetToken
+                if (!relatedPasswordResetToken) { // there is no passwordResetToken record with related passwordResetToken
                     // report the error:
                     return false;
                 } // if
-                const {
-                    id: userId,
-                    emailVerified,
-                } = user;
                 
                 
                 
-                // delete the current passwordResetToken record so it cannot be re-use again:
-                await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).delete({
-                    where  : {
-                        [rPasswordResetToken as any] : userId,
-                    },
-                    select : {
-                        id                           : true,
-                    },
-                });
-                
-                
-                
-                // create/update user's credentials:
-                await ((prismaTransaction as TPrisma)[mCredentials] as any).upsert({
-                    where  : {
-                        [rCredentials] : userId,
-                    },
-                    create : {
-                        [rCredentials] : userId,
-                        
-                        password       : hashedPassword,
-                    },
-                    update : {
-                        password       : hashedPassword,
-                    },
-                    select : {
-                        id             : true,
-                    },
-                });
-                
-                
-                
-                // resetting password is also intrinsically verifies the email:
-                if (emailVerified === null) {
-                    await ((prismaTransaction as TPrisma)[mUser] as any).update({
+                await Promise.all([
+                    // delete the current passwordResetToken record so it cannot be re-use again:
+                    await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).delete({
                         where  : {
-                            id            : userId,
+                            id : relatedPasswordResetToken.id,
+                        },
+                        select : {
+                            id : true,
+                        },
+                    }),
+                    
+                    
+                    
+                    // create/update user's credentials:
+                    ((prismaTransaction as TPrisma)[mCredentials] as any).upsert({
+                        where  : {
+                            [rCredentials] : relatedPasswordResetToken[rPasswordResetToken as any],
+                        },
+                        create : {
+                            [rCredentials] : relatedPasswordResetToken[rPasswordResetToken as any],
+                            
+                            password       : hashedPassword,
+                        },
+                        update : {
+                            password       : hashedPassword,
+                        },
+                        select : {
+                            id             : true,
+                        },
+                    }),
+                    
+                    
+                    
+                    // resetting password is also intrinsically verifies the email:
+                    await ((prismaTransaction as TPrisma)[mUser] as any).updateMany({
+                        where  : {
+                            id            : relatedPasswordResetToken[rPasswordResetToken as any], // unique, guarantees only update one or zero
                         },
                         data   : {
                             emailVerified : now,
@@ -841,8 +834,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         select : {
                             id            : true,
                         },
-                    });
-                } // if
+                    }),
+                ]);
                 
                 
                 
