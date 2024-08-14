@@ -778,7 +778,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         expiresAt : {
                             gt    : now, // not expired yet (expires in the future)
                         },
-                    },select : {
+                    },
+                    select : {
                         id                           : true,
                         [rPasswordResetToken as any] : true,
                     },
@@ -1022,46 +1023,40 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             // an atomic transaction of [`find user id by emailConfirmationToken`, `delete current emailConfirmationToken record`, `update user's emailVerified field`]:
             return prisma.$transaction(async (prismaTransaction): Promise<boolean> => {
-                // find the related user id by given emailConfirmationToken:
-                const user = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
+                // find the existance of emailConfirmationToken record by given emailConfirmationToken:
+                const relatedEmailConfirmationToken = await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).findUnique({
                     where  : {
-                        [mEmailConfirmationToken] : {
-                            token        : emailConfirmationToken,
-                        },
-                    },
-                    select : {
-                        id               : true, // required: for id key
-                        emailVerified    : true, // required: for marking user's email has verified
-                    },
-                });
-                if (!user) { // there is no user with related emailConfirmationToken
-                    // report the error:
-                    return false;
-                } // if
-                const {
-                    id: userId,
-                    emailVerified,
-                } = user;
-                
-                
-                
-                // delete the current emailConfirmationToken record so it cannot be re-use again:
-                await ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).delete({
-                    where  : {
-                        [rEmailConfirmationToken as any] : userId,
+                        token : emailConfirmationToken,
                     },
                     select : {
                         id                               : true,
+                        [rEmailConfirmationToken as any] : true,
                     },
                 });
+                if (!relatedEmailConfirmationToken) { // there is no emailConfirmationToken record with related emailConfirmationToken
+                    // report the error:
+                    return false;
+                } // if
                 
                 
                 
-                // update user's emailVerified field (if not already verified):
-                if (emailVerified === null) {
-                    await ((prismaTransaction as TPrisma)[mUser] as any).update({
+                await Promise.all([
+                    // delete the current emailConfirmationToken record so it cannot be re-use again:
+                    ((prismaTransaction as TPrisma)[mEmailConfirmationToken] as any).delete({
                         where  : {
-                            id            : userId,
+                            [rEmailConfirmationToken as any] : relatedEmailConfirmationToken.id,
+                        },
+                        select : {
+                            id : true,
+                        },
+                    }),
+                    
+                    
+                    
+                    // update user's emailVerified field (if not already verified):
+                    ((prismaTransaction as TPrisma)[mUser] as any).updateMany({
+                        where  : {
+                            id            : relatedEmailConfirmationToken[rEmailConfirmationToken as any], // unique, guarantees only update one or zero
                         },
                         data   : {
                             emailVerified : now,
@@ -1069,8 +1064,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         select : {
                             id            : true,
                         },
-                    });
-                } // if
+                    }),
+                ]);
                 
                 
                 
