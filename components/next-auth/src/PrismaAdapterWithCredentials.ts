@@ -1083,6 +1083,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 where  : {
                     [modelCredentialsRefUserId] : userId,
                 },
+                select : {
+                    username : true, // only username is shown for security purpose
+                },
             });
         },
         getCredentialsByUserEmail  : async (userEmail                                    ) => {
@@ -1108,6 +1111,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 return ((prismaTransaction as TPrisma)[modelCredentials] as any).findUnique({
                     where  : {
                         [modelCredentialsRefUserId] : relatedUser.id,
+                    },
+                    select : {
+                        username : true, // only username is shown for security purpose
                     },
                 });
             });
