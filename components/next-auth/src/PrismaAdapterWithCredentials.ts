@@ -638,6 +638,8 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 });
                 if (!relatedPasswordResetToken) return null;
                 
+                
+                
                 return ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
                     where  : {
                         id : relatedPasswordResetToken[rPasswordResetToken as any],
@@ -664,29 +666,50 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             
-            const user = await (prisma[mUser] as any).findFirst({
-                where  : {
-                    [mPasswordResetToken] : {
+            return prisma.$transaction(async (prismaTransaction): Promise<ValidatePasswordResetTokenData|null> => {
+                const relatedPasswordResetToken = await ((prismaTransaction as TPrisma)[mPasswordResetToken] as any).findUnique({
+                    where  : {
                         token        : passwordResetToken,
                         expiresAt : {
                             gt       : now, // not expired yet (expires in the future)
                         },
                     },
-                },
-                select : {
-                    email            : true,
-                    [mCredentials] : {
+                    select : {
+                        [rPasswordResetToken as any] : true,
+                    },
+                });
+                if (!relatedPasswordResetToken) return null;
+                
+                
+                
+                const [user, credentials] = await Promise.all([
+                    ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
+                        where  : {
+                            id : relatedPasswordResetToken[rPasswordResetToken as any],
+                        },
+                        select : {
+                            email : true,
+                        },
+                    }),
+                    ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
+                        where  : {
+                            [rCredentials] : relatedPasswordResetToken[rPasswordResetToken as any],
+                        },
                         select : {
                             username : true,
                         },
-                    },
-                },
+                    }),
+                ]);
+                if (!user) return null;
+                if (!credentials) return null;
+                
+                
+                
+                return {
+                    email    : user.email,
+                    username : credentials.username || null,
+                };
             });
-            if (!user) return null;
-            return {
-                email    : user.email,
-                username : user[mCredentials]?.username || null,
-            };
         },
         usePasswordResetToken      : async (passwordResetToken, password: string, options) => {
             // conditions:
