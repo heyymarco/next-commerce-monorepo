@@ -1029,19 +1029,25 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
         // user credentials:
         getCredentialsByUserId     : async (userId                                       ) => {
             // database query:
-            const user = await (prisma[mUser] as any).findUnique({
-                where  : {
-                    id : userId,
-                },
-                select : {
-                    [mCredentials] : {
-                        select : {
-                            username : true,
-                        },
+            return prisma.$transaction(async (prismaTransaction): Promise<AdapterCredentials|null> => {
+                const relatedUser = await ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
+                    where  : {
+                        id : userId,
                     },
-                },
+                    select : {
+                        [rUser as any] : true,
+                    },
+                });
+                if (!relatedUser) return null;
+                
+                
+                
+                return ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
+                    where  : {
+                        id : relatedUser[rUser as any],
+                    },
+                });
             });
-            return user?.[mCredentials] ?? null;
         },
         getCredentialsByUserEmail  : async (userEmail                                    ) => {
             // normalizations:
@@ -1050,19 +1056,25 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             
             
             // database query:
-            const user = await (prisma[mUser] as any).findUnique({
-                where  : {
-                    email : userEmail,
-                },
-                select : {
-                    [mCredentials] : {
-                        select : {
-                            username : true,
-                        },
+            return prisma.$transaction(async (prismaTransaction): Promise<AdapterCredentials|null> => {
+                const relatedUser = await ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
+                    where  : {
+                        email : userEmail,
                     },
-                },
+                    select : {
+                        [rUser as any] : true,
+                    },
+                });
+                if (!relatedUser) return null;
+                
+                
+                
+                return ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
+                    where  : {
+                        id : relatedUser[rUser as any],
+                    },
+                });
             });
-            return user?.[mCredentials] ?? null;
         },
         
         
