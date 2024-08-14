@@ -400,45 +400,82 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
             // an atomic transaction of [`find user's credentials by username (or email)`, `update the failureAttempts & lockedAt`]:
             return prisma.$transaction(async (prismaTransaction): Promise<AdapterUser|false|Date|null> => { // AdapterUser: succeeded; false: email is not verified; Date: account locked up; null: invalid username and/or password
                 // find user data + credentials by given username (or email):
-                const userWithCredentials = await ((prismaTransaction as TPrisma)[mUser] as any).findFirst({
-                    where   : (
-                        usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
-                        ? {
-                            email        : usernameOrEmail,
-                        }
-                        : {
-                            [mCredentials] : {
-                                username : usernameOrEmail,
+                const userWithCredentials = (
+                    usernameOrEmail.includes('@') // if username contains '@' => treat as email, otherwise regular username
+                    ? await (async () => {
+                        // first: find the user:
+                        const user = await ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
+                            where   : {
+                                email    : usernameOrEmail,
                             },
-                        }
-                    ),
-                    
-                    // all User's columns plus credentials:
-                    include : {
-                        [mCredentials] : {
-                            select : {
+                        });
+                        if (!user) return null;
+                        
+                        // then: find the related credentials:
+                        const credentials = await ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
+                            where   : {
+                                [rCredentials] : user.id,
+                            },
+                            select  : {
                                 id              : true, // required: for further updating failure_counter and/or lockedAt
                                 failureAttempts : true, // required: for inspecting the failureMaxAttempts  constraint
                                 lockedAt        : true, // required: for inspecting the failureLockDuration constraint
                                 password        : true, // required: for password hash comparison
                             },
-                        },
-                    },
-                });
+                        });
+                        
+                        // then: combine them:
+                        return {
+                            user,
+                            credentials,
+                        };
+                    })()
+                    : await (async () => {
+                        // first: find the credentials:
+                        const credentials = await ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
+                            where   : {
+                                username : usernameOrEmail,
+                            },
+                            select  : {
+                                id              : true, // required: for further updating failure_counter and/or lockedAt
+                                failureAttempts : true, // required: for inspecting the failureMaxAttempts  constraint
+                                lockedAt        : true, // required: for inspecting the failureLockDuration constraint
+                                password        : true, // required: for password hash comparison
+                                
+                                [rCredentials]  : true, // required: for finding the related user
+                            },
+                        });
+                        if (!credentials) return null;
+                        
+                        // then: find the user:
+                        const user = await ((prismaTransaction as TPrisma)[mUser] as any).findUnique({
+                            where   : {
+                                id : credentials[rCredentials],
+                            },
+                        });
+                        
+                        // then: combine them:
+                        return {
+                            user,
+                            credentials,
+                        };
+                    })()
+                );
                 if (!userWithCredentials) return null; // no user found with given username (or email) => return null (not found)
                 
                 
                 
                 // exclude credentials property to increase security strength:
                 const {
-                    [mCredentials] : expectedCredentials,
-                ...restUser} = userWithCredentials;
+                    user        : user,
+                    credentials : expectedCredentials,
+                } = userWithCredentials;
                 
                 
                 
                 // check if user's email was verified:
                 if (requireEmailVerified) {
-                    if (restUser.emailVerified === null) return false;
+                    if (user.emailVerified === null) return false;
                 } // if
                 
                 
@@ -534,7 +571,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 
                 // the verification passed => authorized => return An `AdapterUser` object:
-                return restUser;
+                return user;
             });
         },
         
