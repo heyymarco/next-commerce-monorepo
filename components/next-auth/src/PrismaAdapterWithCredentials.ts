@@ -1060,7 +1060,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         id : userId,
                     },
                     select : {
-                        [rUser as any] : true,
+                        id : true,
                     },
                 });
                 if (!relatedUser) return null;
@@ -1069,7 +1069,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 return ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
                     where  : {
-                        id : relatedUser[rUser as any],
+                        [rCredentials] : relatedUser.id,
                     },
                 });
             });
@@ -1087,7 +1087,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         email : userEmail,
                     },
                     select : {
-                        [rUser as any] : true,
+                        id : true,
                     },
                 });
                 if (!relatedUser) return null;
@@ -1096,7 +1096,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 return ((prismaTransaction as TPrisma)[mCredentials] as any).findUnique({
                     where  : {
-                        id : relatedUser[rUser as any],
+                        [rCredentials] : relatedUser.id,
                     },
                 });
             });
