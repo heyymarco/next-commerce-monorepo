@@ -1291,7 +1291,8 @@ If the problem still persists, please contact our technical support.`,
                         });
                         
                         
-                        const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith?.('https://') ?? !!process.env.VERCEL;
+                        
+                        const useSecureCookies = (process.env.AUTH_URL ?? process.env.NEXTAUTH_URL)?.startsWith?.('https://') ?? !!process.env.VERCEL;
                         const {
                             sessionToken : {
                                 name : cookieName,
