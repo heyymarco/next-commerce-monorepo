@@ -15,6 +15,9 @@ import {
 }                           from 'next/server'
 
 // auth-js:
+// import {
+//     defaultCookies,
+// }                           from '@auth/core/lib/utils/cookie.js'
 import {
     // cryptos:
     encode,
@@ -36,6 +39,9 @@ import type {
     CredentialsConfig as NextAuthCredentialsConfig,
     OAuthConfig       as NextAuthOAuthConfig,
 }                           from 'next-auth/providers' // TODO: to be removed, for compatibility reason
+import {
+    defaultCookies,
+}                           from 'next-auth/core/lib/cookie.js'
 
 // credentials providers:
 import {
@@ -1235,6 +1241,18 @@ If the problem still persists, please contact our technical support.`,
     
     // built in handlers:
     const nextAuthHandler                        = async (req: Request, context: NextAuthRouteContext): Promise<Response> => {
+        /*
+            The next-auth design limitation:
+            The `CredentialsProvider` is NOT COMPATIBLE with `Database Sessions`.
+            In order to the `CredentialsProvider` to WORK with `Database Sessions`,
+            a `session` + `cookie` HACK is used to force next-auth to treat the authenticated user as loggedIn.
+            
+            Check if this sign in callback is being called in the credentials authentication flow.
+            If so, use the next-auth adapter to create a session entry in the database (SignIn is called after authorize so we can safely assume the user is valid and already authenticated).
+            
+            Credit:
+            https://nneko.branche.online/next-auth-credentials-provider-with-the-database-session-strategy/
+        */
         const isUpdatingCookie : boolean     = (session.strategy === 'database') && (
             (req.method === 'POST')
             &&
@@ -1273,9 +1291,36 @@ If the problem still persists, please contact our technical support.`,
                         });
                         
                         
-                        
-                        const isSecureCookie = process.env.NEXTAUTH_URL?.startsWith?.('https://') ?? !!process.env.VERCEL;
-                        const cookieName     = `${isSecureCookie ? '__Secure-' : ''}next-auth.session-token`;
+                        const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith?.('https://') ?? !!process.env.VERCEL;
+                        const {
+                            sessionToken : {
+                                name : cookieName,
+                                options : {
+                                    path     : cookiePath,
+                                    httpOnly : cookieHttpOnly,
+                                    secure   : cookieSecure,
+                                    sameSite : cookieSameSite,
+                                },
+                            },
+                        } = defaultCookies(useSecureCookies);
+                        const cookieSameSiteValue = (() => {
+                            switch (cookieSameSite) {
+                                case 'lax':
+                                    return 'Lax';
+                                
+                                case true:
+                                case 'strict':
+                                    return 'Strict';
+                                
+                                case 'none':
+                                    return 'None';
+                                
+                                case false:
+                                default:
+                                    return '';
+                            } // switch
+                        })();
+                        // const cookieName     = `${isSecureCookie ? '__Secure-' : ''}next-auth.session-token`;
                         // create the sessionToken record into cookie:
                         // const cookies = new Cookies(req, context);
                         // cookies.set(cookieName, sessionToken, {
@@ -1285,7 +1330,7 @@ If the problem still persists, please contact our technical support.`,
                         //     secure       : true,
                         //     sameSite     : 'lax',
                         // });
-                        sessionCookie = `${cookieName}=${sessionToken}; Path=/; Expires=${sessionExpiry.toUTCString()}; HttpOnly;${isSecureCookie ? ' Secure;' : '' } SameSite=Lax`;
+                        sessionCookie = `${cookieName}=${sessionToken}; Path=${cookiePath}; Expires=${sessionExpiry.toUTCString()};${cookieHttpOnly ? ' HttpOnly;' : '' }${cookieSecure ? ' Secure;' : '' }${cookieSameSiteValue ? ` SameSite=${cookieSameSiteValue}` : ''}`;
                     } // if
                     
                     
