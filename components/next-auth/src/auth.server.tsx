@@ -39,9 +39,9 @@ import type {
     CredentialsConfig as NextAuthCredentialsConfig,
     OAuthConfig       as NextAuthOAuthConfig,
 }                           from 'next-auth/providers' // TODO: to be removed, for compatibility reason
-import {
-    defaultCookies,
-}                           from 'next-auth/core/lib/cookie.js'
+// import {
+//     defaultCookies,
+// }                           from 'next-auth/core/lib/cookie.js'
 
 // credentials providers:
 import {
@@ -1293,17 +1293,29 @@ If the problem still persists, please contact our technical support.`,
                         
                         
                         const useSecureCookies = (process.env.AUTH_URL ?? process.env.NEXTAUTH_URL)?.startsWith?.('https://') ?? !!process.env.VERCEL;
+                        const cookiePrefix     = useSecureCookies ? '__Secure-' : '';
                         const {
                             sessionToken : {
                                 name : cookieName,
                                 options : {
-                                    path     : cookiePath,
                                     httpOnly : cookieHttpOnly,
-                                    secure   : cookieSecure,
                                     sameSite : cookieSameSite,
+                                    path     : cookiePath,
+                                    secure   : cookieSecure,
                                 },
                             },
-                        } = defaultCookies(useSecureCookies);
+                        } = { // defaultCookies(useSecureCookies); // not exported from 'next-auth/core/lib/cookie.js' / '@auth/core/lib/utils/cookie.js'
+                            sessionToken: {
+                                // name: `${cookiePrefix}authjs.session-token`,
+                                name: `${cookiePrefix}next-auth.session-token`,
+                                options: {
+                                    httpOnly : true  as boolean,
+                                    sameSite : 'lax' as string|boolean,
+                                    path     : '/',
+                                    secure   : useSecureCookies,
+                                },
+                            },
+                        };
                         const cookieSameSiteValue = (() => {
                             switch (cookieSameSite) {
                                 case 'lax':
