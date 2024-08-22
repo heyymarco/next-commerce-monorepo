@@ -793,12 +793,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 await Promise.all([
                     // delete the current passwordResetToken record so it cannot be re-use again:
-                    await ((prismaTransaction as TPrisma)[modelPasswordResetToken] as any).delete({
+                    await ((prismaTransaction as TPrisma)[modelPasswordResetToken] as any).deleteMany({
                         where  : {
                             id : relatedPasswordResetToken.id,
-                        },
-                        select : {
-                            id : true,
                         },
                     }),
                     
@@ -831,9 +828,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         },
                         data   : {
                             emailVerified : now,
-                        },
-                        select : {
-                            id            : true,
                         },
                     }),
                 ]);
@@ -1042,12 +1036,9 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                 
                 await Promise.all([
                     // delete the current emailConfirmationToken record so it cannot be re-use again:
-                    ((prismaTransaction as TPrisma)[modelEmailConfirmationToken] as any).delete({
+                    ((prismaTransaction as TPrisma)[modelEmailConfirmationToken] as any).deleteMany({
                         where  : {
                             [modelEmailConfirmationTokenRefUserId as any] : relatedEmailConfirmationToken.id,
-                        },
-                        select : {
-                            id : true,
                         },
                     }),
                     
@@ -1060,9 +1051,6 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                         },
                         data   : {
                             emailVerified : now,
-                        },
-                        select : {
-                            id            : true,
                         },
                     }),
                 ]);
@@ -1140,6 +1128,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     },
                 });
                 if (!relatedUser) return null;
+                if (relatedUser[modelUserRefRoleId as any] === null) return null;
                 
                 
                 
@@ -1173,6 +1162,7 @@ export const PrismaAdapterWithCredentials = <TPrisma extends PrismaClient>(prism
                     },
                 });
                 if (!relatedUser) return null;
+                if (relatedUser[modelUserRefRoleId as any] === null) return null;
                 
                 
                 
