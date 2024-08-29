@@ -8,6 +8,7 @@ import {
     
     // reads/writes css variables configuration:
     usesCssProps,
+    usesPrefixedProps,
 }                           from '@cssfn/core'                  // writes css in javascript
 
 // internals:
@@ -22,18 +23,25 @@ import {
 export const usesAlternateSeparatorLayout = () => {
     return style({
         // layouts:
-        display  : 'grid',
-        gridArea : [[
+        display      : 'grid',
+        gridTemplate : [[
             '"horz1 text horz2" auto',
             '/',
             '1fr max-content 1fr',
         ]],
+        alignItems   : 'center', // center items vertically
         
         
         
         // children:
-        ...children(['.horz1', '.text', '.horz2'], {
-            opacity : alternateSeparators.opacity,
+        ...children(['.horz1', '.horz2'], {
+            // spacings:
+            margin: 0,
+            
+            
+            
+            // customize:
+            ...usesCssProps(usesPrefixedProps(alternateSeparators, 'horz')), // apply config's cssProps starting with horz***
         }),
         ...children('.horz1', {
             // positions:
@@ -42,6 +50,11 @@ export const usesAlternateSeparatorLayout = () => {
         ...children('.text', {
             // positions:
             gridArea : 'text',
+            
+            
+            
+            // customize:
+            ...usesCssProps(usesPrefixedProps(alternateSeparators, 'text')), // apply config's cssProps starting with text***
         }),
         ...children('.horz2', {
             // positions:
@@ -52,7 +65,6 @@ export const usesAlternateSeparatorLayout = () => {
         
         // customize:
         ...usesCssProps(alternateSeparators), // apply config's cssProps
-        opacity : null, // ignore opacity from config's cssProps
     });
 };
 

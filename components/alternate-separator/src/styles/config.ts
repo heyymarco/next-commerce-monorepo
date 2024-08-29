@@ -26,17 +26,18 @@ import {
 export const [alternateSeparators, alternateSeparatorValues, cssAlternateSeparatorConfig] = cssConfig(() => {
     return {
         // appearances:
-        opacity   : horzRules.opacity   as CssKnownProps['opacity'   ],
+        horzOpacity : horzRules.opacity as CssKnownProps['opacity'   ],
+        textOpacity : 0.5               as CssKnownProps['opacity'   ],
         
         
         
         // foregrounds:
-        foreg     : horzRules.foreg     as CssKnownProps['foreground'],
+        foreg       : horzRules.foreg   as CssKnownProps['foreground'],
         
         
         
         // spacings:
-        gapInline : spacers.sm          as CssKnownProps['gapInline' ],
-        gapBlock  : spacers.sm          as CssKnownProps['gapBlock'  ],
+        gapInline   : spacers.sm        as CssKnownProps['gapInline' ],
+        gapBlock    : spacers.sm        as CssKnownProps['gapBlock'  ],
     };
 }, { prefix: 'altSeparator' });
