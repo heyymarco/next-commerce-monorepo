@@ -387,7 +387,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         
         // children:
-        switchSignUpButtonComponent.props.children                  ?? <>Don&apos;t have an account? <strong>SignUp</strong></>,
+        switchSignUpButtonComponent.props.children                  ?? <>Don&apos;t have an account? <strong>Sign Up</strong></>,
     ));
     const SwitchSignInButton = useEvent(() => React.cloneElement<ButtonProps>(switchSignInButtonComponent,
         // props:
@@ -404,7 +404,7 @@ const SignInInternal = <TElement extends Element = HTMLElement>(props: SignInPro
         
         
         // children:
-        switchSignInButtonComponent.props.children                  ?? <>Already have an account? <strong>SignIn</strong></>,
+        switchSignInButtonComponent.props.children                  ?? <>Already have an account? <strong>Sign In</strong></>,
     ));
     const GotoSignInButton   = useEvent(() => React.cloneElement<ButtonProps>(gotoSignInButtonComponent,
         // props:
