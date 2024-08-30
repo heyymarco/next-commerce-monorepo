@@ -20,7 +20,9 @@ export const useScheduleTriggerEvent = (): ScheduleTriggerEventFunction => {
     return (scheduledTriggerEventCallback, options) => {
         // conditions:
         if (!scheduledTriggerEventCallback) return; // no event_delegator_callback => nothing to trigger
-        if (!isMounted.current) return; // the component was unloaded before the scheduler is called => do nothing
+        
+        // do NOT check `isMounted.current` before running `setTimeout()`|`queueMicrotask()`, causes detected WRONG UNMOUNT by React's strict mode (double re-render)
+        // if (!isMounted.current) return; // the component was unloaded before the scheduler is called => do nothing
         
         
         

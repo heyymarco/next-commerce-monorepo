@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/events",
-  "version": "6.7.0",
+  "version": "6.7.1",
   "description": "A utility of React events, controllable events, uncontrollable events, and more.",
   "keywords": [
     "react",
