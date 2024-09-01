@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/next-auth",
-  "version": "6.11.5",
+  "version": "7.0.0",
   "description": "A complete authentication solution for web applications.",
   "keywords": [
     "login",
@@ -63,7 +63,7 @@
     "@auth/core": "^0.19.1",
     "@prisma/client": "^5.2.0",
     "@types/react": "^18.0.0",
-    "next": "^13.0.0",
+    "next": "^14.0.0",
     "next-auth": "^4.24.5",
     "react": "^18.0.0"
   },

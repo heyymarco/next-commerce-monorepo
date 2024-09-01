@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/image",
-  "version": "6.5.0",
+  "version": "7.0.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,7 +26,7 @@
     "@types/react": "^18.0.33"
   },
   "peerDependencies": {
-    "next": "^13.0.0",
+    "next": "^14.0.0",
     "react": "^18.0.0"
   }
 }
