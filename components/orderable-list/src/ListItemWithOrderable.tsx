@@ -8,7 +8,6 @@ import {
     // hooks:
     useRef,
     useMemo,
-    useState,
 }                           from 'react'
 
 // reusable-ui core:
@@ -266,15 +265,15 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // registrations:
-    const [draggableSubscribers       ] = useState<Map<symbol, boolean>>(() => new Map<symbol, boolean>());
-    const draggableSubscribersCache     = useRef<boolean>(false);
+    const draggableSubscribers        = useMemo<Map<symbol, boolean>>(() => new Map<symbol, boolean>(), []);
+    const draggableSubscribersCache   = useRef<boolean>(false);
     
-    const [droppableSubscribers       ] = useState<Map<symbol, boolean>>(() => new Map<symbol, boolean>());
-    const droppableSubscribersCache     = useRef<boolean>(false);
+    const droppableSubscribers        = useMemo<Map<symbol, boolean>>(() => new Map<symbol, boolean>(), []);
+    const droppableSubscribersCache   = useRef<boolean>(false);
     
-    const [onOrderStartSubscribers    ] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>());
-    const [onOrderHandshakeSubscribers] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>());
-    const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement>): () => void => {
+    const onOrderStartSubscribers     = useMemo<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>(), []);
+    const onOrderHandshakeSubscribers = useMemo<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>(), []);
+    const registerOrderableListItem   = useEvent((registration: OrderableListItemRegistration<TElement>): () => void => {
         const {
             // behaviors:
             draggable,
