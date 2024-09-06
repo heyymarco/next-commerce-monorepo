@@ -1405,6 +1405,13 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 // in case of redirect to current page => just hide the busy indicator after redirect finished
                 setIsBusy(false); // unmark as busy
+                
+                
+                
+                // resets:
+                setEnableValidation(false);
+             // setUsernameOrEmail(''); // already reseted above
+             // setPassword('');        // already reseted above
             }
             else {
                 // stays on signIn tab
