@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/next-auth",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "A complete authentication solution for web applications.",
   "keywords": [
     "login",
