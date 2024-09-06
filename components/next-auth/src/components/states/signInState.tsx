@@ -1400,6 +1400,11 @@ const SignInStateProvider = (props: React.PropsWithChildren<SignInStateProps>) =
                 
                 
                 router.replace(callbackUrl);
+                
+                
+                
+                // in case of redirect to current page => just hide the busy indicator after redirect finished
+                setIsBusy(false); // unmark as busy
             }
             else {
                 // stays on signIn tab
