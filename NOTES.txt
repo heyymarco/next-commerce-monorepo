@@ -53,3 +53,4 @@ SelectStateEditor    |  generic (= div)    |  generic (= changeEvent)   |  strin
 SelectCityEditor     |  generic (= div)    |  generic (= changeEvent)   |  string              | DDL<string> (= DDL_Expanded) |
 -------------------------------------------------------------------------------------------------------------------------------
 NumberEditor         |  generic (= span)   |  generic (= changeEvent)   |  number|null         |              -               |
+NumberUpDownEditor   |  generic (= div)    |  generic (= changeEvent)   |  number|null         |              -               |
