@@ -42,9 +42,13 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-  "@heymarco/editor": "^6.10.0",
-  "@heymarco/input-editor": "^6.10.0",
-    "@reusable-ui/core": "^6.11.0"
+    "@cssfn/core": "^3.2.0",
+    "@heymarco/editor": "^6.10.0",
+    "@heymarco/number-editor": "^6.10.0",
+    "@reusable-ui/button": "^6.5.0",
+    "@reusable-ui/button-icon": "^6.5.0",
+    "@reusable-ui/core": "^6.11.0",
+    "@reusable-ui/group": "^6.5.1"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
