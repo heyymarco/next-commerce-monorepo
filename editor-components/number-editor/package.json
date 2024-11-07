@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/number-editor",
-  "version": "6.10.0",
+  "version": "6.11.0",
   "description": "A numeric editor component.",
   "keywords": [
     "numeric",

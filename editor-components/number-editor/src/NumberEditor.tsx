@@ -20,36 +20,47 @@ import {
     // react components:
     type InputEditorProps,
     InputEditor,
+    
+    type InputEditorComponentProps,
 }                           from '@heymarco/input-editor'
 
 
 
 // react components:
-export interface NumberEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface NumberEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>
     extends
         // bases:
-        Omit<InputEditorProps<TElement, TChangeEvent, number|null>,
+        Omit<InputEditorProps<TElement, TChangeEvent, TValue>,
             // validations:
             |'minLength'|'maxLength' // text length constraint is not supported
             |'pattern'               // text regex is not supported
             
-            // formats:
-            |'type'                  // only supports number
-            |'autoCapitalize'        // nothing to capitalize of number
-            |'inputMode'             // always 'numeric'
-        >
+            // these props may be used in <HexNumberEditor>, so keep it supported:
+            // // formats:
+            // |'type'                  // only supports number
+            // |'autoCapitalize'        // nothing to capitalize of number
+            // |'inputMode'             // always 'numeric'
+        >,
+        
+        // components:
+        InputEditorComponentProps<TElement, TChangeEvent, TValue>
 {
     // validations:
     min  ?: number // only supports numeric value
     max  ?: number // only supports numeric value
     step ?: number // only supports numeric value
 }
-const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NumberEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>(props: NumberEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // values:
         onChange,
         onChangeAsText,
+        
+        
+        
+        // components:
+        inputEditorComponent = (<InputEditor<TElement, TChangeEvent, TValue> /> as React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>),
         
         
         
@@ -61,9 +72,14 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
     
     // handlers:
     const handleChangeAsTextInternal = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
-        onChange?.((value ? Number.parseFloat(value) : null), event);
+        onChange?.((value ? Number.parseFloat(value) : null) as TValue, event);
     });
     const handleChangeAsText         = useMergeEvents(
+        // preserves the original `onChangeAsText` from `inputEditorComponent`:
+        inputEditorComponent.props.onChangeAsText,
+        
+        
+        
         // preserves the original `onChangeAsText` from `props`:
         onChangeAsText,
         
@@ -75,22 +91,47 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
     
     
     
+    // default props:
+    const {
+        // formats:
+        type : inputEditorType          = 'number',
+        
+        
+        
+        // other props:
+        ...restInputEditorProps
+    } = restNumberEditorProps;
+    
+    const {
+        // formats:
+        type : inputEditorComponentType = inputEditorType,
+        
+        
+        
+        // other props:
+        ...restInputEditorComponentProps
+    } = inputEditorComponent.props;
+    
+    
+    
     // jsx:
-    return (
-        <InputEditor<TElement, TChangeEvent, number|null>
+    return React.cloneElement<InputEditorProps<TElement, TChangeEvent, TValue>>(inputEditorComponent,
+        // props:
+        {
             // other props:
-            {...restNumberEditorProps}
+            ...restInputEditorProps,
+            ...restInputEditorComponentProps, // overwrites restInputEditorProps (if any conflics)
             
             
             
             // values:
-            onChangeAsText={handleChangeAsText}
+            onChangeAsText : handleChangeAsText,
             
             
             
             // formats:
-            type='number'
-        />
+            type           : inputEditorComponentType,
+        },
     );
 };
 export {
@@ -100,8 +141,8 @@ export {
 
 
 
-export interface NumberEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface NumberEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>
 {
     // components:
-    numberEditorComponent ?: React.ReactElement<NumberEditorProps<TElement, TChangeEvent>>
+    numberEditorComponent ?: React.ReactElement<NumberEditorProps<TElement, TChangeEvent, TValue>>
 }
