@@ -264,7 +264,11 @@ const QuantityInput = <TElement extends Element = HTMLSpanElement>(props: Quanti
                 // react *hack*: trigger `onChange` event:
                 scheduleTriggerEvent(() => { // runs the `input` event *next after* current macroTask completed
                     if (value !== null) {
-                        inputElm.valueAsNumber = value; // react *hack* set_value *before* firing `input` event
+                        // do not use `valueAsNumber`, the underlying `inputElm` is not always `type='number'`, maybe `type='text'` with `inputMode='numeric'`
+                        // inputElm.valueAsNumber = value; // react *hack* set_value *before* firing `input` event
+                        
+                        // instead, pass the value as string:
+                        inputElm.value = value.toString(); // react *hack* set_value *before* firing `input` event
                     }
                     else {
                         inputElm.value = '';            // react *hack* set_value *before* firing `input` event
