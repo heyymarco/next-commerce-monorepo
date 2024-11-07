@@ -33,10 +33,11 @@ export interface NumberEditorProps<out TElement extends Element = HTMLSpanElemen
         Omit<InputEditorProps<TElement, TChangeEvent, TValue>,
             // validations:
             |'minLength'|'maxLength' // text length constraint is not supported
-            |'pattern'               // text regex is not supported
-            
             // these props may be used in <HexNumberEditor>, so keep it supported:
-            // // formats:
+            // |'pattern'               // text regex is not supported
+            
+            // formats:
+            // these props may be used in <HexNumberEditor>, so keep it supported:
             // |'type'                  // only supports number
             // |'autoCapitalize'        // nothing to capitalize of number
             // |'inputMode'             // always 'numeric'
