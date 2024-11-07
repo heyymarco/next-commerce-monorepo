@@ -66,7 +66,7 @@ import {
 
 
 // react components:
-export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>
     extends
         // bases:
         Pick<GroupProps<TElement>,
@@ -93,7 +93,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
             // styles:
             |'style'          // moved to <Group>
         >,
-        Omit<NumberEditorProps<TElement, TChangeEvent>,
+        Omit<NumberEditorProps<TElement, TChangeEvent, TValue>,
             // refs:
             |'outerRef'       // moved to <Group>
             
@@ -121,7 +121,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
     // components:
     decreaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
     increaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
-    numberEditorComponent   ?: React.ReactComponentElement<any, NumberEditorProps<TElement, TChangeEvent>>
+    numberEditorComponent   ?: React.ReactComponentElement<any, NumberEditorProps<TElement, TChangeEvent, TValue>>
     
     
     
@@ -131,7 +131,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
     childrenAfterInput      ?: React.ReactNode
     childrenAfterButton     ?: React.ReactNode
 }
-const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NumberUpDownEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>(props: NumberUpDownEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // refs:
@@ -183,9 +183,9 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
         
         
         // components:
-        decreaseButtonComponent = (<ButtonIcon icon='remove'             /> as React.ReactComponentElement<any, ButtonProps>),
-        increaseButtonComponent = (<ButtonIcon icon='add'                /> as React.ReactComponentElement<any, ButtonProps>),
-        numberEditorComponent   = (<NumberEditor<TElement, TChangeEvent> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, TChangeEvent>>),
+        decreaseButtonComponent = (<ButtonIcon icon='remove'                     /> as React.ReactComponentElement<any, ButtonProps>),
+        increaseButtonComponent = (<ButtonIcon icon='add'                        /> as React.ReactComponentElement<any, ButtonProps>),
+        numberEditorComponent   = (<NumberEditor<TElement, TChangeEvent, TValue> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, TChangeEvent, TValue>>),
         
         
         
@@ -437,6 +437,27 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
     
     
     
+    // default props:
+    const {
+        // values:
+     // defaultValue : numberEditorComponentDefaultValue = (defaultValueFn   ?? null), // fully controllable, no defaultValue
+        value        : numberEditorComponentValue        = (valueRef.current ?? null), // fully controllable
+        
+        
+        
+        // validations:
+        min          : numberEditorComponentMin          = (negativeFn ? maxFn : minFn),
+        max          : numberEditorComponentMax          = (negativeFn ? minFn : maxFn),
+        step         : numberEditorComponentStep         = stepFn,
+        
+        
+        
+        // other props:
+        ...restNumberEditorComponentProps
+    } = numberEditorComponent.props;
+    
+    
+    
     // jsx:
     return (
         <AccessibilityProvider {...propAccess}>
@@ -497,12 +518,12 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
                 {childrenBeforeInput}
                 
                 {/* <Input> */}
-                {React.cloneElement<NumberEditorProps<TElement, TChangeEvent>>(numberEditorComponent,
+                {React.cloneElement<NumberEditorProps<TElement, TChangeEvent, TValue>>(numberEditorComponent,
                     // props:
                     {
-                        // rest props:
+                        // other props:
                         ...restNumberEditorProps,
-                        ...numberEditorComponent.props, // overwrites restNumberEditorProps (if any conflics)
+                        ...restNumberEditorComponentProps, // overwrites restNumberEditorProps (if any conflics)
                         
                         
                         
@@ -517,16 +538,16 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
                         
                         
                         // values:
-                     // defaultValue : numberEditorComponent.props.defaultValue ?? defaultValueFn   ?? null, // fully controllable, no defaultValue
-                        value        : numberEditorComponent.props.value        ?? valueRef.current ?? null, // fully controllable
+                     // defaultValue : numberEditorComponentDefaultValue as TValue, // fully controllable, no defaultValue
+                        value        : numberEditorComponentValue        as TValue, // fully controllable
                         onChange     : handleChange,
                         
                         
                         
                         // validations:
-                        min          : numberEditorComponent.props.min  ?? (negativeFn ? maxFn : minFn),
-                        max          : numberEditorComponent.props.max  ?? (negativeFn ? minFn : maxFn),
-                        step         : numberEditorComponent.props.step ?? stepFn,
+                        min          : numberEditorComponentMin,
+                        max          : numberEditorComponentMax,
+                        step         : numberEditorComponentStep,
                     },
                 )}
                 
