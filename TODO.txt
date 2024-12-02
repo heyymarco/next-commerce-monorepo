@@ -5,6 +5,8 @@ implement <InputWithLabel> to <AddressFields>
 [@heymarco/quantity-input] implement disabled & readOnly Buttons
 [@heymarco/events] add createSyntheticChangeEvent()
 
+[high prior] fix flickering of <OrderableList> when ordering a <ListItem> with different height
+
 [high prior] InputValidator::handleChange(), FormValidator::handleChange(), SelectValidator::handleChange() are not aware of validation property change, such as:
     * required
     * minLength
