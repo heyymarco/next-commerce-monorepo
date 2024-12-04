@@ -353,8 +353,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, props: Pick<OrderableListItemDropHandshakeEvent<TElement, TData>, 'ownListIndex'|'pairListIndex'|'ownData'|'pairData'|'isDragging'>): Promise<boolean> => {
         // props:
         const {
-            ownListIndex,
-            pairListIndex,
+            ownListIndex  : ownListIndexRaw,
+            pairListIndex : pairListIndexRaw,
             
             isDragging,
             
@@ -379,9 +379,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
-        const isRestoring      = (ownListIndex < 0) || (pairListIndex < 0) || Object.is(ownListIndex, -0) || Object.is(pairListIndex, -0); // if negative value (including negative zero) => *restore* the draft to original placement
-        const absOwnListIndex  = Math.abs(ownListIndex);  // remove the negative index (negative index: a *backup* of original placement)
-        const absPairListIndex = Math.abs(pairListIndex); // remove the negative index (negative index: a *backup* of original placement)
         const orderableListItemDropHandshakeEvent : OrderableListItemDropHandshakeEvent<TElement, TData> = {
             // bases:
             ...createSyntheticMouseEvent<TElement, MouseEvent>({
@@ -398,8 +395,26 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             // data:
             ...restOrderableListItemDropHandshakeEvent,
-            ownListIndex       : isRestoring ? absPairListIndex : absOwnListIndex,
-            pairListIndex      : isRestoring ? absOwnListIndex : absPairListIndex,
+            ownListIndex       : ((): number => {
+                if ((ownListIndexRaw < 0) || Object.is(ownListIndexRaw, -0)) {
+                    const absIndex      = Math.abs(ownListIndexRaw);
+                    const isIndexBigger = absIndex > Math.abs(pairListIndexRaw);
+                    return absIndex + (isIndexBigger ? -1 : 1);
+                }
+                else {
+                    return ownListIndexRaw;
+                } // if
+            })(),
+            pairListIndex      : ((): number => {
+                if ((pairListIndexRaw < 0) || Object.is(pairListIndexRaw, -0)) {
+                    const absIndex      = Math.abs(pairListIndexRaw);
+                    const isIndexBigger = absIndex > Math.abs(ownListIndexRaw);
+                    return absIndex + (isIndexBigger ? -1 : 1);
+                }
+                else {
+                    return pairListIndexRaw;
+                } // if
+            })(),
             isDragging         : isDragging,
             response           : true, // initial response status
         };
