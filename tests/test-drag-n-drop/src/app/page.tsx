@@ -56,7 +56,12 @@ export default function Home() {
     ]);
     const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData}: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
         if (ownListIndex === pairListIndex) return;
-        console.log({isDragging, ownListIndex, pairListIndex, ownData, pairData});
+        if (!isDragging) return;
+        console.log({
+            isDragging,
+            ownListIndex, pairListIndex,
+            // ownData, pairData,
+        });
     });
     return (
         <main>

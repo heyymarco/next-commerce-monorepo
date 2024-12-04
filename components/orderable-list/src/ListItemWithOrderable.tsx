@@ -379,6 +379,9 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
+        const isRestoring      = (ownListIndex < 0) || (pairListIndex < 0) || Object.is(ownListIndex, -0) || Object.is(pairListIndex, -0); // if negative value (including negative zero) => *restore* the draft to original placement
+        const absOwnListIndex  = Math.abs(ownListIndex);  // remove the negative index (negative index: a *backup* of original placement)
+        const absPairListIndex = Math.abs(pairListIndex); // remove the negative index (negative index: a *backup* of original placement)
         const orderableListItemDropHandshakeEvent : OrderableListItemDropHandshakeEvent<TElement, TData> = {
             // bases:
             ...createSyntheticMouseEvent<TElement, MouseEvent>({
@@ -395,8 +398,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             // data:
             ...restOrderableListItemDropHandshakeEvent,
-            ownListIndex       : Math.abs(ownListIndex),  // remove the negative index (negative index: a *backup* of original placement)
-            pairListIndex      : Math.abs(pairListIndex), // remove the negative index (negative index: a *backup* of original placement)
+            ownListIndex       : isRestoring ? absPairListIndex : absOwnListIndex,
+            pairListIndex      : isRestoring ? absOwnListIndex : absPairListIndex,
             isDragging         : isDragging,
             response           : true, // initial response status
         };
