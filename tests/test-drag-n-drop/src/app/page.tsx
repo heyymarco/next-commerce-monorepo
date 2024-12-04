@@ -1,8 +1,9 @@
 'use client'
 
 import {useState} from 'react'
-import { OrderableList, OrderableListItem, OrderableListItemProps } from '@heymarco/orderable-list'
+import { OrderableList, OrderableListItem, OrderableListItemDropHandshakeEvent, OrderableListItemProps } from '@heymarco/orderable-list'
 import { Basic } from '@reusable-ui/components';
+import { useEvent } from '@reusable-ui/core';
 
 
 
@@ -53,6 +54,10 @@ export default function Home() {
         </OrderableListItem>,
         <OrderableListItem<HTMLElement, number> key='444' data={4}>444</OrderableListItem>,
     ]);
+    const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData}: OrderableListItemDropHandshakeEvent<HTMLElement>): void => {
+        if (ownListIndex === pairListIndex) return;
+        console.log({isDragging, ownListIndex, pairListIndex, ownData, pairData});
+    });
     return (
         <main>
             <OrderableList theme='primary' mild={false} defaultChildren={<>
@@ -88,6 +93,16 @@ export default function Home() {
             <p>
                 Data: {items.map((item) => item.props.data).join(', ')}
             </p>
+            
+            <hr />
+            
+            <OrderableList theme='primary' mild={false} orderMode='swap' defaultChildren={<>
+                <OrderableListItem data={'000'} onOrderHandshake={handleOrderHandshake}>000</OrderableListItem>
+                <OrderableListItem data={'111'} onOrderHandshake={handleOrderHandshake}>111</OrderableListItem>
+                <OrderableListItem data={'222'} onOrderHandshake={handleOrderHandshake}>222</OrderableListItem>
+                <OrderableListItem data={'333'} onOrderHandshake={handleOrderHandshake}>333</OrderableListItem>
+                <OrderableListItem data={'444'} onOrderHandshake={handleOrderHandshake}>444</OrderableListItem>
+            </>} />
         </main>
     )
 }

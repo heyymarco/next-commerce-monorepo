@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/orderable-list",
-  "version": "6.9.2",
+  "version": "6.10.0",
   "description": "Represents a series of content that the order can be rearranged.",
   "keywords": [
     "list",
@@ -44,7 +44,7 @@
   "dependencies": {
     "@cssfn/core": "^3.2.0",
     "@cssfn/cssfn-react": "^3.2.0",
-    "@heymarco/draggable": "^6.6.0",
+    "@heymarco/draggable": "^6.6.1",
     "@heymarco/droppable": "^6.6.0",
     "@heymarco/events": "^6.7.0",
     "@reusable-ui/basic": "^6.5.0",

@@ -169,8 +169,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         isDragging,
     ...draggable} = useDraggable<TElement>({
         // data:
-        dragData           : new Map<symbol, number>([
-            [dragNDropId, listIndex],
+        dragData           : new Map<symbol, [number, TData|undefined]>([
+            [dragNDropId, [listIndex, props.data]],
         ]),
         
         
@@ -192,7 +192,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 handleDragMove({
                     ...event.nativeEvent,
                     from : listIndex,
-                    to   : event.dropData?.get(dragNDropId) as number,
+                    to   : (event.dropData?.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
                 });
             } // if
             
@@ -201,14 +201,22 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             handleUpdateFloatingPos(event.nativeEvent);
         },
         async onDragHandshake(event) {
-            if (!Array.from(event.dropData.keys()).includes(dragNDropId)) { // wrong drop target
+            if (!event.dropData.has(dragNDropId)) { // wrong drop target
                 event.response = false;
                 return;
             } // if
             
             
             
-            if (!(await handleOrderHandshake(event, /*isDragging: */true))) {
+            if (!(await handleOrderHandshake(event, {
+                ownListIndex  : listIndex,
+                pairListIndex : (event.dropData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
+                
+                ownData       : props.data,
+                pairData      : (event.dropData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[1] as TData|undefined,
+                
+                isDragging    : true, 
+            }))) {
                 event.response = false; // abort this event handler
                 return;
             } // if
@@ -217,17 +225,17 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             event.response = true; // yes drop there (drop to self source|target is allowed)
         },
-        onDragged({dropData}) {
+        onDragged(event) {
             handleDropped({
                 from : listIndex,
-                to   : dropData.get(dragNDropId) as number,
+                to   : (event.dropData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
             });
         },
     });
     useDroppable<TElement>({
         // data:
-        dropData : new Map<symbol, number>([
-            [dragNDropId, listIndex],
+        dropData : new Map<symbol, [number, TData|undefined]>([
+            [dragNDropId, [listIndex, props.data]],
         ]),
         
         
@@ -244,14 +252,22 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // handlers:
         async onDropHandshake(event) {
-            if (!Array.from(event.dragData.keys()).includes(dragNDropId)) { // wrong drag source
+            if (!event.dragData.has(dragNDropId)) { // wrong drag source
                 event.response = false;
                 return;
             } // if
             
             
             
-            if (!(await handleOrderHandshake(event, /*isDragging: */false))) {
+            if (!(await handleOrderHandshake(event, {
+                ownListIndex  : listIndex,
+                pairListIndex : (event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
+                
+                ownData       : props.data,
+                pairData      : (event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[1] as TData|undefined,
+                
+                isDragging    : false,
+            }))) {
                 event.response = false; // abort this event handler
                 return;
             } // if
@@ -330,16 +346,24 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // handlers:
-    const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, isDragging: boolean): Promise<boolean> => {
+    const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, props: Pick<OrderableListItemDropHandshakeEvent<TElement, TData>, 'ownListIndex'|'pairListIndex'|'ownData'|'pairData'|'isDragging'>): Promise<boolean> => {
+        // props:
+        const {
+            isDragging,
+            ...restOrderableListItemDropHandshakeEvent
+        } = props;
+        
+        
+        
         // conditions:
         if (!parentOrderable)                   return false; // `<OrderableList orderable={false}>` => not orderable => prevents to be dropped
         if (!droppableSubscribersCache.current) {
             if (
-                !isDragging /* === isDropping */                                            // if the dropping_side
-                &&                                                                          // AND
-                (('dragData' in event) && (event.dragData.get(dragNDropId) !== listIndex))  // not_dropped_by_itself
+                !isDragging /* === isDropping */                                                                                                    // if the dropping_side
+                &&                                                                                                                                  // AND
+                (('dragData' in event) && ((event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number !== listIndex))  // not_dropped_by_itself
             ) {
-                console.log(Date.now(), 'prevent from dropping', event);
+                // console.log(Date.now(), 'prevent from dropping', event);
                 return false; // `droppable={false}` => not droppable => prevents to be dropped
             } // if
         } // if
@@ -347,7 +371,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
-        const orderableListItemDropHandshakeEvent : OrderableListItemDropHandshakeEvent<TElement> = {
+        const orderableListItemDropHandshakeEvent : OrderableListItemDropHandshakeEvent<TElement, TData> = {
             // bases:
             ...createSyntheticMouseEvent<TElement, MouseEvent>({
                 nativeEvent    : event.nativeEvent,
@@ -362,6 +386,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             // data:
+            ...restOrderableListItemDropHandshakeEvent,
             isDragging         : isDragging,
             response           : true, // initial response status
         };

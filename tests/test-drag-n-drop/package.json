@@ -10,9 +10,9 @@
   },
   "dependencies": {
     "@cssfn/cssfn-dom": "^3.2.0",
-    "@heymarco/draggable": "^6.5.1",
+    "@heymarco/draggable": "^6.6.1",
     "@heymarco/droppable": "^6.5.0",
-    "@heymarco/orderable-list": "^6.9.2",
+    "@heymarco/orderable-list": "^6.10.0",
     "@reusable-ui/components": "^6.11.0",
     "@reusable-ui/core": "^6.9.0"
   }

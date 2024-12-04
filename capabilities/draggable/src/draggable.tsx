@@ -346,7 +346,14 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     const handleTouchStart        = useEvent<React.TouchEventHandler<TElement>>((event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
-        event.preventDefault(); // now we handled the event
+        // try {
+        //     event.preventDefault(); // now we handled the event
+        // }
+        // catch {
+        //     if (process.env?.NODE_ENV === 'production') {
+        //         console.log('`useDraggable::handleTouchStart` must be pointed to passive listener.')
+        //     } // if
+        // } // if
         
         
         

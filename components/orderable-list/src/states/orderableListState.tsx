@@ -13,7 +13,14 @@ import {
     // hooks:
     useContext,
     useMemo,
+    useState,
 }                           from 'react'
+
+// reusable-ui core:
+import {
+    // react helper hooks:
+    useEvent,
+}                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 
 
@@ -83,10 +90,10 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     // props:
     const {
         // handlers:
-        onDragStart,
-        onDragEnd,
-        onDragMove,
-        onDropped,
+        onDragStart : handleDragStart,
+        onDragEnd   : handleDragEnd,
+        onDragMove  : handleDragMove,
+        onDropped   : handleDropped,
         
         
         
@@ -97,28 +104,41 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     
     
     // identifiers:
-    const dragNDropId = useMemo(() => Symbol(), []);
+    const [dragNDropId] = useState(() => Symbol());
+    
+    
+    
+    // stable callbacks:
+    const onDragStart = useEvent(handleDragStart);
+    const onDragEnd   = useEvent(handleDragEnd);
+    const onDragMove  = useEvent(handleDragMove);
+    const onDropped   = useEvent(handleDropped);
     
     
     
     // states:
     const orderableListState = useMemo<OrderableListState>(() => ({
         // identifiers:
-        dragNDropId, // stable ref
+        dragNDropId,                   // stable ref
         
         
         
         // handlers:
-        handleDragStart : onDragStart,
-        handleDragEnd   : onDragEnd,
-        handleDragMove  : onDragMove,
-        handleDropped   : onDropped,
+        handleDragStart : onDragStart, // stable ref
+        handleDragEnd   : onDragEnd,   // stable ref
+        handleDragMove  : onDragMove,  // stable ref
+        handleDropped   : onDropped,   // stable ref
     }), [
+        // identifiers:
+        // dragNDropId,                // stable ref
+        
+        
+        
         // handlers:
-        onDragStart,
-        onDragEnd,
-        onDragMove,
-        onDropped,
+        // onDragStart,                // stable ref
+        // onDragEnd,                  // stable ref
+        // onDragMove,                 // stable ref
+        // onDropped,                  // stable ref
     ]);
     
     
