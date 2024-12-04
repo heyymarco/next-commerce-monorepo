@@ -398,8 +398,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             ownListIndex       : ((): number => {
                 if ((ownListIndexRaw < 0) || Object.is(ownListIndexRaw, -0)) {
                     const absIndex      = Math.abs(ownListIndexRaw);
-                    const isIndexBigger = absIndex > Math.abs(pairListIndexRaw);
-                    return absIndex + (isIndexBigger ? -1 : 1);
+                    const absBuddyIndex = Math.abs(pairListIndexRaw);
+                    return absIndex + ((absIndex > absBuddyIndex) ? -1 : 1);
                 }
                 else {
                     return ownListIndexRaw;
@@ -408,8 +408,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             pairListIndex      : ((): number => {
                 if ((pairListIndexRaw < 0) || Object.is(pairListIndexRaw, -0)) {
                     const absIndex      = Math.abs(pairListIndexRaw);
-                    const isIndexBigger = absIndex > Math.abs(ownListIndexRaw);
-                    return absIndex + (isIndexBigger ? -1 : 1);
+                    const absBuddyIndex = Math.abs(ownListIndexRaw);
+                    return absIndex + ((absIndex > absBuddyIndex) ? -1 : 1);
                 }
                 else {
                     return pairListIndexRaw;

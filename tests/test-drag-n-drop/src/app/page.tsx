@@ -54,14 +54,16 @@ export default function Home() {
         </OrderableListItem>,
         <OrderableListItem<HTMLElement, number> key='444' data={4}>444</OrderableListItem>,
     ]);
-    const prevLogRef = useRef<number|undefined>(undefined);
-    const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData}: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
+    // const prevLogRef = useRef<number|undefined>(undefined);
+    const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData, target}: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
+        // if (!isDragging) return;
+        
         // if (ownListIndex === pairListIndex) return;
         
-        if (prevLogRef.current === pairListIndex) return;
-        prevLogRef.current = pairListIndex;
+        // if (prevLogRef.current === pairListIndex) return;
+        // prevLogRef.current = pairListIndex;
+        if ((target instanceof Element) && target.tagName === 'LI') return; // ignore when on blank <ListItem>
         
-        if (!isDragging) return;
         console.log({
             isDragging,
             ownListIndex, pairListIndex,
