@@ -89,6 +89,10 @@ export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLE
         Required<ListItemComponentProps<TElement>>
 {
     // positions:
+    /**
+     * Positive value (including negative zero) => original listIndex.  
+     * Negative value (including negative zero) => backup listIndex.
+     */
     listIndex         : number
     
     
@@ -349,7 +353,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, props: Pick<OrderableListItemDropHandshakeEvent<TElement, TData>, 'ownListIndex'|'pairListIndex'|'ownData'|'pairData'|'isDragging'>): Promise<boolean> => {
         // props:
         const {
+            ownListIndex,
+            pairListIndex,
+            
             isDragging,
+            
             ...restOrderableListItemDropHandshakeEvent
         } = props;
         
@@ -387,6 +395,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             // data:
             ...restOrderableListItemDropHandshakeEvent,
+            ownListIndex       : Math.abs(ownListIndex),  // remove the negative index (negative index: a *backup* of original placement)
+            pairListIndex      : Math.abs(pairListIndex), // remove the negative index (negative index: a *backup* of original placement)
             isDragging         : isDragging,
             response           : true, // initial response status
         };
@@ -403,23 +413,23 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         if (!listItemParentElm) return false;
         
         if (onOrderStartSubscribers.size) {
-                const orderableListItemDragStartEvent : OrderableListItemDragStartEvent<TElement> = {
-                    // bases:
-                    ...createSyntheticMouseEvent<TElement, MouseEvent>({
-                        nativeEvent    : event,
-                        
-                        type           : 'orderablelistitemdragstart',
-                        
-                        currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
-                        target         : event.target ?? undefined,        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
-                        relatedTarget  : null,                             // no related/paired element
-                    }),
+            const orderableListItemDragStartEvent : OrderableListItemDragStartEvent<TElement> = {
+                // bases:
+                ...createSyntheticMouseEvent<TElement, MouseEvent>({
+                    nativeEvent    : event,
                     
+                    type           : 'orderablelistitemdragstart',
                     
-                    
-                    // data:
-                    response           : true, // initial response status
-                };
+                    currentTarget  : listItemRef.current ?? undefined, // point to <OrderableListItem> itself
+                    target         : event.target ?? undefined,        // point to <OrderableListItem>'s descendant (if any) -or- <OrderableListItem> itself
+                    relatedTarget  : null,                             // no related/paired element
+                }),
+                
+                
+                
+                // data:
+                response           : true, // initial response status
+            };
             await onOrderStart(orderableListItemDragStartEvent);
             if (!orderableListItemDragStartEvent.response) return false; // abort this event handler
         } // if
