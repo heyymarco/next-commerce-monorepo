@@ -31,7 +31,7 @@ import type {
 //#region orderableListItemState
 
 // contexts:
-export interface OrderableListItemRegistration<TElement extends Element = HTMLElement> {
+export interface OrderableListItemRegistration<TElement extends Element = HTMLElement, TData extends unknown = unknown> {
     // behaviors:
     draggable         : boolean
     droppable         : boolean
@@ -39,35 +39,35 @@ export interface OrderableListItemRegistration<TElement extends Element = HTMLEl
     
     
     // handlers:
-    onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>    ) => void|Promise<void>
-    onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement>) => void|Promise<void>
+    onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>           ) => void|Promise<void>
+    onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement, TData>) => void|Promise<void>
 }
-export interface OrderableListItemState<TElement extends Element = HTMLElement>
+export interface OrderableListItemState<TElement extends Element = HTMLElement, TData extends unknown = unknown>
 {
     // registrations:
-    registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): () => void
+    registerOrderableListItem(registration: OrderableListItemRegistration<TElement, TData>): () => void
 }
 
 const noopHandler = () => { throw Error('not inside <OrderableList>'); }; // actually 'not inside <ListItemWithOrderable>'
-const OrderableListItemStateContext = createContext<OrderableListItemState<Element>>({
+const OrderableListItemStateContext = createContext<OrderableListItemState<Element, unknown>>({
     // registrations:
     registerOrderableListItem : noopHandler,
 });
 OrderableListItemStateContext.displayName  = 'OrderableListItemState';
 
-export const useOrderableListItemState = <TElement extends Element = HTMLElement>(): OrderableListItemState<TElement> => {
+export const useOrderableListItemState = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(): OrderableListItemState<TElement, TData> => {
     return useContext(OrderableListItemStateContext);
 }
 
 
 
 // react components:
-export interface OrderableListItemStateProps<TElement extends Element = HTMLElement>
+export interface OrderableListItemStateProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
 {
     // registrations:
-    registerOrderableListItem(registration: OrderableListItemRegistration<TElement>): () => void
+    registerOrderableListItem(registration: OrderableListItemRegistration<TElement, TData>): () => void
 }
-const OrderableListItemStateProvider = <TElement extends Element = HTMLElement>(props: React.PropsWithChildren<OrderableListItemStateProps<TElement>>): JSX.Element|null => {
+const OrderableListItemStateProvider = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(props: React.PropsWithChildren<OrderableListItemStateProps<TElement, TData>>): JSX.Element|null => {
     // props:
     const {
         // registrations:
@@ -82,7 +82,7 @@ const OrderableListItemStateProvider = <TElement extends Element = HTMLElement>(
     
     
     // states:
-    const orderableListItemState = useMemo<OrderableListItemState<TElement>>(() => ({
+    const orderableListItemState = useMemo<OrderableListItemState<TElement, TData>>(() => ({
         // handlers:
         registerOrderableListItem, // stable ref
     }), []);
@@ -91,7 +91,7 @@ const OrderableListItemStateProvider = <TElement extends Element = HTMLElement>(
     
     // jsx:
     return (
-        <OrderableListItemStateContext.Provider value={orderableListItemState as OrderableListItemState<Element>}>
+        <OrderableListItemStateContext.Provider value={orderableListItemState as OrderableListItemState<Element, TData>}>
             {children}
         </OrderableListItemStateContext.Provider>
     );

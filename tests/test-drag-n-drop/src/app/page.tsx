@@ -54,7 +54,7 @@ export default function Home() {
         </OrderableListItem>,
         <OrderableListItem<HTMLElement, number> key='444' data={4}>444</OrderableListItem>,
     ]);
-    const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData}: OrderableListItemDropHandshakeEvent<HTMLElement>): void => {
+    const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData}: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
         if (ownListIndex === pairListIndex) return;
         console.log({isDragging, ownListIndex, pairListIndex, ownData, pairData});
     });

@@ -56,8 +56,8 @@ export interface OrderableListItemProps<TElement extends Element = HTMLElement, 
     
     
     // handlers:
-    onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>    ) => void|Promise<void>
-    onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement>) => void|Promise<void>
+    onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>           ) => void|Promise<void>
+    onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement, TData>) => void|Promise<void>
 }
 export const OrderableListItem       = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(props: OrderableListItemProps<TElement, TData>): JSX.Element|null => {
     // rest props:
@@ -90,7 +90,7 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
     const {
         // registrations:
         registerOrderableListItem,
-    } = useOrderableListItemState<TElement>();
+    } = useOrderableListItemState<TElement, TData>();
     
     
     

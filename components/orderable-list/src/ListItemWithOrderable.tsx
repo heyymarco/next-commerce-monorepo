@@ -289,7 +289,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     const [onOrderStartSubscribers    ] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>());
     const [onOrderHandshakeSubscribers] = useState<Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>>(() => new Set<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>());
-    const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement>): () => void => {
+    const registerOrderableListItem     = useEvent((registration: OrderableListItemRegistration<TElement, TData>): () => void => {
         const {
             // behaviors:
             draggable,
@@ -618,7 +618,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // jsx:
     return (
-        <OrderableListItemStateProvider<TElement>
+        <OrderableListItemStateProvider<TElement, TData>
             // registrations:
             registerOrderableListItem={registerOrderableListItem}
         >
