@@ -27,10 +27,10 @@ export default function Home() {
         // if ((target instanceof Element) && target.tagName === 'LI') return; // ignore when on blank <ListItem>
         
         if (isDragging) {
-            console.log(`migrate ${pairListIndex} by ${ownListIndex} [dragging]`)
+            // console.log(`migrate ${ownListIndex} to ${pairListIndex} [dragging]`)
         }
         else {
-            console.log(`migrate ${ownListIndex} by ${pairListIndex} [dragged]`);
+            // console.log(`migrate ${pairListIndex} to ${ownListIndex} [dragged]`);
         } // if
     });
     

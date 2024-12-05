@@ -72,6 +72,9 @@ import type {
     // react components:
     OrderableListItemProps,
 }                           from './OrderableListItem.js'
+import {
+    calculateSyncIndex,
+}                           from './utilities.js'
 
 
 
@@ -190,26 +193,15 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                         8 [8]               8 [8]
                         9 [9]               9 [9]
             */
-            if (
-                /*
-                    from > to >= appliedTo
-                */
-                (absTo < from)                     // to_index is less_than pulled_index
-                &&
-                draftChildren                      // has an applied_index
-                &&
-                (absTo >= draftChildren.appliedTo) // to_index is greater_than_equal applied_index
-            )
-            {
-                absTo++; // increase the to_index to compensate the out_of_index_sync
-            } // if
+            absTo += calculateSyncIndex(from, absTo, draftChildren?.appliedTo);
             // #endregion patch the hole
             
             
             
             // mutate:
             const isToBigger           = absTo > from;
-            const backTo               = absTo + (isToBigger ? -1 : 1);
+            // const backTo               = absTo + (isToBigger ? -1 : 1);
+            const backTo               = absTo + (isToBigger ? -1 : 0);
             const fromIndex            = listMap.get(from)   ?? from;   // convert listIndex => childIndex
             const toIndex              = listMap.get(backTo) ?? backTo; // convert listIndex => childIndex
             const mutatedChildren      = wrappedChildren.slice(0);      // copy
@@ -239,7 +231,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                 children  : mutatedChildren,
                 appliedTo : backTo,
             });
-            // console.log({from, to, backTo, fromIndex, toIndex});
+            // console.log({from, backTo, to, fromIndex, toIndex});
             
             
             
@@ -264,19 +256,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                     8 [8]               8 [8]
                     9 [9]               9 [9]
         */
-        if (
-            /*
-                from > to >= appliedTo
-            */
-            (to < from)                     // to_index is less_than pulled_index
-            &&
-            draftChildren                   // has an applied_index
-            &&
-            (to >= draftChildren.appliedTo) // to_index is greater_than_equal applied_index
-        )
-        {
-            to++; // increase the to_index to compensate the out_of_index_sync
-        } // if
+        to += calculateSyncIndex(from, to, draftChildren?.appliedTo);
         // #endregion patch the hole
         
         
