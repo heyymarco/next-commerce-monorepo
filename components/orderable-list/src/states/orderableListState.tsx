@@ -49,6 +49,11 @@ export interface OrderableListState
     
     
     
+    // states:
+    appliedTo       : number|undefined
+    
+    
+    
     // handlers:
     handleDragStart : (event: OrderableListDragStartEvent) => void
     handleDragEnd   : () => void
@@ -60,6 +65,11 @@ const noopHandler = () => { throw Error('not inside <OrderableList>'); };
 const OrderableListStateContext = createContext<OrderableListState>({
     // identifiers:
     dragNDropId     : undefined as any,
+    
+    
+    
+    // states:
+    appliedTo       : undefined,
     
     
     
@@ -79,16 +89,26 @@ export const useOrderableListState = (): OrderableListState => {
 
 // react components:
 export interface OrderableListStateProps
+    extends
+        Pick<OrderableListState,
+            // states:
+            |'appliedTo'
+        >
 {
     // handlers:
-    onDragStart : (event: OrderableListDragStartEvent) => void
-    onDragEnd   : () => void
-    onDragMove  : (event: OrderableListDragMoveEvent) => void
-    onDropped   : (event: OrderableListDroppedEvent) => void
+    onDragStart : OrderableListState['handleDragStart']
+    onDragEnd   : OrderableListState['handleDragEnd']
+    onDragMove  : OrderableListState['handleDragMove']
+    onDropped   : OrderableListState['handleDropped']
 }
 const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableListStateProps>): JSX.Element|null => {
     // props:
     const {
+        // states:
+        appliedTo,
+        
+        
+        
         // handlers:
         onDragStart : handleDragStart,
         onDragEnd   : handleDragEnd,
@@ -123,6 +143,11 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         
         
         
+        // states:
+        appliedTo,                     // mutable ref
+        
+        
+        
         // handlers:
         handleDragStart : onDragStart, // stable ref
         handleDragEnd   : onDragEnd,   // stable ref
@@ -131,6 +156,11 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     }), [
         // identifiers:
         // dragNDropId,                // stable ref
+        
+        
+        
+        // states:
+        appliedTo,                     // mutable ref
         
         
         

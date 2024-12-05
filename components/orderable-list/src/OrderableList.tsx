@@ -169,8 +169,41 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
             // conditions:
-            const absTo = -to; // remove negative sign
+            let absTo = -to; // remove negative sign
             if (absTo === from) return; // useless move => ignore
+            
+            
+            
+            // #region patch the hole
+            /*
+                example of pulling [6] and temporary applied to index of 2
+                
+                wrappedChildren     visuallyRendered
+                index:  0 [0]       index:  0 [0]
+                        1 [1]               1 [1]
+                        2 [2]          void 2 [ ] <-- apply [6]
+                        3 [3]             x 3 [2] <-- out_of_index_sync    elements with data from [2] to [5] are out_of_index_sync with the indices
+                        4 [4]             x 4 [3] <-- out_of_index_sync
+                        5 [5]             x 5 [4] <-- out_of_index_sync
+                        6 [6] --> pull    x 6 [5] <-- out_of_index_sync
+                        7 [7]               7 [7]
+                        8 [8]               8 [8]
+                        9 [9]               9 [9]
+            */
+            if (
+                /*
+                    from > to >= appliedTo
+                */
+                (absTo < from)                     // to_index is less_than pulled_index
+                &&
+                draftChildren                      // has an applied_index
+                &&
+                (absTo >= draftChildren.appliedTo) // to_index is greater_than_equal applied_index
+            )
+            {
+                absTo++; // increase the to_index to compensate the out_of_index_sync
+            } // if
+            // #endregion patch the hole
             
             
             
@@ -206,11 +239,45 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                 children  : mutatedChildren,
                 appliedTo : backTo,
             });
+            // console.log({from, to, backTo, fromIndex, toIndex});
             
             
             
             return; // no further mutation
         } // if
+        
+        
+        
+        // #region patch the hole
+        /*
+            example of pulling [6] and temporary applied to index of 2
+            
+            wrappedChildren     visuallyRendered
+            index:  0 [0]       index:  0 [0]
+                    1 [1]               1 [1]
+                    2 [2]          void 2 [ ] <-- apply [6]
+                    3 [3]             x 3 [2] <-- out_of_index_sync    elements with data from [2] to [5] are out_of_index_sync with the indices
+                    4 [4]             x 4 [3] <-- out_of_index_sync
+                    5 [5]             x 5 [4] <-- out_of_index_sync
+                    6 [6] --> pull    x 6 [5] <-- out_of_index_sync
+                    7 [7]               7 [7]
+                    8 [8]               8 [8]
+                    9 [9]               9 [9]
+        */
+        if (
+            /*
+                from > to >= appliedTo
+            */
+            (to < from)                     // to_index is less_than pulled_index
+            &&
+            draftChildren                   // has an applied_index
+            &&
+            (to >= draftChildren.appliedTo) // to_index is greater_than_equal applied_index
+        )
+        {
+            to++; // increase the to_index to compensate the out_of_index_sync
+        } // if
+        // #endregion patch the hole
         
         
         
@@ -243,6 +310,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             children  : mutatedChildren,
             appliedTo : to,
         });
+        // console.log({from, to, fromIndex, toIndex});
     });
     const handleDropped        = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         // conditions:
@@ -364,6 +432,11 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     // jsx:
     return (
         <OrderableListStateProvider
+            // states:
+            appliedTo={draftChildren?.appliedTo}
+            
+            
+            
             // handlers:
             onDragStart={handleDragStartEnd}
             onDragEnd={handleDragStartEnd}

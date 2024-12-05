@@ -57,6 +57,7 @@ export default function Home() {
     // const prevLogRef = useRef<number|undefined>(undefined);
     const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData, target}: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
         // if (!isDragging) return;
+        // if (isDragging) return;
         if (pairListIndex === undefined) return;
         
         // if (ownListIndex === pairListIndex) return;
@@ -65,11 +66,12 @@ export default function Home() {
         // prevLogRef.current = pairListIndex;
         // if ((target instanceof Element) && target.tagName === 'LI') return; // ignore when on blank <ListItem>
         
-        console.log({
-            isDragging,
-            ownListIndex, pairListIndex,
-            // ownData, pairData,
-        });
+        if (isDragging) {
+            console.log(`migrate ${pairListIndex} by ${ownListIndex} [dragging]`)
+        }
+        else {
+            // console.log(`migrate ${ownListIndex} by ${pairListIndex} [dragged]`);
+        } // if
     });
     return (
         <main>
@@ -115,6 +117,8 @@ export default function Home() {
                 <OrderableListItem data={'222'} onOrderHandshake={handleOrderHandshake}>222</OrderableListItem>
                 <OrderableListItem data={'333'} onOrderHandshake={handleOrderHandshake}>333</OrderableListItem>
                 <OrderableListItem data={'444'} onOrderHandshake={handleOrderHandshake}>444</OrderableListItem>
+                <OrderableListItem data={'555'} onOrderHandshake={handleOrderHandshake}>555</OrderableListItem>
+                <OrderableListItem data={'666'} onOrderHandshake={handleOrderHandshake}>666</OrderableListItem>
             </>} />
         </main>
     )

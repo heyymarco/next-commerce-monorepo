@@ -147,6 +147,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
+        // states:
+        appliedTo,
+        
+        
+        
         // handlers:
         handleDragStart,
         handleDragEnd,
@@ -400,7 +405,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             // data:
             ...restOrderableListItemDropHandshakeEvent,
             
-            ownListIndex       : ((): number => {
+            ownListIndex       : (isDragging ? appliedTo : undefined) ?? ((): number => {
                 if ((ownListIndexRaw < 0) || Object.is(ownListIndexRaw, -0)) {
                     const absIndex      = Math.abs(ownListIndexRaw);
                     const absBuddyIndex = Math.abs(pairListIndexRaw);
@@ -410,7 +415,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     return ownListIndexRaw;
                 } // if
             })(),
-            pairListIndex      : isOnItself ? undefined : ((): number => {
+            pairListIndex      : isOnItself ? undefined : (!isDragging ? appliedTo : undefined) ?? ((): number => {
                 if ((pairListIndexRaw < 0) || Object.is(pairListIndexRaw, -0)) {
                     const absIndex      = Math.abs(pairListIndexRaw);
                     const absBuddyIndex = Math.abs(ownListIndexRaw);

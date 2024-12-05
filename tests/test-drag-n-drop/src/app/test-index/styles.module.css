@@ -1,0 +1,9 @@
+.main {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+}
+.list {
+    width: 5rem;
+    text-align: center;
+}
