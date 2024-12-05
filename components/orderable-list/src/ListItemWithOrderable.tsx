@@ -350,11 +350,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // handlers:
-    const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, props: Pick<OrderableListItemDropHandshakeEvent<TElement, TData>, 'ownListIndex'|'pairListIndex'|'ownData'|'pairData'|'isDragging'>): Promise<boolean> => {
+    const handleOrderHandshake     = useEvent(async (event: DragHandshakeEvent<TElement>|DropHandshakeEvent<TElement>, props: Pick<OrderableListItemDropHandshakeEvent<TElement, TData>, 'ownListIndex'|'pairListIndex'|'ownData'|'pairData'|'isDragging'> & { pairListIndex: number }): Promise<boolean> => {
         // props:
         const {
             ownListIndex  : ownListIndexRaw,
             pairListIndex : pairListIndexRaw,
+            
+            ownData,
+            pairData,
             
             isDragging,
             
@@ -379,6 +382,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
+        const isOnItself = Object.is(pairListIndexRaw, ownListIndexRaw); // compares both the value and positive|negative sign, if equals => it's on itself
         const orderableListItemDropHandshakeEvent : OrderableListItemDropHandshakeEvent<TElement, TData> = {
             // bases:
             ...createSyntheticMouseEvent<TElement, MouseEvent>({
@@ -395,6 +399,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             // data:
             ...restOrderableListItemDropHandshakeEvent,
+            
             ownListIndex       : ((): number => {
                 if ((ownListIndexRaw < 0) || Object.is(ownListIndexRaw, -0)) {
                     const absIndex      = Math.abs(ownListIndexRaw);
@@ -405,7 +410,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     return ownListIndexRaw;
                 } // if
             })(),
-            pairListIndex      : ((): number => {
+            pairListIndex      : isOnItself ? undefined : ((): number => {
                 if ((pairListIndexRaw < 0) || Object.is(pairListIndexRaw, -0)) {
                     const absIndex      = Math.abs(pairListIndexRaw);
                     const absBuddyIndex = Math.abs(ownListIndexRaw);
@@ -415,6 +420,10 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     return pairListIndexRaw;
                 } // if
             })(),
+            
+            ownData            : ownData,
+            pairData           : isOnItself ? undefined : pairData,
+            
             isDragging         : isDragging,
             response           : true, // initial response status
         };

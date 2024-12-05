@@ -11,7 +11,7 @@ export interface OrderableListItemDragStartEvent<TElement extends Element = HTML
 }
 export interface OrderableListItemDropHandshakeEvent<TElement extends Element = HTMLElement, TData extends unknown = unknown> extends React.MouseEvent<TElement, MouseEvent> {
     readonly    ownListIndex  : number
-    readonly    pairListIndex : number
+    readonly    pairListIndex : number|undefined
     
     readonly    ownData       : TData|undefined
     readonly    pairData      : TData|undefined
