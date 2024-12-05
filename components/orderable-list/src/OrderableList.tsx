@@ -145,7 +145,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         onValueChange      : onControllableChildrenChange as ((children: React.ReactNode) => void),
     });
     
-    const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], to: number }|undefined>(undefined);
+    const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], appliedTo: number }|undefined>(undefined);
     
     
     
@@ -203,8 +203,8 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             
             handleMutateChildren(mutatedChildren, fromIndex, toIndex);
             setDraftChildren({
-                children : mutatedChildren,
-                to       : backTo,
+                children  : mutatedChildren,
+                appliedTo : backTo,
             });
             
             
@@ -240,13 +240,13 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         handleMutateChildren(mutatedChildren, fromIndex, toIndex);
         setDraftChildren({
-            children : mutatedChildren,
-            to       : to,
+            children  : mutatedChildren,
+            appliedTo : to,
         });
     });
     const handleDropped        = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         // conditions:
-        to = draftChildren?.to ?? to; // cancel out effect of moved draftChildren (if any)
+        to = draftChildren?.appliedTo ?? to; // cancel out effect of moved draftChildren (if any)
         if (to === from) return; // useless move => ignore
         
         
