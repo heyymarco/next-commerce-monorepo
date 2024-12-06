@@ -167,13 +167,18 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         } // if
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
-        // conditions:
-        if (to === from) return; // useless move => ignore
+        from = Math.abs(from); // remove negative sign (if any)
+        
+        
         
         if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
+            // normalize:
+            let backTo = Math.abs(to); // remove negative sign
+            
+            
+            
             // conditions:
-            let absTo = -to; // remove negative sign
-            if (absTo === from) return; // useless move => ignore
+            if (backTo === from) return; // useless move => ignore
             
             
             
@@ -193,15 +198,12 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                         8 [8]               8 [8]
                         9 [9]               9 [9]
             */
-            absTo += calculateSyncIndex(from, absTo, draftChildren?.appliedTo);
+            backTo += calculateSyncIndex(from, backTo, draftChildren?.appliedTo);
             // #endregion patch the hole
             
             
             
             // mutate:
-            const isToBigger           = absTo > from;
-            // const backTo               = absTo + (isToBigger ? -1 : 1);
-            const backTo               = absTo + (isToBigger ? -1 : 0);
             const fromIndex            = listMap.get(from)   ?? from;   // convert listIndex => childIndex
             const toIndex              = listMap.get(backTo) ?? backTo; // convert listIndex => childIndex
             const mutatedChildren      = wrappedChildren.slice(0);      // copy
@@ -231,12 +233,16 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                 children  : mutatedChildren,
                 appliedTo : backTo,
             });
-            // console.log({from, backTo, to, fromIndex, toIndex});
             
             
             
             return; // no further mutation
         } // if
+        
+        
+        
+        // conditions:
+        if (to === from) return; // useless move => ignore
         
         
         
@@ -290,7 +296,6 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             children  : mutatedChildren,
             appliedTo : to,
         });
-        // console.log({from, to, fromIndex, toIndex});
     });
     const handleDropped        = useEvent(({from, to}: OrderableListDroppedEvent): void => {
         // conditions:
