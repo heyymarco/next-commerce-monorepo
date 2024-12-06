@@ -167,77 +167,9 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         } // if
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
+        const isRestoring = (to < 0) || Object.is(to, -0); // if negative value (including negative zero) => *restore* the draft to original placement
         from = Math.abs(from); // remove negative sign (if any)
-        
-        
-        
-        if ((to < 0) || Object.is(to, -0)) { // if negative value (including negative zero) => *restore* the draft to original placement
-            // normalize:
-            let backTo = Math.abs(to); // remove negative sign
-            
-            
-            
-            // conditions:
-            if (backTo === from) return; // useless move => ignore
-            
-            
-            
-            // #region patch the hole
-            /*
-                example of pulling [6] and temporary applied to index of 2
-                
-                wrappedChildren     visuallyRendered
-                index:  0 [0]       index:  0 [0]
-                        1 [1]               1 [1]
-                        2 [2]          void 2 [ ] <-- apply [6]
-                        3 [3]             x 3 [2] <-- out_of_index_sync    elements with data from [2] to [5] are out_of_index_sync with the indices
-                        4 [4]             x 4 [3] <-- out_of_index_sync
-                        5 [5]             x 5 [4] <-- out_of_index_sync
-                        6 [6] --> pull    x 6 [5] <-- out_of_index_sync
-                        7 [7]               7 [7]
-                        8 [8]               8 [8]
-                        9 [9]               9 [9]
-            */
-            backTo += calculateSyncIndex(from, backTo, draftChildren?.appliedTo);
-            // #endregion patch the hole
-            
-            
-            
-            // mutate:
-            const fromIndex            = listMap.get(from)   ?? from;   // convert listIndex => childIndex
-            const toIndex              = listMap.get(backTo) ?? backTo; // convert listIndex => childIndex
-            const mutatedChildren      = wrappedChildren.slice(0);      // copy
-            
-            // the dragging item:
-            mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-                // props:
-                {
-                    refresh : {}, // declarative way to refresh()
-                    // theme   : 'dark', // for *visual* debugging purpose
-                },
-            );
-            
-            // no need to restore, because we're re-copy from unmodified `wrappedChildren`
-            // // the restored item (may the same index as the dragging item above):
-            // mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-            //     // props:
-            //     {
-            //         // *restore* the draft to original placement:
-            //         listIndex : backTo,
-            //         theme     : 'warning', // for *visual* debugging purpose
-            //     },
-            // );
-            
-            handleMutateChildren(mutatedChildren, fromIndex, toIndex);
-            setDraftChildren({
-                children  : mutatedChildren,
-                appliedTo : backTo,
-            });
-            
-            
-            
-            return; // no further mutation
-        } // if
+        to   = Math.abs(to);   // remove negative sign (if any)
         
         
         
@@ -281,15 +213,29 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             },
         );
         
-        // the backup item:
-        mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
-            // props:
-            {
-                // *backup* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
-                listIndex : -to,
-                // theme     : 'success', // for *visual* debugging purpose
-            },
-        );
+        if (!isRestoring) {
+            // the backup item:
+            mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+                // props:
+                {
+                    // *backup* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
+                    listIndex : -to,
+                    // theme     : 'success', // for *visual* debugging purpose
+                },
+            );
+        } // if
+        // else {
+        //     // no need to restore, because we're re-copy from unmodified `wrappedChildren`
+        //     // // the restored item (may the same index as the dragging item above):
+        //     // mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+        //     //     // props:
+        //     //     {
+        //     //         // *restore* the draft to original placement:
+        //     //         listIndex : to,
+        //     //         theme     : 'warning', // for *visual* debugging purpose
+        //     //     },
+        //     // );
+        // } // if
         
         handleMutateChildren(mutatedChildren, fromIndex, toIndex);
         setDraftChildren({
