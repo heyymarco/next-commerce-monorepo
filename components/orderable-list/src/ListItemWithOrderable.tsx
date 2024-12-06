@@ -76,6 +76,9 @@ import type {
     // react components:
     OrderableListItemProps,
 }                           from './OrderableListItem.js'
+import {
+    calculateSyncIndex,
+}                           from './utilities.js'
 
 
 
@@ -406,24 +409,62 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             ...restOrderableListItemDropHandshakeEvent,
             
             ownListIndex       : (isDragging ? appliedTo : undefined) ?? ((): number => {
-                if ((ownListIndexRaw < 0) || Object.is(ownListIndexRaw, -0)) {
-                    const absIndex      = Math.abs(ownListIndexRaw);
-                    const absBuddyIndex = Math.abs(pairListIndexRaw);
-                    return absIndex + ((absIndex > absBuddyIndex) ? -1 : 1);
-                }
-                else {
-                    return ownListIndexRaw;
-                } // if
+                const from = Math.abs(pairListIndexRaw); // remove negative sign (if any)
+                let   to   = Math.abs(ownListIndexRaw);  // remove negative sign (if any)
+                
+                
+                
+                // #region patch the hole
+                /*
+                    example of pulling [6] and temporary applied to index of 2
+                    
+                    wrappedChildren     visuallyRendered
+                    index:  0 [0]       index:  0 [0]
+                            1 [1]               1 [1]
+                            2 [2]          void 2 [ ] <-- apply [6]
+                            3 [3]             x 3 [2] <-- out_of_index_sync    elements with data from [2] to [5] are out_of_index_sync with the indices
+                            4 [4]             x 4 [3] <-- out_of_index_sync
+                            5 [5]             x 5 [4] <-- out_of_index_sync
+                            6 [6] --> pull    x 6 [5] <-- out_of_index_sync
+                            7 [7]               7 [7]
+                            8 [8]               8 [8]
+                            9 [9]               9 [9]
+                */
+                to += calculateSyncIndex(from, to, appliedTo);
+                // #endregion patch the hole
+                
+                
+                
+                return to;
             })(),
             pairListIndex      : isOnItself ? undefined : (!isDragging ? appliedTo : undefined) ?? ((): number => {
-                if ((pairListIndexRaw < 0) || Object.is(pairListIndexRaw, -0)) {
-                    const absIndex      = Math.abs(pairListIndexRaw);
-                    const absBuddyIndex = Math.abs(ownListIndexRaw);
-                    return absIndex + ((absIndex > absBuddyIndex) ? -1 : 1);
-                }
-                else {
-                    return pairListIndexRaw;
-                } // if
+                const from = Math.abs(ownListIndexRaw);  // remove negative sign (if any)
+                let   to   = Math.abs(pairListIndexRaw); // remove negative sign (if any)
+                
+                
+                
+                // #region patch the hole
+                /*
+                    example of pulling [6] and temporary applied to index of 2
+                    
+                    wrappedChildren     visuallyRendered
+                    index:  0 [0]       index:  0 [0]
+                            1 [1]               1 [1]
+                            2 [2]          void 2 [ ] <-- apply [6]
+                            3 [3]             x 3 [2] <-- out_of_index_sync    elements with data from [2] to [5] are out_of_index_sync with the indices
+                            4 [4]             x 4 [3] <-- out_of_index_sync
+                            5 [5]             x 5 [4] <-- out_of_index_sync
+                            6 [6] --> pull    x 6 [5] <-- out_of_index_sync
+                            7 [7]               7 [7]
+                            8 [8]               8 [8]
+                            9 [9]               9 [9]
+                */
+                to += calculateSyncIndex(from, to, appliedTo);
+                // #endregion patch the hole
+                
+                
+                
+                return to;
             })(),
             
             ownData            : ownData,
