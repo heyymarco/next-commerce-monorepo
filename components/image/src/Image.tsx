@@ -228,6 +228,85 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     
     
     
+    /*
+        To make your <ImageWithStatus /> component semantically better and accessible, you can use the <figure> and <figcaption> elements.
+        However, since you encountered an issue with <figure> inside a <p>, you can use a <div> with appropriate ARIA roles and attributes.
+        
+        Here’s how you can improve the semantic structure and accessibility of your component:
+        1. Use role="img": This role indicates that the element is an image.
+        2. Use aria-label: Provide a descriptive label for the image.
+        3. Use aria-busy: Indicate when the image is loading.
+        4. Use aria-live: Announce error messages to screen readers.
+        
+        Here’s the updated component:
+        ```tsx
+        return (
+            <div
+                className='wrapper'
+                role='img'
+                aria-label={state === 'loading' ? 'Loading image' : state === 'error' ? 'Error loading image' : 'Image'}
+                aria-busy={state === 'loading'}
+                aria-live={state === 'error' ? 'assertive' : 'off'}
+            >
+                <img className='image' src={src} alt='' />
+                {state === 'loading' && <span className='busy'>Loading...</span>}
+                {state === 'error' && <span className='error'>Error loading image</span>}
+            </div>
+        );
+        ```
+        
+        
+        
+        So, there is an aria-label on the <div> and an alt on the <img>. Will screen readers be confused by the presence of these two labels?
+        
+        Good question! Screen readers will prioritize the aria-label on the <div> with role="img" over the alt attribute on the <img>.
+        This is because the role="img" and aria-label combination is designed to provide a more descriptive and accessible experience for users.
+        
+        However, to avoid any potential confusion and ensure the best accessibility,
+        you can remove the alt attribute from the <img> element since the aria-label on the <div> already provides the necessary description.
+        Here’s the updated component:
+        ```tsx
+        return (
+            <div
+                className='wrapper'
+                role='img'
+                aria-label={state === 'loading' ? 'Loading image' : state === 'error' ? 'Error loading image' : 'Image'}
+                aria-busy={state === 'loading'}
+                aria-live={state === 'error' ? 'assertive' : 'off'}
+            >
+                <img className='image' src={src} />
+                {state === 'loading' && <span className='busy'>Loading...</span>}
+                {state === 'error' && <span className='error'>Error loading image</span>}
+            </div>
+        );
+        ```
+        
+        
+        
+        Should I add aria-role="none|presentation" to <span> busy and error (and add the aria-role to the <img> too)? Or is the previous code semantic enough?
+        
+        Adding role="none" or role="presentation" to the <span> elements for the busy and error states can help ensure that screen readers ignore these elements,
+        focusing only on the main content. This can improve the accessibility of your component.
+        Here’s the updated code with these roles added:
+        ```tsx
+        return (
+            <div
+                className='wrapper'
+                role='img'
+                aria-label={state === 'loading' ? 'Loading image' : state === 'error' ? 'Error loading image' : 'Image'}
+                aria-busy={state === 'loading'}
+                aria-live={state === 'error' ? 'assertive' : 'off'}
+            >
+                <img className='image' src={src} role='none' />
+                {state === 'loading' && <span className='busy' role='none'>Loading...</span>}
+                {state === 'error' && <span className='error' role='none'>Error loading image</span>}
+            </div>
+        );
+        ```
+    */
+    
+    
+    
     // jsx:
     return (
         <Generic<TElement>
