@@ -229,6 +229,30 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     
     
     /*
+        I created an image component, let's say <ImageWithStatus src='...' /> that something like this:
+        ```ts
+        return (
+            <div className='wrapper'>
+                <img className='image' ... />
+                {(state === 'loading') && <span className='busy'>...</span>}
+                {(state === 'error  ') && <span className='error'>...</span>}
+            </div>
+        );
+        ```
+        
+        Initially the wrapper was made from <figure>, but then i changed it to <div>
+        because when the <ImageWithStatus/> placed in <p>, i got a console error:
+        "Warning: In HTML, <figure> cannot be a descendant of <p>".
+        
+        I want my <ImageWithStatus/> behave like a regular <img/>.
+        The wrapper is required for easily centering the loading and error indicator at the center of image.
+        
+        The question is: what's the appropriate role and aria attributes for my component above?
+        Can you fix it with semantically better? Is there a more appropriate tag other than
+        <div role='...'>?
+        
+        
+        
         To make your <ImageWithStatus /> component semantically better and accessible, you can use the <figure> and <figcaption> elements.
         However, since you encountered an issue with <figure> inside a <p>, you can use a <div> with appropriate ARIA roles and attributes.
         
