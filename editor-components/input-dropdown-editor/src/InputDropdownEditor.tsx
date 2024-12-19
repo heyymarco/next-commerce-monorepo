@@ -301,7 +301,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // other props:
-        ...restSelectDropdownEditorProps
+        ...restInputDropdownEditorProps
     } = props;
     
     
@@ -670,7 +670,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     const {
         // other props:
         ...restInputEditorProps
-    } = restSelectDropdownEditorProps;
+    } = restInputDropdownEditorProps;
     
     const {
         // classes:
