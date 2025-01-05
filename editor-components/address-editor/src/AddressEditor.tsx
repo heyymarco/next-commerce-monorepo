@@ -84,10 +84,10 @@ const emptyAddress : Address = {
 
 
 // react components:
-export interface AddressEditorProps<out TElement extends Element = HTMLDivElement>
+export interface AddressEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends Address|null = Address|null>
     extends
         // bases:
-        Pick<EditorProps<HTMLDivElement, React.ChangeEvent<HTMLInputElement>, Address|null>,
+        Pick<EditorProps<TElement, TChangeEvent, TValue>,
             // values:
             |'defaultValue'
             |'value'
@@ -123,32 +123,32 @@ export interface AddressEditorProps<out TElement extends Element = HTMLDivElemen
     
     
     // components:
-    countryEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    stateEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    cityEditorComponent      ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    zipEditorComponent       ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    addressEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    countryEditorComponent   ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    stateEditorComponent     ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    cityEditorComponent      ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    zipEditorComponent       ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    addressEditorComponent   ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
     
-    companyEditorComponent   ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    firstNameEditorComponent ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    lastNameEditorComponent  ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
-    phoneEditorComponent     ?: React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>> | null
+    companyEditorComponent   ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    firstNameEditorComponent ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    lastNameEditorComponent  ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
+    phoneEditorComponent     ?: React.ReactElement<TextEditorProps<Element, TChangeEvent>> | null
 }
-const AddressEditor         = <TElement extends Element = HTMLDivElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
+const AddressEditor         = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends Address|null = Address|null>(props: AddressEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // jsx:
     return (
         <AccessibilityProvider {...props}>
-            <AddressEditorInternal {...props} />
+            <AddressEditorInternal<TElement, TChangeEvent, TValue> {...props} />
         </AccessibilityProvider>
     );
 };
-const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props: AddressEditorProps<TElement>): JSX.Element|null => {
+const AddressEditorInternal = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends Address|null = Address|null>(props: AddressEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // values:
         addressType       : addressTypeRaw,
         
-        defaultValue      : defaultUncontrollableValue = emptyAddress,
+        defaultValue      : defaultUncontrollableValue = emptyAddress as TValue,
         value             : controllableValue,
         onChange          : onControllableValueChange,
         
@@ -173,16 +173,16 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
         
         
         // components:
-        countryEditorComponent   = (<TextEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='Country'           /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        stateEditorComponent     = (<TextEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='State'             /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        cityEditorComponent      = (<TextEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='City'              /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        zipEditorComponent       = (<TextEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='Zip (Postal) Code' /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        addressEditorComponent   = (<TextEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='Street Address'    /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        countryEditorComponent   = (<TextEditor<  Element , TChangeEvent> aria-label='Country'           /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        stateEditorComponent     = (<TextEditor<  Element , TChangeEvent> aria-label='State'             /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        cityEditorComponent      = (<TextEditor<  Element , TChangeEvent> aria-label='City'              /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        zipEditorComponent       = (<TextEditor<  Element , TChangeEvent> aria-label='Zip (Postal) Code' /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        addressEditorComponent   = (<TextEditor<  Element , TChangeEvent> aria-label='Street Address'    /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
         
-        companyEditorComponent   = (<NameEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='Company'           /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        firstNameEditorComponent = (<NameEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='First Name'        /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        lastNameEditorComponent  = (<NameEditor<  Element , React.ChangeEvent<HTMLInputElement>> aria-label='Last Name'         /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
-        phoneEditorComponent     = (<PhoneEditor< Element , React.ChangeEvent<HTMLInputElement>>                                /> as React.ReactElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>),
+        companyEditorComponent   = (<NameEditor<  Element , TChangeEvent> aria-label='Company'           /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        firstNameEditorComponent = (<NameEditor<  Element , TChangeEvent> aria-label='First Name'        /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        lastNameEditorComponent  = (<NameEditor<  Element , TChangeEvent> aria-label='Last Name'         /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
+        phoneEditorComponent     = (<PhoneEditor< Element , TChangeEvent>                                /> as React.ReactElement<TextEditorProps<Element, TChangeEvent>>),
         
         
         
@@ -206,7 +206,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
-    } = useControllableAndUncontrollable<Address|null, React.ChangeEvent<HTMLInputElement>>({
+    } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
         onValueChange      : onControllableValueChange,
@@ -215,45 +215,45 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
     
     
     // handlers:
-    const handleChangeInternal          = useEvent((field: keyof Address, newValue: string, event: React.ChangeEvent<HTMLInputElement>) => {
-        const newAddress : Address = {
-            ...emptyAddress,
+    const handleChangeInternal          = useEvent((field: keyof Exclude<TValue, null>, newValue: string, event: TChangeEvent) => {
+        const newAddress : Exclude<TValue, null> = {
+            ...emptyAddress as Exclude<TValue, null>,
             ...value,
             [field] : newValue,
         };
         
         triggerValueChange(
-            Object.values<string>(newAddress as unknown as { [key: string] : string }).some((field) => !!field?.trim().length) ? newAddress : null,
+            Object.values<string>(newAddress as unknown as { [key: string] : string }).some((field) => !!field?.trim().length) ? newAddress : (null as TValue),
             { triggerAt: 'immediately', event: event }
         );
     });
     
-    const handleCountryChangeInternal   = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleCountryChangeInternal   = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('country', value, event);
     });
-    const handleStateChangeInternal     = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleStateChangeInternal     = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('state', value, event);
     });
-    const handleCityChangeInternal      = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleCityChangeInternal      = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('city', value, event);
     });
-    const handleZipChangeInternal       = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleZipChangeInternal       = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('zip', value, event);
     });
-    const handleAddressChangeInternal   = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleAddressChangeInternal   = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('address', value, event);
     });
     
-    const handleCompanyChangeInternal   = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleCompanyChangeInternal   = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('company', value, event);
     });
-    const handleFirstNameChangeInternal = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleFirstNameChangeInternal = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('firstName', value, event);
     });
-    const handleLastNameChangeInternal  = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handleLastNameChangeInternal  = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('lastName', value, event);
     });
-    const handlePhoneChangeInternal     = useEvent<EditorChangeEventHandler<React.ChangeEvent<HTMLInputElement>, string>>((value, event) => {
+    const handlePhoneChangeInternal     = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
         handleChangeInternal('phone', value, event);
     });
     
@@ -595,7 +595,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
             {/* <ResponsiveContainer> */}
             <div>
                 {/* <Country> */}
-                {!!countryEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(countryEditorComponent,
+                {!!countryEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(countryEditorComponent,
                     // props:
                     {
                         // other props:
@@ -625,7 +625,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <State> */}
-                {!!stateEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(stateEditorComponent,
+                {!!stateEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(stateEditorComponent,
                     // props:
                     {
                         // other props:
@@ -655,7 +655,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <City> */}
-                {!!cityEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(cityEditorComponent,
+                {!!cityEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(cityEditorComponent,
                     // props:
                     {
                         // other props:
@@ -685,7 +685,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <Zip> */}
-                {!!zipEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(zipEditorComponent,
+                {!!zipEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(zipEditorComponent,
                     // props:
                     {
                         // other props:
@@ -715,7 +715,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <Address> */}
-                {!!addressEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(addressEditorComponent,
+                {!!addressEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(addressEditorComponent,
                     // props:
                     {
                         // other props:
@@ -746,7 +746,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 
                 
                 {/* <Company> */}
-                {!!companyEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(companyEditorComponent,
+                {!!companyEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(companyEditorComponent,
                     // props:
                     {
                         // other props:
@@ -776,7 +776,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <FirstName> */}
-                {!!firstNameEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(firstNameEditorComponent,
+                {!!firstNameEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(firstNameEditorComponent,
                     // props:
                     {
                         // other props:
@@ -806,7 +806,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <LastName> */}
-                {!!lastNameEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(lastNameEditorComponent,
+                {!!lastNameEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(lastNameEditorComponent,
                     // props:
                     {
                         // other props:
@@ -836,7 +836,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement>(props:
                 )}
                 
                 {/* <Phone> */}
-                {!!phoneEditorComponent && React.cloneElement<TextEditorProps<Element, React.ChangeEvent<HTMLInputElement>>>(phoneEditorComponent,
+                {!!phoneEditorComponent && React.cloneElement<TextEditorProps<Element, TChangeEvent>>(phoneEditorComponent,
                     // props:
                     {
                         // other props:
