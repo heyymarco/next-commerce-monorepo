@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/editor",
-  "version": "6.10.0",
+  "version": "6.10.1",
   "description": "A generic editor component.",
   "keywords": [
     "generic",
@@ -40,7 +40,8 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@reusable-ui/editable-control": "^6.14.1"
+    "@reusable-ui/core": "^6.14.0",
+    "@reusable-ui/editable-control": "^6.14.2"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
