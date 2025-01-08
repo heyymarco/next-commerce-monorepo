@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     type DropdownListExpandedChangeEvent,
@@ -40,7 +46,7 @@ const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeEv
         
         // other props:
         ...restInputDropdownEditorProps
-    } = props;
+    } = props satisfies NoForeignProps<typeof props, InputDropdownEditorProps<TElement, TChangeEvent, string, TDropdownListExpandedChangeEvent>>;
     
     
     

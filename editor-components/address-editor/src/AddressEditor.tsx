@@ -11,6 +11,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
     useMergeEvents,
@@ -20,6 +25,11 @@ import {
     // an accessibility management system:
     type AccessibilityProps,
     AccessibilityProvider,
+    
+    
+    
+    // a validation management system:
+    ValidationProvider,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -99,7 +109,12 @@ export interface AddressEditorProps<out TElement extends Element = HTMLDivElemen
             |'enableValidation'
             |'isValid'
             |'inheritValidation'
-            // |'onValidation' // not supported
+            // |'validationDeps'    // not supported
+            // |'onValidation'      // not supported
+            
+            // |'validDelay'        // not supported
+            // |'invalidDelay'      // not supported
+            // |'noValidationDelay' // not supported
             
             |'required'
         >,
@@ -138,7 +153,9 @@ const AddressEditor         = <TElement extends Element = HTMLDivElement, TChang
     // jsx:
     return (
         <AccessibilityProvider {...props}>
-            <AddressEditorInternal<TElement, TChangeEvent, TValue> {...props} />
+            <ValidationProvider {...props}>
+                <AddressEditorInternal<TElement, TChangeEvent, TValue> {...props} />
+            </ValidationProvider>
         </AccessibilityProvider>
     );
 };
@@ -155,20 +172,20 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement, TChang
         
         
         // validations:
-        enableValidation  : _enableValidation,  // remove
-        isValid           : _isValid,           // remove
-        inheritValidation : _inheritValidation, // remove
+        enableValidation  : _enableValidation,  // remove, already handled by `<ValidationProvider>`
+        isValid           : _isValid,           // remove, already handled by `<ValidationProvider>`
+        inheritValidation : _inheritValidation, // remove, already handled by `<ValidationProvider>`
         
-        required = true,                        // take, to be forwarded to nested <Editor>(s)
+        required          = true,               // take to nested <Editor>(s)
         
         
         
         // states:
-        enabled,         // take, to be handled by `<AccessibilityProvider>`
-        inheritEnabled,  // take, to be handled by `<AccessibilityProvider>`
+        enabled           : _enabled,           // remove, already handled by `<AccessibilityProvider>`
+        inheritEnabled    : _inheritEnabled,    // remove, already handled by `<AccessibilityProvider>`
         
-        readOnly,        // take, to be handled by `<AccessibilityProvider>`
-        inheritReadOnly, // take, to be handled by `<AccessibilityProvider>`
+        readOnly          : _readOnly,          // remove, already handled by `<AccessibilityProvider>`
+        inheritReadOnly   : _inheritReadOnly,   // remove, already handled by `<AccessibilityProvider>`
         
         
         
@@ -351,7 +368,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement, TChang
         
         // other props:
         ...restGenericProps
-    } = restAddressEditorProps;
+    } = restAddressEditorProps satisfies NoForeignProps<typeof restAddressEditorProps, GenericProps<TElement>>;
     
     const {
         // classes:

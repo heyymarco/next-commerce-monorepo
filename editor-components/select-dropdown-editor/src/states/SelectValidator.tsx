@@ -1,22 +1,14 @@
 // react:
 import {
     // hooks:
-    useRef,
     useEffect,
     useState,
-    
-    
-    
-    // utilities:
-    startTransition,
 }                           from 'react'
 
 // reusable-ui core:
 import {
     // react helper hooks:
-    useTriggerRender,
     useEvent,
-    type EventHandler,
     useMountedFlag,
     
     
@@ -28,12 +20,8 @@ import {
     
     // a possibility of UI having an invalid state:
     type ValidityChangeEvent,
+    type ValidationEventHandler,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
-
-// heymarco components:
-import {
-    type EditorChangeEventHandler
-}                           from '@heymarco/editor'
 
 // internals:
 import {
@@ -47,7 +35,7 @@ import {
 // states:
 
 //#region SelectValidator
-export const isSelectionValid = <TValue extends unknown = string>(props: SelectValidatorProps<TValue>, finalValueOptions: TValue[]|undefined, value: TValue): ValResult => {
+export const isSelectionValid = <TValue extends unknown = string>(props: SelectValidatorProps<TValue>, validationValues: TValue[]|undefined, value: TValue): ValResult => {
     // props:
     const {
         // values:
@@ -69,13 +57,13 @@ export const isSelectionValid = <TValue extends unknown = string>(props: SelectV
     
     if (freeTextInput) return true; // *valid* for any value
     
-    if (!finalValueOptions) return null; // no finalValueOptions => cannot perform check => *uncheck*
+    if (!validationValues) return null; // no validationValues => cannot perform check => *uncheck*
     
     
     
     // validations:
     try {
-        if (!finalValueOptions.some((finalValueOption) => equalityValueComparison(finalValueOption, value))) return false; // match option is not found => *invalid*
+        if (!validationValues.some((validationValue) => equalityValueComparison(validationValue, value))) return false; // match option is not found => *invalid*
     }
     catch {
         return false; // unknown error => *invalid*
@@ -99,12 +87,16 @@ export interface SelectValidatorProps<TValue extends unknown = string> {
     freeTextInput           ?: boolean
     equalityValueComparison ?: (a: TValue, b: TValue) => boolean
 }
-export interface SelectValidatorApi<in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string> {
-    handleValidation : EventHandler<ValidityChangeEvent>
-    handleInit       : EventHandler<TValue>
-    handleChange     : EditorChangeEventHandler<TChangeEvent, TValue>
+export interface SelectValidatorApi<TValue extends unknown = string> {
+    // states:
+    validationValues : TValue[]|undefined
+    
+    
+    
+    // handlers:
+    handleValidation : ValidationEventHandler<ValidityChangeEvent>
 }
-export const useSelectValidator = <TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string>(props: SelectValidatorProps<TValue>): SelectValidatorApi<TChangeEvent, TValue> => {
+export const useSelectValidator = <TValue extends unknown = string>(props: SelectValidatorProps<TValue>, value: TValue): SelectValidatorApi<TValue> => {
     // props:
     const {
         // values:
@@ -115,13 +107,9 @@ export const useSelectValidator = <TChangeEvent extends React.SyntheticEvent<unk
     
     
     // states:
-    // we stores the `isValid` in `useRef` instead of `useState` because we need to *real-time export* of its value:
-    const isValid = useRef<ValResult>(null); // initially unchecked (neither valid nor invalid)
     
-    // manually controls the (re)render event:
-    const [triggerRender] = useTriggerRender();
-    
-    const [finalValueOptions, setFinalValueOptions] = useState<TValue[]|undefined>(undefined);
+    // resolving `valueOptions` and `excludedValueOptions` to `validationValues`:
+    const [validationValues, setValidationValues] = useState<TValue[]|undefined>(undefined);
     const isMounted = useMountedFlag();
     useEffect(() => {
         // setups:
@@ -142,45 +130,27 @@ export const useSelectValidator = <TChangeEvent extends React.SyntheticEvent<unk
             
             
             
-            const finalValueOptions = (
+            const newValidationValues = (
                 !resolvedExcludedValueOptions?.length
                 ? resolvedValueOptions
                 : resolvedValueOptions.filter((item) =>
                     !resolvedExcludedValueOptions.includes(item)
                 )
             );
-            setFinalValueOptions(finalValueOptions);
+            setValidationValues(newValidationValues);
         })();
         
         
         
         // cleanups:
         return () => {
-            setFinalValueOptions(undefined);
+            setValidationValues(undefined);
         };
     }, [valueOptions, excludedValueOptions]);
     
     
     
-    // functions:
-    
-    const validate = (value: TValue): void => {
-        // remember the validation result:
-        const newIsValid = isSelectionValid<TValue>(props, finalValueOptions, value);
-        if (isValid.current !== newIsValid) {
-            isValid.current = newIsValid;
-            
-            // lazy responsives => a bit delayed of responsives is ok:
-            startTransition(() => {
-                triggerRender(); // notify to react runtime to re-render with a new validity state, causing `useInvalidable()` runs the effect => calls `onValidation` => `handleValidation()`
-            });
-        } // if
-    };
-    
-    
-    
     // handlers:
-    
     /**
      * Handles the validation result.
      * @returns  
@@ -188,27 +158,28 @@ export const useSelectValidator = <TChangeEvent extends React.SyntheticEvent<unk
      * `true`  = valid.  
      * `false` = invalid.
      */
-    const handleValidation   = useEvent<EventHandler<ValidityChangeEvent>>((event) => {
+    const handleValidation = useEvent<ValidationEventHandler<ValidityChangeEvent>>(async (event) => {
         // conditions:
         if (event.isValid !== true) return; // ignore if was *invalid*|*uncheck* (only perform a further_validation if was *valid*)
         
         
         
         // further validations:
-        event.isValid = isValid.current;
-    });
-    
-    const handleInitOrChange = useEvent<EventHandler<TValue>>((value) => {
-        validate(value);
+        const newIsValid : ValResult = isSelectionValid<TValue>(props, validationValues, value);
+        event.isValid = newIsValid; // update the validation result
     });
     
     
     
     // api:
     return {
+        // states:
+        validationValues,
+        
+        
+        
+        // handlers:
         handleValidation,
-        handleInit   : handleInitOrChange,
-        handleChange : handleInitOrChange,
     };
 };
 //#endregion SelectValidator

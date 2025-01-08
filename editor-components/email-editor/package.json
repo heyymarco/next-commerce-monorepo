@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/email-editor",
-  "version": "6.10.0",
+  "version": "6.13.0",
   "description": "An email editor component.",
   "keywords": [
     "email",
@@ -40,7 +40,8 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-  "@heymarco/text-editor": "^6.10.0"
+    "@heymarco/text-editor": "^6.13.0",
+    "@reusable-ui/core": "^6.14.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",

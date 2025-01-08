@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     type DropdownListExpandedChangeEvent,
@@ -33,13 +39,21 @@ export interface SelectStateEditorProps<out TElement extends Element = HTMLDivEl
 {
 }
 const SelectStateEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: SelectStateEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
-    // default props:
+    // props:
     const {
         // models:
-        modelName    = 'State',
+        modelName = 'State',
         
         
         
+        // other props:
+        ...restSelectStateEditorProps
+    } = props;
+    
+    
+    
+    // default props:
+    const {
         // formats:
         autoComplete = 'address-level1',
         
@@ -47,7 +61,7 @@ const SelectStateEditor = <TElement extends Element = HTMLDivElement, TChangeEve
         
         // other props:
         ...restSelectZoneEditorProps
-    } = props;
+    } = restSelectStateEditorProps satisfies NoForeignProps<typeof restSelectStateEditorProps, Omit<SelectZoneEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>, 'modelName'>>;
     
     
     

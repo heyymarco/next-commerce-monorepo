@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
     useMergeEvents,
@@ -101,7 +106,7 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
         
         // other props:
         ...restInputEditorProps
-    } = restNumberEditorProps;
+    } = restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>;
     
     const {
         // formats:

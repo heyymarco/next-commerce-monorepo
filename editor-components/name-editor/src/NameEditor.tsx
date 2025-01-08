@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
 // heymarco components:
 import {
     // react components:
@@ -35,7 +41,7 @@ const NameEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
         
         // other props:
         ...restTextEditorProps
-    } = props;
+    } = props satisfies NoForeignProps<typeof props, TextEditorProps<TElement, TChangeEvent>>;
     
     
     

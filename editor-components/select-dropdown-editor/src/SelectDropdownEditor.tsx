@@ -2,25 +2,31 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useState,
 }                           from 'react'
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
-    useIsomorphicLayoutEffect,
+    useEvent,
     useMergeEvents,
-    useMountedFlag,
     
     
     
     // a capability of UI to rotate its layout:
     type OrientationName,
     useOrientationableWithDirection,
+    
+    
+    
+    // a possibility of UI having an invalid state:
+    type ValidityChangeEvent,
+    type ValidationDeps,
+    type ValidationEventHandler,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -98,7 +104,7 @@ import {
 
 
 // utilities:
-const defaultValueToUi = <TValue extends any = string>(value: TValue|null): string => `${value ?? ''}`;
+const defaultValueToUi = <TValue extends any = string>(value: TValue|null): React.ReactNode => `${value ?? ''}`;
 
 
 
@@ -112,13 +118,20 @@ export interface SelectDropdownEditorProps<out TElement extends Element = HTMLBu
             |'value'
             |'onChange'
             
+            |'notifyValueChange'
+            
             
             
             // validations:
             |'enableValidation'
             |'isValid'
             |'inheritValidation'
+            |'validationDeps'
             |'onValidation'
+            
+            |'validDelay'
+            |'invalidDelay'
+            |'noValidationDelay'
             
             |'required'
         >,
@@ -147,7 +160,7 @@ export interface SelectDropdownEditorProps<out TElement extends Element = HTMLBu
     
     
     // values:
-    valueToUi       ?: (value: TValue|null) => string
+    valueToUi       ?: (value: TValue|null) => React.ReactNode
     
     
     
@@ -201,19 +214,25 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
         
         defaultValue            : defaultUncontrollableValue = '' as TValue,
         value                   : controllableValue,
-        onChange                : onControllableValueChange,
+        onChange                : onValueChange,
         
         
         
         // validations:
-        enableValidation,                    // take, to be handled by `<EditableButton>`
-        isValid,                             // take, to be handled by `<EditableButton>`
-        inheritValidation,                   // take, to be handled by `<EditableButton>`
-        onValidation,                        // take, to be handled by `<EditableButton>` and `useSelectValidator`
-        equalityValueComparison = Object.is, // take, to be handled by                        `useSelectValidator`
+        enableValidation,                                  // take, to be handled by `<EditableButton>`
+        isValid,                                           // take, to be handled by `<EditableButton>`
+        inheritValidation,                                 // take, to be handled by `<EditableButton>`
+        validationDeps          : validationDepsOverwrite, // take, to be handled by `<EditableButton>`
+        onValidation,                                      // take, to be handled by `<EditableButton>` and `useSelectValidator`
         
-        required,                            // take, to be handled by                        `useSelectValidator`
-        freeTextInput,                       // take, to be handled by                        `useSelectValidator`
+        validDelay,                                        // take, to be handled by `<EditableButton>`
+        invalidDelay,                                      // take, to be handled by `<EditableButton>`
+        noValidationDelay,                                 // take, to be handled by `<EditableButton>`
+        
+        equalityValueComparison = Object.is,               // take, to be handled by                        `useSelectValidator`
+        
+        required,                                          // take, to be handled by                        `useSelectValidator`
+        freeTextInput,                                     // take, to be handled by                        `useSelectValidator`
         
         
         
@@ -226,50 +245,20 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
         
         
         // other props:
-        ...restSelectDropdownEditorProps
+        ...restPreSelectDropdownEditorProps
     } = props;
     
     
     
     // states:
-    const selectValidator  = useSelectValidator<TChangeEvent, TValue>({
-        // values:
-        valueOptions,
-        excludedValueOptions,
-        
-        
-        
-        // validations:
-        required,
-        freeTextInput,
-        equalityValueComparison,
-    });
-    const handleValidation = useMergeEvents(
-        // preserves the original `onValidation` from `editableButtonComponent`:
-        editableButtonComponent.props.onValidation,
-        
-        
-        
-        // preserves the original `onValidation` from `props`:
-        onValidation,
-        
-        
-        
-        // states:
-        selectValidator.handleValidation,
-    );
-    
-    
-    
-    // states:
-    const handleControllableValueChange = useMergeEvents(
+    const handleValueChange = useMergeEvents(
         // preserves the original `onChange` from `props`:
-        onControllableValueChange,
+        onValueChange,
         
         
         
-        // validations:
-        selectValidator.handleChange,
+        // actions:
+        // TODO: signal the uncontrollable value changes
     );
     const {
         value              : value,
@@ -277,59 +266,79 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
     } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : handleControllableValueChange,
+        onValueChange      : handleValueChange,
     });
     
     
     
     // states:
-    const [isLoading, setIsLoading] = useState<undefined|false|TValue[]>(undefined);
+    const {
+        // states:
+        validationValues,
+        
+        
+        
+        // handlers:
+        handleValidation: selectValidatorHandleValidation,
+    } = useSelectValidator<TValue>({
+        // values:
+        valueOptions,
+        excludedValueOptions,
+        
+        
+        
+        // validations:
+        equalityValueComparison,
+        
+        required,
+        freeTextInput,
+    }, value);
+    const appendValidationDeps = useEvent<ValidationDeps>((bases) => [
+        ...bases,
+        
+        // validations:
+        validationValues,
+    ]);
+    const mergedValidationDeps = useEvent<ValidationDeps>((bases) => {
+        const basesStage2 = appendValidationDeps(bases);
+        const basesStage3 = validationDepsOverwrite ? validationDepsOverwrite(basesStage2) : basesStage2;
+        
+        const validationDepsOverwrite2 = editableButtonComponent.props.validationDeps;
+        const basesStage4 = validationDepsOverwrite2 ? validationDepsOverwrite2(basesStage3) : basesStage3;
+        
+        return basesStage4;
+    });
+    const handleValidation = useEvent<ValidationEventHandler<ValidityChangeEvent>>(async (event) => {
+        /* sequentially runs validators from `selectValidatorHandleValidation()` then followed by `editableButtonComponent.props.onValidation()` and `props.onValidation()` */
+        
+        
+        
+        // states:
+        await selectValidatorHandleValidation(event);
+        
+        
+        
+        // preserves the original `onValidation` from `editableButtonComponent`:
+        await editableButtonComponent.props.onValidation?.(event);
+        
+        
+        
+        // preserves the original `onValidation` from `props`:
+        await onValidation?.(event);
+    });
     
     
     
-    // effects:
-    const isMounted = useMountedFlag();
-    
-    useIsomorphicLayoutEffect(() => {
-        selectValidator.handleInit(value);
-    }, []);
-    
-    useIsomorphicLayoutEffect(() => {
-        // setups:
-        setIsLoading(undefined); // loading
-        (async (): Promise<void> => {
-            try {
-                const [resolvedValueOptions, resolvedExcludedValueOptions] = await Promise.all([
-                    (
-                        ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
-                        ? (valueOptions.current ?? [])
-                        : valueOptions
-                    ),
-                    (
-                        ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
-                        ? (excludedValueOptions.current ?? [])
-                        : excludedValueOptions
-                    ),
-                ]);
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-                
-                
-                
-                const finalValueOptions = (
-                    !resolvedExcludedValueOptions?.length
-                    ? resolvedValueOptions
-                    : resolvedValueOptions.filter((item) =>
-                        !resolvedExcludedValueOptions.includes(item)
-                    )
-                );
-                setIsLoading(finalValueOptions); // loaded
-            }
-            catch {
-                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-                setIsLoading(false); // error
-            } // try
-        })();
-    }, [valueOptions, excludedValueOptions]);
+    // props:
+    const {
+        // values:
+        notifyValueChange       = value,                   // take, to be handled by `<EditableButton>`
+        
+        
+        
+        // other props:
+        ...restSelectDropdownEditorProps
+    } = restPreSelectDropdownEditorProps;
     
     
     
@@ -352,41 +361,50 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
         
         // other props:
         ...restDropdownListButtonProps
-    } = restSelectDropdownEditorProps;
+    } = restSelectDropdownEditorProps satisfies NoForeignProps<typeof restSelectDropdownEditorProps, DropdownListButtonProps<TDropdownListExpandedChangeEvent>>;
     
     const {
+        // values:
+        notifyValueChange  : editableButtonComponentNotifyValueChange = notifyValueChange,
+        
+        
+        
         // validations:
-        enableValidation   : editableButtonEnableValidation  = enableValidation,
-        isValid            : editableButtonIsValid           = isValid,
-        inheritValidation  : editableButtonInheritValidation = inheritValidation,
+        enableValidation   : editableButtonComponentEnableValidation  = enableValidation,
+        isValid            : editableButtonComponentIsValid           = isValid,
+        inheritValidation  : editableButtonComponentInheritValidation = inheritValidation,
+        
+        validDelay         : editableButtonComponentValidDelay        = validDelay,
+        invalidDelay       : editableButtonComponentInvalidDelay      = invalidDelay,
+        noValidationDelay  : editableButtonComponentNoValidationDelay = noValidationDelay,
         
         
         
         // components:
-        buttonComponent    : editableButtonButtonComponent   = buttonComponent,
+        buttonComponent    : editableButtonComponentButtonComponent   = buttonComponent,
         
         
         
         // other props:
-        ...restEditableButtonProps
+        ...restEditableButtonComponentProps
     } = editableButtonComponent.props;
     
-    const defaultChildren : React.ReactElement|false = !!isLoading && <>
-        {isLoading.map((valueOption, index) => {
+    const defaultChildren : React.ReactElement|false = !!validationValues && <>
+        {validationValues.map((validationValue, index) => {
             // default props:
             const {
                 // states:
-                active   = equalityValueComparison(valueOption, value),
+                active   = equalityValueComparison(validationValue, value),
                 
                 
                 
                 // children:
-                children = valueToUi(valueOption),
+                children = valueToUi(validationValue),
                 
                 
                 
                 // other props:
-                ...restListItemProps
+                ...restListItemComponentProps
             } = listItemComponent.props;
             
             
@@ -405,7 +423,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
                             // props:
                             {
                                 // other props:
-                                ...restListItemProps,
+                                ...restListItemComponentProps,
                                 
                                 
                                 
@@ -430,7 +448,7 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
                         
                         
                         // actions:
-                        triggerValueChange(valueOption, { triggerAt: 'immediately', event: event });
+                        triggerValueChange(validationValue, { triggerAt: 'immediately', event: event });
                     }) satisfies React.EventHandler<TChangeEvent & React.MouseEvent<HTMLInputElement>>}
                 />
             );
@@ -476,23 +494,33 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
                     // props:
                     {
                         // other props:
-                        ...restEditableButtonProps,
+                        ...restEditableButtonComponentProps,
+                        
+                        
+                        
+                        // values:
+                        notifyValueChange  : editableButtonComponentNotifyValueChange,
                         
                         
                         
                         // validations:
-                        enableValidation   : editableButtonEnableValidation,
-                        isValid            : editableButtonIsValid,
-                        inheritValidation  : editableButtonInheritValidation,
+                        enableValidation   : editableButtonComponentEnableValidation,
+                        isValid            : editableButtonComponentIsValid,
+                        inheritValidation  : editableButtonComponentInheritValidation,
+                        validationDeps     : mergedValidationDeps,
                         onValidation       : handleValidation,  // to be handled by `useSelectValidator()`
+                        
+                        validDelay         : editableButtonComponentValidDelay,
+                        invalidDelay       : editableButtonComponentInvalidDelay,
+                        noValidationDelay  : editableButtonComponentNoValidationDelay,
                         
                         
                         
                         // components:
-                        buttonComponent    : ((!!isLoading && !!isLoading.length) ? editableButtonButtonComponent : React.cloneElement<ButtonIconProps>(editableButtonButtonComponent,
+                        buttonComponent    : ((!!validationValues && !!validationValues.length) ? editableButtonComponentButtonComponent : React.cloneElement<ButtonIconProps>(editableButtonComponentButtonComponent,
                             // props:
                             (
-                                (isLoading === undefined)
+                                (validationValues === undefined)
                                 ? {
                                     // appearances:
                                     icon    : iconLoading ?? undefined,

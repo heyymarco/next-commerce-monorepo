@@ -17,6 +17,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // a set of numeric utility functions:
     clamp,
     
@@ -444,15 +449,17 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
     // default props:
     const {
         // values:
-     // defaultValue : numberEditorComponentDefaultValue = (defaultValueFn   ?? null), // fully controllable, no defaultValue
-        value        : numberEditorComponentValue        = (valueRef.current ?? null), // fully controllable
+     // defaultValue      : numberEditorComponentDefaultValue      = (defaultValueFn   ?? null), // fully controllable, no defaultValue
+        value             : numberEditorComponentValue             = (valueRef.current ?? null), // fully controllable
+        
+        notifyValueChange : numberEditorComponentNotifyValueChange = (valueRef.current ?? null),
         
         
         
         // validations:
-        min          : numberEditorComponentMin          = (negativeFn ? maxFn : minFn),
-        max          : numberEditorComponentMax          = (negativeFn ? minFn : maxFn),
-        step         : numberEditorComponentStep         = stepFn,
+        min               : numberEditorComponentMin               = (negativeFn ? maxFn : minFn),
+        max               : numberEditorComponentMax               = (negativeFn ? minFn : maxFn),
+        step              : numberEditorComponentStep              = stepFn,
         
         
         
@@ -526,32 +533,34 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
                     // props:
                     {
                         // other props:
-                        ...restNumberEditorProps,
+                        ...restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, NumberEditorProps<TElement, TChangeEvent, TValue>>,
                         ...restNumberEditorComponentProps, // overwrites restNumberEditorProps (if any conflics)
                         
                         
                         
                         // refs:
-                        elmRef       : mergedInputRef,
+                        elmRef            : mergedInputRef,
                         
                         
                         
                         // classes:
-                        classes      : inputClasses,
+                        classes           : inputClasses,
                         
                         
                         
                         // values:
-                     // defaultValue : numberEditorComponentDefaultValue as TValue, // fully controllable, no defaultValue
-                        value        : numberEditorComponentValue        as TValue, // fully controllable
-                        onChange     : handleChange,
+                     // defaultValue      : numberEditorComponentDefaultValue as TValue, // fully controllable, no defaultValue
+                        value             : numberEditorComponentValue        as TValue, // fully controllable
+                        onChange          : handleChange,
+                        
+                        notifyValueChange : numberEditorComponentNotifyValueChange,
                         
                         
                         
                         // validations:
-                        min          : numberEditorComponentMin,
-                        max          : numberEditorComponentMax,
-                        step         : numberEditorComponentStep,
+                        min               : numberEditorComponentMin,
+                        max               : numberEditorComponentMax,
+                        step              : numberEditorComponentStep,
                     },
                 )}
                 

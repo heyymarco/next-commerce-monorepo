@@ -6,6 +6,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useMergeEvents,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
@@ -63,7 +68,7 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
         
         // other props:
         ...restEditorProps
-    } = restTextEditorProps;
+    } = restTextEditorProps satisfies NoForeignProps<typeof restTextEditorProps, InputEditorProps<TElement, TChangeEvent, string>>;
     
     
     

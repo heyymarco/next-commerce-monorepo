@@ -4,6 +4,12 @@ import {
     default as React,
 }                           from 'react'
 
+// reusable-ui core:
+import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+}                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     // react components:
@@ -52,7 +58,7 @@ const Editor = <TElement extends Element = HTMLElement, TChangeEvent extends Rea
     return (
         <EditableControl<TElement>
             // other props:
-            {...restEditableControlProps}
+            {...restEditableControlProps satisfies NoForeignProps<typeof restEditableControlProps, EditableControlProps<TElement>>}
         />
     );
 };

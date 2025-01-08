@@ -10,6 +10,12 @@ import {
     startsCapitalized,
 }                           from '@cssfn/core'                          // writes css in javascript
 
+// reusable-ui core:
+import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+}                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
+
 // reusable-ui components:
 import {
     type DropdownListExpandedChangeEvent,
@@ -66,7 +72,7 @@ const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEven
         
         // other props:
         ...restTextDropdownEditorProps
-    } = restSelectZoneEditorProps;
+    } = restSelectZoneEditorProps satisfies NoForeignProps<typeof restSelectZoneEditorProps, TextDropdownEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>>;
     
     
     

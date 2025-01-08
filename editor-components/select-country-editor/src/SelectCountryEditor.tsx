@@ -11,6 +11,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useEvent,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
@@ -63,6 +68,11 @@ export interface SelectCountryEditorProps<out TElement extends Element = HTMLDiv
 const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<string> = DropdownListExpandedChangeEvent<string>>(props: SelectCountryEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // props:
     const {
+        // models:
+        modelName = 'Country',
+        
+        
+        
         // values:
         defaultValue   : defaultUncontrollableValue = '',
         value          : controllableValue,
@@ -123,13 +133,10 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     // default props:
     const {
-        // models:
-        modelName                = 'Country',
-        
-        
-        
         // values:
         valueOptions             = defaultCountryList,
+        
+        notifyValueChange        = value,
         
         
         
@@ -145,7 +152,7 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         // other props:
         ...restSelectZoneEditorProps
-    } = restSelectCountryEditorProps;
+    } = restSelectCountryEditorProps satisfies NoForeignProps<typeof restSelectCountryEditorProps, Omit<SelectZoneEditorProps<TElement, TChangeEvent, TDropdownListExpandedChangeEvent>, 'modelName'>>;
     
     
     
@@ -164,8 +171,10 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             // values:
             valueOptions={valueOptions}
-            value={valueAsCountryName}
-            onChange={handleChange}
+            value={valueAsCountryName} // controllable, always displays the country name instead of the country code
+            onChange={handleChange}    // controllable, always reports  the country code instead of the country name
+            
+            notifyValueChange={notifyValueChange}
             
             
             
