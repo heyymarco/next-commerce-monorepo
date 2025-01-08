@@ -224,11 +224,6 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
     preferFocusOnInputEditor ?: boolean
 }
 const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: InputDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
-    // states:
-    const [isValidControllable, setIsValidControllable] = useState<boolean|null>(null);
-    
-    
-    
     // props:
     const {
         // refs:
@@ -279,7 +274,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         // validations:
         enableValidation,                                                // take, moved to <InputEditor>
-        isValid                       = isValidControllable,             // take, moved to <InputEditor>, mirrored to <SelectDropdownEditor>, defaults to internally controllable
+        isValid,                                                         // take, moved to <InputEditor>
         inheritValidation,                                               // take, moved to <InputEditor>
         validationDeps                : validationDepsOverwrite,         // take, moved to <InputEditor>
         onValidation,                                                    // take, moved to <InputEditor>
@@ -383,6 +378,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     
     // states:
+    const [isValidControllable, setIsValidControllable] = useState<boolean|null>(null);
+    
     const {
         // states:
         validationValues,
@@ -758,7 +755,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // validations:
-        isValid                 : selectDropdownEditorComponentIsValid                 = isValid,                 // mirrored to <SelectDropdownEditor>, required for mirroring the validity state of <InputEditor>
+        isValid                 : selectDropdownEditorComponentIsValid                 = isValidControllable,     // mirrored to <SelectDropdownEditor>, defaults to internally controllable
         
         validDelay              : selectDropdownEditorComponentValidDelay              = validDelay,              // mirrored to <SelectDropdownEditor>, required for syncing validity delay
         invalidDelay            : selectDropdownEditorComponentInvalidDelay            = invalidDelay,            // mirrored to <SelectDropdownEditor>, required for syncing validity delay
