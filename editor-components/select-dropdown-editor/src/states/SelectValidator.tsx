@@ -114,30 +114,36 @@ export const useSelectValidator = <TValue extends unknown = string>(props: Selec
     useEffect(() => {
         // setups:
         (async (): Promise<void> => {
-            const [resolvedValueOptions, resolvedExcludedValueOptions] = await Promise.all([
-                (
-                    ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
-                    ? (valueOptions.current ?? [])
-                    : valueOptions
-                ),
-                (
-                    ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
-                    ? (excludedValueOptions.current ?? [])
-                    : excludedValueOptions
-                ),
-            ]);
-            if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
-            
-            
-            
-            const newValidationValues = (
-                !resolvedExcludedValueOptions?.length
-                ? resolvedValueOptions
-                : resolvedValueOptions.filter((item) =>
-                    !resolvedExcludedValueOptions.includes(item)
-                )
-            );
-            setValidationValues(newValidationValues);
+            try {
+                const [resolvedValueOptions, resolvedExcludedValueOptions] = await Promise.all([
+                    (
+                        ((typeof(valueOptions) === 'object') && ('current' in valueOptions))
+                        ? (valueOptions.current ?? [])
+                        : valueOptions
+                    ),
+                    (
+                        ((typeof(excludedValueOptions) === 'object') && ('current' in excludedValueOptions))
+                        ? (excludedValueOptions.current ?? [])
+                        : excludedValueOptions
+                    ),
+                ]);
+                if (!isMounted.current) return; // the component was unloaded before awaiting returned => do nothing
+                
+                
+                
+                const newValidationValues = (
+                    !resolvedExcludedValueOptions?.length
+                    ? resolvedValueOptions
+                    : resolvedValueOptions.filter((item) =>
+                        !resolvedExcludedValueOptions.includes(item)
+                    )
+                );
+                setValidationValues(newValidationValues);
+            }
+            catch {
+                // unable to resolve, maybe due to a fetch error:
+                setValidationValues(undefined);
+            } // try
         })();
         
         
