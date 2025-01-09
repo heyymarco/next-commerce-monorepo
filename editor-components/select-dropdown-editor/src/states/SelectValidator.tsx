@@ -142,7 +142,7 @@ export const useSelectValidator = <TValue extends unknown = string>(props: Selec
             }
             catch {
                 // unable to resolve, maybe due to a fetch error:
-                setValidationValues(undefined);
+                setValidationValues([]); // Use an *empty string* instead of `undefined`. `undefined` means it's still loading. An *empty string* means it's loaded but got nothing.
             } // try
         })();
         
