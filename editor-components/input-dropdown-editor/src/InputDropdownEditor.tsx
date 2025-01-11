@@ -421,7 +421,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         return basesStage4;
     });
     const handleValidation = useEvent<ValidationEventHandler<ValidityChangeEvent>>(async (event) => {
-        /* sequentially runs validators from `inputEditorComponent.props.onValidation()` (primary validator, if any) then followed by `selectValidatorHandleValidation` (secondary validator), `selectDropdownEditorComponent.props.onValidation()`, `props.onValidation()`and `handleValidationInternal()` */
+        /* sequentially runs validators from `inputEditorComponent.props.onValidation()` (primary validator, if any) then followed by `selectValidatorHandleValidation` (secondary validator), `selectDropdownEditorComponent.props.onValidation()`, `props.onValidation()` and `setIsValidControllable()` */
         
         
         
