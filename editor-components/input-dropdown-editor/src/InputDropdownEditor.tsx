@@ -426,27 +426,32 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // preserves the original `onValidation` from `inputEditorComponent`:
+        // `inputValidator` is the primary validator, so it should be the first validation check:
         await inputEditorComponent.props.onValidation?.(event);
         
         
         
         // states:
+        // `selectValidator` is the secondary validator, so it should be the second validation check:
         await selectValidatorHandleValidation(event);
         
         
         
         // no need to validate by <SelectDropdownEditor>, because it's a secondary component:
         // // preserves the original `onValidation` from `selectDropdownEditorComponent`:
+        // // *component*Validator (if any) is the external supplement validator, so it should be the second-to-last validation check:
         // await selectDropdownEditorComponent.props.onValidation?.(event);
         
         
         
         // preserves the original `onValidation` from `props`:
+        // *props*Validator (if any) is the external supplement validator, so it should be the last validation check:
         await onValidation?.(event);
         
         
         
         // updates:
+        // `setIsValidControllable` reads the validation result, so it should be placed at the end:
         setIsValidControllable(event.isValid);
     });
     

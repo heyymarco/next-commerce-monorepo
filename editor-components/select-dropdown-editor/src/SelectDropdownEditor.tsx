@@ -314,16 +314,19 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TCha
         
         
         // states:
+        // `selectValidator` is the primary validator, so it should be the first validation check:
         await selectValidatorHandleValidation(event);
         
         
         
         // preserves the original `onValidation` from `editableButtonComponent`:
+        // *component*Validator (if any) is the external supplement validator, so it should be the second-to-last validation check:
         await editableButtonComponent.props.onValidation?.(event);
         
         
         
         // preserves the original `onValidation` from `props`:
+        // *props*Validator (if any) is the external supplement validator, so it should be the last validation check:
         await onValidation?.(event);
     });
     
