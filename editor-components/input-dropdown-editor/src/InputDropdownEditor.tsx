@@ -454,7 +454,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         
         
         // updates:
-        // `setIsValidControllable` reads the validation result, so it should be placed at the end:
+        // `handleValidationInternal` reads the validation result, so it should be placed at the end:
         handleValidationInternal(event);
     });
     
