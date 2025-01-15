@@ -27,7 +27,7 @@ import {
 }                           from '@heymarco/events'
 import {
     // types:
-    DragHandshakeEvent,
+    type DragHandshakeEvent,
     
     
     
@@ -36,7 +36,7 @@ import {
 }                           from '@heymarco/draggable'
 import {
     // types:
-    DropHandshakeEvent,
+    type DropHandshakeEvent,
     
     
     
@@ -45,16 +45,21 @@ import {
 }                           from '@heymarco/droppable'
 
 // reusable-ui components:
-import type {
+import {
     // react components:
-    ListItemComponentProps,
+    type ListItemComponentProps,
 }                           from '@reusable-ui/list'            // represents a series of content
 
 // internals:
-import type {
+import {
+    // types:
+    type OrderableListDragNDropData,
+    
+    
+    
     // events:
-    OrderableListItemDragStartEvent,
-    OrderableListItemDropHandshakeEvent,
+    type OrderableListItemDragStartEvent,
+    type OrderableListItemDropHandshakeEvent,
 }                           from './types.js'
 import {
     useOrderableListStyleSheet,
@@ -65,16 +70,16 @@ import {
 }                           from './states/orderableListState.js'
 import {
     // types:
-    OrderableListItemRegistration,
+    type OrderableListItemRegistration,
     
     
     
     // react components:
     OrderableListItemStateProvider,
 }                           from './states/orderableListItemState.js'
-import type {
+import {
     // react components:
-    OrderableListItemProps,
+    type OrderableListItemProps,
 }                           from './OrderableListItem.js'
 import {
     calculateWillToIndex,
@@ -186,8 +191,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         isDragging,
     ...draggable} = useDraggable<TElement>({
         // data:
-        dragData           : new Map<symbol, [number, TData|undefined]>([
-            [dragNDropId, [listIndex, props.data]],
+        dragData           : new Map<symbol, OrderableListDragNDropData<TElement, TData>>([
+            [dragNDropId, {listIndex, listRef: listItemRef, data: props.data}],
         ]),
         
         
@@ -208,7 +213,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             if (event.response) {
                 handleDragMove({
                     from : listIndex,
-                    to   : (event.dropData?.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
+                    to   : (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
                 });
             } // if
             
@@ -226,10 +231,10 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             if (!(await handleOrderHandshake(event, {
                 ownListIndex  : listIndex,
-                pairListIndex : (event.dropData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
+                pairListIndex : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
                 
                 ownData       : props.data,
-                pairData      : (event.dropData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[1] as TData|undefined,
+                pairData      : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.data as TData|undefined,
                 
                 isDragging    : true, 
             }))) {
@@ -244,14 +249,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         onDragged(event) {
             handleDropped({
                 from : listIndex,
-                to   : (event.dropData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
+                to   : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
             });
         },
     });
     useDroppable<TElement>({
         // data:
-        dropData : new Map<symbol, [number, TData|undefined]>([
-            [dragNDropId, [listIndex, props.data]],
+        dropData : new Map<symbol, OrderableListDragNDropData<TElement, TData>>([
+            [dragNDropId, {listIndex, listRef: listItemRef, data: props.data}],
         ]),
         
         
@@ -277,10 +282,10 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             if (!(await handleOrderHandshake(event, {
                 ownListIndex  : listIndex,
-                pairListIndex : (event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
+                pairListIndex : (event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
                 
                 ownData       : props.data,
-                pairData      : (event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[1] as TData|undefined,
+                pairData      : (event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.data as TData|undefined,
                 
                 isDragging    : false,
             }))) {
@@ -382,9 +387,9 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         if (!parentOrderable)                   return false; // `<OrderableList orderable={false}>` => not orderable => prevents to be dropped
         if (!droppableSubscribersCache.current) {
             if (
-                !isDragging /* === isDropping */                                                                                                    // if the dropping_side
-                &&                                                                                                                                  // AND
-                (('dragData' in event) && ((event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number !== listIndex))  // not_dropped_by_itself
+                !isDragging /* === isDropping */                                                                                                                           // if the dropping_side
+                &&                                                                                                                                                         // AND
+                (('dragData' in event) && ((event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number !== listIndex)) // not_dropped_by_itself
             ) {
                 return false; // `droppable={false}` => not droppable => prevents to be dropped
             } // if

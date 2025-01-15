@@ -3,6 +3,12 @@ export type OrderableListOrderMode =
     |'swap'
     |'shift'
 
+export interface OrderableListDragNDropData<TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown> {
+    listIndex : number
+    listRef   : React.RefObject<TElement|null>
+    data      : TData|undefined
+}
+
 
 
 // events:
