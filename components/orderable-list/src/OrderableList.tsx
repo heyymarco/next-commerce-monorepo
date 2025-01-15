@@ -73,7 +73,7 @@ import type {
     OrderableListItemProps,
 }                           from './OrderableListItem.js'
 import {
-    calculateSyncIndex,
+    calculateWillToIndex,
 }                           from './utilities.js'
 
 
@@ -178,24 +178,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         
-        // #region patch the hole
-        /*
-            example of pulling [6] and temporary applied to index of 2
-            
-            wrappedChildren     visuallyRendered
-            index:  0 [0]       index:  0 [0]
-                    1 [1]               1 [1]
-                    2 [2]          void 2 [ ] <-- apply [6]
-                    3 [3]             x 3 [2] <-- out_of_index_sync    elements with data from [2] to [5] are out_of_index_sync with the indices
-                    4 [4]             x 4 [3] <-- out_of_index_sync
-                    5 [5]             x 5 [4] <-- out_of_index_sync
-                    6 [6] --> pull    x 6 [5] <-- out_of_index_sync
-                    7 [7]               7 [7]
-                    8 [8]               8 [8]
-                    9 [9]               9 [9]
-        */
-        to += calculateSyncIndex(from, to, draftChildren?.appliedTo);
-        // #endregion patch the hole
+        to = calculateWillToIndex(from, draftChildren?.appliedTo, to);
         
         
         
