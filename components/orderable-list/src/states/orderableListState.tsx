@@ -22,6 +22,12 @@ import {
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// internals:
+import type {
+    // types:
+    OrderableListOrderMode,
+}                           from '../types.js'
+
 
 
 // hooks:
@@ -45,7 +51,12 @@ export interface OrderableListDroppedEvent {
 export interface OrderableListState
 {
     // identifiers:
-    dragNDropId     : symbol,
+    dragNDropId     : symbol
+    
+    
+    
+    // behaviors:
+    orderMode       : OrderableListOrderMode
     
     
     
@@ -65,6 +76,11 @@ const noopHandler = () => { throw Error('not inside <OrderableList>'); };
 const OrderableListStateContext = createContext<OrderableListState>({
     // identifiers:
     dragNDropId     : undefined as any,
+    
+    
+    
+    // behaviors:
+    orderMode       : 'shift',
     
     
     
@@ -91,6 +107,9 @@ export const useOrderableListState = (): OrderableListState => {
 export interface OrderableListStateProps
     extends
         Pick<OrderableListState,
+            // behaviors:
+            |'orderMode'
+            
             // states:
             |'appliedTo'
         >
@@ -104,6 +123,11 @@ export interface OrderableListStateProps
 const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableListStateProps>): JSX.Element|null => {
     // props:
     const {
+        // behaviors:
+        orderMode,
+        
+        
+        
         // states:
         appliedTo,
         
@@ -143,6 +167,11 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         
         
         
+        // behaviors:
+        orderMode,                     // mutable ref
+        
+        
+        
         // states:
         appliedTo,                     // mutable ref
         
@@ -156,6 +185,11 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     }), [
         // identifiers:
         // dragNDropId,                // stable ref
+        
+        
+        
+        // behaviors:
+        orderMode,                     // mutable ref
         
         
         

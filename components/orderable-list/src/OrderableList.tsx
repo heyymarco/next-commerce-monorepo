@@ -178,7 +178,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         
-        to = calculateWillToIndex(from, draftChildren?.appliedTo, to);
+        to = calculateWillToIndex(orderMode, from, draftChildren?.appliedTo, to);
         
         
         
@@ -346,6 +346,11 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     // jsx:
     return (
         <OrderableListStateProvider
+            // behaviors:
+            orderMode={orderMode}
+            
+            
+            
             // states:
             appliedTo={draftChildren?.appliedTo}
             

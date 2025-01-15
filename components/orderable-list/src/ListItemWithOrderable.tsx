@@ -150,6 +150,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
+        // behaviors:
+        orderMode,
+        
+        
+        
         // states:
         appliedTo,
         
@@ -414,7 +419,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 
                 
                 
-                to = calculateWillToIndex(from, appliedTo, to);
+                to = calculateWillToIndex(orderMode, from, appliedTo, to);
                 
                 
                 
@@ -426,7 +431,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 
                 
                 
-                to = calculateWillToIndex(from, appliedTo, to);
+                to = calculateWillToIndex(orderMode, from, appliedTo, to);
                 
                 
                 

@@ -1,4 +1,12 @@
-export const calculateWillToIndex = (from: number, appliedTo: number|undefined, willTo: number): number => {
+// internals:
+import type {
+    // types:
+    OrderableListOrderMode,
+}                           from './types.js'
+
+
+
+export const calculateWillToIndex = (orderMode: OrderableListOrderMode, from: number, appliedTo: number|undefined, willTo: number): number => {
     /*
         Example of pulling from [6] and appliedTo index of 2.
         The element's indices between [2] to [6] are *shifted*, they are [3][4][5][6].
@@ -39,6 +47,7 @@ export const calculateWillToIndex = (from: number, appliedTo: number|undefined, 
     
     
     // conditions:
+    if (orderMode !== 'shift')              return willTo; // only applies to *shift* mode        => still the same as original
     if (appliedTo === undefined)            return willTo; // there is NO *already moved* element => still the same as original
     if (from === appliedTo)                 return willTo; // no shifted indices                  => still the same as original
     if (willTo < Math.min(from, appliedTo)) return willTo; // below the shifted indices           => still the same as original
