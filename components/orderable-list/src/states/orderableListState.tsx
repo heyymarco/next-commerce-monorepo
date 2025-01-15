@@ -40,7 +40,7 @@ import type {
 export interface OrderableListDragStartEvent {
     from : number
 }
-export interface OrderableListDragMoveEvent extends MouseEvent {
+export interface OrderableListDragMoveEvent {
     from : number
     to   : number
 }

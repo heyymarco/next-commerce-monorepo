@@ -207,7 +207,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         onDragMove(event) {
             if (event.response) {
                 handleDragMove({
-                    ...event.nativeEvent,
                     from : listIndex,
                     to   : (event.dropData?.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number,
                 });
@@ -315,8 +314,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             // handlers:
-            onOrderStart,
-            onOrderHandshake,
+            onOrderStart     : handleOrderStart,
+            onOrderHandshake : handleOrderHandshake,
         } = registration;
         
         
@@ -330,8 +329,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         droppableSubscribers.set(droppableKey, droppable);
         droppableSubscribersCache.current = !Array.from(droppableSubscribers.values()).some((droppable) => !droppable); // if contains a/some `droppable={false}` => not droppable
         
-        if (onOrderStart)     onOrderStartSubscribers.add(onOrderStart);
-        if (onOrderHandshake) onOrderHandshakeSubscribers.add(onOrderHandshake);
+        if (handleOrderStart)     onOrderStartSubscribers.add(handleOrderStart);
+        if (handleOrderHandshake) onOrderHandshakeSubscribers.add(handleOrderHandshake);
         
         
         
@@ -343,19 +342,19 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             droppableSubscribers.delete(droppableKey);
             droppableSubscribersCache.current = !Array.from(droppableSubscribers.values()).some((droppable) => !droppable); // if contains a/some `droppable={false}` => not droppable
             
-            if (onOrderStart)     onOrderStartSubscribers.delete(onOrderStart);
-            if (onOrderHandshake) onOrderHandshakeSubscribers.delete(onOrderHandshake);
+            if (handleOrderStart)     onOrderStartSubscribers.delete(handleOrderStart);
+            if (handleOrderHandshake) onOrderHandshakeSubscribers.delete(handleOrderHandshake);
         };
     });
     
     
     
     // event emmiters:
-    const onOrderStart     = useEvent<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>(async (event) => {
+    const triggerOrderStart     = useEvent<Exclude<OrderableListItemProps<TElement, TData>['onOrderStart'], undefined>>(async (event) => {
         // actions:
         await Promise.all(Array.from(onOrderStartSubscribers).map((subscriber) => subscriber(event)));
     });
-    const onOrderHandshake = useEvent<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>(async (event) => {
+    const triggerOrderHandshake = useEvent<Exclude<OrderableListItemProps<TElement, TData>['onOrderHandshake'], undefined>>(async (event) => {
         // actions:
         await Promise.all(Array.from(onOrderHandshakeSubscribers).map((subscriber) => subscriber(event)));
     });
@@ -387,11 +386,10 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 &&                                                                                                                                  // AND
                 (('dragData' in event) && ((event.dragData.get(dragNDropId) as [number, TData|undefined]|undefined)?.[0] as number !== listIndex))  // not_dropped_by_itself
             ) {
-                // console.log(Date.now(), 'prevent from dropping', event);
                 return false; // `droppable={false}` => not droppable => prevents to be dropped
             } // if
         } // if
-        if (!onOrderHandshakeSubscribers.size)  return true;  // if no `onOrderHandshake` defined, assumes as allowed
+        if (!onOrderHandshakeSubscribers.size)  return true;  // if no `onOrderHandshake` provided, assumes as allowed
         
         
         
@@ -444,7 +442,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             isDragging         : isDragging,
             response           : true, // initial response status
         };
-        await onOrderHandshake(orderableListItemDropHandshakeEvent);
+        await triggerOrderHandshake(orderableListItemDropHandshakeEvent);
         return orderableListItemDropHandshakeEvent.response;
     });
     
@@ -474,7 +472,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 // data:
                 response           : true, // initial response status
             };
-            await onOrderStart(orderableListItemDragStartEvent);
+            await triggerOrderStart(orderableListItemDragStartEvent);
             if (!orderableListItemDragStartEvent.response) return false; // abort this event handler
         } // if
         
@@ -515,27 +513,28 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         
-        // simulates the TouchMove as MouseMove:
-        if (!(await handlePointerStart(new MouseEvent('mousemove', {
-            // simulates for `onOrderStart(event)`:
-            ...event.nativeEvent,
-            ...(() => {
-                const touch = event?.touches?.[0];
-                return {
-                    clientX : touch?.clientX ?? 0,
-                    clientY : touch?.clientY ?? 0,
-                    
-                    screenX : touch?.screenX ?? 0,
-                    screenY : touch?.screenY ?? 0,
-                    
-                    pageX   : touch?.pageX   ?? 0,
-                    pageY   : touch?.pageY   ?? 0,
-                    
-                    button  : 1, // primary button (usually the left button)
-                    buttons : 1, // primary button (usually the left button)
-                };
-            })(),
-        })))) return; // abort if returned false
+        // simulates the TouchStart as MouseDown:
+        const touch = event?.touches?.[0];
+        const simulateMousedownEvent = new MouseEvent("mousedown sim", {
+            bubbles          : true,
+            cancelable       : true,
+            clientX          : touch.clientX,
+            clientY          : touch.clientY,
+            screenX          : touch.screenX,
+            screenY          : touch.screenY,
+            // pageX         : touch.pageX,
+            // pageY         : touch.pageY,
+            button           : 0,  // primary button (usually the left button)
+            buttons          : 1, // primary button (usually the left button)
+            // relatedTarget : event.relatedTarget,
+            ctrlKey          : event.ctrlKey,
+            shiftKey         : event.shiftKey,
+            altKey           : event.altKey,
+            metaKey          : event.metaKey,
+        });
+        // optionally copy non-enumerable properties if needed:
+        // Object.defineProperties(simulateMousedownEvent, Object.getOwnPropertyDescriptors(event.nativeEvent)); // copy non enumerable props from `nativeEvent`
+        if (!(await handlePointerStart(simulateMousedownEvent))) return; // abort if returned false
         draggable.handleTouchStart(event);
     });
     const handleTouchStart         = useMergeEvents(
