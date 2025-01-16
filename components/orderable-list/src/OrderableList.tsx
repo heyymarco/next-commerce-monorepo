@@ -167,7 +167,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         } // if
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
-        const isRestoring = (to < 0) || Object.is(to, -0); // if negative value (including negative zero) => *restore* the draft to original placement
+        const hasMoved = (to < 0) || Object.is(to, -0); // if negative value (including negative zero) => the item has moved from its original location to a new location
         from = Math.abs(from); // remove negative sign (if any)
         to   = Math.abs(to);   // remove negative sign (if any)
         
@@ -196,8 +196,8 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             },
         );
         
-        if (!isRestoring) {
-            // the backup item:
+        if (!hasMoved) { // the item is still on its original location
+            // convert to negative value, indicating a backup location:
             mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
                 // props:
                 {
