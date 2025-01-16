@@ -58,3 +58,19 @@ export const calculateWillToIndex = (orderMode: OrderableListOrderMode, from: nu
     // normalize:
     return willTo + ((from > appliedTo) ? 1 : -1);
 }
+
+export const getElementRoundedRect = (element: Element): DOMRect => {
+    // get fractional snapshot coordinate:
+    const rect        = element.getBoundingClientRect();
+    
+    // get rounded snapshot coordinate:
+    const left        = Math.floor(rect.left);
+    const top         = Math.floor(rect.top);
+    const right       = Math.ceil(rect.right);
+    const bottom      = Math.ceil(rect.bottom);
+    const width       = right  - left;
+    const height      = bottom - top;
+    const roundedRect = new DOMRect(left, top, width, height);
+    
+    return roundedRect;
+}
