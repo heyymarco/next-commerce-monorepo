@@ -65,6 +65,12 @@ import {
     useOrderableListStyleSheet,
 }                           from './styles/loader.js'
 import {
+    // types:
+    RestoreOnce,
+    type IgnoreArea,
+    
+    
+    
     // states:
     useOrderableListState,
 }                           from './states/orderableListState.js'
@@ -83,6 +89,7 @@ import {
 }                           from './OrderableListItem.js'
 import {
     calculateWillToIndex,
+    getElementRoundedRect,
 }                           from './utilities.js'
 
 
@@ -162,6 +169,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // states:
         appliedTo,
+        ignoreAreaRef,
         
         
         
@@ -229,6 +237,48 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
+            const ignoreArea = ignoreAreaRef.current;
+            if (ignoreArea) { // having an ignore area
+                const pairListElm = (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listRef?.current;
+                if (pairListElm && (pairListElm === ignoreArea.element)) { // matches the ignoring target
+                    // get pointer coordinate:
+                    const {
+                        clientX,
+                        clientY,
+                    } = event;
+                    
+                    // get ignoring coordinate:
+                    const {
+                        left,
+                        right,
+                        top,
+                        bottom,
+                    } = ignoreArea.rect;
+                    
+                    // ensures the pointer coordinate is NOT in ignore coordinate:
+                    if (
+                        (clientX >= left) && (clientX <= right ) // the x coordinate is between left and right
+                        &&
+                        (clientY >= top ) && (clientY <= bottom) // the y coordinate is between top and bottom
+                    ) {
+                        if (ignoreArea.restoreOnce === RestoreOnce.PLANNED) { // the cursor is re-entering *back* from self_dragging_item to target_item => restore target_item to its original placement
+                            ignoreArea.restoreOnce = RestoreOnce.PERFORMED; // when the cursor re-enters *back* from target_item (and has restored to its original placement) to self_dragging_item
+                            console.log('PERFORMED');
+                            
+                            
+                            
+                            // the code below `... handleOrderHandshake ...` restores target_item to its original placement
+                        }
+                        else {
+                            event.response = false; // abort this event handler
+                            return; // no further action, exit earlier
+                        } // if
+                    } // if
+                } // if
+            } // if
+            
+            
+            
             if (!(await handleOrderHandshake(event, {
                 ownListIndex  : listIndex,
                 pairListIndex : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
@@ -291,6 +341,50 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             }))) {
                 event.response = false; // abort this event handler
                 return;
+            } // if
+            
+            
+            
+            const fromRaw = (event.dragData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number;
+            const toRaw   = listIndex;
+            const from    = Math.abs(fromRaw);
+            const to      = Math.abs(toRaw);
+            if (from !== to) { // the cursor is dragging over target_item
+                const hasMoved = (toRaw < 0) || Object.is(toRaw, -0); // if negative value (including negative zero) => the item has moved from its original location to a new location
+                if (!hasMoved) { // the item is still on its original location => take a snapshot for an ignore area
+                    const pairListRef = listItemRef;
+                    const pairListElm = pairListRef.current;
+                    if (!pairListElm) {
+                        // the element was unmounted => nothing to ignore:
+                        ignoreAreaRef.current = undefined;
+                        console.log('nothing to ignore');
+                    }
+                    else {
+                        // get a rounded snapshot area:
+                        const roundedRect = getElementRoundedRect(pairListElm);
+                        
+                        // set an ignore area, so the ambiguous area (the intersection between the current area and the moved area) won't cause a flickering effect:
+                        ignoreAreaRef.current = {
+                            rect        : roundedRect,
+                            element     : pairListElm,
+                            restoreOnce : (
+                                (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED) // if has performed flag
+                                ? RestoreOnce.PERFORMED // preserves the performed flag
+                                : RestoreOnce.NEVER     // initially as never having performed restore
+                            ),
+                        } satisfies IgnoreArea;
+                    } // if
+                } // if
+            }
+            else /* if (from === to) */ { // the cursor is dragging over self_dragging_item
+                if (ignoreAreaRef.current?.restoreOnce === RestoreOnce.NEVER) { // the cursor is re-entering *back* from target_item to self_dragging_item
+                    ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED;    // when the cursor re-enters *back* from self_dragging_item to target_item => restore target_item to its original placement
+                    console.log('PLANNED');
+                }
+                else if (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED) { // the cursor is re-entering *back* from target_item (and has restored to its original placement) to self_dragging_item
+                    ignoreAreaRef.current = undefined;                                   // when the cursor is re-entering *back* from self_dragging_item to target_item => the cursor should NOT be ignored and performs usual behavior
+                    console.log('CLEAR');
+                } // if
             } // if
             
             

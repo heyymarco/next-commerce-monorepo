@@ -14,6 +14,7 @@ import {
     useContext,
     useMemo,
     useState,
+    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -37,6 +38,16 @@ import type {
 //#region orderableListState
 
 // contexts:
+export const enum RestoreOnce {
+    NEVER,
+    PLANNED,
+    PERFORMED,
+}
+export interface IgnoreArea {
+    rect        : DOMRect
+    element     : Element
+    restoreOnce : RestoreOnce
+}
 export interface OrderableListDragStartEvent {
     from : number
 }
@@ -62,6 +73,7 @@ export interface OrderableListState
     
     // states:
     appliedTo       : number|undefined
+    ignoreAreaRef   : React.MutableRefObject<IgnoreArea|undefined>
     
     
     
@@ -86,6 +98,7 @@ const OrderableListStateContext = createContext<OrderableListState>({
     
     // states:
     appliedTo       : undefined,
+    ignoreAreaRef   : { current: undefined },
     
     
     
@@ -161,6 +174,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     
     
     // states:
+    const ignoreAreaRef      = useRef<IgnoreArea|undefined>(undefined);
     const orderableListState = useMemo<OrderableListState>(() => ({
         // identifiers:
         dragNDropId,                   // stable ref
@@ -174,6 +188,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         
         // states:
         appliedTo,                     // mutable ref
+        ignoreAreaRef,                 // stable ref
         
         
         
@@ -195,6 +210,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         
         // states:
         appliedTo,                     // mutable ref
+        // ignoreAreaRef,              // stable ref
         
         
         
