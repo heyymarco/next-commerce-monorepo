@@ -234,11 +234,11 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         // mutate:
-        const fromIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
-        const toIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
+        const fromChildIndex       = listMap.get(from) ?? from; // convert listIndex => childIndex
+        const toChildIndex         = listMap.get(to)   ?? to;   // convert listIndex => childIndex
         const mutatedChildren      = children.slice(0);         // copy
         
-        handleMutateChildren(mutatedChildren, fromIndex, toIndex);
+        handleMutateChildren(mutatedChildren, fromChildIndex, toChildIndex);
         triggerChildrenChange(mutatedChildren, { triggerAt: 'microtask' });
     });
     
