@@ -217,18 +217,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // handlers:
-        onDragMove(event) {
-            if (event.response) {
-                handleDragMove({
-                    from : listIndex,
-                    to   : (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
-                });
-            } // if
-            
-            
-            
-            handleUpdateFloatingPos(event.nativeEvent);
-        },
         async onDragHandshake(event) {
             if (!event.dropData.has(dragNDropId)) { // wrong drop target
                 event.response = false;
@@ -295,6 +283,18 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             event.response = true; // yes drop there (drop to self source|target is allowed)
+        },
+        onDragMove(event) {
+            if (event.response) {
+                handleDragMove({
+                    from : listIndex,
+                    to   : (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
+                });
+            } // if
+            
+            
+            
+            handleUpdateFloatingPos(event.nativeEvent);
         },
         onDragged(event) {
             handleDropped({
@@ -369,7 +369,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                             element     : pairListElm,
                             restoreOnce : (
                                 (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED) // if has performed flag
-                                ? RestoreOnce.PERFORMED // preserves the performed flag
+                                ? RestoreOnce.PERFORMED // preserves the performed flag to avoid DOUBLE performing
                                 : RestoreOnce.NEVER     // initially as never having performed restore
                             ),
                         } satisfies IgnoreArea;
