@@ -373,17 +373,24 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                                 : RestoreOnce.NEVER     // initially as never having performed restore
                             ),
                         } satisfies IgnoreArea;
+                        console.log('SET', pairListElm.textContent);
                     } // if
                 } // if
             }
             else /* if (from === to) */ { // the cursor is dragging over self_dragging_item
-                if (ignoreAreaRef.current?.restoreOnce === RestoreOnce.NEVER) { // the cursor is re-entering *back* from target_item to self_dragging_item
-                    ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED;    // when the cursor re-enters *back* from self_dragging_item to target_item => restore target_item to its original placement
+                // if (ignoreAreaRef.current?.restoreOnce === RestoreOnce.NEVER) { // the cursor is re-entering *back* from target_item to self_dragging_item
+                //     ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED;    // when the cursor re-enters *back* from self_dragging_item to target_item => restore target_item to its original placement
+                //     console.log('PLANNED');
+                // }
+                // else if (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED) { // the cursor is re-entering *back* from target_item (and has restored to its original placement) to self_dragging_item
+                //     ignoreAreaRef.current = undefined;                                   // when the cursor re-enters *back* from self_dragging_item to target_item => the cursor should NOT be ignored and performs usual behavior
+                //     // ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED;
+                //     console.log('CLEAR');
+                // } // if
+                
+                if (ignoreAreaRef.current && (ignoreAreaRef.current.restoreOnce !== RestoreOnce.PLANNED)) { // the cursor is re-entering *back* from target_item (and MAY restored to its original placement) to self_dragging_item
+                    ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED; // when the cursor re-enters *back* from self_dragging_item to target_item => performs usual behavior (including restoring to its original placement)
                     console.log('PLANNED');
-                }
-                else if (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED) { // the cursor is re-entering *back* from target_item (and has restored to its original placement) to self_dragging_item
-                    ignoreAreaRef.current = undefined;                                   // when the cursor is re-entering *back* from self_dragging_item to target_item => the cursor should NOT be ignored and performs usual behavior
-                    console.log('CLEAR');
                 } // if
             } // if
             
