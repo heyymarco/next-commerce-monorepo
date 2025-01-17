@@ -157,13 +157,13 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         setDraftChildren(undefined); // if dragging is completed|canceled => resets draftChildren
     });
     
-    const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromIndex: number, toIndex: number): void => {
+    const handleMutateChildren = useEvent((mutatedChildren: React.ReactNode[], fromChildIndex: number, toChildIndex: number): void => {
         if (orderMode === 'swap') {
-            [mutatedChildren[fromIndex], mutatedChildren[toIndex]] = [mutatedChildren[toIndex], mutatedChildren[fromIndex]];
+            [mutatedChildren[fromChildIndex], mutatedChildren[toChildIndex]] = [mutatedChildren[toChildIndex], mutatedChildren[fromChildIndex]];
         }
         else {
-            const movedItems = mutatedChildren.splice(fromIndex, /*just one child to remove: */1); // remove <SelectedChild> from children
-            mutatedChildren.splice(toIndex, /*no deleted child: */0, ...movedItems);               // then insert <SelectedChild> to children
+            const movedItems = mutatedChildren.splice(fromChildIndex, /*just one child to remove: */1); // remove <SelectedChild> from children
+            mutatedChildren.splice(toChildIndex, /*no deleted child: */0, ...movedItems);               // then insert <SelectedChild> to children
         } // if
     });
     const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
