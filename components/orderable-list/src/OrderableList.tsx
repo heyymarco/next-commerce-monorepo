@@ -183,12 +183,12 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         // mutate:
-        const fromIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
-        const toIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
-        const mutatedChildren      = wrappedChildren.slice(0);  // copy
+        const fromChildIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
+        const toChildIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
+        const mutatedChildren           = wrappedChildren.slice(0);  // copy
         
         // the dragging item:
-        mutatedChildren[fromIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+        mutatedChildren[fromChildIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromChildIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
             // props:
             {
                 refresh : {}, // declarative way to refresh()
@@ -198,7 +198,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         if (!hasMoved) { // the item is still on its original location
             // convert to negative value, indicating a backup location:
-            mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+            mutatedChildren[toChildIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toChildIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
                 // props:
                 {
                     // *backup* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
@@ -210,7 +210,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         // else {
         //     // no need to restore, because we're re-copy from unmodified `wrappedChildren`
         //     // // the restored item (may the same index as the dragging item above):
-        //     // mutatedChildren[toIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+        //     // mutatedChildren[toChildIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toChildIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
         //     //     // props:
         //     //     {
         //     //         // *restore* the draft to original placement:
@@ -220,7 +220,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         //     // );
         // } // if
         
-        handleMutateChildren(mutatedChildren, fromIndex, toIndex);
+        handleMutateChildren(mutatedChildren, fromChildIndex, toChildIndex);
         setDraftChildren({
             children  : mutatedChildren,
             appliedTo : to,
