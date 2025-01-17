@@ -198,24 +198,26 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         );
         
         if (!hasMoved) { // the item is still on its original location
+            const toElementIndex = listMap.get(to) ?? to;
             // convert to negative value, indicating a backup location:
-            mutatedChildren[toChildIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toChildIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+            mutatedChildren[toElementIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toElementIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
                 // props:
                 {
                     // *backup* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
-                    listIndex : -toLogicIndex,
+                    listIndex : -to,
                     // theme     : 'success', // for *visual* debugging purpose
                 },
             );
         } // if
         // else {
         //     // no need to restore, because we're re-copy from unmodified `wrappedChildren`
+        //     // const elementIndex = listMap.get(to) ?? to;
         //     // // the restored item (may the same index as the dragging item above):
-        //     // mutatedChildren[toChildIndex  ] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toChildIndex  ] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
+        //     // mutatedChildren[toElementIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[toElementIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
         //     //     // props:
         //     //     {
         //     //         // *restore* the draft to original placement:
-        //     //         listIndex : toLogicIndex,
+        //     //         listIndex : to,
         //     //         theme     : 'warning', // for *visual* debugging purpose
         //     //     },
         //     // );
