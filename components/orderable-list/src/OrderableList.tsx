@@ -166,10 +166,10 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             mutatedChildren.splice(toChildIndex, /*no deleted child: */0, ...movedItems);               // then insert <SelectedChild> to children
         } // if
     });
-    const handleDragMove       = useEvent(({from, to}: OrderableListDragMoveEvent): void => {
-        const hasMoved = (to < 0) || Object.is(to, -0); // if negative value (including negative zero) => the item has moved from its original location to a new location
-        from = Math.abs(from); // remove negative sign (if any)
-        to   = Math.abs(to);   // remove negative sign (if any)
+    const handleDragMove       = useEvent(({from: fromRaw, to: toRaw}: OrderableListDragMoveEvent): void => {
+        const hasMoved = (toRaw < 0) || Object.is(toRaw, -0); // if negative value (including negative zero) => the item has moved from its original location to a new location
+        const from     = Math.abs(fromRaw); // remove negative sign (if any)
+        const to       = Math.abs(toRaw);   // remove negative sign (if any)
         
         
         
@@ -178,14 +178,15 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         
         
         
-        to = calculateWillToIndex(orderMode, from, draftChildren?.appliedTo, to);
+        const fromLogicIndex = from;
+        const toLogicIndex   = calculateWillToIndex(orderMode, fromLogicIndex, draftChildren?.appliedTo, to);
         
         
         
         // mutate:
-        const fromChildIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
-        const toChildIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
-        const mutatedChildren           = wrappedChildren.slice(0);  // copy
+        const fromChildIndex            = listMap.get(fromLogicIndex) ?? fromLogicIndex; // convert listIndex => childIndex
+        const toChildIndex              = listMap.get(toLogicIndex)   ?? toLogicIndex;   // convert listIndex => childIndex
+        const mutatedChildren           = wrappedChildren.slice(0);                      // copy
         
         // the dragging item:
         mutatedChildren[fromChildIndex] = React.cloneElement<ListItemWithOrderableProps<HTMLElement, TData>>(mutatedChildren[fromChildIndex] as React.ReactComponentElement<any, ListItemWithOrderableProps<HTMLElement, TData>>,
@@ -202,7 +203,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
                 // props:
                 {
                     // *backup* the listIndex to negative value (including negative zero), so we can *restore* the draft to original placement:
-                    listIndex : -to,
+                    listIndex : -toLogicIndex,
                     // theme     : 'success', // for *visual* debugging purpose
                 },
             );
@@ -214,7 +215,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         //     //     // props:
         //     //     {
         //     //         // *restore* the draft to original placement:
-        //     //         listIndex : to,
+        //     //         listIndex : toLogicIndex,
         //     //         theme     : 'warning', // for *visual* debugging purpose
         //     //     },
         //     // );
@@ -223,20 +224,33 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         handleMutateChildren(mutatedChildren, fromChildIndex, toChildIndex);
         setDraftChildren({
             children  : mutatedChildren,
-            appliedTo : to,
+            appliedTo : toLogicIndex,
         });
     });
-    const handleDropped        = useEvent(({from, to}: OrderableListDroppedEvent): void => {
+    const handleDropped        = useEvent(({from: fromRaw, to: toRaw}: OrderableListDroppedEvent): void => {
+        const from     = Math.abs(fromRaw); // remove negative sign (if any)
+        const to       = (
+            draftChildren?.appliedTo        // cancel out effect of moved draftChildren (if any)
+            ??
+            Math.abs(toRaw)                 // remove negative sign (if any)
+        );
+        
+        
+        
         // conditions:
-        to = draftChildren?.appliedTo ?? to; // cancel out effect of moved draftChildren (if any)
         if (to === from) return; // useless move => ignore
         
         
         
+        const fromLogicIndex = from;
+        const toLogicIndex   = to;
+        
+        
+        
         // mutate:
-        const fromChildIndex            = listMap.get(from) ?? from; // convert listIndex => childIndex
-        const toChildIndex              = listMap.get(to)   ?? to;   // convert listIndex => childIndex
-        const mutatedChildren           = children.slice(0);         // copy
+        const fromChildIndex            = listMap.get(fromLogicIndex) ?? fromLogicIndex; // convert listIndex => childIndex
+        const toChildIndex              = listMap.get(toLogicIndex)   ?? toLogicIndex;   // convert listIndex => childIndex
+        const mutatedChildren           = children.slice(0);                             // copy
         
         handleMutateChildren(mutatedChildren, fromChildIndex, toChildIndex);
         triggerChildrenChange(mutatedChildren, { triggerAt: 'microtask' });
