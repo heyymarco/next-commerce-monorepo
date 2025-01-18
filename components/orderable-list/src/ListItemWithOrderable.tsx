@@ -228,7 +228,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             const ignoreArea = ignoreAreaRef.current;
             if (ignoreArea) { // having an ignore area
                 const pairListElm = (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listRef?.current;
-                if (pairListElm && (pairListElm === ignoreArea.element)) { // matches the ignoring target
+                if (pairListElm && (pairListElm === ignoreArea.lastElement)) { // matches the ignoring target
                     // get pointer coordinate:
                     const {
                         clientX,
@@ -241,7 +241,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                         right,
                         top,
                         bottom,
-                    } = ignoreArea.rect;
+                    } = ignoreArea.beforeRect;
                     
                     // ensures the pointer coordinate is NOT in ignore coordinate:
                     if (
@@ -251,7 +251,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     ) {
                         if (ignoreArea.restoreOnce === RestoreOnce.PLANNED) { // the cursor is re-entering *back* from self_dragging_item to target_item => restore target_item to its original placement
                             ignoreArea.restoreOnce = RestoreOnce.PERFORMED; // when the cursor re-enters *back* from target_item (and has restored to its original placement) to self_dragging_item
-                            console.log('PERFORMED');
+                            console.log('PERFORMED', { pair: pairListElm.textContent });
                             
                             
                             
@@ -350,30 +350,47 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             const from    = Math.abs(fromRaw);
             const to      = Math.abs(toRaw);
             if (from !== to) { // the cursor is dragging over target_item
-                const hasMoved = (toRaw < 0) || Object.is(toRaw, -0); // if negative value (including negative zero) => the item has moved from its original location to a new location
-                if (!hasMoved) { // the item is still on its original location => take a snapshot for an ignore area
-                    const pairListRef = listItemRef;
-                    const pairListElm = pairListRef.current;
-                    if (!pairListElm) {
-                        // the element was unmounted => nothing to ignore:
-                        ignoreAreaRef.current = undefined;
-                        console.log('nothing to ignore');
-                    }
-                    else {
-                        // get a rounded snapshot area:
-                        const roundedRect = getElementRoundedRect(pairListElm);
+                const pairListRef = listItemRef;
+                const pairListElm = pairListRef.current;
+                if (!pairListElm) {
+                    // the element was unmounted => nothing to ignore:
+                    ignoreAreaRef.current = undefined;
+                    console.log('nothing to ignore');
+                }
+                else {
+                    // get a rounded snapshot area of current location:
+                    const roundedRect = getElementRoundedRect(pairListElm);
+                    const hasMoved    = (toRaw < 0) || Object.is(toRaw, -0); // if negative value (including negative zero) => the item has moved from its original location to a new location
+                    if (
+                        !ignoreAreaRef.current // not having prev state => initial state
+                        ||
+                        (pairListElm !== ignoreAreaRef.current.lastElement) // different element => initial state
+                        ||
+                        (hasMoved !== ignoreAreaRef.current.lastMoved) // a switching movement is detected
+                    ) { // an initial or switching movement is detected => take a snapshot of the previous rect for an ignore area
+                        const isSelfElement = (pairListElm === ignoreAreaRef.current?.lastElement);
                         
                         // set an ignore area, so the ambiguous area (the intersection between the current area and the moved area) won't cause a flickering effect:
                         ignoreAreaRef.current = {
-                            rect        : roundedRect,
-                            element     : pairListElm,
+                            lastElement : pairListElm,
+                            lastMoved   : hasMoved,    // take a snapshot of the current movement state, so we can detect the switching movement later
+                            lastRect    : roundedRect, // take a snapshot of the current rect, so we can use the previous rect before movement later
+                            
+                            beforeRect  : isSelfElement ? (ignoreAreaRef.current?.lastRect ?? roundedRect) : roundedRect, // take a snapshot of the previous rect for an ignore area
                             restoreOnce : (
-                                (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED) // if has performed flag
+                                (isSelfElement && (ignoreAreaRef.current?.restoreOnce === RestoreOnce.PERFORMED)) // if has performed flag
                                 ? RestoreOnce.PERFORMED // preserves the performed flag to avoid DOUBLE performing
                                 : RestoreOnce.NEVER     // initially as never having performed restore
                             ),
                         } satisfies IgnoreArea;
-                        console.log('SET', pairListElm.textContent);
+                        console.log('SET', { pair: pairListElm.textContent, hasMoved, rect: ignoreAreaRef.current.beforeRect.top });
+                    }
+                    else {
+                        // just update the log:
+                        ignoreAreaRef.current.lastElement = pairListElm;
+                        ignoreAreaRef.current.lastMoved   = hasMoved;
+                        ignoreAreaRef.current.lastRect    = roundedRect;
+                        // console.log('UPDATE');
                     } // if
                 } // if
             }

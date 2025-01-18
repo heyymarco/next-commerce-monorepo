@@ -44,8 +44,31 @@ export const enum RestoreOnce {
     PERFORMED,
 }
 export interface IgnoreArea {
-    rect        : DOMRect
-    element     : Element
+    /**
+     * The known last DOM reference of target_item element.
+     */
+    lastElement : Element
+    
+    /**
+     * The known last area of hasMoved status.
+     */
+    lastMoved   : boolean
+    
+    /**
+     * The known last area of target_item.
+     */
+    lastRect    : DOMRect
+    
+    
+    
+    /**
+     * The area of target_item BEFORE switching.
+     */
+    beforeRect  : DOMRect
+    
+    /**
+     * The current switching state.
+     */
     restoreOnce : RestoreOnce
 }
 export interface OrderableListDragStartEvent {
