@@ -758,6 +758,29 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         }
         else {
             handleDragEnd?.();
+            
+            
+            
+            /**
+             * Clears the ignore area to avoid unnecessary `PLANNED` states (which cause flickering) and prevents a memory leak from referencing the `lastElement` DOM.
+             * 
+             * Case of flickering effect:
+             * [A (small)]
+             * [B (big)  ]
+             * [C (small)]
+             * 
+             * When dropping [A] into [B] and then moving back to [A], it sets the `ignoreAreaRef` of [B] to `PLANNED`.
+             * Then, when dropping [C] into [B], the existing `PLANNED` state of [B] causes a SUDDEN `PERFORMED` state, switching [C] to [B].
+             * Because the `lastRect` is a snapshot of when [B] moved into [A], a second SUDDEN switch from [B] to [C] occurs.
+             * This back-and-forth switching causes a flickering effect.
+             */
+            ignoreAreaRef.current = undefined;
+            // visual debugger:
+            if (process.env.NODE_ENV === 'development') {
+                const debugElm = (window as any).__debugElm as HTMLDivElement|undefined;
+                debugElm?.parentElement?.removeChild(debugElm);
+                delete (window as any).__debugElm;
+            } // if
         } // if
         
         
