@@ -383,7 +383,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                                 : RestoreOnce.NEVER     // initially as never having performed restore
                             ),
                         } satisfies IgnoreArea;
-                        console.log('SET', { pair: pairListElm.textContent, hasMoved, rect: ignoreAreaRef.current.beforeRect.top });
+                        // console.log('SET', { pair: pairListElm.textContent, hasMoved, rect: ignoreAreaRef.current.beforeRect.top });
                     }
                     else {
                         // just update the log:
@@ -391,6 +391,29 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                         ignoreAreaRef.current.lastMoved   = hasMoved;
                         ignoreAreaRef.current.lastRect    = roundedRect;
                         // console.log('UPDATE');
+                    } // if
+                    
+                    
+                    
+                    // visual debugger:
+                    if (process.env.NODE_ENV === 'development') {
+                        const debugElm = (((window as any).__debugElm) as HTMLDivElement) ?? (() => {
+                            const newDebugElm = document.createElement('div');
+                            const style = newDebugElm.style;
+                            style.pointerEvents = 'none';
+                            style.zIndex = '999';
+                            style.position = 'absolute';
+                            style.border = 'solid 1px red';
+                            window.document.body.append(newDebugElm);
+                            (window as any).__debugElm = newDebugElm;
+                            return newDebugElm;
+                        })();
+                        const debugRect = ignoreAreaRef.current.beforeRect;
+                        const style = debugElm.style;
+                        style.left = `${debugRect.left}px`;
+                        style.top = `${debugRect.top}px`;
+                        style.width = `${debugRect.width}px`;
+                        style.height = `${debugRect.height}px`;
                     } // if
                 } // if
             }
