@@ -7,7 +7,8 @@ import { useEvent } from '@reusable-ui/core';
 
 export default function Home() {
     // const prevLogRef = useRef<number|undefined>(undefined);
-    const handleOrderHandshake = useEvent(({isDragging, ownListIndex, pairListIndex, ownData, pairData, target}: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
+    const handleOrderHandshake = useEvent((event: OrderableListItemDropHandshakeEvent<HTMLElement, unknown>): void => {
+        const {isDragging, ownListIndex, pairListIndex, ownData, pairData, target} = event;
         // if (!isDragging) return;
         // if (isDragging) return;
         if (pairListIndex === undefined) return;
@@ -19,7 +20,7 @@ export default function Home() {
         // if ((target instanceof Element) && target.tagName === 'LI') return; // ignore when on blank <ListItem>
         
         if (isDragging) {
-            console.log(`[dragging] migrate ${ownListIndex} => ${pairListIndex}`);
+            console.log(`[dragging] migrate ${ownListIndex} => ${pairListIndex}`, event.timeStamp);
         }
         else {
             // console.log(`[dragged] migrate ${ownListIndex} => ${pairListIndex}`);

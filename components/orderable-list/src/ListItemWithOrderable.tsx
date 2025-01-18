@@ -294,64 +294,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
-            handleUpdateFloatingPos(event.nativeEvent);
-        },
-        onDragged(event) {
-            handleDropped({
-                from : listIndex,
-                to   : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
-            });
-        },
-    });
-    useDroppable<TElement>({
-        // data:
-        dropData : new Map<symbol, OrderableListDragNDropData<TElement, TData>>([
-            [dragNDropId, {listIndex, listRef: listItemRef, data: props.data}],
-        ]),
-        
-        
-        
-        // refs:
-        dropRef  : listItemParentRef, // we use `listItemParentRef` instead of `listItemRef`, because the `listItemParentRef` doesn't moving while `onDragMove() => handleUpdateFloatingPos()` triggered
-        
-        
-        
-        // states:
-        enabled  : true,
-        
-        
-        
-        // handlers:
-        async onDropHandshake(event) {
-            if (!event.dragData.has(dragNDropId)) { // wrong drag source
-                event.response = false;
-                return;
-            } // if
-            
-            
-            
-            if (!(await handleOrderHandshake(event, {
-                ownListIndex  : listIndex,
-                pairListIndex : (event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
-                
-                ownData       : props.data,
-                pairData      : (event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.data as TData|undefined,
-                
-                isDragging    : false,
-            }))) {
-                event.response = false; // abort this event handler
-                return;
-            } // if
-            
-            
-            
-            const fromRaw = (event.dragData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number;
-            const toRaw   = listIndex;
+            const fromRaw = listIndex;
+            const toRaw   = (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number;
             const from    = Math.abs(fromRaw);
             const to      = Math.abs(toRaw);
             if (from !== to) { // the cursor is dragging over target_item
-                const pairListRef = listItemRef;
-                const pairListElm = pairListRef.current;
+                // console.log('measuring', {fromRaw, toRaw}, event.timeStamp);
+                const pairListRef = (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listRef;
+                const pairListElm = pairListRef?.current;
                 if (!pairListElm) {
                     // the element was unmounted => nothing to ignore:
                     ignoreAreaRef.current = undefined;
@@ -432,6 +382,57 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED; // when the cursor re-enters *back* from self_dragging_item to target_item => performs usual behavior (including restoring to its original placement)
                     console.log('PLANNED');
                 } // if
+            } // if
+            
+            
+            
+            handleUpdateFloatingPos(event.nativeEvent);
+        },
+        onDragged(event) {
+            handleDropped({
+                from : listIndex,
+                to   : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
+            });
+        },
+    });
+    useDroppable<TElement>({
+        // data:
+        dropData : new Map<symbol, OrderableListDragNDropData<TElement, TData>>([
+            [dragNDropId, {listIndex, listRef: listItemRef, data: props.data}],
+        ]),
+        
+        
+        
+        // refs:
+        dropRef  : listItemParentRef, // we use `listItemParentRef` instead of `listItemRef`, because the `listItemParentRef` doesn't moving while `onDragMove() => handleUpdateFloatingPos()` triggered
+        
+        
+        
+        // states:
+        enabled  : true,
+        
+        
+        
+        // handlers:
+        async onDropHandshake(event) {
+            if (!event.dragData.has(dragNDropId)) { // wrong drag source
+                event.response = false;
+                return;
+            } // if
+            
+            
+            
+            if (!(await handleOrderHandshake(event, {
+                ownListIndex  : listIndex,
+                pairListIndex : (event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
+                
+                ownData       : props.data,
+                pairData      : (event.dragData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.data as TData|undefined,
+                
+                isDragging    : false,
+            }))) {
+                event.response = false; // abort this event handler
+                return;
             } // if
             
             
