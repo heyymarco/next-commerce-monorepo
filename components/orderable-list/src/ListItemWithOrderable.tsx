@@ -194,6 +194,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // capabilities:
+    const lastSwitchingIndexRef = useRef<number|undefined>(undefined);
     const {
         // states:
         isDragging,
@@ -218,6 +219,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         // handlers:
         async onDragHandshake(event) {
+            // console.log('onDragHandshake', event.timeStamp);
             if (!event.dropData.has(dragNDropId)) { // wrong drop target
                 event.response = false;
                 return;
@@ -283,8 +285,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             event.response = true; // yes drop there (drop to self source|target is allowed)
+            
+            
+            
+            // remember the listIndex of the last switching, so we can simulate *dropped* event when the user dragged on the `ignoreArea`:
+            lastSwitchingIndexRef.current = (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex;
         },
         onDragMove(event) {
+            // console.log('onDragMove', event.timeStamp);
             if (event.response) {
                 handleDragMove({
                     from : listIndex,
@@ -389,6 +397,12 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             handleUpdateFloatingPos(event.nativeEvent);
         },
         onDragged(event) {
+            console.log('onDragged', event.timeStamp);
+            
+            lastSwitchingIndexRef.current = undefined; // prevents from simulating *dropped* event from happening
+            
+            
+            
             handleDropped({
                 from : listIndex,
                 to   : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
@@ -758,6 +772,19 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         }
         else {
             handleDragEnd?.();
+            
+            
+            
+            const lastSwitchingIndex = lastSwitchingIndexRef.current; // take
+            lastSwitchingIndexRef.current = undefined;                // clear
+            if (lastSwitchingIndex !== undefined) {
+                // simulate *dropped* event when dragged on `ignoreArea`:
+                console.log('simulate onDragged => handleDropped');
+                handleDropped({
+                    from : listIndex,
+                    to   : lastSwitchingIndex,
+                });
+            } // if
             
             
             

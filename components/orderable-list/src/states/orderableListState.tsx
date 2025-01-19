@@ -50,7 +50,7 @@ export interface IgnoreArea {
     lastElement : Element
     
     /**
-     * The known last area of hasMoved status.
+     * The known last `hasMoved` status.
      */
     lastMoved   : boolean
     
