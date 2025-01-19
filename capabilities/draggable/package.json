@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/draggable",
-  "version": "6.6.1",
+  "version": "6.7.0",
   "description": "Enables drag operations.",
   "keywords": [
     "react",
@@ -46,7 +46,7 @@
     "@reusable-ui/pointer-capturable": "^6.6.0"
   },
   "peerDependencies": {
-    "@heymarco/drag-n-drop": "^6.6.0",
+    "@heymarco/drag-n-drop": "^6.7.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "react": "^18.0.0",

@@ -7,7 +7,6 @@ import {
     
     // hooks:
     useState,
-    useMemo,
     useEffect,
 }                           from 'react'
 
@@ -50,7 +49,7 @@ export interface DroppableProps<TElement extends Element = HTMLElement> {
     
     
     // refs:
-    dropRef          : React.RefObject<TElement>|TElement|null // getter ref
+    dropRef          : React.RefObject<TElement|null>|TElement|null // getter ref
     
     
     
@@ -141,7 +140,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     
     
     // stable droppableHook:
-    const droppableHook = useMemo((): DroppableHook<TElement> =>
+    const [droppableHook] = useState((): DroppableHook<TElement> =>
         new DroppableHook<TElement>({
             enabled         : enabled,
             dropData        : dropData,
@@ -151,7 +150,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
             setIsDropping   : handleSetIsDropping, // stable ref
             setDragData     : handleSetDragData,   // stable ref
         })
-    , []);
+    );
     droppableHook.enabled   = enabled;
     droppableHook.dropData  = dropData;
     droppableHook.dropRef   = dropRef;
@@ -165,9 +164,9 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     // effects:
     
     // register/unregister DroppableHook:
+    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
     useEffect(() => {
         // conditions:
-        const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
         if (!dropElm) return; // no element for droppable => ignore
         
         
@@ -181,7 +180,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
         return () => {
             unregisterDroppableHook(dropElm);
         };
-    }, [dropRef, droppableHook]);
+    }, [dropElm, droppableHook]);
     
     
     

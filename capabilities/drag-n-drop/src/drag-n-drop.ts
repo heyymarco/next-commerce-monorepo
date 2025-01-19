@@ -33,7 +33,7 @@ const selfAndAncestors = (element: Element): Element[] => {
 export class DroppableHook<TElement extends Element = HTMLElement> {
     enabled          : boolean
     dropData         : DragNDropData
-    dropRef          : React.RefObject<TElement>|TElement|null // getter ref
+    dropRef          : React.RefObject<TElement|null>|TElement|null // getter ref
     onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
     onDropped        : ((event: DroppedEvent<TElement>) => void)|undefined
     setIsDropping    : (newIsDropping: undefined|null|boolean) => void
@@ -50,7 +50,7 @@ export class DroppableHook<TElement extends Element = HTMLElement> {
     } : {
         enabled          : boolean
         dropData         : DragNDropData
-        dropRef          : React.RefObject<TElement>|TElement|null // getter ref
+        dropRef          : React.RefObject<TElement|null>|TElement|null // getter ref
         onDropHandshake  : (event: DropHandshakeEvent<TElement>) => void|Promise<void>
         onDropped        : ((event: DroppedEvent<TElement>) => void)|undefined
         setIsDropping    : (newIsDropping: undefined|null|boolean) => void
@@ -87,9 +87,9 @@ export const enterDroppableHook  = (dragData: DragNDropData) => {
     } // for
 };
 export interface AttachedDroppableHookOptions<TElement extends Element = HTMLElement> {
-    dragRef            ?: React.RefObject<TElement>|TElement|null // getter ref
+    dragRef            ?: React.RefObject<TElement|null>|TElement|null // getter ref
     onDragHandshake    ?: (event: DragHandshakeEvent<TElement>) => void|Promise<void>
-    ignoreDropElements ?: (React.RefObject<Element>|Element|null|undefined)[]
+    ignoreDropElements ?: (React.RefObject<Element|null>|Element|null|undefined)[]
 }
 export interface AttachedDroppableHookResult {
     response       : null|boolean

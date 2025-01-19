@@ -87,8 +87,8 @@ export interface DraggableProps<TElement extends Element = HTMLElement>
     
     
     // refs:
-    dragRef            ?: React.RefObject<TElement>|TElement|null // getter ref
-    ignoreDropElements ?: (React.RefObject<Element>|Element|null|undefined)[]
+    dragRef            ?: React.RefObject<TElement|null>|TElement|null // getter ref
+    ignoreDropElements ?: (React.RefObject<Element|null>|Element|null|undefined)[]
     
     
     
@@ -197,10 +197,14 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
     
     // refs:
     const overlayRef               = useRef<HTMLDivElement|null>(null);
-    const mergedIgnoreDropElements = useMemo<(React.RefObject<Element>|Element|null|undefined)[]>(() => [
+    const mergedIgnoreDropElements = useMemo<(React.RefObject<Element|null>|Element|null|undefined)[]>(() => [
         ...(ignoreDropElements ?? []),
         overlayRef,
-    ], [ignoreDropElements, overlayRef]);
+        
+        
+        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    ], [...(ignoreDropElements ?? [])]);
     
     
     
