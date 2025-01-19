@@ -187,11 +187,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // refs:
     const listItemRef                = useRef<TElement|null>(null);
-    const [listItemParentRef]        = useState<React.RefObject<TElement>>(() => ({
-        get current(): HTMLElement|null {
-            return listItemRef.current?.parentElement ?? null;
+    const [listItemParentRef]        = useState<React.RefObject<TElement|null>>(() => ({
+        get current(): TElement|null {
+            return (listItemRef.current?.parentElement ?? null) as TElement|null;
         },
-    }) as React.RefObject<TElement>);
+    }) as React.RefObject<TElement|null>);
     
     
     
@@ -208,7 +208,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // refs:
-        dragRef            : listItemRef,
+        dragRef            :  listItemRef,
         ignoreDropElements : [listItemRef],
         
         
@@ -254,7 +254,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     ) {
                         if (ignoreArea.restoreOnce === RestoreOnce.PLANNED) { // the cursor is re-entering *back* from self_dragging_item to target_item => restore target_item to its original placement
                             ignoreArea.restoreOnce = RestoreOnce.PERFORMED; // when the cursor re-enters *back* from target_item (and has restored to its original placement) to self_dragging_item
-                            console.log('PERFORMED', { pair: pairListElm.textContent });
+                            // console.log('PERFORMED', { pair: pairListElm.textContent });
                             
                             
                             
@@ -314,7 +314,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 if (!pairListElm) {
                     // the element was unmounted => nothing to ignore:
                     ignoreAreaRef.current = undefined;
-                    console.log('nothing to ignore');
+                    // console.log('nothing to ignore');
                 }
                 else {
                     // get a rounded snapshot area of current location:
@@ -354,26 +354,26 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                     
                     
                     
-                    // visual debugger:
-                    if (process.env.NODE_ENV === 'development') {
-                        const debugElm = (((window as any).__debugElm) as HTMLDivElement) ?? (() => {
-                            const newDebugElm = document.createElement('div');
-                            const style = newDebugElm.style;
-                            style.pointerEvents = 'none';
-                            style.zIndex = '999';
-                            style.position = 'absolute';
-                            style.border = 'solid 1px red';
-                            window.document.body.append(newDebugElm);
-                            (window as any).__debugElm = newDebugElm;
-                            return newDebugElm;
-                        })();
-                        const debugRect = ignoreAreaRef.current.beforeRect;
-                        const style = debugElm.style;
-                        style.left = `${debugRect.left}px`;
-                        style.top = `${debugRect.top}px`;
-                        style.width = `${debugRect.width}px`;
-                        style.height = `${debugRect.height}px`;
-                    } // if
+                    // // visual debugger:
+                    // if (process.env.NODE_ENV === 'development') {
+                    //     const debugElm = (((window as any).__debugElm) as HTMLDivElement) ?? (() => {
+                    //         const newDebugElm = document.createElement('div');
+                    //         const style = newDebugElm.style;
+                    //         style.pointerEvents = 'none';
+                    //         style.zIndex = '999';
+                    //         style.position = 'absolute';
+                    //         style.border = 'solid 1px red';
+                    //         window.document.body.append(newDebugElm);
+                    //         (window as any).__debugElm = newDebugElm;
+                    //         return newDebugElm;
+                    //     })();
+                    //     const debugRect = ignoreAreaRef.current.beforeRect;
+                    //     const style = debugElm.style;
+                    //     style.left = `${debugRect.left}px`;
+                    //     style.top = `${debugRect.top}px`;
+                    //     style.width = `${debugRect.width}px`;
+                    //     style.height = `${debugRect.height}px`;
+                    // } // if
                 } // if
             }
             else /* if (from === to) */ { // the cursor is dragging over self_dragging_item
@@ -389,7 +389,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 
                 if (ignoreAreaRef.current && (ignoreAreaRef.current.restoreOnce !== RestoreOnce.PLANNED)) { // the cursor is re-entering *back* from target_item (and MAY restored to its original placement) to self_dragging_item
                     ignoreAreaRef.current.restoreOnce = RestoreOnce.PLANNED; // when the cursor re-enters *back* from self_dragging_item to target_item => performs usual behavior (including restoring to its original placement)
-                    console.log('PLANNED');
+                    // console.log('PLANNED');
                 } // if
             } // if
             
@@ -398,7 +398,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             handleUpdateFloatingPos(event.nativeEvent);
         },
         onDragged(event) {
-            console.log('onDragged', event.timeStamp);
+            // console.log('onDragged', event.timeStamp);
             
             lastSwitchingIndexRef.current = undefined; // prevents from simulating *dropped* event from happening
             
@@ -756,12 +756,12 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         false     : active (inside wrong drop target)
         true      : active (inside right drop target)
     */
-    const isDraggingActive    = (isDragging !== undefined);
-    const isDraggingActiveRef = useRef<boolean>(isDraggingActive);
+    const isDraggingActive        = (isDragging !== undefined);
+    const prevIsDraggingActiveRef = useRef<boolean>(isDraggingActive);
     useIsomorphicLayoutEffect(() => {
         // conditions:
-        if (isDraggingActiveRef.current === isDraggingActive) return; // already the same => ignore
-        isDraggingActiveRef.current = isDraggingActive;               // sync
+        if (prevIsDraggingActiveRef.current === isDraggingActive) return; // already the same => ignore
+        prevIsDraggingActiveRef.current = isDraggingActive;               // sync
         
         
         // actions:
@@ -779,7 +779,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             lastSwitchingIndexRef.current = undefined;                // clear
             if (lastSwitchingIndex !== undefined) {
                 // simulate *dropped* event when dragged on `ignoreArea`:
-                console.log('simulate onDragged => handleDropped');
+                // console.log('simulate onDragged => handleDropped');
                 handleDropped({
                     from : listIndex,
                     to   : lastSwitchingIndex,
@@ -802,12 +802,13 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
              * This back-and-forth switching causes a flickering effect.
              */
             ignoreAreaRef.current = undefined;
-            // visual debugger:
-            if (process.env.NODE_ENV === 'development') {
-                const debugElm = (window as any).__debugElm as HTMLDivElement|undefined;
-                debugElm?.parentElement?.removeChild(debugElm);
-                delete (window as any).__debugElm;
-            } // if
+            
+            // // visual debugger:
+            // if (process.env.NODE_ENV === 'development') {
+            //     const debugElm = (window as any).__debugElm as HTMLDivElement|undefined;
+            //     debugElm?.parentElement?.removeChild(debugElm);
+            //     delete (window as any).__debugElm;
+            // } // if
         } // if
         
         
