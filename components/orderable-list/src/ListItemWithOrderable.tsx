@@ -187,11 +187,11 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     // refs:
     const listItemRef                = useRef<TElement|null>(null);
-    const [listItemParentRef]        = useState<React.MutableRefObject<TElement|null>>(() => ({
+    const [listItemParentRef]        = useState<React.RefObject<TElement>>(() => ({
         get current(): HTMLElement|null {
             return listItemRef.current?.parentElement ?? null;
         },
-    }) as React.MutableRefObject<TElement|null>);
+    }) as React.RefObject<TElement>);
     
     
     
