@@ -171,6 +171,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         appliedTo,
         ignoreAreaRef,
         lastSwitchingIndexRef,
+        touchedPositionRef,
+        cachedFloatingPos,
         
         
         
@@ -190,7 +192,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             return listItemRef.current?.parentElement ?? null;
         },
     }) as React.MutableRefObject<TElement|null>);
-    const listItemTouchedPositionRef = useRef<{ left: number, top: number }|undefined>(undefined);
     
     
     
@@ -643,7 +644,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         const {left: baseLeft, top: baseTop} = listItemParentElm.getBoundingClientRect();
         const touchedLeft = event.clientX - baseLeft;
         const touchedTop  = event.clientY - baseTop;
-        listItemTouchedPositionRef.current = {left: touchedLeft, top: touchedTop};
+        touchedPositionRef.current = { left: touchedLeft, top: touchedTop };
         
         
         
@@ -713,17 +714,16 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         handleTouchStartInternal,
     );
     
-    const prevFloatingPos          = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
     const handleUpdateFloatingPos  = useEvent((event?: MouseEvent): void => {
         // conditions:
-        const recentPos = event ?? prevFloatingPos.current;
+        const recentPos = event ?? cachedFloatingPos.current;
         if (!recentPos) return;
         
         
         
         // calculate & memorize floating pos:
-        const {clientX, clientY} = recentPos;
-        prevFloatingPos.current  = {clientX, clientY};
+        const { clientX, clientY } = recentPos;
+        cachedFloatingPos.current  = { clientX, clientY };
         
         
         
@@ -736,8 +736,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         // live update for first rerender of <ListItemWithOrderable>, vanilla way, without causing busy re-render:
-        const {left: baseLeft   , top: baseTop   } = listItemParentElm.getBoundingClientRect();
-        const {left: touchedLeft, top: touchedTop} = listItemTouchedPositionRef.current ?? {left: 0, top: 0};
+        const { left: baseLeft   , top: baseTop    } = listItemParentElm.getBoundingClientRect();
+        const { left: touchedLeft, top: touchedTop } = touchedPositionRef.current ?? {left: 0, top: 0};
         listItemInlineStyle.left = `${clientX - baseLeft - touchedLeft}px`;
         listItemInlineStyle.top  = `${clientY - baseTop  - touchedTop }px`;
     });
@@ -813,8 +813,8 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         
         
         if (!isDraggingActive) {
-            prevFloatingPos.current            = undefined; // cleanup floating pos
-            listItemTouchedPositionRef.current = undefined; // cleanup touched pos
+            cachedFloatingPos.current  = undefined; // cleanup floating pos
+            touchedPositionRef.current = undefined; // cleanup touched pos
             
             const listItemInlineStyle = listItemRef.current?.style;
             if (listItemInlineStyle) {

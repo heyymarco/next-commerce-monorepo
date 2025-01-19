@@ -99,6 +99,16 @@ export interface OrderableListState
     ignoreAreaRef         : React.MutableRefObject<IgnoreArea|undefined>
     lastSwitchingIndexRef : React.MutableRefObject<number|undefined>
     
+    /**
+     * The coordinates (relative to the `<OrderableListItem>`'s left and top) where the `<OrderableListItem>` is being grabbed.
+     */
+    touchedPositionRef    : React.MutableRefObject<{ left: number, top: number }|undefined>
+    
+    /**
+     * The cached coordinates (relative to the browser's viewport) where the `<OrderableListItem>` is floating.
+     */
+    cachedFloatingPos     : React.MutableRefObject<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>
+    
     
     
     // handlers:
@@ -124,6 +134,8 @@ const OrderableListStateContext = createContext<OrderableListState>({
     appliedTo             : undefined,
     ignoreAreaRef         : { current: undefined },
     lastSwitchingIndexRef : { current: undefined },
+    touchedPositionRef    : { current: undefined },
+    cachedFloatingPos     : { current: undefined },
     
     
     
@@ -201,6 +213,8 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     // states:
     const ignoreAreaRef         = useRef<IgnoreArea|undefined>(undefined);
     const lastSwitchingIndexRef = useRef<number|undefined>(undefined);
+    const touchedPositionRef    = useRef<{ left: number, top: number }|undefined>(undefined);
+    const cachedFloatingPos     = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
     const orderableListState    = useMemo<OrderableListState>(() => ({
         // identifiers:
         dragNDropId,                   // stable ref
@@ -216,6 +230,8 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         appliedTo,                     // mutable ref
         ignoreAreaRef,                 // stable ref
         lastSwitchingIndexRef,         // stable ref
+        touchedPositionRef,            // stable ref
+        cachedFloatingPos,             // stable ref
         
         
         
@@ -239,6 +255,8 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         appliedTo,                     // mutable ref
         // ignoreAreaRef,              // stable ref
         // lastSwitchingIndexRef,      // stable ref
+        // touchedPositionRef,         // stable ref
+        // cachedFloatingPos,          // stable ref
         
         
         
