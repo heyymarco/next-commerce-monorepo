@@ -121,7 +121,7 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
                 // conditions:
                 if (!ignoreDropElement) continue; // ignore nullish
                 
-                const ignoreDropElementElm = (ignoreDropElement instanceof Element) ? ignoreDropElement : ignoreDropElement?.current;
+                const ignoreDropElementElm = ('current' in ignoreDropElement) ? ignoreDropElement.current : ignoreDropElement;
                 if (!ignoreDropElementElm) continue; // ignore nullish
                 
                 
@@ -163,10 +163,10 @@ export const attachDroppableHook = async <TElement extends Element = HTMLElement
         
         
         // getting responses:
-        const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+        const dragElm = (dragRef && ('current' in dragRef)) ? dragRef.current : dragRef;
         
         const dropRef = droppableHook.dropRef;
-        const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+        const dropElm = (dropRef && ('current' in dropRef)) ? dropRef.current : dropRef;
         
         const [dragResponse, dropResponse] = await Promise.all([
             (async (): Promise<undefined|boolean> => {
@@ -451,7 +451,7 @@ if ((typeof(window) !== 'undefined') && (typeof(document) !== 'undefined')) {
                 const onDropped = activeDroppableHook.onDropped;
                 if (onDropped) {
                     const dropRef = activeDroppableHook.dropRef;
-                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    const dropElm = (dropRef && ('current' in dropRef)) ? dropRef.current : dropRef;
                     onDropped({
                         // bases:
                         ...createSyntheticMouseEvent<Element, MouseEvent>({

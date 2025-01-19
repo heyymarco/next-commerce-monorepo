@@ -164,7 +164,7 @@ export const useDroppable = <TElement extends Element = HTMLElement>(props: Drop
     // effects:
     
     // register/unregister DroppableHook:
-    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+    const dropElm = (dropRef && ('current' in dropRef)) ? dropRef.current : dropRef;
     useEffect(() => {
         // conditions:
         if (!dropElm) return; // no element for droppable => ignore

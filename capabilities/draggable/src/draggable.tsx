@@ -219,10 +219,10 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             if (isDragging === true) { // if was a valid dragging => now is dragged/dropped
                 const activeDroppableHook = getActiveDroppableHook();
                 if (activeDroppableHook?.enabled) {
-                    const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                    const dragElm = (dragRef && ('current' in dragRef)) ? dragRef.current : dragRef;
                     
                     const dropRef = activeDroppableHook.dropRef;
-                    const dropElm = (dropRef instanceof Element) ? dropRef : dropRef?.current;
+                    const dropElm = (dropRef && ('current' in dropRef)) ? dropRef.current : dropRef;
                     
                     const activeDroppableTarget = getActiveDroppableTarget();
                     
@@ -311,7 +311,7 @@ export const useDraggable = <TElement extends Element = HTMLElement>(props: Drag
             }
             finally {
                 if (onDragMove) {
-                    const dragElm = (dragRef instanceof Element) ? dragRef : dragRef?.current;
+                    const dragElm = (dragRef && ('current' in dragRef)) ? dragRef.current : dragRef;
                     onDragMove({
                         // bases:
                         ...createSyntheticMouseEvent<TElement, MouseEvent>({
