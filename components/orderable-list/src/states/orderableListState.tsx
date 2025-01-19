@@ -85,51 +85,53 @@ export interface OrderableListDroppedEvent {
 export interface OrderableListState
 {
     // identifiers:
-    dragNDropId     : symbol
+    dragNDropId           : symbol
     
     
     
     // behaviors:
-    orderMode       : OrderableListOrderMode
+    orderMode             : OrderableListOrderMode
     
     
     
     // states:
-    appliedTo       : number|undefined
-    ignoreAreaRef   : React.MutableRefObject<IgnoreArea|undefined>
+    appliedTo             : number|undefined
+    ignoreAreaRef         : React.MutableRefObject<IgnoreArea|undefined>
+    lastSwitchingIndexRef : React.MutableRefObject<number|undefined>
     
     
     
     // handlers:
-    handleDragStart : (event: OrderableListDragStartEvent) => void
-    handleDragEnd   : () => void
-    handleDragMove  : (event: OrderableListDragMoveEvent) => void
-    handleDropped   : (event: OrderableListDroppedEvent) => void
+    handleDragStart       : (event: OrderableListDragStartEvent) => void
+    handleDragEnd         : () => void
+    handleDragMove        : (event: OrderableListDragMoveEvent) => void
+    handleDropped         : (event: OrderableListDroppedEvent) => void
 }
 
 const noopHandler = () => { throw Error('not inside <OrderableList>'); };
 const OrderableListStateContext = createContext<OrderableListState>({
     // identifiers:
-    dragNDropId     : undefined as any,
+    dragNDropId           : undefined as any,
     
     
     
     // behaviors:
-    orderMode       : 'shift',
+    orderMode             : 'shift',
     
     
     
     // states:
-    appliedTo       : undefined,
-    ignoreAreaRef   : { current: undefined },
+    appliedTo             : undefined,
+    ignoreAreaRef         : { current: undefined },
+    lastSwitchingIndexRef : { current: undefined },
     
     
     
     // handlers:
-    handleDragStart : noopHandler,
-    handleDragEnd   : noopHandler,
-    handleDragMove  : noopHandler,
-    handleDropped   : noopHandler,
+    handleDragStart       : noopHandler,
+    handleDragEnd         : noopHandler,
+    handleDragMove        : noopHandler,
+    handleDropped         : noopHandler,
 });
 OrderableListStateContext.displayName  = 'OrderableListState';
 
@@ -197,8 +199,9 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     
     
     // states:
-    const ignoreAreaRef      = useRef<IgnoreArea|undefined>(undefined);
-    const orderableListState = useMemo<OrderableListState>(() => ({
+    const ignoreAreaRef         = useRef<IgnoreArea|undefined>(undefined);
+    const lastSwitchingIndexRef = useRef<number|undefined>(undefined);
+    const orderableListState    = useMemo<OrderableListState>(() => ({
         // identifiers:
         dragNDropId,                   // stable ref
         
@@ -212,6 +215,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         // states:
         appliedTo,                     // mutable ref
         ignoreAreaRef,                 // stable ref
+        lastSwitchingIndexRef,         // stable ref
         
         
         
@@ -234,6 +238,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         // states:
         appliedTo,                     // mutable ref
         // ignoreAreaRef,              // stable ref
+        // lastSwitchingIndexRef,      // stable ref
         
         
         

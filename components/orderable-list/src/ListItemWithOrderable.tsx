@@ -170,6 +170,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         // states:
         appliedTo,
         ignoreAreaRef,
+        lastSwitchingIndexRef,
         
         
         
@@ -194,7 +195,6 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
     
     
     // capabilities:
-    const lastSwitchingIndexRef = useRef<number|undefined>(undefined);
     const {
         // states:
         isDragging,
