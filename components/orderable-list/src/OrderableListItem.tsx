@@ -138,7 +138,17 @@ export const OrderableListItem       = <TElement extends Element = HTMLElement, 
     );
 };
 
+
+
 export {
     type ListSeparatorItemProps,
     ListSeparatorItem,
+}
+
+
+
+export interface OrderableListItemComponentProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
+{
+    // components:
+    orderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<TElement, TData>>
 }

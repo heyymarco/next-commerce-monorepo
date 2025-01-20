@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/orderable-list",
-  "version": "6.11.0",
+  "version": "6.12.0",
   "description": "Represents a series of content that the order can be rearranged.",
   "keywords": [
     "list",

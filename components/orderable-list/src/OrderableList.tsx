@@ -30,12 +30,6 @@ import {
 
 // reusable-ui components:
 import {
-    // variants:
-    ListStyle,
-    ListVariant,
-    
-    
-    
     // react components:
     ListItemProps,
     
@@ -405,4 +399,10 @@ export {
     OrderableList as default,
 }
 
-export type { ListStyle, ListVariant }
+
+
+export interface OrderableListComponentProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
+{
+    // components:
+    orderableListComponent ?: React.ReactComponentElement<any, OrderableListProps<TElement, TData>>
+}
