@@ -25,17 +25,17 @@ import {
 
 
 // react components:
-export interface ActionEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface ActionEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, in TActionEvent extends React.SyntheticEvent<unknown, unknown> = React.SyntheticEvent<unknown, unknown>>
     extends
         // bases:
         EditorProps<TElement, TChangeEvent, TValue>
 {
     // handlers:
-    onSave   ?: EventHandler<React.KeyboardEvent<unknown>>|EventHandler<React.MouseEvent<unknown>>|EventHandler<React.TouchEvent<unknown>>
-    onCancel ?: EventHandler<React.KeyboardEvent<unknown>>|EventHandler<React.MouseEvent<unknown>>|EventHandler<React.TouchEvent<unknown>>
-    onDelete ?: EventHandler<React.KeyboardEvent<unknown>>|EventHandler<React.MouseEvent<unknown>>|EventHandler<React.TouchEvent<unknown>>
+    onSave   ?: EventHandler<TActionEvent>
+    onCancel ?: EventHandler<TActionEvent>
+    onDelete ?: EventHandler<TActionEvent>
 }
-const ActionEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: ActionEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const ActionEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TActionEvent extends React.SyntheticEvent<unknown, unknown> = React.SyntheticEvent<unknown, unknown>>(props: ActionEditorProps<TElement, TChangeEvent, TValue, TActionEvent>): JSX.Element|null => {
     // props:
     const {
         // handlers:
@@ -66,8 +66,8 @@ export {
 
 
 
-export interface ActionEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface ActionEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, in TActionEvent extends React.SyntheticEvent<unknown, unknown> = React.SyntheticEvent<unknown, unknown>>
 {
     // components:
-    actionEditorComponent ?: React.ReactElement<ActionEditorProps<TElement, TChangeEvent, TValue>>
+    actionEditorComponent ?: React.ReactElement<ActionEditorProps<TElement, TChangeEvent, TValue, TActionEvent>>
 }
