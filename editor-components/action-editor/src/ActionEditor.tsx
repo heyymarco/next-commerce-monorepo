@@ -31,9 +31,9 @@ export interface ActionEditorProps<out TElement extends Element = HTMLElement, i
         EditorProps<TElement, TChangeEvent, TValue>
 {
     // handlers:
-    onSave   ?: EventHandler<React.SyntheticEvent<unknown, Event>>
-    onCancel ?: EventHandler<React.SyntheticEvent<unknown, Event>>
-    onDelete ?: EventHandler<React.SyntheticEvent<unknown, Event>>
+    onSave   ?: EventHandler<React.KeyboardEvent<unknown>>|EventHandler<React.MouseEvent<unknown>>|EventHandler<React.TouchEvent<unknown>>
+    onCancel ?: EventHandler<React.KeyboardEvent<unknown>>|EventHandler<React.MouseEvent<unknown>>|EventHandler<React.TouchEvent<unknown>>
+    onDelete ?: EventHandler<React.KeyboardEvent<unknown>>|EventHandler<React.MouseEvent<unknown>>|EventHandler<React.TouchEvent<unknown>>
 }
 const ActionEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: ActionEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
