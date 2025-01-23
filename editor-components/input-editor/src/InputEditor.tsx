@@ -59,10 +59,10 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ex
     // props:
     const {
         // values:
-        defaultValue,         // take  , to be normalized: null => empty string, TValue => toString
-        value,                // take  , to be normalized: null => empty string, TValue => toString
-        onChange : _onChange, // remove, will be defined by <SpecificEditor>::onChange(as TSpecific)
-        onChangeAsText,       // take  , will be handled by `handleValueChange()`
+        defaultValue,   // take, to be normalized: null => empty string, TValue => toString
+        value,          // take, to be normalized: null => empty string, TValue => toString
+        onChange,       // take, will be defined by <SpecificEditor>::onChange(as TSpecific)
+        onChangeAsText, // take, will be handled by `handleValueChange()`
         
         
         
@@ -75,6 +75,38 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ex
     // handlers:
     const handleValueChange = useEvent<React.EventHandler<TChangeEvent & React.ChangeEvent<HTMLInputElement>>>((event) => {
         onChangeAsText?.(event.target.value, event);
+        
+        if (onChange) {
+            const value = event.target.value;
+            switch (props.type ?? 'text') {
+                case 'number':
+                case 'range' : {
+                    const trimmedValue = value.trim();
+                    onChange((trimmedValue ? Number.parseFloat(trimmedValue) : null) satisfies number|null as TValue, event);
+                } break;
+                
+                case 'date':
+                case 'datetime-local':
+                case 'month':
+                case 'week':
+                case 'time': {
+                    const trimmedValue = value.trim();
+                    onChange((trimmedValue ? new Date(Date.parse(trimmedValue)) : null) satisfies Date|null as TValue, event);
+                } break;
+                
+                // case 'color':
+                // case 'email':
+                // case 'file':
+                // case 'password':
+                // case 'search':
+                // case 'tel':
+                // case 'text':
+                // case 'url':
+                default : {
+                    onChange(value satisfies string as TValue, event);
+                } break;
+            } // switch
+        } // if
     });
     
     
