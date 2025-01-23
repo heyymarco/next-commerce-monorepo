@@ -30,10 +30,10 @@ import {
 }                           from '@heymarco/action-editor'
 import {
     // react components:
-    type TextEditorProps,
-    TextEditor,
-    type TextEditorComponentProps,
-}                           from '@heymarco/text-editor'
+    type InputEditorProps,
+    InputEditor,
+    type InputEditorComponentProps,
+}                           from '@heymarco/input-editor'
 
 // internals:
 import {
@@ -48,23 +48,23 @@ import {
 
 
 // react components:
-export interface KeyActionEditorProps</*out*/ TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface KeyActionEditorProps</*out*/ TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
     extends
         // bases:
-        Omit<ActionEditorProps<TElement, TChangeEvent, string, React.KeyboardEvent<TElement>>,
+        Omit<ActionEditorProps<TElement, TChangeEvent, TValue, React.KeyboardEvent<TElement>>,
             // refs:
             |'elmRef'   // moved to <input>
             
             // children:
             |'children' // no nested children
         >,
-        Pick<TextEditorProps<TElement, TChangeEvent>,
+        Pick<InputEditorProps<TElement, TChangeEvent, TValue>,
             // refs:
             |'elmRef'   // moved to <input>
         >,
         
         // components:
-        TextEditorComponentProps<TElement, TChangeEvent>
+        InputEditorComponentProps<TElement, TChangeEvent, TValue>
 {
     // accessibilities:
     /**
@@ -82,7 +82,7 @@ export interface KeyActionEditorProps</*out*/ TElement extends Element = HTMLEle
      */
     deleteKeys ?: string[]
 }
-const KeyActionEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: KeyActionEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+const KeyActionEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: KeyActionEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // refs:
@@ -91,14 +91,14 @@ const KeyActionEditor = <TElement extends Element = HTMLElement, TChangeEvent ex
         
         
         // accessibilities:
-        saveKeys            = defaultSaveKeys,
-        cancelKeys          = defaultCancelKeys,
-        deleteKeys          = defaultDeleteKeys,
+        saveKeys             = defaultSaveKeys,
+        cancelKeys           = defaultCancelKeys,
+        deleteKeys           = defaultDeleteKeys,
         
         
         
         // components:
-        textEditorComponent = (<TextEditor /> as React.ReactElement<TextEditorProps<TElement, TChangeEvent>>),
+        inputEditorComponent = (<InputEditor<TElement, TChangeEvent, TValue> /> as React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>),
         
         
         
@@ -113,15 +113,15 @@ const KeyActionEditor = <TElement extends Element = HTMLElement, TChangeEvent ex
         
         
         // other props:
-        ...restKeyActionEditorProps
+        ...restInputEditorProps
     } = props;
     
     
     
     // refs:
     const mergedInputRef = useMergeRefs(
-        // preserves the original `elmRef` from `textEditorComponent`:
-        textEditorComponent.props.elmRef,
+        // preserves the original `elmRef` from `inputEditorComponent`:
+        inputEditorComponent.props.elmRef,
         
         
         
@@ -220,8 +220,8 @@ const KeyActionEditor = <TElement extends Element = HTMLElement, TChangeEvent ex
         });
     });
     const handleKeyDown         = useMergeEvents(
-        // preserves the original `onKeyDown` from `textEditorComponent`:
-        textEditorComponent.props.onKeyDown,
+        // preserves the original `onKeyDown` from `inputEditorComponent`:
+        inputEditorComponent.props.onKeyDown,
         
         
         
@@ -238,8 +238,8 @@ const KeyActionEditor = <TElement extends Element = HTMLElement, TChangeEvent ex
         setPressedKeys(null); // reset pressed keys when the editor loses focus
     });
     const handleBlur            = useMergeEvents(
-        // preserves the original `onBlur` from `textEditorComponent`:
-        textEditorComponent.props.onBlur,
+        // preserves the original `onBlur` from `inputEditorComponent`:
+        inputEditorComponent.props.onBlur,
         
         
         
@@ -316,25 +316,14 @@ const KeyActionEditor = <TElement extends Element = HTMLElement, TChangeEvent ex
     
     
     
-    // default props:
-    const {
-        ...restTextEditorProps
-    } = restKeyActionEditorProps satisfies NoForeignProps<typeof restKeyActionEditorProps, TextEditorProps<TElement, TChangeEvent>>;
-    
-    const {
-        ...restTextEditorComponentProps
-    } = textEditorComponent.props;
-    
-    
-    
     // jsx:
-    /* <TextEditor> */
-    return React.cloneElement<TextEditorProps<TElement, TChangeEvent>>(textEditorComponent,
+    /* <InputEditor> */
+    return React.cloneElement<InputEditorProps<TElement, TChangeEvent, TValue>>(inputEditorComponent,
         // props:
         {
             // other props:
-            ...restTextEditorProps,
-            ...restTextEditorComponentProps, // overwrites restTextEditorProps (if any conflics)
+            ...restInputEditorProps satisfies NoForeignProps<typeof restInputEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>,
+            ...inputEditorComponent.props, // overwrites restInputEditorProps (if any conflics)
             
             
             

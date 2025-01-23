@@ -8,7 +8,7 @@ The `KeyActionEditor` component is a custom React component that handles key eve
 - `saveKeys`: An array of key codes that trigger the save action. Default is `defaultSaveKeys`.
 - `cancelKeys`: An array of key codes that trigger the cancel action. Default is `defaultCancelKeys`.
 - `deleteKeys`: An array of key codes that trigger the delete action. Default is `defaultDeleteKeys`.
-- `textEditorComponent`: A React element representing the text editor component. Default is `<TextEditor />`.
+- `inputEditorComponent`: A React element representing the input editor component. Default is `<InputEditor />`.
 - `onSave`: A callback function triggered when the save action is performed.
 - `onCancel`: A callback function triggered when the cancel action is performed.
 - `onDelete`: A callback function triggered when the delete action is performed.
