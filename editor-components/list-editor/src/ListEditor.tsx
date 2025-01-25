@@ -2,12 +2,6 @@
 import {
     // react:
     default as React,
-    
-    
-    
-    // hooks:
-    useMemo,
-    useRef,
 }                           from 'react'
 
 // reusable-ui core:
@@ -30,29 +24,48 @@ import {
 
 // heymarco components:
 import {
+    // types:
+    type EditorChangeEventHandler,
+    
+    
+    
     // react components:
     type EditorProps,
-    type EditorComponentProps,
 }                           from '@heymarco/editor'
 import {
-    // layout-components:
+    // react components:
     type OrderableListProps,
     OrderableList,
     type OrderableListComponentProps,
     
     type OrderableListItemProps,
-    OrderableListItem,
     type OrderableListItemComponentProps,
 }                           from '@heymarco/orderable-list'             // represents a series of content that the order can be rearranged
+
+// internal components:
 import {
     // react components:
-    TextEditor,
-}                           from '@heymarco/text-editor'
+    type InsertOrderableListItemProps,
+    InsertOrderableListItem,
+}                           from './InsertOrderableListItem.js'
+import {
+    // react components:
+    type EditableOrderableListItemProps,
+    EditableOrderableListItem,
+}                           from './EditableOrderableListItem.js'
 
-
-
-// utilities:
-const defaultValueToUi = <TValue extends any = string>(value: TValue|null): React.ReactNode => `${value ?? ''}`;
+// internals:
+import {
+    extractElementsByOrder,
+}                           from './utilities.js'
+import {
+    useUniqueKeys,
+}                           from './hooks/unique-keys.js'
+import {
+    // types:
+    type SaveEntity,
+    type DeleteEntity,
+}                           from './hooks/edit-action-editor.js'
 
 
 
@@ -69,7 +82,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLButtonElemen
             
             |'notifyValueChange'
         >,
-        Omit<OrderableListProps<TElement, TValue>,
+        Omit<OrderableListProps<TElement, number>,
             // values:
             |'defaultValue'
             |'value'
@@ -82,56 +95,74 @@ export interface ListEditorProps<out TElement extends Element = HTMLButtonElemen
             |'children'         // not supported
             |'onChildrenChange' // not supported
         >,
-        Pick<React.InputHTMLAttributes<TElement>,
-            // accessibilities:
-            |'placeholder'
-        >,
         
         // components:
-        OrderableListComponentProps<TElement, TValue>,
-        OrderableListItemComponentProps<Element, TValue>,
-        EditorComponentProps<Element, TChangeEvent, TValue>
+        OrderableListComponentProps<TElement, number>,
+        OrderableListItemComponentProps<Element, number>,
+        Pick<EditableOrderableListItemProps<TElement, TChangeEvent, TValue>,
+            // accessibilities:
+            |'placeholder'
+            
+            // values:
+            |'valueToUi'
+            
+            // behaviors:
+            |'autoFocusOnEdit'
+            |'cancelEditOnBlur'
+            
+            // components:
+            |'orderableListItemComponent'
+            |'actionEditorComponent'
+        >,
+        Pick<InsertOrderableListItemProps<TElement, TChangeEvent, TValue>,
+            // accessibilities:
+            |'placeholder'
+            
+            // values:
+            |'emptyValue'
+            
+            // components:
+            |'insertOrderableListItemComponent'
+            |'actionEditorComponent'
+        >
 {
     // positions:
-    editorPosition                   ?: EditorPosition
-    
-    
-    
-    // values:
-    valueToUi                        ?: (value: TValue|null) => React.ReactNode
-    
-    
-    
-    // components:
-    editorOrderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<Element, unknown>>
+    editorPosition ?: EditorPosition
 }
 const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: ListEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // positions:
-        editorPosition                   = 'end',
+        editorPosition                    = 'end',
         
         
         
         // accessibilities:
-        placeholder                      = 'Add new',
+        placeholder,                      // take, to be handled by `<InsertOrderableListItem>` and `<EditableOrderableListItem>`
         
         
         
         // values:
-        valueToUi                        = defaultValueToUi,
+        valueToUi,                        // take, to be handled by                                 `<EditableOrderableListItem>`
+        emptyValue,                       // take, to be handled by `<InsertOrderableListItem>`
         
-        defaultValue                     : defaultUncontrollableValue = [],
-        value                            : controllableValue,
-        onChange                         : onValueChange,
+        defaultValue                      : defaultUncontrollableValue = [],
+        value                             : controllableValue,
+        onChange                          : onValueChange,
+        
+        
+        
+        // behaviors:
+        autoFocusOnEdit,                  // take, to be handled by                                 `<EditableOrderableListItem>`
+        cancelEditOnBlur,                 // take, to be handled by                                 `<EditableOrderableListItem>`
         
         
         
         // components:
-        orderableListComponent           = (<OrderableList<TElement, TValue>      /> as React.ReactElement<OrderableListProps<TElement, TValue>>),
-        orderableListItemComponent       = (<OrderableListItem<Element, TValue>   /> as React.ReactElement<OrderableListItemProps<Element, TValue>>),
-        editorOrderableListItemComponent = (<OrderableListItem<Element, unknown>  /> as React.ReactElement<OrderableListItemProps<Element, unknown>>),
-        editorComponent                  = (<TextEditor placeholder={placeholder} /> as React.ReactElement<EditorProps<Element, TChangeEvent, TValue>>),
+        orderableListComponent            = (<OrderableList<TElement, number> /> as React.ReactElement<OrderableListProps<TElement, number>>),
+        orderableListItemComponent,       // take, to be handled by                                 `<EditableOrderableListItem>`
+        insertOrderableListItemComponent, // take, to be handled by `<InsertOrderableListItem>`
+        actionEditorComponent,            // take, to be handled by `<InsertOrderableListItem>` and `<EditableOrderableListItem>`
         
         
         
@@ -151,69 +182,23 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
         onValueChange      : onValueChange,
     });
     
-    const existingRegisteredKeyMapRef = useRef<Map<TValue, number[]>|undefined>(undefined);
-    const uniqueValueCounterRef       = useRef<number>(0);
-    const uniqueKeys = useMemo<number[]>(() => {
-        // deep clone the `existingRegisteredKeyMap` to ``availableRegisteredKeyMap` because we need to mutate the data:
-        const availableRegisteredKeyMap = (
-            existingRegisteredKeyMapRef.current
-            ? new Map<TValue, number[]>(
-                existingRegisteredKeyMapRef.current
-                .entries()
-                .map(([key, list]) =>
-                    [key, [...list]]
-                )
-            )
-            : new Map<TValue, number[]>()
-        );
-        
-        
-        
-        const renewRegisteredKeyMap = new Map<TValue, number[]>();
-        const renewUniqueKeys : number[] = [];
-        
-        
-        
-        let index = -1;
-        for (const val of value) {
-            index++;
-            
-            
-            
-            const availableRegisteredKeysOfValue = availableRegisteredKeyMap.get(val) ?? (() => {
-                const newRegisteredKeysOfValue : number[] = [];
-                availableRegisteredKeyMap.set(val, newRegisteredKeysOfValue);
-                return newRegisteredKeysOfValue;
-            })();
-            const renewRegisteredKeysOfValue = renewRegisteredKeyMap.get(val) ?? (() => {
-                const newRegisteredKeysOfValue : number[] = [];
-                renewRegisteredKeyMap.set(val, newRegisteredKeysOfValue);
-                return newRegisteredKeysOfValue;
-            })();
-            const key = (
-                availableRegisteredKeysOfValue.shift() // take existing key (if any)
-                ??
-                uniqueValueCounterRef.current++        // create new key
-            );
-            renewRegisteredKeysOfValue.push(key);
-            renewUniqueKeys.push(key);
-        } // for
-        
-        
-        
-        existingRegisteredKeyMapRef.current = renewRegisteredKeyMap;
-        return renewUniqueKeys;
-    }, [value]);
+    const {
+        uniqueKeys,
+    } = useUniqueKeys({
+        value,
+    });
     
     
     
     // handlers:
-    const handleChildrenChangeInternal = useEvent((children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TValue>>[]): void => {
+    const handleChildrenChangeInternal = useEvent((children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, number>>[]): void => {
         triggerValueChange(
-            children
-            .filter(({props}) => 'data' in props) // filter out <EditorComponent>
-            .map(({props: {data}}) =>
-                data!
+            extractElementsByOrder(value,        
+                children
+                .filter(({props}) => 'data' in props) // filter out <InsertOrderableListItem>
+                .map(({props: {data}}) =>
+                    data!
+                )
             ),
             { triggerAt: 'immediately', event: undefined as any } // TODO: define event
         );
@@ -227,6 +212,42 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
         // actions:
         handleChildrenChangeInternal,
     );
+    
+    const handleSave                   = useEvent<EditorChangeEventHandler<TChangeEvent, SaveEntity<TValue>>>(({index, mutatedValue}, event) => {
+        const valueCopy = value.slice(0);
+        valueCopy[index] = mutatedValue;
+        triggerValueChange(
+            valueCopy,
+            { triggerAt: 'immediately', event }
+        );
+    });
+    const handleDelete                 = useEvent<EditorChangeEventHandler<TChangeEvent, DeleteEntity>>(({index}, event) => {
+        const valueCopy = value.slice(0);
+        valueCopy.splice(index, 1);
+        triggerValueChange(
+            valueCopy,
+            { triggerAt: 'immediately', event }
+        );
+    });
+    
+    const handleInsertStart            = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newItem, event) => {
+        triggerValueChange(
+            [
+                newItem,
+                ...value,
+            ],
+            { triggerAt: 'immediately', event }
+        );
+    });
+    const handleInsertEnd              = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newItem, event) => {
+        triggerValueChange(
+            [
+                ...value,
+                newItem,
+            ],
+            { triggerAt: 'immediately', event }
+        );
+    });
     
     
     
@@ -247,144 +268,95 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
     const {
         // other props:
         ...restOrderableListProps
-    } = restListEditorProps satisfies NoForeignProps<typeof restListEditorProps, OrderableListProps<TElement, TValue>>;
-    
-    const OrderableListItemWithEditor = (props: OrderableListItemProps<Element, unknown>): JSX.Element|null => {
-        // default props:
-        const {
-            // variants:
-            nude : editorComponentNude = true,
-            
-            
-            
-            // other props:
-            ...restEditorComponentProps
-        } = editorComponent.props;
-        
-        const {
-            // behaviors:
-            orderable = false,
-            
-            
-            
-            // children:
-            children  = React.cloneElement<EditorProps<Element, TChangeEvent, TValue>>(editorComponent,
-                // props:
-                {
-                    // other props:
-                    ...restEditorComponentProps,
-                    
-                    
-                    
-                    // variants:
-                    nude : editorComponentNude,
-                },
-            ),
-            
-            
-            
-            // other props:
-            ...restOrderableListItemProps
-        } = props;
-        
-        const {
-            // behaviors:
-            orderable : editorOrderableListItemComponentOrderable = orderable,
-            
-            
-            
-            // children:
-            children  : editorOrderableListItemComponentChildren  = children,
-            
-            
-            
-            // other props:
-            ...restEditorOrderableListItemComponentProps
-        } = editorOrderableListItemComponent.props;
-        
-        
-        
-        // jsx:
-        /* <OrderableListItem> */
-        return React.cloneElement<OrderableListItemProps<Element, unknown>>(editorOrderableListItemComponent,
-            // props:
-            {
-                // other props:
-                ...restOrderableListItemProps,
-                ...restEditorOrderableListItemComponentProps, // overwrites restOrderableListItemProps (if any conflics)
-                
-                
-                
-                // behaviors:
-                orderable : editorOrderableListItemComponentOrderable,
-            },
-            
-            
-            
-            // children:
-            editorOrderableListItemComponentChildren,
-        );
-    };
+    } = restListEditorProps satisfies NoForeignProps<typeof restListEditorProps, OrderableListProps<TElement, number>>;
     
     const {
         // children:
         children : orderableListComponentChildren = <>
-            {/* <OrderableListItemWithEditor> */}
-            {((editorPosition === 'start') || (editorPosition === 'both')) && <OrderableListItemWithEditor />}
+            {((editorPosition === 'start') || (editorPosition === 'both')) && <InsertOrderableListItem<TElement, TChangeEvent, TValue>
+                // accessibilities:
+                placeholder={placeholder}
+                
+                
+                
+                // values:
+                emptyValue={emptyValue}
+                
+                
+                
+                // components:
+                insertOrderableListItemComponent={insertOrderableListItemComponent}
+                actionEditorComponent={actionEditorComponent}
+                
+                
+                
+                // handlers:
+                onInsert={handleInsertStart}
+            />}
             
-            {/* <OrderableListItem> */}
-            {value.map((val, childIndex) => {
-                const uniqueKey = uniqueKeys[childIndex];
-                
-                
-                
-                // default props:
-                const {
+            {/* <EditableOrderableListItem> */}
+            {value.map((val, listIndex) =>
+                <EditableOrderableListItem<TElement, TChangeEvent, TValue>
+                    // identifiers:
+                    key={uniqueKeys[listIndex]}
+                    
+                    
+                    
                     // data:
-                    data     : orderableListItemComponentData     = val,
+                    data={listIndex}
                     
                     
                     
-                    // children:
-                    // children : orderableListItemComponentChildren = valueToUi(val),
-                    children : orderableListItemComponentChildren = <>${uniqueKey} - {valueToUi(val)}</>, // TODO: remove visual key debugger
+                    // accessibilities:
+                    placeholder={placeholder}
                     
                     
                     
-                    // other props:
-                    ...restOrderableListItemComponentProps
-                } = orderableListItemComponent.props;
-                
-                
-                
-                // jsx:
-                /* <OrderableListItem> */
-                return React.cloneElement<OrderableListItemProps<Element, TValue>>(orderableListItemComponent,
-                    // props:
-                    {
-                        // other props:
-                        ...restOrderableListItemComponentProps,
-                        
-                        
-                        
-                        // identifiers:
-                        key  : uniqueKey,
-                        
-                        
-                        
-                        // data:
-                        data : orderableListItemComponentData,
-                    },
+                    // values:
+                    valueToUi={valueToUi}
+                    
+                    defaultValue={val}
                     
                     
                     
-                    // children:
-                    orderableListItemComponentChildren,
-                );
-            })}
+                    // behaviors:
+                    autoFocusOnEdit={autoFocusOnEdit}
+                    cancelEditOnBlur={cancelEditOnBlur}
+                    
+                    
+                    
+                    // components:
+                    orderableListItemComponent={orderableListItemComponent}
+                    actionEditorComponent={actionEditorComponent}
+                    
+                    
+                    
+                    // handlers:
+                    onSave={handleSave}
+                    onDelete={handleDelete}
+                />
+            )}
             
-            {/* <OrderableListItemWithEditor> */}
-            {((editorPosition === 'end') || (editorPosition === 'both')) && <OrderableListItemWithEditor />}
+            {((editorPosition === 'end') || (editorPosition === 'both')) && <InsertOrderableListItem<TElement, TChangeEvent, TValue>
+                // accessibilities:
+                placeholder={placeholder}
+                
+                
+                
+                // values:
+                emptyValue={emptyValue}
+                
+                
+                
+                // components:
+                insertOrderableListItemComponent={insertOrderableListItemComponent}
+                actionEditorComponent={actionEditorComponent}
+                
+                
+                
+                // handlers:
+                onInsert={handleInsertEnd}
+            />}
         </>,
         
         
@@ -397,7 +369,7 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
     
     // jsx:
     /* <OrderableList> */
-    return React.cloneElement<OrderableListProps<TElement, TValue>>(orderableListComponent,
+    return React.cloneElement<OrderableListProps<TElement, number>>(orderableListComponent,
         // props:
         {
             // other props:
