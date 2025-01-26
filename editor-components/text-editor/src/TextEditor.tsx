@@ -17,6 +17,10 @@ import {
 
 // heymarco components:
 import {
+    // types:
+    type EditorChangeEventHandler,
+}                           from '@heymarco/editor'
+import {
     // react components:
     type InputEditorProps,
     InputEditor,
@@ -25,13 +29,13 @@ import {
 
 
 // react components:
-export interface TextEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface TextEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>
     extends
         // bases:
-        InputEditorProps<TElement, TChangeEvent, string>
+        InputEditorProps<TElement, TChangeEvent, TValue>
 {
 }
-const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: TextEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>(props: TextEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // values:
@@ -48,13 +52,13 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
     
     // handlers:
     const handleChangeAsText = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onChange,
-        
-        
-        
         // preserves the original `onChangeAsText` from `props`:
         onChangeAsText,
+        
+        
+        
+        // preserves the original `onChange` from `props`:
+        onChange satisfies EditorChangeEventHandler<TChangeEvent, TValue>|undefined as EditorChangeEventHandler<TChangeEvent, string>|undefined,
     );
     
     
@@ -67,16 +71,16 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
         
         
         // other props:
-        ...restEditorProps
-    } = restTextEditorProps satisfies NoForeignProps<typeof restTextEditorProps, InputEditorProps<TElement, TChangeEvent, string>>;
+        ...restInputEditorProps
+    } = restTextEditorProps satisfies NoForeignProps<typeof restTextEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>;
     
     
     
     // jsx:
     return (
-        <InputEditor<TElement, TChangeEvent, string>
+        <InputEditor<TElement, TChangeEvent, TValue>
             // other props:
-            {...restEditorProps}
+            {...restInputEditorProps}
             
             
             
@@ -97,8 +101,8 @@ export {
 
 
 
-export interface TextEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface TextEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>
 {
     // components:
-    textEditorComponent ?: React.ReactElement<TextEditorProps<TElement, TChangeEvent>>
+    textEditorComponent ?: React.ReactElement<TextEditorProps<TElement, TChangeEvent, TValue>>
 }

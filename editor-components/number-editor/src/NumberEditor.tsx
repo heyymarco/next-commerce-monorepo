@@ -25,8 +25,6 @@ import {
     // react components:
     type InputEditorProps,
     InputEditor,
-    
-    type InputEditorComponentProps,
 }                           from '@heymarco/input-editor'
 
 
@@ -46,10 +44,7 @@ export interface NumberEditorProps<out TElement extends Element = HTMLSpanElemen
             // |'type'                  // only supports number
             // |'autoCapitalize'        // nothing to capitalize of number
             // |'inputMode'             // always 'numeric'
-        >,
-        
-        // components:
-        InputEditorComponentProps<TElement, TChangeEvent, TValue>
+        >
 {
     // validations:
     min  ?: number // only supports numeric value
@@ -65,11 +60,6 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
         
         
         
-        // components:
-        inputEditorComponent = (<InputEditor<TElement, TChangeEvent, TValue> /> as React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>),
-        
-        
-        
         // other props:
         ...restNumberEditorProps
     } = props;
@@ -81,11 +71,6 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
         onChange?.((value ? Number.parseFloat(value) : null) as TValue, event);
     });
     const handleChangeAsText         = useMergeEvents(
-        // preserves the original `onChangeAsText` from `inputEditorComponent`:
-        inputEditorComponent.props.onChangeAsText,
-        
-        
-        
         // preserves the original `onChangeAsText` from `props`:
         onChangeAsText,
         
@@ -100,7 +85,7 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
     // default props:
     const {
         // formats:
-        type : inputEditorType          = 'number',
+        type = 'number',
         
         
         
@@ -108,36 +93,24 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
         ...restInputEditorProps
     } = restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>;
     
-    const {
-        // formats:
-        type : inputEditorComponentType = inputEditorType,
-        
-        
-        
-        // other props:
-        ...restInputEditorComponentProps
-    } = inputEditorComponent.props;
-    
     
     
     // jsx:
-    return React.cloneElement<InputEditorProps<TElement, TChangeEvent, TValue>>(inputEditorComponent,
-        // props:
-        {
+    return (
+        <InputEditor<TElement, TChangeEvent, TValue>
             // other props:
-            ...restInputEditorProps,
-            ...restInputEditorComponentProps, // overwrites restInputEditorProps (if any conflics)
+            {...restInputEditorProps}
             
             
             
             // values:
-            onChangeAsText : handleChangeAsText,
+            onChangeAsText={handleChangeAsText}
             
             
             
             // formats:
-            type           : inputEditorComponentType,
-        },
+            type={type}
+        />
     );
 };
 export {
