@@ -1,6 +1,6 @@
 'use client'
 
-import { OrderableList, OrderableListItem, OrderableListItemDropHandshakeEvent } from '@heymarco/orderable-list'
+import { ChildrenChangeEventHandler, OrderableList, OrderableListItem, OrderableListItemDropHandshakeEvent } from '@heymarco/orderable-list'
 import { useEvent } from '@reusable-ui/core';
 
 
@@ -26,6 +26,9 @@ export default function Home() {
             // console.log(`[dragged] migrate ${ownListIndex} => ${pairListIndex}`);
         } // if
     });
+    const handleChildrenChange = useEvent<ChildrenChangeEventHandler<unknown>>((children, event) => {
+        console.log('onChildrenChange', event.clientX, event.clientY);
+    });
     return (
         <main>
             <OrderableList theme='primary' mild={false} defaultChildren={<>
@@ -36,7 +39,7 @@ export default function Home() {
                 <OrderableListItem data={'444'} onOrderHandshake={handleOrderHandshake}>444<br />444</OrderableListItem>
                 <OrderableListItem data={'555'} onOrderHandshake={handleOrderHandshake}>555</OrderableListItem>
                 <OrderableListItem data={'666'} onOrderHandshake={handleOrderHandshake}>666</OrderableListItem>
-            </>} />
+            </>} onChildrenChange={handleChildrenChange} />
         </main>
     )
 }

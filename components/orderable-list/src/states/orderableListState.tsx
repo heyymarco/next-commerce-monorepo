@@ -23,6 +23,13 @@ import {
     useEvent,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco:
+import {
+    // types:
+    type DragHandshakeEvent,
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
+
 // internals:
 import type {
     // types:
@@ -71,6 +78,10 @@ export interface IgnoreArea {
      */
     restoreOnce : RestoreOnce
 }
+export interface LastSwitching {
+    to                 : number|undefined
+    dragHandshakeEvent : DragHandshakeEvent<Element>
+}
 export interface OrderableListDragStartEvent {
     from : number
 }
@@ -85,65 +96,65 @@ export interface OrderableListDroppedEvent {
 export interface OrderableListState
 {
     // identifiers:
-    dragNDropId           : symbol
+    dragNDropId        : symbol
     
     
     
     // behaviors:
-    orderMode             : OrderableListOrderMode
+    orderMode          : OrderableListOrderMode
     
     
     
     // states:
-    appliedTo             : number|undefined
-    ignoreAreaRef         : React.MutableRefObject<IgnoreArea|undefined>
-    lastSwitchingIndexRef : React.MutableRefObject<number|undefined>
+    appliedTo          : number|undefined
+    ignoreAreaRef      : React.MutableRefObject<IgnoreArea|undefined>
+    lastSwitchingRef   : React.MutableRefObject<LastSwitching|undefined>
     
     /**
      * The coordinates (relative to the `<OrderableListItem>`'s left and top) where the `<OrderableListItem>` is being grabbed.
      */
-    touchedPositionRef    : React.MutableRefObject<{ left: number, top: number }|undefined>
+    touchedPositionRef : React.MutableRefObject<{ left: number, top: number }|undefined>
     
     /**
      * The cached coordinates (relative to the browser's viewport) where the `<OrderableListItem>` is floating.
      */
-    cachedFloatingPos     : React.MutableRefObject<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>
+    cachedFloatingPos  : React.MutableRefObject<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>
     
     
     
     // handlers:
-    handleDragStart       : (event: OrderableListDragStartEvent) => void
-    handleDragEnd         : () => void
-    handleDragMove        : (event: OrderableListDragMoveEvent) => void
-    handleDropped         : (event: OrderableListDroppedEvent) => void
+    handleDragStart    : (event: OrderableListDragStartEvent) => void
+    handleDragEnd      : () => void
+    handleDragMove     : (event: OrderableListDragMoveEvent) => void
+    handleDropped      : (event: OrderableListDroppedEvent, draggedEvent: DraggedEvent<Element>) => void
 }
 
 const noopHandler = () => { throw Error('not inside <OrderableList>'); };
 const OrderableListStateContext = createContext<OrderableListState>({
     // identifiers:
-    dragNDropId           : undefined as any,
+    dragNDropId        : undefined as any,
     
     
     
     // behaviors:
-    orderMode             : 'shift',
+    orderMode          : 'shift',
     
     
     
     // states:
-    appliedTo             : undefined,
-    ignoreAreaRef         : { current: undefined },
-    lastSwitchingIndexRef : { current: undefined },
-    touchedPositionRef    : { current: undefined },
-    cachedFloatingPos     : { current: undefined },
+    appliedTo          : undefined,
+    ignoreAreaRef      : { current: undefined },
+    lastSwitchingRef   : { current: undefined },
+    touchedPositionRef : { current: undefined },
+    cachedFloatingPos  : { current: undefined },
     
     
     
     // handlers:
-    handleDragStart       : noopHandler,
-    handleDragEnd         : noopHandler,
-    handleDragMove        : noopHandler,
-    handleDropped         : noopHandler,
+    handleDragStart    : noopHandler,
+    handleDragEnd      : noopHandler,
+    handleDragMove     : noopHandler,
+    handleDropped      : noopHandler,
 });
 OrderableListStateContext.displayName  = 'OrderableListState';
 
@@ -211,11 +222,11 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
     
     
     // states:
-    const ignoreAreaRef         = useRef<IgnoreArea|undefined>(undefined);
-    const lastSwitchingIndexRef = useRef<number|undefined>(undefined);
-    const touchedPositionRef    = useRef<{ left: number, top: number }|undefined>(undefined);
-    const cachedFloatingPos     = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
-    const orderableListState    = useMemo<OrderableListState>(() => ({
+    const ignoreAreaRef      = useRef<IgnoreArea|undefined>(undefined);
+    const lastSwitchingRef   = useRef<LastSwitching|undefined>(undefined);
+    const touchedPositionRef = useRef<{ left: number, top: number }|undefined>(undefined);
+    const cachedFloatingPos  = useRef<Pick<MouseEvent, 'clientX'|'clientY'>|undefined>(undefined);
+    const orderableListState = useMemo<OrderableListState>(() => ({
         // identifiers:
         dragNDropId,                   // stable ref
         
@@ -229,7 +240,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         // states:
         appliedTo,                     // mutable ref
         ignoreAreaRef,                 // stable ref
-        lastSwitchingIndexRef,         // stable ref
+        lastSwitchingRef,              // stable ref
         touchedPositionRef,            // stable ref
         cachedFloatingPos,             // stable ref
         
@@ -254,7 +265,7 @@ const OrderableListStateProvider = (props: React.PropsWithChildren<OrderableList
         // states:
         appliedTo,                     // mutable ref
         // ignoreAreaRef,              // stable ref
-        // lastSwitchingIndexRef,      // stable ref
+        // lastSwitchingRef,           // stable ref
         // touchedPositionRef,         // stable ref
         // cachedFloatingPos,          // stable ref
         

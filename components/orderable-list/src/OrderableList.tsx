@@ -27,6 +27,10 @@ import {
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
+import {
+    // types:
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
 
 // reusable-ui components:
 import {
@@ -72,6 +76,14 @@ import {
 
 
 
+// types:
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export type ChildrenChangeEventHandler<TData extends unknown = unknown> = (children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[], event: DraggedEvent<Element>) => void
+
+
+
 // react components:
 export interface OrderableListProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
     extends
@@ -101,9 +113,12 @@ export interface OrderableListProps<TElement extends Element = HTMLElement, TDat
     
     
     // children:
+    /*
+        We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+    */
     defaultChildren  ?: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]|React.ReactNode
     children         ?: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]|React.ReactNode
-    onChildrenChange ?: (children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[]) => void
+    onChildrenChange ?: ChildrenChangeEventHandler<TData>
 }
 const OrderableList = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(props: OrderableListProps<TElement, TData>): JSX.Element|null => {
     // styles:
@@ -136,10 +151,10 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     const {
         value              : children,
         triggerValueChange : triggerChildrenChange,
-    } = useControllableAndUncontrollable<React.ReactNode[]>({
+    } = useControllableAndUncontrollable<React.ReactNode[], DraggedEvent<Element>>({
         defaultValue       : (defaultUncontrollableChildren !== undefined) ? flattenChildren(defaultUncontrollableChildren) : [],
         value              : (controllableChildren          !== undefined) ? flattenChildren(controllableChildren         ) : undefined,
-        onValueChange      : onControllableChildrenChange as ((children: React.ReactNode) => void),
+        onValueChange      : onControllableChildrenChange as ((children: React.ReactNode, event: DraggedEvent<Element>) => void),
     });
     
     const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], appliedTo: number }|undefined>(undefined);
@@ -223,7 +238,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             appliedTo : toLogicIndex,
         });
     });
-    const handleDropped        = useEvent(({from: fromRaw, to: toRaw}: OrderableListDroppedEvent): void => {
+    const handleDropped        = useEvent(({from: fromRaw, to: toRaw}: OrderableListDroppedEvent, draggedEvent: DraggedEvent<Element>): void => {
         const from     = Math.abs(fromRaw); // remove negative sign (if any)
         const to       = (
             draftChildren?.appliedTo        // cancel out effect of moved draftChildren (if any)
@@ -249,7 +264,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
         const mutatedChildren           = children.slice(0);                             // copy
         
         handleMutateChildren(mutatedChildren, fromChildIndex, toChildIndex);
-        triggerChildrenChange(mutatedChildren, { triggerAt: 'microtask' });
+        triggerChildrenChange(mutatedChildren, { triggerAt: 'immediately', event: draggedEvent });
     });
     
     

@@ -35,7 +35,10 @@ import {
 
 
 // react components:
-export interface OrderableListItemProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface OrderableListItemProps<TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown>
     extends
         // bases:
         ListItemProps<TElement>,
@@ -59,7 +62,7 @@ export interface OrderableListItemProps<TElement extends Element = HTMLElement, 
     onOrderStart     ?: (event: OrderableListItemDragStartEvent<TElement>           ) => void|Promise<void>
     onOrderHandshake ?: (event: OrderableListItemDropHandshakeEvent<TElement, TData>) => void|Promise<void>
 }
-export const OrderableListItem       = <TElement extends Element = HTMLElement, TData extends unknown = unknown>(props: OrderableListItemProps<TElement, TData>): JSX.Element|null => {
+export const OrderableListItem       = <TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown>(props: OrderableListItemProps<TElement, TData>): JSX.Element|null => {
     // rest props:
     const {
         // data:
@@ -147,7 +150,7 @@ export {
 
 
 
-export interface OrderableListItemComponentProps<TElement extends Element = HTMLElement, TData extends unknown = unknown>
+export interface OrderableListItemComponentProps<TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown>
 {
     // components:
     orderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<TElement, TData>>

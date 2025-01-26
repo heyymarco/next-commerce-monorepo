@@ -12,10 +12,13 @@ export interface OrderableListDragNDropData<TElement extends HTMLElement = HTMLE
 
 
 // events:
-export interface OrderableListItemDragStartEvent<TElement extends Element = HTMLElement> extends React.MouseEvent<TElement, MouseEvent> {
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface OrderableListItemDragStartEvent<TElement extends HTMLElement = HTMLElement> extends React.MouseEvent<TElement, MouseEvent> {
     /*mutable*/ response   : boolean
 }
-export interface OrderableListItemDropHandshakeEvent<TElement extends Element = HTMLElement, TData extends unknown = unknown> extends React.MouseEvent<TElement, MouseEvent> {
+export interface OrderableListItemDropHandshakeEvent<TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown> extends React.MouseEvent<TElement, MouseEvent> {
     readonly    ownListIndex  : number
     readonly    pairListIndex : number|undefined
     

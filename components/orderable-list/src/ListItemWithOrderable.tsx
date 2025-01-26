@@ -28,6 +28,7 @@ import {
 import {
     // types:
     type DragHandshakeEvent,
+    type DraggedEvent,
     
     
     
@@ -95,6 +96,9 @@ import {
 
 
 // react components:
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
 export interface ListItemWithOrderableProps<TElement extends HTMLElement = HTMLElement, TData extends unknown = unknown>
     extends
         // bases:
@@ -170,7 +174,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         // states:
         appliedTo,
         ignoreAreaRef,
-        lastSwitchingIndexRef,
+        lastSwitchingRef,
         touchedPositionRef,
         cachedFloatingPos,
         
@@ -290,15 +294,25 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             // remember the listIndex of the last switching, so we can simulate *dropped* event when the user dragged on the `ignoreArea`:
-            lastSwitchingIndexRef.current = (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex;
+            lastSwitchingRef.current = {
+                to                 : (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex,
+                dragHandshakeEvent : event,
+            };
         },
         onDragMove(event) {
             // console.log('onDragMove', event.timeStamp);
+            // console.log('onDragMove', event.clientX, event.clientY);
             if (event.response) {
                 handleDragMove({
                     from : listIndex,
                     to   : (event.dropData?.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
                 });
+            }
+            else if (lastSwitchingRef.current) { // when responsed as `false` (was aborted in `onDragHandshake` due to inside ignore area) => we need to preserve the cursor coordinate
+                lastSwitchingRef.current.dragHandshakeEvent = {
+                    ...event, // partially update the `DragMoveEvent` (partial), containing the cursor coordinate => `DragHandshakeEvent` (full)
+                    dropData : lastSwitchingRef.current.dragHandshakeEvent.dropData, // preserve the `dropData` from `DragHandshakeEvent`
+                };
             } // if
             
             
@@ -400,14 +414,14 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
         onDragged(event) {
             // console.log('onDragged', event.timeStamp);
             
-            lastSwitchingIndexRef.current = undefined; // prevents from simulating *dropped* event from happening
+            lastSwitchingRef.current = undefined; // prevents from simulating *dropped* event from happening
             
             
             
             handleDropped({
                 from : listIndex,
                 to   : (event.dropData.get(dragNDropId) as OrderableListDragNDropData<TElement, TData>|undefined)?.listIndex as number,
-            });
+            }, event);
         },
     });
     useDroppable<TElement>({
@@ -775,15 +789,22 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
             
             
             
-            const lastSwitchingIndex = lastSwitchingIndexRef.current; // take
-            lastSwitchingIndexRef.current = undefined;                // clear
-            if (lastSwitchingIndex !== undefined) {
+            const lastSwitching = lastSwitchingRef.current; // take
+            lastSwitchingRef.current = undefined;                // clear
+            if (lastSwitching?.to !== undefined) {
                 // simulate *dropped* event when dragged on `ignoreArea`:
                 // console.log('simulate onDragged => handleDropped');
+                const {
+                    to,
+                    dragHandshakeEvent : {
+                        response : _response, // remove
+                        ...restDraggedEvent
+                    }
+                } = lastSwitching;
                 handleDropped({
                     from : listIndex,
-                    to   : lastSwitchingIndex,
-                });
+                    to   : to,
+                }, restDraggedEvent satisfies DraggedEvent<Element>);
             } // if
             
             
