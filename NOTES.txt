@@ -45,6 +45,7 @@ KeyActionEditor      |  generic (= span)   |  generic (= changeEvent)   |  gener
 SelectDropdownEditor |  generic (= button) |  generic (= mouseEvent)    |  generic (= string)       |   generic (= DDL_Expanded)   |           -           |
 InputDropdownEditor  |  generic (= div)    |  generic (= changeEvent)   |  generic (= string)       |   generic (= DDL_Expanded)   |           -           |
 AddressEditor        |  generic (= div)    |  generic (= changeEvent)   |  generic (= Address|null) |              -               |           -           |
+ListEditor           |  generic (= html)   |  generic (= kbd|dragged)   |  generic (= string)       |              -               |           -           |
 ------------------------------------------------------------------------------------------------------------------------------------------------------------
 TextEditor           |  generic (= span)   |  generic (= changeEvent)   |  string                   |              -               |           -           |
 NameEditor           |  generic (= span)   |  generic (= changeEvent)   |  string                   |              -               |           -           |
