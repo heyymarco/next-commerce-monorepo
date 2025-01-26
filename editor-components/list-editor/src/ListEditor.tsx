@@ -33,12 +33,16 @@ import {
     type EditorProps,
 }                           from '@heymarco/editor'
 import {
+    // types:
+    ChildrenChangeEventHandler,
+    
+    
+    
     // react components:
     type OrderableListProps,
     OrderableList,
     type OrderableListComponentProps,
     
-    type OrderableListItemProps,
     type OrderableListItemComponentProps,
 }                           from '@heymarco/orderable-list'             // represents a series of content that the order can be rearranged
 
@@ -71,7 +75,7 @@ import {
 
 // react components:
 export type EditorPosition = 'start'|'end'|'both'|'none'
-export interface ListEditorProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface ListEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
     extends
         // bases:
         Pick<EditorProps<TElement, TChangeEvent, TValue[]>,
@@ -98,8 +102,8 @@ export interface ListEditorProps<out TElement extends Element = HTMLButtonElemen
         
         // components:
         OrderableListComponentProps<TElement, number>,
-        OrderableListItemComponentProps<Element, number>,
-        Pick<EditableOrderableListItemProps<TElement, TChangeEvent, TValue>,
+        OrderableListItemComponentProps<HTMLElement, number>,
+        Pick<EditableOrderableListItemProps<HTMLElement, TChangeEvent, TValue>,
             // accessibilities:
             |'placeholder'
             
@@ -114,7 +118,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLButtonElemen
             |'orderableListItemComponent'
             |'actionEditorComponent'
         >,
-        Pick<InsertOrderableListItemProps<TElement, TChangeEvent, TValue>,
+        Pick<InsertOrderableListItemProps<HTMLElement, TChangeEvent, TValue>,
             // accessibilities:
             |'placeholder'
             
@@ -129,7 +133,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLButtonElemen
     // positions:
     editorPosition ?: EditorPosition
 }
-const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: ListEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: ListEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // positions:
@@ -191,7 +195,7 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
     
     
     // handlers:
-    const handleChildrenChangeInternal = useEvent((children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, number>>[]): void => {
+    const handleChildrenChangeInternal = useEvent<ChildrenChangeEventHandler<number>>((children, event): void => {
         triggerValueChange(
             extractElementsByOrder(value,        
                 children
@@ -200,7 +204,7 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
                     data!
                 )
             ),
-            { triggerAt: 'immediately', event: undefined as any } // TODO: define event
+            { triggerAt: 'immediately', event: event satisfies React.SyntheticEvent<unknown, Event> as React.SyntheticEvent<unknown, Event> as TChangeEvent }
         );
     });
     const handleChildrenChange         = useMergeEvents(
@@ -273,7 +277,7 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
     const {
         // children:
         children : orderableListComponentChildren = <>
-            {((editorPosition === 'start') || (editorPosition === 'both')) && <InsertOrderableListItem<TElement, TChangeEvent, TValue>
+            {((editorPosition === 'start') || (editorPosition === 'both')) && <InsertOrderableListItem<HTMLElement, TChangeEvent, TValue>
                 // accessibilities:
                 placeholder={placeholder}
                 
@@ -296,7 +300,7 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
             
             {/* <EditableOrderableListItem> */}
             {value.map((val, listIndex) =>
-                <EditableOrderableListItem<TElement, TChangeEvent, TValue>
+                <EditableOrderableListItem<HTMLElement, TChangeEvent, TValue>
                     // identifiers:
                     key={uniqueKeys[listIndex]}
                     
@@ -337,7 +341,7 @@ const ListEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent e
                 />
             )}
             
-            {((editorPosition === 'end') || (editorPosition === 'both')) && <InsertOrderableListItem<TElement, TChangeEvent, TValue>
+            {((editorPosition === 'end') || (editorPosition === 'both')) && <InsertOrderableListItem<HTMLElement, TChangeEvent, TValue>
                 // accessibilities:
                 placeholder={placeholder}
                 
@@ -395,7 +399,7 @@ export {
 
 
 
-export interface ListEditorComponentProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface ListEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
 {
     // components:
     listEditorComponent ?: React.ReactElement<ListEditorProps<TElement, TChangeEvent, TValue>>

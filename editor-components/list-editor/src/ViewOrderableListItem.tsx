@@ -36,20 +36,23 @@ import {
 
 
 // react components:
-export interface ViewOrderableListItemProps<TValue extends unknown = string>
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface ViewOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, TValue extends unknown = string>
     extends
         // bases:
-        Omit<OrderableListItemProps<Element, number>,
+        Omit<OrderableListItemProps<TElement, number>,
             // values:
             |'defaultValue'
         >,
-        Pick<EditActionEditorProps<Element, React.SyntheticEvent<unknown, Event>, TValue>,
+        Pick<EditActionEditorProps<TElement, React.SyntheticEvent<unknown, Event>, TValue>,
             // values:
             |'defaultValue'
         >,
         
         // components:
-        OrderableListItemComponentProps<Element, number>
+        OrderableListItemComponentProps<TElement, number>
 {
     // values:
     valueToUi ?: (value: TValue) => React.ReactNode
@@ -59,7 +62,7 @@ export interface ViewOrderableListItemProps<TValue extends unknown = string>
     // handlers:
     onEdit    ?: EventHandler<void>
 }
-const ViewOrderableListItem = <TValue extends unknown = string>(props: ViewOrderableListItemProps<TValue>): JSX.Element|null => {
+const ViewOrderableListItem = <TElement extends HTMLElement = HTMLElement, TValue extends unknown = string>(props: ViewOrderableListItemProps<TElement, TValue>): JSX.Element|null => {
     // props:
     const {
         // values:
@@ -70,7 +73,7 @@ const ViewOrderableListItem = <TValue extends unknown = string>(props: ViewOrder
         
         
         // components:
-        orderableListItemComponent = (<OrderableListItem<Element, unknown> /> as React.ReactElement<OrderableListItemProps<Element, number>>),
+        orderableListItemComponent = (<OrderableListItem<TElement, unknown> /> as React.ReactElement<OrderableListItemProps<TElement, number>>),
         
         
         
@@ -116,7 +119,7 @@ const ViewOrderableListItem = <TValue extends unknown = string>(props: ViewOrder
         
         // other props:
         ...restOrderableListItemProps
-    } = restViewOrderableListItemProps satisfies NoForeignProps<typeof restViewOrderableListItemProps, OrderableListItemProps<Element, number>>;
+    } = restViewOrderableListItemProps satisfies NoForeignProps<typeof restViewOrderableListItemProps, OrderableListItemProps<TElement, number>>;
     
     const {
         // children:
@@ -132,7 +135,7 @@ const ViewOrderableListItem = <TValue extends unknown = string>(props: ViewOrder
     
     // jsx:
     /* <OrderableListItem> */
-    return React.cloneElement<OrderableListItemProps<Element, number>>(orderableListItemComponent,
+    return React.cloneElement<OrderableListItemProps<TElement, number>>(orderableListItemComponent,
         // props:
         {
             // other props:

@@ -41,6 +41,7 @@ import {
 
 
 
+// type:
 export interface EditEntity {
     index : number
 }
@@ -50,7 +51,10 @@ export interface SaveEntity<TValue extends unknown = string> extends EditEntity 
 export interface DeleteEntity extends EditEntity {
 }
 
-export interface EditActionEditorProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface EditActionEditorProps<out TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
     extends
         // components:
         ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>,
@@ -86,7 +90,7 @@ export interface EditActionEditorApi<in TChangeEvent extends React.SyntheticEven
         Required<ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>>
 {
 }
-export const useEditActionEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: EditActionEditorProps<TElement, TChangeEvent, TValue>): EditActionEditorApi<TChangeEvent, TValue> => {
+export const useEditActionEditor = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: EditActionEditorProps<TElement, TChangeEvent, TValue>): EditActionEditorApi<TChangeEvent, TValue> => {
     // props:
     const {
         // identifiers:

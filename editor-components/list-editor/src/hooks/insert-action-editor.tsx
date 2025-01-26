@@ -38,7 +38,10 @@ import {
 
 
 
-export interface InsertActionEditorProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface InsertActionEditorProps<out TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
     extends
         // components:
         ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>,
@@ -61,7 +64,7 @@ export interface InsertActionEditorApi<in TChangeEvent extends React.SyntheticEv
         Required<ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>>
 {
 }
-export const useInsertActionEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: InsertActionEditorProps<TElement, TChangeEvent, TValue>): InsertActionEditorApi<TChangeEvent, TValue> => {
+export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: InsertActionEditorProps<TElement, TChangeEvent, TValue>): InsertActionEditorApi<TChangeEvent, TValue> => {
     // props:
     const {
         // accessibilities:

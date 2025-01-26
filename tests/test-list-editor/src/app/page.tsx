@@ -22,7 +22,10 @@ export default function Home() {
     ]);
     return (
         <Container tag='main' theme='primary' className={styles.main}>
-            <ListEditor theme='primary' editorPosition='both' value={items} onChange={setItems} />
+            <ListEditor theme='primary' editorPosition='both' value={items} onChange={(newValue, event) => {
+                setItems(newValue);
+                console.log(event);
+            }} />
             <p>
                 {items.join(', ')}
             </p>

@@ -46,10 +46,13 @@ import {
 
 
 // react components:
-export interface EditableOrderableListItemProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface EditableOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
     extends
         // bases:
-        Omit<ViewOrderableListItemProps<TValue>,
+        Omit<ViewOrderableListItemProps<TElement, TValue>,
             // handlers:
             |'onEdit'
         >,
@@ -59,7 +62,7 @@ export interface EditableOrderableListItemProps<out TElement extends Element = H
         >
 {
 }
-const EditableOrderableListItem = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: EditableOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: EditableOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:
@@ -121,9 +124,9 @@ const EditableOrderableListItem = <TElement extends Element = HTMLButtonElement,
     if (!isEditMode) {
         /* <ViewOrderableListItem> */
         return (
-            <ViewOrderableListItem<TValue>
+            <ViewOrderableListItem<TElement, TValue>
                 // other props:
-                {...restOrderableListItemProps satisfies NoForeignProps<typeof restOrderableListItemProps, ViewOrderableListItemProps<TValue>>}
+                {...restOrderableListItemProps satisfies NoForeignProps<typeof restOrderableListItemProps, ViewOrderableListItemProps<TElement, TValue>>}
                 
                 
                 

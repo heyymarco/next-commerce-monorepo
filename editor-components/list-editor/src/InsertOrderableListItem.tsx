@@ -26,16 +26,19 @@ import {
 
 
 // react components:
-export interface InsertOrderableListItemProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+/*
+    We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
+*/
+export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
     extends
         // bases:
-        OrderableListItemProps<Element, never>,
+        OrderableListItemProps<TElement, never>,
         InsertActionEditorProps<TElement, TChangeEvent, TValue>
 {
     // components:
-    insertOrderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<Element, never>>
+    insertOrderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<TElement, never>>
 }
-const InsertOrderableListItem = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: InsertOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: InsertOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:
@@ -49,7 +52,7 @@ const InsertOrderableListItem = <TElement extends Element = HTMLButtonElement, T
         
         
         // components:
-        insertOrderableListItemComponent = (<OrderableListItem<Element, unknown> /> as React.ReactElement<OrderableListItemProps<Element, never>>),
+        insertOrderableListItemComponent = (<OrderableListItem<TElement, unknown> /> as React.ReactElement<OrderableListItemProps<TElement, never>>),
         actionEditorComponent,
         
         
@@ -105,7 +108,7 @@ const InsertOrderableListItem = <TElement extends Element = HTMLButtonElement, T
         
         // other props:
         ...restOrderableListItemProps
-    } = restInsertOrderableListItemProps satisfies NoForeignProps<typeof restInsertOrderableListItemProps, OrderableListItemProps<Element, never>>;
+    } = restInsertOrderableListItemProps satisfies NoForeignProps<typeof restInsertOrderableListItemProps, OrderableListItemProps<TElement, never>>;
     
     const {
         // behaviors:
@@ -126,7 +129,7 @@ const InsertOrderableListItem = <TElement extends Element = HTMLButtonElement, T
     
     // jsx:
     /* <OrderableListItem> */
-    return React.cloneElement<OrderableListItemProps<Element, never>>(insertOrderableListItemComponent,
+    return React.cloneElement<OrderableListItemProps<TElement, never>>(insertOrderableListItemComponent,
         // props:
         {
             // other props:
