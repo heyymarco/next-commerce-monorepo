@@ -54,7 +54,7 @@ export interface IgnoreArea {
     /**
      * The known last DOM reference of target_item element.
      */
-    lastElement : Element
+    lastElement : HTMLElement
     
     /**
      * The known last `hasMoved` status.
@@ -80,7 +80,7 @@ export interface IgnoreArea {
 }
 export interface LastSwitching {
     to                 : number|undefined
-    dragHandshakeEvent : DragHandshakeEvent<Element>
+    dragHandshakeEvent : DragHandshakeEvent<HTMLElement>
 }
 export interface OrderableListDragStartEvent {
     from : number
@@ -126,7 +126,7 @@ export interface OrderableListState
     handleDragStart    : (event: OrderableListDragStartEvent) => void
     handleDragEnd      : () => void
     handleDragMove     : (event: OrderableListDragMoveEvent) => void
-    handleDropped      : (event: OrderableListDroppedEvent, draggedEvent: DraggedEvent<Element>) => void
+    handleDropped      : (event: OrderableListDroppedEvent, draggedEvent: DraggedEvent<HTMLElement>) => void
 }
 
 const noopHandler = () => { throw Error('not inside <OrderableList>'); };

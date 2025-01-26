@@ -80,7 +80,7 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export type ChildrenChangeEventHandler<TData extends unknown = unknown> = (children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[], event: DraggedEvent<Element>) => void
+export type ChildrenChangeEventHandler<TData extends unknown = unknown> = (children: React.ReactComponentElement<any, OrderableListItemProps<HTMLElement, TData>>[], event: DraggedEvent<HTMLElement>) => void
 
 
 
@@ -151,10 +151,10 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
     const {
         value              : children,
         triggerValueChange : triggerChildrenChange,
-    } = useControllableAndUncontrollable<React.ReactNode[], DraggedEvent<Element>>({
+    } = useControllableAndUncontrollable<React.ReactNode[], DraggedEvent<HTMLElement>>({
         defaultValue       : (defaultUncontrollableChildren !== undefined) ? flattenChildren(defaultUncontrollableChildren) : [],
         value              : (controllableChildren          !== undefined) ? flattenChildren(controllableChildren         ) : undefined,
-        onValueChange      : onControllableChildrenChange as ((children: React.ReactNode, event: DraggedEvent<Element>) => void),
+        onValueChange      : onControllableChildrenChange as ((children: React.ReactNode, event: DraggedEvent<HTMLElement>) => void),
     });
     
     const [draftChildren, setDraftChildren] = useState<{ children: React.ReactNode[], appliedTo: number }|undefined>(undefined);
@@ -238,7 +238,7 @@ const OrderableList = <TElement extends Element = HTMLElement, TData extends unk
             appliedTo : toLogicIndex,
         });
     });
-    const handleDropped        = useEvent(({from: fromRaw, to: toRaw}: OrderableListDroppedEvent, draggedEvent: DraggedEvent<Element>): void => {
+    const handleDropped        = useEvent(({from: fromRaw, to: toRaw}: OrderableListDroppedEvent, draggedEvent: DraggedEvent<HTMLElement>): void => {
         const from     = Math.abs(fromRaw); // remove negative sign (if any)
         const to       = (
             draftChildren?.appliedTo        // cancel out effect of moved draftChildren (if any)

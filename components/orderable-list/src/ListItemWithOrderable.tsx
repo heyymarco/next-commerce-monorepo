@@ -804,7 +804,7 @@ export const ListItemWithOrderable = <TElement extends HTMLElement = HTMLElement
                 handleDropped({
                     from : listIndex,
                     to   : to,
-                }, restDraggedEvent satisfies DraggedEvent<Element>);
+                }, restDraggedEvent satisfies DraggedEvent<HTMLElement>);
             } // if
             
             
