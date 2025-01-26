@@ -47,7 +47,7 @@ InputDropdownEditor  |  generic (= div)    |  generic (= changeEvent)   |  unkno
 AddressEditor        |  generic (= div)    |  generic (= changeEvent)   |  Address|null (= Address|null) |              -               |           -           |
 ListEditor           |  generic (= html)   |  generic (= kbd|dragged)   |  unknown (= string)            |              -               |           -           |
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-TextEditor           |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
+TextEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
 NameEditor           |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
 EmailEditor          |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
 PhoneEditor          |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
