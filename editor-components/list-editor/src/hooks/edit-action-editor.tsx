@@ -20,6 +20,12 @@ import {
     useMergeRefs,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco core:
+import {
+    // types:
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
+
 // heymarco components:
 import {
     // types:
@@ -54,7 +60,7 @@ export interface DeleteEntity extends EditEntity {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface EditActionEditorProps<out TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface EditActionEditorProps<out TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
     extends
         // components:
         ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>,
@@ -84,13 +90,13 @@ export interface EditActionEditorProps<out TElement extends HTMLElement = HTMLEl
     onDelete         ?: EditorChangeEventHandler<TChangeEvent, DeleteEntity>
     onCancel         ?: EventHandler<void>
 }
-export interface EditActionEditorApi<in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface EditActionEditorApi<in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
     extends
         // components:
         Required<ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>>
 {
 }
-export const useEditActionEditor = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: EditActionEditorProps<TElement, TChangeEvent, TValue>): EditActionEditorApi<TChangeEvent, TValue> => {
+export const useEditActionEditor = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: EditActionEditorProps<TElement, TChangeEvent, TValue>): EditActionEditorApi<TChangeEvent, TValue> => {
     // props:
     const {
         // identifiers:

@@ -21,6 +21,10 @@ import {
     // utilities:
     useControllableAndUncontrollable,
 }                           from '@heymarco/events'
+import {
+    // types:
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
 
 // heymarco components:
 import {
@@ -75,7 +79,7 @@ import {
 
 // react components:
 export type EditorPosition = 'start'|'end'|'both'|'none'
-export interface ListEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface ListEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
     extends
         // bases:
         Pick<EditorProps<TElement, TChangeEvent, TValue[]>,
@@ -133,7 +137,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLElement, in 
     // positions:
     editorPosition ?: EditorPosition
 }
-const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: ListEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: ListEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // positions:
@@ -399,7 +403,7 @@ export {
 
 
 
-export interface ListEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface ListEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
 {
     // components:
     listEditorComponent ?: React.ReactElement<ListEditorProps<TElement, TChangeEvent, TValue>>

@@ -21,6 +21,12 @@ import {
     type EventHandler,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco core:
+import {
+    // types:
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
+
 // heymarco components:
 import {
     // types:
@@ -49,7 +55,7 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface EditableOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface EditableOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
     extends
         // bases:
         Omit<ViewOrderableListItemProps<TElement, TValue>,
@@ -62,7 +68,7 @@ export interface EditableOrderableListItemProps</*out*/ TElement extends HTMLEle
         >
 {
 }
-const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: EditableOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: EditableOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:

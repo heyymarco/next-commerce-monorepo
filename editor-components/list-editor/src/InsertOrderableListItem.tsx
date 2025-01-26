@@ -10,6 +10,12 @@ import {
     type NoForeignProps,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco core:
+import {
+    // types:
+    type DraggedEvent,
+}                           from '@heymarco/draggable'
+
 // heymarco components:
 import {
     // react components:
@@ -29,7 +35,7 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>
+export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
     extends
         // bases:
         OrderableListItemProps<TElement, never>,
@@ -38,7 +44,7 @@ export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLEleme
     // components:
     insertOrderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<TElement, never>>
 }
-const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>, TValue extends unknown = string>(props: InsertOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: InsertOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:
