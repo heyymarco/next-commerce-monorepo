@@ -20,13 +20,13 @@ import {
 
 
 // react components:
-export interface NameEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface NameEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>
     extends
         // bases:
-        TextEditorProps<TElement, TChangeEvent>
+        TextEditorProps<TElement, TChangeEvent, TValue>
 {
 }
-const NameEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NameEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+const NameEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>(props: NameEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // default props:
     const {
         // accessibilities:
@@ -41,13 +41,13 @@ const NameEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
         
         // other props:
         ...restTextEditorProps
-    } = props satisfies NoForeignProps<typeof props, TextEditorProps<TElement, TChangeEvent>>;
+    } = props satisfies NoForeignProps<typeof props, TextEditorProps<TElement, TChangeEvent, TValue>>;
     
     
     
     // jsx:
     return (
-        <TextEditor<TElement, TChangeEvent>
+        <TextEditor<TElement, TChangeEvent, TValue>
             // other props:
             {...restTextEditorProps}
             

@@ -20,13 +20,13 @@ import {
 
 
 // react components:
-export interface EmailEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface EmailEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>
     extends
         // bases:
-        TextEditorProps<TElement, TChangeEvent>
+        TextEditorProps<TElement, TChangeEvent, TValue>
 {
 }
-const EmailEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: EmailEditorProps<TElement, TChangeEvent>): JSX.Element|null => {
+const EmailEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>(props: EmailEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
     // default props:
     const {
         // accessibilities:
@@ -41,13 +41,13 @@ const EmailEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ex
         
         // other props:
         ...restTextEditorProps
-    } = props satisfies NoForeignProps<typeof props, TextEditorProps<TElement, TChangeEvent>>;
+    } = props satisfies NoForeignProps<typeof props, TextEditorProps<TElement, TChangeEvent, TValue>>;
     
     
     
     // jsx:
     return (
-        <TextEditor<TElement, TChangeEvent>
+        <TextEditor<TElement, TChangeEvent, TValue>
             // other props:
             {...restTextEditorProps}
             

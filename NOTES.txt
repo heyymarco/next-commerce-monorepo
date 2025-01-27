@@ -48,14 +48,14 @@ AddressEditor        |  generic (= div)    |  generic (= changeEvent)   |  Addre
 ListEditor           |  generic (= html)   |  generic (= kbd|dragged)   |  unknown (= string)            |              -               |           -           |
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 TextEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
-NameEditor           |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
-EmailEditor          |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
-PhoneEditor          |  generic (= span)   |  generic (= changeEvent)   |  string                        |              -               |           -           |
-TextDropdownEditor   |  generic (= div)    |  generic (= changeEvent)   |  string                        | DDL<string> (= DDL_Expanded) |           -           |
-SelectZoneEditor     |  generic (= div)    |  generic (= changeEvent)   |  string                        | DDL<string> (= DDL_Expanded) |           -           |
-SelectCountryEditor  |  generic (= div)    |  generic (= changeEvent)   |  string                        | DDL<string> (= DDL_Expanded) |           -           |
-SelectStateEditor    |  generic (= div)    |  generic (= changeEvent)   |  string                        | DDL<string> (= DDL_Expanded) |           -           |
-SelectCityEditor     |  generic (= div)    |  generic (= changeEvent)   |  string                        | DDL<string> (= DDL_Expanded) |           -           |
+NameEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
+EmailEditor          |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
+PhoneEditor          |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
+TextDropdownEditor   |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
+SelectZoneEditor     |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
+SelectCountryEditor  |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
+SelectStateEditor    |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
+SelectCityEditor     |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 NumberEditor         |  generic (= span)   |  generic (= changeEvent)   |  number|null (= number|null)   |              -               |           -           |
 NumberUpDownEditor   |  generic (= div)    |  generic (= changeEvent)   |  number|null (= number|null)   |              -               |           -           |
