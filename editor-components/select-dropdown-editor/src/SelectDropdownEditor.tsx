@@ -109,10 +109,10 @@ const defaultValueToUi = <TValue extends any = string>(value: TValue|null): Reac
 
 
 // react components:
-export interface SelectDropdownEditorProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface SelectDropdownEditorProps<out TElement extends Element = HTMLButtonElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        Pick<EditorProps<TElement, TChangeEvent, TValue>,
+        Pick<EditorProps<TElement, TValue, TChangeEvent>,
             // values:
             |'defaultValue'
             |'value'
@@ -167,7 +167,7 @@ export interface SelectDropdownEditorProps<out TElement extends Element = HTMLBu
     // components:
     buttonComponent ?: React.ReactElement<ButtonIconProps>
 }
-const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // variants:
     const dropdownOrientationableVariant = useOrientationableWithDirection(props, defaultOrientationableWithDirectionOptions);
     const determineDropdownIcon = () => {
@@ -595,8 +595,8 @@ export {
 
 
 
-export interface SelectDropdownEditorComponentProps<out TElement extends Element = HTMLButtonElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface SelectDropdownEditorComponentProps<out TElement extends Element = HTMLButtonElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.MouseEvent<Element, MouseEvent>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
 {
     // components:
-    selectDropdownEditorComponent ?: React.ReactElement<SelectDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>
+    selectDropdownEditorComponent ?: React.ReactElement<SelectDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>
 }

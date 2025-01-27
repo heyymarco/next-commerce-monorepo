@@ -55,20 +55,20 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface EditableOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface EditableOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
     extends
         // bases:
         Omit<ViewOrderableListItemProps<TElement, TValue>,
             // handlers:
             |'onEdit'
         >,
-        Omit<EditOrderableListItemProps<TElement, TChangeEvent, TValue>,
+        Omit<EditOrderableListItemProps<TElement, TValue, TChangeEvent>,
             // handlers:
             |'onCancel'
         >
 {
 }
-const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: EditableOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>(props: EditableOrderableListItemProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:
@@ -113,7 +113,7 @@ const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, T
     
     
     // handlers:
-    const handleSave = useEvent<EditorChangeEventHandler<TChangeEvent, SaveEntity<TValue>>>((saveEntity, event) => {
+    const handleSave = useEvent<EditorChangeEventHandler<SaveEntity<TValue>, TChangeEvent>>((saveEntity, event) => {
         setIsEditMode(false);
         onSave?.(saveEntity, event);
     });
@@ -156,9 +156,9 @@ const EditableOrderableListItem = <TElement extends HTMLElement = HTMLElement, T
     else {
         /* <EditOrderableListItem> */
         return (
-            <EditOrderableListItem<TElement, TChangeEvent, TValue>
+            <EditOrderableListItem<TElement, TValue, TChangeEvent>
                 // other props:
-                {...restOrderableListItemProps satisfies NoForeignProps<typeof restOrderableListItemProps, EditOrderableListItemProps<TElement, TChangeEvent, TValue>>}
+                {...restOrderableListItemProps satisfies NoForeignProps<typeof restOrderableListItemProps, EditOrderableListItemProps<TElement, TValue, TChangeEvent>>}
                 
                 
                 

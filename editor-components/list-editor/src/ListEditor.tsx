@@ -79,10 +79,10 @@ import {
 
 // react components:
 export type EditorPosition = 'start'|'end'|'both'|'none'
-export interface ListEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface ListEditorProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
     extends
         // bases:
-        Pick<EditorProps<TElement, TChangeEvent, TValue[]>,
+        Pick<EditorProps<TElement, TValue[], TChangeEvent>,
             // values:
             |'defaultValue'
             |'value'
@@ -107,7 +107,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLElement, in 
         // components:
         OrderableListComponentProps<TElement, number>,
         OrderableListItemComponentProps<HTMLElement, number>,
-        Pick<EditableOrderableListItemProps<HTMLElement, TChangeEvent, TValue>,
+        Pick<EditableOrderableListItemProps<HTMLElement, TValue, TChangeEvent>,
             // accessibilities:
             |'placeholder'
             
@@ -122,7 +122,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLElement, in 
             |'orderableListItemComponent'
             |'actionEditorComponent'
         >,
-        Pick<InsertOrderableListItemProps<HTMLElement, TChangeEvent, TValue>,
+        Pick<InsertOrderableListItemProps<HTMLElement, TValue, TChangeEvent>,
             // accessibilities:
             |'placeholder'
             
@@ -137,7 +137,7 @@ export interface ListEditorProps<out TElement extends Element = HTMLElement, in 
     // positions:
     editorPosition ?: EditorPosition
 }
-const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: ListEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const ListEditor = <TElement extends Element = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>(props: ListEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // positions:
@@ -221,7 +221,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
         handleChildrenChangeInternal,
     );
     
-    const handleSave                   = useEvent<EditorChangeEventHandler<TChangeEvent, SaveEntity<TValue>>>(({index, mutatedValue}, event) => {
+    const handleSave                   = useEvent<EditorChangeEventHandler<SaveEntity<TValue>, TChangeEvent>>(({index, mutatedValue}, event) => {
         const valueCopy = value.slice(0);
         valueCopy[index] = mutatedValue;
         triggerValueChange(
@@ -229,7 +229,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
             { triggerAt: 'immediately', event }
         );
     });
-    const handleDelete                 = useEvent<EditorChangeEventHandler<TChangeEvent, DeleteEntity>>(({index}, event) => {
+    const handleDelete                 = useEvent<EditorChangeEventHandler<DeleteEntity, TChangeEvent>>(({index}, event) => {
         const valueCopy = value.slice(0);
         valueCopy.splice(index, 1);
         triggerValueChange(
@@ -238,7 +238,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
         );
     });
     
-    const handleInsertStart            = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newItem, event) => {
+    const handleInsertStart            = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newItem, event) => {
         triggerValueChange(
             [
                 newItem,
@@ -247,7 +247,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
             { triggerAt: 'immediately', event }
         );
     });
-    const handleInsertEnd              = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newItem, event) => {
+    const handleInsertEnd              = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newItem, event) => {
         triggerValueChange(
             [
                 ...value,
@@ -281,7 +281,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
     const {
         // children:
         children : orderableListComponentChildren = <>
-            {((editorPosition === 'start') || (editorPosition === 'both')) && <InsertOrderableListItem<HTMLElement, TChangeEvent, TValue>
+            {((editorPosition === 'start') || (editorPosition === 'both')) && <InsertOrderableListItem<HTMLElement, TValue, TChangeEvent>
                 // accessibilities:
                 placeholder={placeholder}
                 
@@ -304,7 +304,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
             
             {/* <EditableOrderableListItem> */}
             {value.map((val, listIndex) =>
-                <EditableOrderableListItem<HTMLElement, TChangeEvent, TValue>
+                <EditableOrderableListItem<HTMLElement, TValue, TChangeEvent>
                     // identifiers:
                     key={uniqueKeys[listIndex]}
                     
@@ -345,7 +345,7 @@ const ListEditor = <TElement extends Element = HTMLElement, TChangeEvent extends
                 />
             )}
             
-            {((editorPosition === 'end') || (editorPosition === 'both')) && <InsertOrderableListItem<HTMLElement, TChangeEvent, TValue>
+            {((editorPosition === 'end') || (editorPosition === 'both')) && <InsertOrderableListItem<HTMLElement, TValue, TChangeEvent>
                 // accessibilities:
                 placeholder={placeholder}
                 
@@ -403,8 +403,8 @@ export {
 
 
 
-export interface ListEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface ListEditorComponentProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
 {
     // components:
-    listEditorComponent ?: React.ReactElement<ListEditorProps<TElement, TChangeEvent, TValue>>
+    listEditorComponent ?: React.ReactElement<ListEditorProps<TElement, TValue, TChangeEvent>>
 }

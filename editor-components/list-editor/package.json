@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/list-editor",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "A multi value editor component.",
   "keywords": [
     "generic",
@@ -42,11 +42,11 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/action-editor": "^6.13.0",
-    "@heymarco/editor": "^6.13.0",
+    "@heymarco/action-editor": "^7.0.0",
+    "@heymarco/editor": "^7.0.0",
     "@heymarco/events": "^6.7.1",
-    "@heymarco/input-editor": "^6.14.0",
-    "@heymarco/key-action-editor": "^6.13.0",
+    "@heymarco/input-editor": "^7.0.0",
+    "@heymarco/key-action-editor": "^7.0.0",
     "@heymarco/orderable-list": "^6.12.0",
     "@reusable-ui/core": "^6.14.0"
   },

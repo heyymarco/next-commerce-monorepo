@@ -36,14 +36,14 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface EditOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface EditOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
     extends
         // bases:
         Omit<OrderableListItemProps<TElement, number>,
             // values:
             |'defaultValue'
         >,
-        Omit<EditActionEditorProps<TElement, TChangeEvent, TValue>,
+        Omit<EditActionEditorProps<TElement, TValue, TChangeEvent>,
             // identifiers:
             |'listIndex'
         >,
@@ -52,7 +52,7 @@ export interface EditOrderableListItemProps</*out*/ TElement extends HTMLElement
         OrderableListItemComponentProps<TElement, number>
 {
 }
-const EditOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: EditOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const EditOrderableListItem = <TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>(props: EditOrderableListItemProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:
@@ -94,7 +94,7 @@ const EditOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChan
     const {
         // components:
         actionEditorComponent : editActionEditorComponent,
-    } = useEditActionEditor<TElement, TChangeEvent, TValue>({
+    } = useEditActionEditor<TElement, TValue, TChangeEvent>({
         // identifiers:
         listIndex : props.data!,
         

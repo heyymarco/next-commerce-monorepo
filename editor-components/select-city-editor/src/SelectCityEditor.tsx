@@ -25,20 +25,20 @@ import {
 
 
 // react components:
-export interface SelectCityEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface SelectCityEditorProps<out TElement extends Element = HTMLDivElement, TValue extends string = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        Omit<SelectZoneEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
+        Omit<SelectZoneEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
             // models:
             |'modelName' // changed to optional
         >,
-        Partial<Pick<SelectZoneEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
+        Partial<Pick<SelectZoneEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
             // models:
             |'modelName' // changed to optional
         >>
 {
 }
-const SelectCityEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectCityEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const SelectCityEditor = <TElement extends Element = HTMLDivElement, TValue extends string = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectCityEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // models:
@@ -61,13 +61,13 @@ const SelectCityEditor = <TElement extends Element = HTMLDivElement, TChangeEven
         
         // other props:
         ...restSelectZoneEditorProps
-    } = restSelectCityEditorProps satisfies NoForeignProps<typeof restSelectCityEditorProps, Omit<SelectZoneEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>, 'modelName'>>;
+    } = restSelectCityEditorProps satisfies NoForeignProps<typeof restSelectCityEditorProps, Omit<SelectZoneEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>, 'modelName'>>;
     
     
     
     // jsx:
     return (
-        <SelectZoneEditor<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
+        <SelectZoneEditor<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
             // other props:
             {...restSelectZoneEditorProps}
             

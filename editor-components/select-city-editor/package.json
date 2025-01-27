@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/select-city-editor",
-  "version": "6.13.0",
+  "version": "7.0.0",
   "description": "A city-name editor component with a selectable predefined cities.",
   "keywords": [
     "city",
@@ -44,7 +44,7 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/select-zone-editor": "^6.13.0",
+    "@heymarco/select-zone-editor": "^7.0.0",
     "@reusable-ui/core": "^6.14.0",
     "@reusable-ui/dropdown-list": "^6.6.2"
   },

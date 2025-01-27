@@ -30,10 +30,10 @@ import {
 
 
 // react components:
-export interface NumberEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>
+export interface NumberEditorProps<out TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        Omit<InputEditorProps<TElement, TChangeEvent, TValue>,
+        Omit<InputEditorProps<TElement, TValue, TChangeEvent>,
             // validations:
             |'minLength'|'maxLength' // text length constraint is not supported
             // these props may be used in <HexNumberEditor>, so keep it supported:
@@ -51,7 +51,7 @@ export interface NumberEditorProps<out TElement extends Element = HTMLSpanElemen
     max  ?: number // only supports numeric value
     step ?: number // only supports numeric value
 }
-const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>(props: NumberEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const NumberEditor = <TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NumberEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // values:
@@ -67,7 +67,7 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
     
     
     // handlers:
-    const handleChangeAsTextInternal = useEvent<EditorChangeEventHandler<TChangeEvent, string>>((value, event) => {
+    const handleChangeAsTextInternal = useEvent<EditorChangeEventHandler<string, TChangeEvent>>((value, event) => {
         onChange?.((value ? Number.parseFloat(value) : null) as TValue, event);
     });
     const handleChangeAsText         = useMergeEvents(
@@ -91,13 +91,13 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent e
         
         // other props:
         ...restInputEditorProps
-    } = restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>;
+    } = restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, InputEditorProps<TElement, TValue, TChangeEvent>>;
     
     
     
     // jsx:
     return (
-        <InputEditor<TElement, TChangeEvent, TValue>
+        <InputEditor<TElement, TValue, TChangeEvent>
             // other props:
             {...restInputEditorProps}
             
@@ -120,8 +120,8 @@ export {
 
 
 
-export interface NumberEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>
+export interface NumberEditorComponentProps<out TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
 {
     // components:
-    numberEditorComponent ?: React.ReactElement<NumberEditorProps<TElement, TChangeEvent, TValue>>
+    numberEditorComponent ?: React.ReactElement<NumberEditorProps<TElement, TValue, TChangeEvent>>
 }

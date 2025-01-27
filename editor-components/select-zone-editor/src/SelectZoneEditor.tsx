@@ -36,15 +36,15 @@ import {
 
 
 // react components:
-export interface SelectZoneEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface SelectZoneEditorProps<out TElement extends Element = HTMLDivElement, TValue extends string = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        TextDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
+        TextDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
 {
     // models:
     modelName : string
 }
-const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectZoneEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TValue extends string = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: SelectZoneEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // models:
@@ -72,13 +72,13 @@ const SelectZoneEditor = <TElement extends Element = HTMLDivElement, TChangeEven
         
         // other props:
         ...restTextDropdownEditorProps
-    } = restSelectZoneEditorProps satisfies NoForeignProps<typeof restSelectZoneEditorProps, TextDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>;
+    } = restSelectZoneEditorProps satisfies NoForeignProps<typeof restSelectZoneEditorProps, TextDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>;
     
     
     
     // jsx:
     return (
-        <TextDropdownEditor<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
+        <TextDropdownEditor<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
             // other props:
             {...restTextDropdownEditorProps}
             

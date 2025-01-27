@@ -36,10 +36,10 @@ import {
 
 
 // react components:
-export interface InputEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface InputEditorProps<out TElement extends Element = HTMLSpanElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        Omit<EditorProps<TElement, TChangeEvent, TValue>,
+        Omit<EditorProps<TElement, TValue, TChangeEvent>,
             // refs:
             |'elmRef'                          // moved to <input>
             
@@ -53,9 +53,9 @@ export interface InputEditorProps<out TElement extends Element = HTMLSpanElement
         >
 {
     // values:
-    onChangeAsText ?: EditorChangeEventHandler<TChangeEvent, string>
+    onChangeAsText ?: EditorChangeEventHandler<string, TChangeEvent>
 }
-const InputEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: InputEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: InputEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // values:
@@ -151,8 +151,8 @@ export {
 
 
 
-export interface InputEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface InputEditorComponentProps<out TElement extends Element = HTMLSpanElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
 {
     // components:
-    inputEditorComponent ?: React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>
+    inputEditorComponent ?: React.ReactElement<InputEditorProps<TElement, TValue, TChangeEvent>>
 }

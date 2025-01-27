@@ -29,13 +29,13 @@ import {
 
 
 // react components:
-export interface TextEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>
+export interface TextEditorProps<out TElement extends Element = HTMLSpanElement, TValue extends string = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        InputEditorProps<TElement, TChangeEvent, TValue>
+        InputEditorProps<TElement, TValue, TChangeEvent>
 {
 }
-const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>(props: TextEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const TextEditor = <TElement extends Element = HTMLSpanElement, TValue extends string = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: TextEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // values:
@@ -58,7 +58,7 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
         
         
         // preserves the original `onChange` from `props`:
-        onChange satisfies EditorChangeEventHandler<TChangeEvent, TValue>|undefined as EditorChangeEventHandler<TChangeEvent, string>|undefined,
+        onChange satisfies EditorChangeEventHandler<TValue, TChangeEvent>|undefined as EditorChangeEventHandler<string, TChangeEvent>|undefined,
     );
     
     
@@ -72,13 +72,13 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent ext
         
         // other props:
         ...restInputEditorProps
-    } = restTextEditorProps satisfies NoForeignProps<typeof restTextEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>;
+    } = restTextEditorProps satisfies NoForeignProps<typeof restTextEditorProps, InputEditorProps<TElement, TValue, TChangeEvent>>;
     
     
     
     // jsx:
     return (
-        <InputEditor<TElement, TChangeEvent, TValue>
+        <InputEditor<TElement, TValue, TChangeEvent>
             // other props:
             {...restInputEditorProps}
             
@@ -101,8 +101,8 @@ export {
 
 
 
-export interface TextEditorComponentProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string>
+export interface TextEditorComponentProps<out TElement extends Element = HTMLSpanElement, TValue extends string = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
 {
     // components:
-    textEditorComponent ?: React.ReactElement<TextEditorProps<TElement, TChangeEvent, TValue>>
+    textEditorComponent ?: React.ReactElement<TextEditorProps<TElement, TValue, TChangeEvent>>
 }

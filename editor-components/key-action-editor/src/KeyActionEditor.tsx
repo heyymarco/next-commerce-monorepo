@@ -45,23 +45,23 @@ import {
 
 
 // react components:
-export interface KeyActionEditorProps</*out*/ TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface KeyActionEditorProps</*out*/ TElement extends Element = HTMLSpanElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
-        Omit<ActionEditorProps<TElement, TChangeEvent, TValue, React.KeyboardEvent<TElement>>,
+        Omit<ActionEditorProps<TElement, TValue, TChangeEvent, React.KeyboardEvent<TElement>>,
             // refs:
             |'elmRef'   // moved to <input>
             
             // children:
             |'children' // no nested children
         >,
-        Pick<InputEditorProps<TElement, TChangeEvent, TValue>,
+        Pick<InputEditorProps<TElement, TValue, TChangeEvent>,
             // refs:
             |'elmRef'   // moved to <input>
         >,
         
         // components:
-        InputEditorComponentProps<TElement, TChangeEvent, TValue>
+        InputEditorComponentProps<TElement, TValue, TChangeEvent>
 {
     // accessibilities:
     /**
@@ -79,7 +79,7 @@ export interface KeyActionEditorProps</*out*/ TElement extends Element = HTMLSpa
      */
     deleteKeys ?: string[]
 }
-const KeyActionEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: KeyActionEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const KeyActionEditor = <TElement extends Element = HTMLSpanElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: KeyActionEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // refs:
@@ -95,7 +95,7 @@ const KeyActionEditor = <TElement extends Element = HTMLSpanElement, TChangeEven
         
         
         // components:
-        inputEditorComponent = (<InputEditor<TElement, TChangeEvent, TValue> /> as React.ReactElement<InputEditorProps<TElement, TChangeEvent, TValue>>),
+        inputEditorComponent = (<InputEditor<TElement, TValue, TChangeEvent> /> as React.ReactElement<InputEditorProps<TElement, TValue, TChangeEvent>>),
         
         
         
@@ -222,11 +222,11 @@ const KeyActionEditor = <TElement extends Element = HTMLSpanElement, TChangeEven
     
     // jsx:
     /* <InputEditor> */
-    return React.cloneElement<InputEditorProps<TElement, TChangeEvent, TValue>>(inputEditorComponent,
+    return React.cloneElement<InputEditorProps<TElement, TValue, TChangeEvent>>(inputEditorComponent,
         // props:
         {
             // other props:
-            ...restInputEditorProps satisfies NoForeignProps<typeof restInputEditorProps, InputEditorProps<TElement, TChangeEvent, TValue>>,
+            ...restInputEditorProps satisfies NoForeignProps<typeof restInputEditorProps, InputEditorProps<TElement, TValue, TChangeEvent>>,
             ...inputEditorComponent.props, // overwrites restInputEditorProps (if any conflics)
             
             

@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/input-dropdown-editor",
-  "version": "6.13.1",
+  "version": "7.0.0",
   "description": "A generic textbox editor component with a selectable dropdown.",
   "keywords": [
     "textbox",
@@ -44,10 +44,10 @@
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jest"
   },
   "dependencies": {
-    "@heymarco/editor": "^6.13.0",
+    "@heymarco/editor": "^7.0.0",
     "@heymarco/events": "^6.7.0",
-    "@heymarco/input-editor": "^6.13.0",
-    "@heymarco/select-dropdown-editor": "^6.13.0",
+    "@heymarco/input-editor": "^7.0.0",
+    "@heymarco/select-dropdown-editor": "^7.0.0",
     "@reusable-ui/core": "^6.14.0",
     "@reusable-ui/dropdown-list": "^6.6.2",
     "@reusable-ui/group": "^6.5.1"

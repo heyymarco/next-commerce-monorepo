@@ -4,5 +4,3 @@ implement <InputWithLabel> to <AddressFields>
 [@heymarco/next-auth] implement loginErrorAttempt
 [@heymarco/quantity-input] implement disabled & readOnly Buttons
 [@heymarco/events] add createSyntheticChangeEvent()
-
-[high prior] fix flickering of <OrderableList> when ordering a <ListItem> with different height

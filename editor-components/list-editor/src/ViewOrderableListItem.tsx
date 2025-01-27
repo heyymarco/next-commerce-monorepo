@@ -46,7 +46,7 @@ export interface ViewOrderableListItemProps</*out*/ TElement extends HTMLElement
             // values:
             |'defaultValue'
         >,
-        Pick<EditActionEditorProps<TElement, React.SyntheticEvent<unknown, Event>, TValue>,
+        Pick<EditActionEditorProps<TElement, TValue, React.SyntheticEvent<unknown, Event>>,
             // values:
             |'defaultValue'
         >,

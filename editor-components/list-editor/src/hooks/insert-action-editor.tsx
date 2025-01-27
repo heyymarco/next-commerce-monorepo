@@ -47,10 +47,10 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface InsertActionEditorProps<out TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface InsertActionEditorProps<out TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
     extends
         // components:
-        ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>,
+        ActionEditorComponentProps<Element, TValue, TChangeEvent, TChangeEvent>,
         Pick<React.InputHTMLAttributes<TElement>,
             // accessibilities:
             |'placeholder'
@@ -62,15 +62,15 @@ export interface InsertActionEditorProps<out TElement extends HTMLElement = HTML
     
     
     // handlers:
-    onInsert   ?: EditorChangeEventHandler<TChangeEvent, TValue>
+    onInsert   ?: EditorChangeEventHandler<TValue, TChangeEvent>
 }
-export interface InsertActionEditorApi<in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface InsertActionEditorApi<TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
     extends
         // components:
-        Required<ActionEditorComponentProps<Element, TChangeEvent, TValue, TChangeEvent>>
+        Required<ActionEditorComponentProps<Element, TValue, TChangeEvent, TChangeEvent>>
 {
 }
-export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: InsertActionEditorProps<TElement, TChangeEvent, TValue>): InsertActionEditorApi<TChangeEvent, TValue> => {
+export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>(props: InsertActionEditorProps<TElement, TValue, TChangeEvent>): InsertActionEditorApi<TValue, TChangeEvent> => {
     // props:
     const {
         // accessibilities:
@@ -84,7 +84,7 @@ export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement
         
         
         // components:
-        actionEditorComponent = (<KeyActionEditor<Element, TChangeEvent, TValue> inputEditorComponent={<InputEditor<Element, TChangeEvent, TValue> placeholder={placeholder} />} /> as React.ReactElement<ActionEditorProps<Element, TChangeEvent, TValue, TChangeEvent>>),
+        actionEditorComponent = (<KeyActionEditor<Element, TValue, TChangeEvent> inputEditorComponent={<InputEditor<Element, TValue, TChangeEvent> placeholder={placeholder} />} /> as React.ReactElement<ActionEditorProps<Element, TValue, TChangeEvent, TChangeEvent>>),
         
         
         
@@ -100,7 +100,7 @@ export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement
     
     
     // handlers:
-    const handleChangeInternal = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((value, event) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((value, event) => {
         setEditorValue(value);
     });
     const handleChange         = useMergeEvents(
@@ -172,7 +172,7 @@ export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement
     // api:
     return {
         // components:
-        actionEditorComponent : React.cloneElement<ActionEditorProps<Element, TChangeEvent, TValue, TChangeEvent>>(actionEditorComponent,
+        actionEditorComponent : React.cloneElement<ActionEditorProps<Element, TValue, TChangeEvent, TChangeEvent>>(actionEditorComponent,
             // props:
             {
                 // other props:
@@ -197,5 +197,5 @@ export const useInsertActionEditor = <TElement extends HTMLElement = HTMLElement
                 onSave   : handleSave,
             },
         ),
-    } satisfies InsertActionEditorApi<TChangeEvent, TValue>;
+    } satisfies InsertActionEditorApi<TValue, TChangeEvent>;
 }

@@ -25,7 +25,7 @@ import {
 
 
 // react components:
-export interface EditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface EditorProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
         Omit<EditableControlProps<TElement>,
@@ -36,9 +36,9 @@ export interface EditorProps<out TElement extends Element = HTMLElement, in TCha
     // values:
     defaultValue   ?: TValue
     value          ?: TValue
-    onChange       ?: EditorChangeEventHandler<TChangeEvent, TValue>
+    onChange       ?: EditorChangeEventHandler<TValue, TChangeEvent>
 }
-const Editor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>(props: EditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const Editor = <TElement extends Element = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: EditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // values:
@@ -69,8 +69,8 @@ export {
 
 
 
-export interface EditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string>
+export interface EditorComponentProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
 {
     // components:
-    editorComponent ?: React.ReactElement<EditorProps<TElement, TChangeEvent, TValue>>
+    editorComponent ?: React.ReactElement<EditorProps<TElement, TValue, TChangeEvent>>
 }

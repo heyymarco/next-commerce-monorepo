@@ -71,7 +71,7 @@ import {
 
 
 // react components:
-export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpanElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>
+export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
         Pick<GroupProps<TElement>,
@@ -98,7 +98,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
             // styles:
             |'style'          // moved to <Group>
         >,
-        Omit<NumberEditorProps<TElement, TChangeEvent, TValue>,
+        Omit<NumberEditorProps<TElement, TValue, TChangeEvent>,
             // refs:
             |'outerRef'       // moved to <Group>
             
@@ -126,7 +126,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
     // components:
     decreaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
     increaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
-    numberEditorComponent   ?: React.ReactComponentElement<any, NumberEditorProps<TElement, TChangeEvent, TValue>>
+    numberEditorComponent   ?: React.ReactComponentElement<any, NumberEditorProps<TElement, TValue, TChangeEvent>>
     
     
     
@@ -136,7 +136,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
     childrenAfterInput      ?: React.ReactNode
     childrenAfterButton     ?: React.ReactNode
 }
-const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends number|null = number|null>(props: NumberUpDownEditorProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NumberUpDownEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // refs:
@@ -190,7 +190,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
         // components:
         decreaseButtonComponent = (<ButtonIcon icon='remove'                     /> as React.ReactComponentElement<any, ButtonProps>),
         increaseButtonComponent = (<ButtonIcon icon='add'                        /> as React.ReactComponentElement<any, ButtonProps>),
-        numberEditorComponent   = (<NumberEditor<TElement, TChangeEvent, TValue> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, TChangeEvent, TValue>>),
+        numberEditorComponent   = (<NumberEditor<TElement, TValue, TChangeEvent> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, TValue, TChangeEvent>>),
         
         
         
@@ -371,7 +371,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
     
     
     // handlers:
-    const handleChangeInternal      = useEvent<EditorChangeEventHandler<TChangeEvent, number|null>>((value, event) => {
+    const handleChangeInternal      = useEvent<EditorChangeEventHandler<number|null, TChangeEvent>>((value, event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
         if (isDisabledOrReadOnly)   return; // control is disabled or readOnly => no response required
@@ -529,11 +529,11 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TChangeE
                 {childrenBeforeInput}
                 
                 {/* <Input> */}
-                {React.cloneElement<NumberEditorProps<TElement, TChangeEvent, TValue>>(numberEditorComponent,
+                {React.cloneElement<NumberEditorProps<TElement, TValue, TChangeEvent>>(numberEditorComponent,
                     // props:
                     {
                         // other props:
-                        ...restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, NumberEditorProps<TElement, TChangeEvent, TValue>>,
+                        ...restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, NumberEditorProps<TElement, TValue, TChangeEvent>>,
                         ...restNumberEditorComponentProps, // overwrites restNumberEditorProps (if any conflics)
                         
                         

@@ -35,16 +35,16 @@ import {
 /*
     We use HTMLElement instead of Element because HTMLElement supports drag-and-drop, while Element does not.
 */
-export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>
+export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>
     extends
         // bases:
         OrderableListItemProps<TElement, never>,
-        InsertActionEditorProps<TElement, TChangeEvent, TValue>
+        InsertActionEditorProps<TElement, TValue, TChangeEvent>
 {
     // components:
     insertOrderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<TElement, never>>
 }
-const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>, TValue extends unknown = string>(props: InsertOrderableListItemProps<TElement, TChangeEvent, TValue>): JSX.Element|null => {
+const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>(props: InsertOrderableListItemProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // accessibilities:
@@ -78,7 +78,7 @@ const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TCh
     const {
         // components:
         actionEditorComponent : insertActionEditorComponent,
-    } = useInsertActionEditor<TElement, TChangeEvent, TValue>({
+    } = useInsertActionEditor<TElement, TValue, TChangeEvent>({
         // accessibilities:
         placeholder,
         

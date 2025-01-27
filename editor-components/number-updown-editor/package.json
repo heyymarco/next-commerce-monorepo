@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/number-updown-editor",
-  "version": "6.13.0",
+  "version": "7.0.0",
   "description": "A numeric editor component.",
   "keywords": [
     "quantity",
@@ -43,8 +43,8 @@
   },
   "dependencies": {
     "@cssfn/core": "^3.2.0",
-    "@heymarco/editor": "^6.13.0",
-    "@heymarco/number-editor": "^6.13.0",
+    "@heymarco/editor": "^7.0.0",
+    "@heymarco/number-editor": "^7.0.0",
     "@reusable-ui/button": "^6.5.0",
     "@reusable-ui/button-icon": "^6.5.0",
     "@reusable-ui/core": "^6.14.0",

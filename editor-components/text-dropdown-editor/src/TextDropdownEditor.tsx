@@ -30,29 +30,29 @@ import {
 
 
 // react components:
-export interface TextDropdownEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface TextDropdownEditorProps<out TElement extends Element = HTMLDivElement, TValue extends string = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
-        InputDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
+        InputDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
 {
 }
-const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: TextDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const TextDropdownEditor = <TElement extends Element = HTMLDivElement, TValue extends string = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: TextDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // default props:
     const {
         // components:
-        inputEditorComponent = (<TextEditor<Element, TChangeEvent, TValue> /> as React.ReactElement<TextEditorProps<Element, TChangeEvent, TValue>>),
+        inputEditorComponent = (<TextEditor<Element, TValue, TChangeEvent> /> as React.ReactElement<TextEditorProps<Element, TValue, TChangeEvent>>),
         
         
         
         // other props:
         ...restInputDropdownEditorProps
-    } = props satisfies NoForeignProps<typeof props, InputDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>;
+    } = props satisfies NoForeignProps<typeof props, InputDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>;
     
     
     
     // jsx:
     return (
-        <InputDropdownEditor<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
+        <InputDropdownEditor<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
             // other props:
             {...restInputDropdownEditorProps}
             
@@ -70,8 +70,8 @@ export {
 
 
 
-export interface TextDropdownEditorComponentProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends string = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface TextDropdownEditorComponentProps<out TElement extends Element = HTMLDivElement, TValue extends string = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
 {
     // components:
-    textDropdownEditorComponent ?: React.ReactElement<TextDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>
+    textDropdownEditorComponent ?: React.ReactElement<TextDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>
 }

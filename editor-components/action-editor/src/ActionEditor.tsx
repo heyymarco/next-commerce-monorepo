@@ -25,17 +25,17 @@ import {
 
 
 // react components:
-export interface ActionEditorProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, in TActionEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>>
+export interface ActionEditorProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in TActionEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>>
     extends
         // bases:
-        EditorProps<TElement, TChangeEvent, TValue>
+        EditorProps<TElement, TValue, TChangeEvent>
 {
     // handlers:
     onSave   ?: EventHandler<TActionEvent>
     onCancel ?: EventHandler<TActionEvent>
     onDelete ?: EventHandler<TActionEvent>
 }
-const ActionEditor = <TElement extends Element = HTMLElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TActionEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>>(props: ActionEditorProps<TElement, TChangeEvent, TValue, TActionEvent>): JSX.Element|null => {
+const ActionEditor = <TElement extends Element = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TActionEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>>(props: ActionEditorProps<TElement, TValue, TChangeEvent, TActionEvent>): JSX.Element|null => {
     // props:
     const {
         // handlers:
@@ -53,9 +53,9 @@ const ActionEditor = <TElement extends Element = HTMLElement, TChangeEvent exten
     
     // jsx:
     return (
-        <Editor<TElement, TChangeEvent, TValue>
+        <Editor<TElement, TValue, TChangeEvent>
             // other props:
-            {...restEditorProps satisfies NoForeignProps<typeof restEditorProps, EditorProps<TElement, TChangeEvent, TValue>>}
+            {...restEditorProps satisfies NoForeignProps<typeof restEditorProps, EditorProps<TElement, TValue, TChangeEvent>>}
         />
     );
 };
@@ -66,8 +66,8 @@ export {
 
 
 
-export interface ActionEditorComponentProps<out TElement extends Element = HTMLElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, in TActionEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>>
+export interface ActionEditorComponentProps<out TElement extends Element = HTMLElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, in TActionEvent extends React.SyntheticEvent<unknown, Event> = React.SyntheticEvent<unknown, Event>>
 {
     // components:
-    actionEditorComponent ?: React.ReactElement<ActionEditorProps<TElement, TChangeEvent, TValue, TActionEvent>>
+    actionEditorComponent ?: React.ReactElement<ActionEditorProps<TElement, TValue, TChangeEvent, TActionEvent>>
 }

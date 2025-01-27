@@ -90,7 +90,7 @@ const emptyValueOptions : unknown[] = [];
 
 
 // react components:
-export interface InputDropdownEditorProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface InputDropdownEditorProps<out TElement extends Element = HTMLDivElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
     extends
         // bases:
         Pick<GroupProps<TElement>,
@@ -117,7 +117,7 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             // styles:
             |'style'          // moved to <Group>
         >,
-        Omit<InputEditorProps<Element, TChangeEvent, TValue>,
+        Omit<InputEditorProps<Element, TValue, TChangeEvent>,
             // refs:
             |'outerRef'       // moved to <Group>
             
@@ -141,7 +141,7 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             // styles:
             |'style'          // moved to <Group>
         >,
-        Pick<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
+        Pick<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
             // // // ONLY NECESSARY props:
             // // // variants:
             // // |'buttonStyle'
@@ -210,20 +210,20 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             |'listItemComponent'
             |'editableButtonComponent'
         >,
-        Partial<Pick<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>,
+        Partial<Pick<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
             // values:
             |'valueOptions' // changed to optional
         >>,
         
         // components:
-        InputEditorComponentProps<Element, TChangeEvent, TValue>,
-        SelectDropdownEditorComponentProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>
+        InputEditorComponentProps<Element, TValue, TChangeEvent>,
+        SelectDropdownEditorComponentProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>
 {
     // behaviors:
     autoShowDropdownOnFocus  ?: boolean
     preferFocusOnInputEditor ?: boolean
 }
-const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: InputDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
+const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>(props: InputDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // refs:
@@ -310,8 +310,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         listComponent,                                                   // take, moved to <SelectDropdownEditor>
         listItemComponent,                                               // take, moved to <SelectDropdownEditor>
         editableButtonComponent,                                         // take, moved to <SelectDropdownEditor>
-        inputEditorComponent          = (<InputEditor<Element, TChangeEvent, TValue> />                                                                        as React.ReactElement<InputEditorProps<Element, TChangeEvent, TValue>>),
-        selectDropdownEditorComponent = (<SelectDropdownEditor<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent> valueOptions={valueOptions} /> as React.ReactElement<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>),
+        inputEditorComponent          = (<InputEditor<Element, TValue, TChangeEvent> />                                                                        as React.ReactElement<InputEditorProps<Element, TValue, TChangeEvent>>),
+        selectDropdownEditorComponent = (<SelectDropdownEditor<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent> valueOptions={valueOptions} /> as React.ReactElement<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>),
         
         
         
@@ -333,7 +333,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     
     // states:
-    const handleValueChangeInternal = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
+    const handleValueChangeInternal = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
         // normalize: null => empty string, any TValue => toString:
         const newValueStr = (newValue !== null) ? `${newValue}` : '' /* null => empty string */;
         onTextChange?.(newValueStr, event);
@@ -519,7 +519,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     
     
     // handlers:
-    const handleInputChangeInternal    = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue, event) => {
+    const handleInputChangeInternal    = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
         triggerValueChange(newValue, { triggerAt: 'immediately', event: event });
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
@@ -534,7 +534,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
         handleInputChangeInternal,
     );
     
-    const handleDropdownChangeInternal = useEvent<EditorChangeEventHandler<TChangeEvent, TValue>>((newValue) => {
+    const handleDropdownChangeInternal = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue) => {
         const inputElm = inputRefInternal.current;
         if (inputElm) {
             // react *hack*: trigger `onChange` event:
@@ -712,7 +712,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
     const {
         // other props:
         ...restInputEditorProps
-    } = restInputDropdownEditorProps satisfies NoForeignProps<typeof restInputDropdownEditorProps, InputEditorProps<Element, TChangeEvent, TValue>>;
+    } = restInputDropdownEditorProps satisfies NoForeignProps<typeof restInputDropdownEditorProps, InputEditorProps<Element, TValue, TChangeEvent>>;
     
     const {
         // classes:
@@ -847,7 +847,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             style={style}
         >
             {/* <InputEditor> */}
-            {React.cloneElement<InputEditorProps<Element, TChangeEvent, TValue>>(inputEditorComponent,
+            {React.cloneElement<InputEditorProps<Element, TValue, TChangeEvent>>(inputEditorComponent,
                 // props:
                 {
                     // other props:
@@ -900,7 +900,7 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TChangeE
             
             
             {/* <SelectDropdownEditor> */}
-            {React.cloneElement<SelectDropdownEditorProps<Element, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>(selectDropdownEditorComponent,
+            {React.cloneElement<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>(selectDropdownEditorComponent,
                 // props:
                 {
                     // other props:
@@ -983,8 +983,8 @@ export {
 
 
 
-export interface InputDropdownEditorComponentProps<out TElement extends Element = HTMLDivElement, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TValue extends unknown = string, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
+export interface InputDropdownEditorComponentProps<out TElement extends Element = HTMLDivElement, TValue extends unknown = string, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>, TDropdownListExpandedChangeEvent extends DropdownListExpandedChangeEvent<TValue> = DropdownListExpandedChangeEvent<TValue>>
 {
     // components:
-    inputDropdownEditorComponent ?: React.ReactElement<InputDropdownEditorProps<TElement, TChangeEvent, TValue, TDropdownListExpandedChangeEvent>>
+    inputDropdownEditorComponent ?: React.ReactElement<InputDropdownEditorProps<TElement, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>
 }
