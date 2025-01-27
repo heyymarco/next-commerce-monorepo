@@ -1,4 +1,11 @@
-export const defaultCountryCodeToNameMap = new Map<string, string>([
+// internals:
+import {
+    type CountryCode,
+}                           from './types.js'
+
+
+
+export const defaultCountryCodeToNameMap = new Map<CountryCode, string>([
     [
         "AF",
         "Afghanistan"
@@ -1001,7 +1008,7 @@ export const defaultCountryCodeToNameMap = new Map<string, string>([
     ]
 ]);
 
-export const defaultCountryNameToCodeMap = new Map<string, string>([
+export const defaultCountryNameToCodeMap = new Map<string, CountryCode>([
     [
         "afghanistan",
         "AF"

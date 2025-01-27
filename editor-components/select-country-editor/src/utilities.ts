@@ -1,5 +1,8 @@
 // internals:
 import {
+    type CountryCode,
+}                           from './types.js'
+import {
     defaultCountryCodeToNameMap,
     defaultCountryNameToCodeMap,
 }                           from './defaultCountryMap.js'
@@ -19,7 +22,7 @@ export const getNormalizedCountryName = (countryName: string|null|undefined): st
     if (!countryCode) return null; // not found => null
     return defaultCountryCodeToNameMap.get(countryCode) ?? null;
 }
-export const getCountryCodeByName     = (countryName: string|null|undefined): string|null => {
+export const getCountryCodeByName     = (countryName: string|null|undefined): CountryCode|null => {
     // conditions:
     if (!countryName) return null; // no input => null
     
@@ -29,7 +32,7 @@ export const getCountryCodeByName     = (countryName: string|null|undefined): st
     const countryNameLowercase = countryName.trim().toLocaleLowerCase();
     return defaultCountryNameToCodeMap.get(countryNameLowercase) ?? null;
 }
-export const getCountryNameByCode     = (countryCode: string|null|undefined): string|null => {
+export const getCountryNameByCode     = (countryCode: CountryCode|null|undefined): string|null => {
     // conditions:
     if (!countryCode) return null; // no input => null
     
