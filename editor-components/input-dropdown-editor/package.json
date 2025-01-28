@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/input-dropdown-editor",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "A generic textbox editor component with a selectable dropdown.",
   "keywords": [
     "textbox",

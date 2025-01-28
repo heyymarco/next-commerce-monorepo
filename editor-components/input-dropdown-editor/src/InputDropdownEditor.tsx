@@ -26,6 +26,12 @@ import {
     
     
     
+    // an accessibility management system:
+    usePropAccessibility,
+    AccessibilityProvider,
+    
+    
+    
     // a possibility of UI having an invalid state:
     type ValidityChangeEvent,
     type ValidationDeps,
@@ -37,6 +43,12 @@ import {
     useBasicVariantProps,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
+// heymarco core:
+import {
+    // utilities:
+    useControllableAndUncontrollable,
+}                           from '@heymarco/events'
+
 // reusable-ui components:
 import {
     type DropdownListExpandedChangeEvent,
@@ -46,12 +58,6 @@ import {
     type GroupProps,
     Group,
 }                           from '@reusable-ui/group'                   // groups a list of components as a single component
-
-// heymarco:
-import {
-    // utilities:
-    useControllableAndUncontrollable,
-}                           from '@heymarco/events'
 
 // heymarco components:
 import {
@@ -324,6 +330,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         // other props:
         ...restPreInputDropdownEditorProps
     } = props;
+    
+    
+    
+    // accessibilities:
+    const propAccess = usePropAccessibility(props);
     
     
     
@@ -814,166 +825,168 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
     
     // jsx:
     return (
-        <Group<TElement>
-            // refs:
-            outerRef={mergedOuterRef}
-            
-            
-            
-            // identifiers:
-            id={id}
-            
-            
-            
-            // variants:
-            size={size}
-            theme={theme}
-            gradient={gradient}
-            outlined={outlined}
-            mild={mild}
-            
-            
-            
-            // classes:
-            mainClass={mainClass}
-            classes={classes}
-            variantClasses={variantClasses}
-            stateClasses={stateClasses}
-            className={className}
-            
-            
-            
-            // styles:
-            style={style}
-        >
-            {/* <InputEditor> */}
-            {React.cloneElement<InputEditorProps<Element, TValue, TChangeEvent>>(inputEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...restInputEditorProps,
-                    ...restInputEditorComponentProps, // overwrites restInputEditorProps (if any conflics)
-                    
-                    
-                    
-                    // refs:
-                    elmRef                  : mergedInputRef,
-                    
-                    
-                    
-                    // classes:
-                    className               : inputEditorComponentClassName,
-                    
-                    
-                    
-                    // accessibilities:
-                    assertiveFocusable      : inputEditorComponentAssertiveFocusable,
-                    
-                    
-                    
-                    // values:
-                    value                   : inputEditorComponentValue, // internally controllable
-                    onChange                : handleInputChange,         // internally controllable
-                    
-                    notifyValueChange       : inputEditorComponentNotifyValueChange,
-                    
-                    
-                    
-                    // validations:
-                    enableValidation        : inputEditorComponentEnableValidation,
-                    isValid                 : inputEditorComponentIsValid,
-                    inheritValidation       : inputEditorComponentInheritValidation,
-                    validationDeps          : mergedValidationDeps,
-                    onValidation            : handleValidation,
-                    
-                    validDelay              : inputEditorComponentValidDelay,
-                    invalidDelay            : inputEditorComponentInvalidDelay,
-                    noValidationDelay       : inputEditorComponentNoValidationDelay,
-                    
-                    
-                    
-                    // handlers:
-                    onFocus                 : handleInputFocus,
-                    onClick                 : handleInputClick,
-                },
-            )}
-            
-            
-            {/* <SelectDropdownEditor> */}
-            {React.cloneElement<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>(selectDropdownEditorComponent,
-                // props:
-                {
-                    // other props:
-                    ...restSelectDropdownEditorComponentProps,
-                    
-                    
-                    
-                    // variants:
-                    ...basicVariantProps,
-                    
-                    
-                    
-                    // accessibilities:
-                    'aria-invalid'          : selectDropdownEditorComponentAriaInvalid,
-                    
-                    
-                    
-                    // values:
-                    valueOptions            : selectDropdownEditorComponentValueOptions,
-                    excludedValueOptions    : selectDropdownEditorComponentExcludedValueOptions,
-                    valueToUi               : selectDropdownEditorComponentValueToUi,
-                    
-                    value                   : selectDropdownEditorComponentValue, // internally controllable
-                    onChange                : handleDropdownChange,               // internally controllable (forwards to <Input>'s onChange)
-                    
-                    
-                    
-                    // validations:
-                    isValid                 : selectDropdownEditorComponentIsValid,
-                    
-                    validDelay              : selectDropdownEditorComponentValidDelay,
-                    invalidDelay            : selectDropdownEditorComponentInvalidDelay,
-                    noValidationDelay       : selectDropdownEditorComponentNoValidationDelay,
-                    
-                    equalityValueComparison : selectDropdownEditorComponentEqualityValueComparison,
-                    
-                    
-                    
-                    // states:
-                    expanded                : selectDropdownEditorComponentExpanded,
-                    onExpandedChange        : handleExpandedChange,
-                    
-                    
-                    
-                    // floatable:
-                    floatingOn              : selectDropdownEditorComponentFloatingOn,
-                    
-                    
-                    
-                    // auto focusable:
-                    autoFocus               : selectDropdownEditorComponentAutoFocus,
-                    restoreFocus            : selectDropdownEditorComponentRestoreFocus,
-                    
-                    
-                    
-                    // components:
-                    buttonRef               : selectDropdownEditorComponentButtonRef,
-                    buttonOrientation       : selectDropdownEditorComponentButtonOrientation,
-                    buttonComponent         : selectDropdownEditorComponentButtonComponent,
-                    buttonChildren          : selectDropdownEditorComponentButtonChildren,
-                    toggleButtonComponent   : selectDropdownEditorComponentToggleButtonComponent,
-                    dropdownRef             : mergedDropdownRef,
-                    dropdownOrientation     : selectDropdownEditorComponentDropdownOrientation,
-                    dropdownComponent       : selectDropdownEditorComponentDropdownComponent,
-                    listRef                 : selectDropdownEditorComponentListRef,
-                    listOrientation         : selectDropdownEditorComponentListOrientation,
-                    listStyle               : selectDropdownEditorComponentListStyle,
-                    listComponent           : selectDropdownEditorComponentListComponent,
-                    listItemComponent       : selectDropdownEditorComponentListItemComponent,
-                    editableButtonComponent : selectDropdownEditorComponentEditableButtonComponent,
-                },
-            )}
-        </Group>
+        <AccessibilityProvider {...propAccess}>
+            <Group<TElement>
+                // refs:
+                outerRef={mergedOuterRef}
+                
+                
+                
+                // identifiers:
+                id={id}
+                
+                
+                
+                // variants:
+                size={size}
+                theme={theme}
+                gradient={gradient}
+                outlined={outlined}
+                mild={mild}
+                
+                
+                
+                // classes:
+                mainClass={mainClass}
+                classes={classes}
+                variantClasses={variantClasses}
+                stateClasses={stateClasses}
+                className={className}
+                
+                
+                
+                // styles:
+                style={style}
+            >
+                {/* <InputEditor> */}
+                {React.cloneElement<InputEditorProps<Element, TValue, TChangeEvent>>(inputEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...restInputEditorProps,
+                        ...restInputEditorComponentProps, // overwrites restInputEditorProps (if any conflics)
+                        
+                        
+                        
+                        // refs:
+                        elmRef                  : mergedInputRef,
+                        
+                        
+                        
+                        // classes:
+                        className               : inputEditorComponentClassName,
+                        
+                        
+                        
+                        // accessibilities:
+                        assertiveFocusable      : inputEditorComponentAssertiveFocusable,
+                        
+                        
+                        
+                        // values:
+                        value                   : inputEditorComponentValue, // internally controllable
+                        onChange                : handleInputChange,         // internally controllable
+                        
+                        notifyValueChange       : inputEditorComponentNotifyValueChange,
+                        
+                        
+                        
+                        // validations:
+                        enableValidation        : inputEditorComponentEnableValidation,
+                        isValid                 : inputEditorComponentIsValid,
+                        inheritValidation       : inputEditorComponentInheritValidation,
+                        validationDeps          : mergedValidationDeps,
+                        onValidation            : handleValidation,
+                        
+                        validDelay              : inputEditorComponentValidDelay,
+                        invalidDelay            : inputEditorComponentInvalidDelay,
+                        noValidationDelay       : inputEditorComponentNoValidationDelay,
+                        
+                        
+                        
+                        // handlers:
+                        onFocus                 : handleInputFocus,
+                        onClick                 : handleInputClick,
+                    },
+                )}
+                
+                
+                {/* <SelectDropdownEditor> */}
+                {React.cloneElement<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>>(selectDropdownEditorComponent,
+                    // props:
+                    {
+                        // other props:
+                        ...restSelectDropdownEditorComponentProps,
+                        
+                        
+                        
+                        // variants:
+                        ...basicVariantProps,
+                        
+                        
+                        
+                        // accessibilities:
+                        'aria-invalid'          : selectDropdownEditorComponentAriaInvalid,
+                        
+                        
+                        
+                        // values:
+                        valueOptions            : selectDropdownEditorComponentValueOptions,
+                        excludedValueOptions    : selectDropdownEditorComponentExcludedValueOptions,
+                        valueToUi               : selectDropdownEditorComponentValueToUi,
+                        
+                        value                   : selectDropdownEditorComponentValue, // internally controllable
+                        onChange                : handleDropdownChange,               // internally controllable (forwards to <Input>'s onChange)
+                        
+                        
+                        
+                        // validations:
+                        isValid                 : selectDropdownEditorComponentIsValid,
+                        
+                        validDelay              : selectDropdownEditorComponentValidDelay,
+                        invalidDelay            : selectDropdownEditorComponentInvalidDelay,
+                        noValidationDelay       : selectDropdownEditorComponentNoValidationDelay,
+                        
+                        equalityValueComparison : selectDropdownEditorComponentEqualityValueComparison,
+                        
+                        
+                        
+                        // states:
+                        expanded                : selectDropdownEditorComponentExpanded,
+                        onExpandedChange        : handleExpandedChange,
+                        
+                        
+                        
+                        // floatable:
+                        floatingOn              : selectDropdownEditorComponentFloatingOn,
+                        
+                        
+                        
+                        // auto focusable:
+                        autoFocus               : selectDropdownEditorComponentAutoFocus,
+                        restoreFocus            : selectDropdownEditorComponentRestoreFocus,
+                        
+                        
+                        
+                        // components:
+                        buttonRef               : selectDropdownEditorComponentButtonRef,
+                        buttonOrientation       : selectDropdownEditorComponentButtonOrientation,
+                        buttonComponent         : selectDropdownEditorComponentButtonComponent,
+                        buttonChildren          : selectDropdownEditorComponentButtonChildren,
+                        toggleButtonComponent   : selectDropdownEditorComponentToggleButtonComponent,
+                        dropdownRef             : mergedDropdownRef,
+                        dropdownOrientation     : selectDropdownEditorComponentDropdownOrientation,
+                        dropdownComponent       : selectDropdownEditorComponentDropdownComponent,
+                        listRef                 : selectDropdownEditorComponentListRef,
+                        listOrientation         : selectDropdownEditorComponentListOrientation,
+                        listStyle               : selectDropdownEditorComponentListStyle,
+                        listComponent           : selectDropdownEditorComponentListComponent,
+                        listItemComponent       : selectDropdownEditorComponentListItemComponent,
+                        editableButtonComponent : selectDropdownEditorComponentEditableButtonComponent,
+                    },
+                )}
+            </Group>
+        </AccessibilityProvider>
     );
 };
 export {
