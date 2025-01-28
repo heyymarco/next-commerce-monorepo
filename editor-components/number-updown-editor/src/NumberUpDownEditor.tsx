@@ -1,9 +1,3 @@
-// styles:
-import {
-    // types:
-    type Optional,
-}                           from '@cssfn/core'                  // writes css in javascript
-
 // react:
 import {
     // react:
@@ -40,6 +34,11 @@ import {
     // an accessibility management system:
     usePropAccessibility,
     AccessibilityProvider,
+    
+    
+    
+    // a possibility of UI having an invalid state:
+    type ValidationDeps,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -66,6 +65,10 @@ import {
     // react components:
     type NumberEditorProps,
     NumberEditor,
+    
+    
+    
+    type NumberEditorComponentProps,
 }                           from '@heymarco/number-editor'
 
 
@@ -98,7 +101,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
             // styles:
             |'style'          // moved to <Group>
         >,
-        Omit<NumberEditorProps<TElement, TValue, TChangeEvent>,
+        Omit<NumberEditorProps<Element, TValue, TChangeEvent>,
             // refs:
             |'outerRef'       // moved to <Group>
             
@@ -121,12 +124,14 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
             
             // styles:
             |'style'          // moved to <Group>
-        >
+        >,
+        
+        // components:
+        NumberEditorComponentProps<Element, TValue, TChangeEvent>
 {
     // components:
-    decreaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
-    increaseButtonComponent ?: React.ReactComponentElement<any, ButtonProps>
-    numberEditorComponent   ?: React.ReactComponentElement<any, NumberEditorProps<TElement, TValue, TChangeEvent>>
+    decreaseButtonComponent ?: React.ReactElement<ButtonProps>
+    increaseButtonComponent ?: React.ReactElement<ButtonProps>
     
     
     
@@ -140,57 +145,67 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
     // props:
     const {
         // refs:
-        elmRef,
-        outerRef,
+        elmRef,                                            // take, moved to <NumberEditor>
+        outerRef,                                          // take, moved to <Group>
         
         
         
         // identifiers:
-        id,
+        id,                                                // take, moved to <Group>
         
         
         
         // variants:
-        size,
-        theme,
-        gradient,
-        outlined,
-        mild,
+        size,                                              // take, moved to <Group>
+        theme,                                             // take, moved to <Group>
+        gradient,                                          // take, moved to <Group>
+        outlined,                                          // take, moved to <Group>
+        mild,                                              // take, moved to <Group>
         
         
         
         // classes:
-        mainClass,
-        classes,
-        variantClasses,
-        stateClasses,
-        className,
+        mainClass,                                         // take, moved to <Group>
+        classes,                                           // take, moved to <Group>
+        variantClasses,                                    // take, moved to <Group>
+        stateClasses,                                      // take, moved to <Group>
+        className,                                         // take, moved to <Group>
         
         
         
         // styles:
-        style,
+        style,                                             // take, moved to <Group>
         
         
         
         // values:
-        defaultValue,
-        value,
+        defaultValue            : defaultUncontrollableValueRaw,
+        value                   : controllableValueRaw,
         onChange,
         
         
         
         // validations:
-        min  = 0,
-        max  = 9,
-        step = 1,
+        enableValidation,                                  // take, moved to <NumberEditor>
+        isValid,                                           // take, moved to <NumberEditor>
+        inheritValidation,                                 // take, moved to <NumberEditor>
+        validationDeps          : validationDepsOverwrite, // take, moved to <NumberEditor>
+        onValidation,                                      // take, moved to <NumberEditor>
+        
+        validDelay,                                        // take, moved to <NumberEditor>
+        invalidDelay,                                      // take, moved to <NumberEditor>
+        noValidationDelay,                                 // take, moved to <NumberEditor>
+        
+        min                     : min     = 0,
+        max                     : max     = 100,
+        step                    : stepRaw = 1,
         
         
         
         // components:
-        decreaseButtonComponent = (<ButtonIcon icon='remove'                     /> as React.ReactComponentElement<any, ButtonProps>),
-        increaseButtonComponent = (<ButtonIcon icon='add'                        /> as React.ReactComponentElement<any, ButtonProps>),
-        numberEditorComponent   = (<NumberEditor<TElement, TValue, TChangeEvent> /> as React.ReactComponentElement<any, NumberEditorProps<TElement, TValue, TChangeEvent>>),
+        decreaseButtonComponent = (<ButtonIcon icon='remove'                    /> as React.ReactElement<ButtonProps>),
+        increaseButtonComponent = (<ButtonIcon icon='add'                       /> as React.ReactElement<ButtonProps>),
+        numberEditorComponent   = (<NumberEditor<Element, TValue, TChangeEvent> /> as React.ReactElement<NumberEditorProps<Element, TValue, TChangeEvent>>),
         
         
         
@@ -203,26 +218,47 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
         
         
         // other props:
-        ...restNumberEditorProps
+        ...restPreNumberEditorProps
     } = props;
+    
+    const step       : number  = Math.abs(stepRaw);
+    const isReversed : boolean = (max < min);
+    
+    const appendValidationDeps = useEvent<ValidationDeps>((bases) => [
+        ...bases,
+        
+        // validations:
+        /* none */
+    ]);
+    const mergedValidationDeps = useEvent<ValidationDeps>((bases) => {
+        const basesStage2 = appendValidationDeps(bases);
+        const basesStage3 = validationDepsOverwrite ? validationDepsOverwrite(basesStage2) : basesStage2;
+        
+        const validationDepsOverwrite2 = numberEditorComponent.props.validationDeps;
+        const basesStage4 = validationDepsOverwrite2 ? validationDepsOverwrite2(basesStage3) : basesStage3;
+        
+        return basesStage4;
+    });
+    
+    
+    
+    // accessibilities:
+    const propAccess = usePropAccessibility(props);
+    const {enabled: propEnabled, readOnly: propReadOnly} = propAccess;
+    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
     
     
     
     // utilities:
-    const minFn      : number  = min;
-    const maxFn      : number  = max;
-    const stepFn     : number  = Math.abs(step);
-    const negativeFn : boolean = (maxFn < minFn);
-    
-    const trimValue  = useEvent(<TOpt extends number|null|undefined>(value: number|TOpt): number|TOpt => {
-        return clamp(minFn, value, maxFn, stepFn);
+    const trimValue = useEvent(<TOpt extends number|null|undefined>(value: number|TOpt): number|TOpt => {
+        return clamp(min, value, max, step);
     });
     
     
     
     // fn props:
-    const valueFn        : number|null|undefined = trimValue(value);
-    const defaultValueFn : number|null|undefined = trimValue(defaultValue);
+    const controllableValue          : number|null|undefined = trimValue(controllableValueRaw);
+    const defaultUncontrollableValue : number|null|undefined = trimValue(defaultUncontrollableValueRaw);
     
     
     
@@ -245,8 +281,8 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
     
     
     // classes:
-    const specialClasses    = ['solid', 'fluid', 'not-solid', 'not-fluid'];
-    const hasSpecialClasses = (className: Optional<string>): boolean => !!className && specialClasses.includes(className);
+    const specialClasses        = ['solid', 'fluid', 'not-solid', 'not-fluid'];
+    const hasSpecialClasses     = (className: string|null|undefined): boolean => !!className && specialClasses.includes(className);
     const decreaseButtonClasses = useMergeClasses(
         // preserves the original `classes` from `decreaseButtonComponent`:
         decreaseButtonComponent.props.classes,
@@ -256,7 +292,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
         // classes:
         ...(decreaseButtonComponent.props.classes?.some(hasSpecialClasses) ? [/* do not inject any className */] : ['solid']),
     );
-    const inputClasses = useMergeClasses(
+    const mergedInputClasses    = useMergeClasses(
         // preserves the original `classes` from `numberEditorComponent`:
         numberEditorComponent.props.classes,
         
@@ -284,43 +320,44 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
     
     // source of truth:
     const valueRef         = useRef<number|null>(/*initialState: */
-        (valueFn !== undefined)
-        ? valueFn // as number|null
+        (controllableValue !== undefined) // has provided `value` prop
+        ? controllableValue               // as number|null
         : (
-            (defaultValueFn !== undefined)
-            ? defaultValueFn // as number|null
-            : null
+            (defaultUncontrollableValue !== undefined) // has provided `defaultValue` prop
+            ? defaultUncontrollableValue               // as number|null
+            : null                                     // the internal default value
         )
     );
-    if (valueFn !== undefined) valueRef.current = valueFn;  //   controllable component mode: update the source_of_truth on every_re_render -- on every [value] prop changes
-    const [triggerRender]  = useTriggerRender();            // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
+    const value : TValue = (valueRef.current ?? null) as TValue;
+    if (controllableValue !== undefined) valueRef.current = controllableValue; //   controllable component mode: update the source_of_truth on every_re_render -- on every [value] prop changes
+    const [triggerRender]  = useTriggerRender();                               // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
     
     type ChangeValueAction = 'setValue'|'decrease'|'increase'
     const changeValue      = useEvent((action: ChangeValueAction, amount: number|null): void => {
         let value = valueRef.current;
-        const defaultValueInternal = minFn;
+        const defaultValueInternal = min;
         switch (action) {
             case 'setValue': {
                 value = trimValue(amount);
             } break;
             
             case 'decrease' : {
-                if (amount !== null) {
-                    if (value === null) {
+                if (amount !== null) { // if `amount` is `null`, nothing to decrease
+                    if (value === null) { // if `value` is blank, auto-fill with `defaultValue`
                         value = trimValue(defaultValueInternal);
                     }
                     else {
-                        value = trimValue(value - ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                        value = trimValue(value - ((step || 1) * (isReversed ? -1 : 1) * amount));
                     } // if
                 } // if
             } break;
             case 'increase' : {
-                if (amount !== null) {
-                    if (value === null) {
+                if (amount !== null) { // if `amount` is `null`, nothing to increase
+                    if (value === null) { // if `value` is blank, auto-fill with `defaultValue`
                         value = trimValue(defaultValueInternal);
                     }
                     else {
-                        value = trimValue(value + ((stepFn || 1) * (negativeFn ? -1 : 1) * amount));
+                        value = trimValue(value + ((step || 1) * (isReversed ? -1 : 1) * amount));
                     } // if
                 } // if
             } break;
@@ -334,7 +371,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
             
             
             
-            if (valueFn === undefined) { // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
+            if (controllableValue === undefined) { // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
                 valueRef.current = value; // update
                 triggerRender();          // sync the UI to `valueRef.current`
             }
@@ -349,7 +386,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
                 // react *hack*: trigger `onChange` event:
                 scheduleTriggerEvent(() => { // runs the `input` event *next after* current macroTask completed
                     if (value !== null) {
-                        // do not use `valueAsNumber`, the underlying `inputElm` is not always `type='number'`, maybe `type='text'` with `inputMode='numeric'`
+                        // do not use `valueAsNumber`, the underlying `inputElm` is not always `type='number'`, maybe `type='text'` with `inputMode='numeric'` (in case of custom hexadecimal or non-decimal number input)
                         // inputElm.valueAsNumber = value; // react *hack* set_value *before* firing `input` event
                         
                         // instead, pass the value as string:
@@ -368,6 +405,20 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
             } // if
         } // if
     });
+    
+    
+    
+    // props:
+    const {
+        // values:
+        notifyValueChange       = value,                   // take, to be handled by `<NumberEditor>`
+        
+        
+        
+        // other props:
+        ...restNumberEditorProps
+    } = restPreNumberEditorProps;
+    
     
     
     // handlers:
@@ -439,33 +490,64 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
     
     
     
-    // accessibilities:
-    const propAccess = usePropAccessibility(props);
-    const {enabled: propEnabled, readOnly: propReadOnly} = propAccess;
-    const isDisabledOrReadOnly = (!propEnabled || propReadOnly);
-    
-    
-    
     // default props:
     const {
         // values:
-     // defaultValue      : numberEditorComponentDefaultValue      = (defaultValueFn   ?? null), // fully controllable, no defaultValue
-        value             : numberEditorComponentValue             = (valueRef.current ?? null), // fully controllable
+     // defaultValue      : numberEditorComponentDefaultValue      = (defaultValueFn   ?? null), // internally controllable, no defaultValue
+        value             : numberEditorComponentValue             = value,                      // internally controllable
         
-        notifyValueChange : numberEditorComponentNotifyValueChange = (valueRef.current ?? null),
+        notifyValueChange : numberEditorComponentNotifyValueChange = notifyValueChange,
         
         
         
         // validations:
-        min               : numberEditorComponentMin               = (negativeFn ? maxFn : minFn),
-        max               : numberEditorComponentMax               = (negativeFn ? minFn : maxFn),
-        step              : numberEditorComponentStep              = stepFn,
+        enableValidation  : numberEditorComponentEnableValidation  = enableValidation,
+        isValid           : numberEditorComponentIsValid           = isValid,
+        inheritValidation : numberEditorComponentInheritValidation = inheritValidation,
+        
+        validDelay        : numberEditorComponentValidDelay        = validDelay,
+        invalidDelay      : numberEditorComponentInvalidDelay      = invalidDelay,
+        noValidationDelay : numberEditorComponentNoValidationDelay = noValidationDelay,
+        
+        min               : numberEditorComponentMin               = (isReversed ? max : min),
+        max               : numberEditorComponentMax               = (isReversed ? min : max),
+        step              : numberEditorComponentStep              = step,
         
         
         
         // other props:
         ...restNumberEditorComponentProps
     } = numberEditorComponent.props;
+    
+    const {
+        // accessibilities:
+        title   : decreaseButtonComponentTitle   = 'decrease quantity',
+        
+        
+        
+        // states:
+        enabled : decreaseButtonComponentEnabled = (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current > min))),
+        
+        
+        
+        // other props:
+        ...restDecreaseButtonComponentProps
+    } = decreaseButtonComponent.props;
+    
+    const {
+        // accessibilities:
+        title   : increaseButtonComponentTitle   = 'increase quantity',
+        
+        
+        
+        // states:
+        enabled : increaseButtonComponentEnabled = (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current < max))),
+        
+        
+        
+        // other props:
+        ...restIncreaseButtonComponentProps
+    } = increaseButtonComponent.props;
     
     
     
@@ -510,30 +592,39 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
                 {React.cloneElement<ButtonProps>(decreaseButtonComponent,
                     // props:
                     {
+                        // other props:
+                        ...restDecreaseButtonComponentProps,
+                        
+                        
+                        
                         // classes:
-                        classes      : decreaseButtonClasses,
+                        classes : decreaseButtonClasses,
                         
                         
                         
                         // accessibilities:
-                        title        : decreaseButtonComponent.props.title   ?? 'decrease quantity',
-                        enabled      : decreaseButtonComponent.props.enabled ?? (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current > minFn))),
+                        title   : decreaseButtonComponentTitle,
+                        
+                        
+                        
+                        // states:
+                        enabled : decreaseButtonComponentEnabled,
                         
                         
                         
                         // handlers:
-                        onClick      : handleDecreaseButtonClick,
+                        onClick : handleDecreaseButtonClick,
                     },
                 )}
                 
                 {childrenBeforeInput}
                 
-                {/* <Input> */}
-                {React.cloneElement<NumberEditorProps<TElement, TValue, TChangeEvent>>(numberEditorComponent,
+                {/* <NumberEditor> */}
+                {React.cloneElement<NumberEditorProps<Element, TValue, TChangeEvent>>(numberEditorComponent,
                     // props:
                     {
                         // other props:
-                        ...restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, NumberEditorProps<TElement, TValue, TChangeEvent>>,
+                        ...restNumberEditorProps satisfies NoForeignProps<typeof restNumberEditorProps, NumberEditorProps<Element, TValue, TChangeEvent>>,
                         ...restNumberEditorComponentProps, // overwrites restNumberEditorProps (if any conflics)
                         
                         
@@ -544,13 +635,13 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
                         
                         
                         // classes:
-                        classes           : inputClasses,
+                        classes           : mergedInputClasses,
                         
                         
                         
                         // values:
-                     // defaultValue      : numberEditorComponentDefaultValue as TValue, // fully controllable, no defaultValue
-                        value             : numberEditorComponentValue        as TValue, // fully controllable
+                     // defaultValue      : numberEditorComponentDefaultValue as TValue, // internally controllable, no defaultValue
+                        value             : numberEditorComponentValue        as TValue, // internally controllable
                         onChange          : handleChange,
                         
                         notifyValueChange : numberEditorComponentNotifyValueChange,
@@ -558,6 +649,16 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
                         
                         
                         // validations:
+                        enableValidation  : numberEditorComponentEnableValidation,
+                        isValid           : numberEditorComponentIsValid,
+                        inheritValidation : numberEditorComponentInheritValidation,
+                        validationDeps    : mergedValidationDeps,
+                        onValidation      : onValidation,
+                        
+                        validDelay        : numberEditorComponentValidDelay,
+                        invalidDelay      : numberEditorComponentInvalidDelay,
+                        noValidationDelay : numberEditorComponentNoValidationDelay,
+                        
                         min               : numberEditorComponentMin,
                         max               : numberEditorComponentMax,
                         step              : numberEditorComponentStep,
@@ -570,19 +671,28 @@ const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue e
                 {React.cloneElement<ButtonProps>(increaseButtonComponent,
                     // props:
                     {
+                        // other props:
+                        ...restIncreaseButtonComponentProps,
+                        
+                        
+                        
                         // classes:
-                        classes      : increaseButtonClasses,
+                        classes : increaseButtonClasses,
                         
                         
                         
                         // accessibilities:
-                        title        : increaseButtonComponent.props.title   ?? 'increase quantity',
-                        enabled      : increaseButtonComponent.props.enabled ?? (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current < maxFn))),
+                        title   : increaseButtonComponentTitle,
+                        
+                        
+                        
+                        // states:
+                        enabled : increaseButtonComponentEnabled,
                         
                         
                         
                         // handlers:
-                        onClick      : handleIncreaseButtonClick,
+                        onClick : handleIncreaseButtonClick,
                     },
                 )}
                 
