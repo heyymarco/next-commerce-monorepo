@@ -13,7 +13,6 @@ import {
     
     // react helper hooks:
     useEvent,
-    useMergeEvents,
     
     
     
@@ -251,22 +250,13 @@ const SelectDropdownEditor = <TElement extends Element = HTMLButtonElement, TVal
     
     
     // states:
-    const handleValueChange = useMergeEvents(
-        // preserves the original `onChange` from `props`:
-        onValueChange,
-        
-        
-        
-        // actions:
-        // TODO: signal the uncontrollable value changes
-    );
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : handleValueChange,
+        onValueChange      : onValueChange,
     });
     
     
