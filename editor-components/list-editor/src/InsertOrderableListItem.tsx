@@ -42,7 +42,7 @@ export interface InsertOrderableListItemProps</*out*/ TElement extends HTMLEleme
         InsertActionEditorProps<TElement, TValue, TChangeEvent>
 {
     // components:
-    insertOrderableListItemComponent ?: React.ReactComponentElement<any, OrderableListItemProps<TElement, never>>
+    insertOrderableListItemComponent ?: React.ReactElement<OrderableListItemProps<TElement, never>>
 }
 const InsertOrderableListItem = <TElement extends HTMLElement = HTMLElement, TValue extends unknown = string, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.KeyboardEvent<Element>|DraggedEvent<HTMLElement>>(props: InsertOrderableListItemProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
