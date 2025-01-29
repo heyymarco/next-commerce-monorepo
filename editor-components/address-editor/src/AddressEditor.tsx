@@ -167,7 +167,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement, TValue
         
         defaultValue      : defaultUncontrollableValue = emptyAddress as TValue,
         value             : controllableValue,
-        onChange          : onControllableValueChange,
+        onChange          : onValueChange,
         
         
         
@@ -226,7 +226,7 @@ const AddressEditorInternal = <TElement extends Element = HTMLDivElement, TValue
     } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : onControllableValueChange,
+        onValueChange      : onValueChange,
     });
     
     
