@@ -68,7 +68,18 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TValue extends
     
     // handlers:
     const handleChangeInternal = useEvent<EditorChangeEventHandler<string, TChangeEvent>>((value, event) => {
-        onChange?.((value ? Number.parseFloat(value) : null) as TValue, event);
+        if (onChange) {
+            const trimmedValue = value.trim();
+            const parsedNumber = trimmedValue ? Number.parseFloat(trimmedValue) : null;
+            onChange(
+                (
+                    ((parsedNumber !== null) && isFinite(parsedNumber)) // if not `null` and not `NaN` and not `±Infinity`
+                    ? parsedNumber // then, use the `parsedNumber`
+                    : null         // otherwise, use `null`
+                ) as TValue,
+                event
+            );
+        } // if
     });
     const handleChangeAsText   = useMergeEvents(
         // preserves the original `onChange` from `props`:
