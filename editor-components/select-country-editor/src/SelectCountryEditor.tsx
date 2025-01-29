@@ -18,6 +18,7 @@ import {
     
     // react helper hooks:
     useEvent,
+    useMergeEvents,
 }                           from '@reusable-ui/core'                    // a set of reusable-ui packages which are responsible for building any component
 
 // reusable-ui components:
@@ -79,8 +80,8 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TValue e
         // values:
         defaultValue   : defaultUncontrollableValue = '' as TValue,
         value          : controllableValue,
-        onChange       : onControllableValueChange,
-        onChangeAsText : onControllableTextChange,
+        onChange,
+        onChangeAsText,
         
         
         
@@ -91,18 +92,22 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TValue e
     
     
     // states:
-    const handleControllableValueChange = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
-        // forwards:
-        onControllableValueChange?.(newValue, event);
-        onControllableTextChange?.(newValue, event);
-    });
+    const handleValueChange = useMergeEvents(
+        // preserves the original `onChangeAsText` from `props`:
+        onChangeAsText satisfies EditorChangeEventHandler<string, TChangeEvent>|undefined as EditorChangeEventHandler<TValue, TChangeEvent>|undefined,
+        
+        
+        
+        // preserves the original `onChange` from `props`:
+        onChange,
+    );
     const {
         value              : value,
         triggerValueChange : triggerValueChange,
     } = useControllableAndUncontrollable<TValue, TChangeEvent>({
         defaultValue       : defaultUncontrollableValue,
         value              : controllableValue,
-        onValueChange      : handleControllableValueChange,
+        onValueChange      : handleValueChange,
     });
     
     
