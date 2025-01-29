@@ -81,7 +81,15 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
                 case 'number':
                 case 'range' : {
                     const trimmedValue = value.trim();
-                    onChange((trimmedValue ? Number.parseFloat(trimmedValue) : null) satisfies number|null as TValue, event as unknown as TChangeEvent);
+                    const parsedNumber = trimmedValue ? Number.parseFloat(trimmedValue) : null;
+                    onChange(
+                        (
+                            ((parsedNumber !== null) && isFinite(parsedNumber)) // if not `null` and not `NaN` and not `±Infinity`
+                            ? parsedNumber // then, use the `parsedNumber`
+                            : null         // otherwise, use `null`
+                        ) as TValue,
+                        event as unknown as TChangeEvent
+                    );
                 } break;
                 
                 case 'date':
@@ -90,7 +98,15 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
                 case 'week':
                 case 'time': {
                     const trimmedValue = value.trim();
-                    onChange((trimmedValue ? new Date(Date.parse(trimmedValue)) : null) satisfies Date|null as TValue, event as unknown as TChangeEvent);
+                    const parsedDate   = trimmedValue ? Date.parse(trimmedValue) : null;
+                    onChange(
+                        (
+                            ((parsedDate !== null) && isFinite(parsedDate)) // if not `null` and not `NaN` and not `±Infinity`
+                            ? new Date(parsedDate) // then, use the `parsedDate`
+                            : null                 // otherwise, use `null`
+                        ) as TValue,
+                        event as unknown as TChangeEvent
+                    );
                 } break;
                 
                 // case 'color':
