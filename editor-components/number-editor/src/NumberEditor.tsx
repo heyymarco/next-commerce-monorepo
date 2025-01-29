@@ -67,17 +67,17 @@ const NumberEditor = <TElement extends Element = HTMLSpanElement, TValue extends
     
     
     // handlers:
-    const handleChangeAsTextInternal = useEvent<EditorChangeEventHandler<string, TChangeEvent>>((value, event) => {
+    const handleChangeInternal = useEvent<EditorChangeEventHandler<string, TChangeEvent>>((value, event) => {
         onChange?.((value ? Number.parseFloat(value) : null) as TValue, event);
     });
-    const handleChangeAsText         = useMergeEvents(
+    const handleChangeAsText   = useMergeEvents(
+        // preserves the original `onChange` from `props`:
+        handleChangeInternal,
+        
+        
+        
         // preserves the original `onChangeAsText` from `props`:
         onChangeAsText,
-        
-        
-        
-        // handlers:
-        handleChangeAsTextInternal,
     );
     
     
