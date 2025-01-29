@@ -36,26 +36,26 @@ droppable.onDragLeave => :not(:hover)  isDragging|isDropping=null|undefined
 
 
 
-Component            |      TOuterElm      |        TChangeEvent        |        TValue                  |        TExpanded             |     TActionEvent      |
------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Editor               |  generic (= html)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |           -           |
-ActionEditor         |  generic (= html)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |  generic (= generic)  |
-InputEditor          |  generic (= span)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |           -           |
-KeyActionEditor      |  generic (= span)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |  KeyboardEvent        |
-SelectDropdownEditor |  generic (= button) |  generic (= mouseEvent)    |  unknown (= string)            |   generic (= DDL_Expanded)   |           -           |
-InputDropdownEditor  |  generic (= div)    |  generic (= changeEvent)   |  unknown (= string)            |   generic (= DDL_Expanded)   |           -           |
-AddressEditor        |  generic (= div)    |  generic (= changeEvent)   |  Address|null (= Address|null) |              -               |           -           |
-ListEditor           |  generic (= html)   |  generic (= kbd|dragged)   |  unknown (= string)            |              -               |           -           |
------------------------------------------------------------------------------------------------------------------------------------------------------------------
-TextEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
-NameEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
-EmailEditor          |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
-PhoneEditor          |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |
-TextDropdownEditor   |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
-SelectZoneEditor     |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
-SelectCountryEditor  |  generic (= div)    |  generic (= changeEvent)   |  string (= CountryCode)        | DDL<string> (= DDL_Expanded) |           -           |
-SelectStateEditor    |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
-SelectCityEditor     |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |
------------------------------------------------------------------------------------------------------------------------------------------------------------------
-NumberEditor         |  generic (= span)   |  generic (= changeEvent)   |  number|null (= number|null)   |              -               |           -           |
-NumberUpDownEditor   |  generic (= div)    |  generic (= changeEvent)   |  number|null (= number|null)   |              -               |           -           |
+Component            |      TOuterElm      |        TChangeEvent        |        TValue                  |        TExpanded             |     TActionEvent      |                           Compositions                           |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Editor               |  generic (= html)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |           -           |  EditableControl                                                 |
+ActionEditor         |  generic (= html)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |  generic (= generic)  |  Editor                                                          |
+InputEditor          |  generic (= span)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |           -           |  Input                                                           |
+KeyActionEditor      |  generic (= span)   |  generic (= changeEvent)   |  unknown (= string)            |              -               |  KeyboardEvent        |  inputEditorComponent                                            |
+SelectDropdownEditor |  generic (= button) |  generic (= mouseEvent)    |  unknown (= string)            |   generic (= DDL_Expanded)   |           -           |  DropdownListButton                                              |
+InputDropdownEditor  |  generic (= div)    |  generic (= changeEvent)   |  unknown (= string)            |   generic (= DDL_Expanded)   |           -           |  Group of inputEditorComponent + selectDropdownEditorComponent   |
+AddressEditor        |  generic (= div)    |  generic (= changeEvent)   |  Address|null (= Address|null) |              -               |           -           |  Generic of textEditorComponent                                  |
+ListEditor           |  generic (= html)   |  generic (= kbd|dragged)   |  unknown (= string)            |              -               |           -           |  orderableListComponent                                          |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TextEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |  InputEditor                                                     |
+NameEditor           |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |  TextEditor                                                      |
+EmailEditor          |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |  TextEditor                                                      |
+PhoneEditor          |  generic (= span)   |  generic (= changeEvent)   |  string (= string)             |              -               |           -           |  TextEditor                                                      |
+TextDropdownEditor   |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |  InputDropdownEditor                                             |
+SelectZoneEditor     |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |  TextDropdownEditor                                              |
+SelectCountryEditor  |  generic (= div)    |  generic (= changeEvent)   |  string (= CountryCode)        | DDL<string> (= DDL_Expanded) |           -           |  SelectZoneEditor                                                |
+SelectStateEditor    |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |  SelectZoneEditor                                                |
+SelectCityEditor     |  generic (= div)    |  generic (= changeEvent)   |  string (= string)             | DDL<string> (= DDL_Expanded) |           -           |  SelectZoneEditor                                                |
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+NumberEditor         |  generic (= span)   |  generic (= changeEvent)   |  number|null (= number|null)   |              -               |           -           |  InputEditor                                                     |
+NumberUpDownEditor   |  generic (= div)    |  generic (= changeEvent)   |  number|null (= number|null)   |              -               |           -           |  Group of numberEditorComponent + buttonComponent                |
