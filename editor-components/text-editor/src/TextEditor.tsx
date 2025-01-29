@@ -52,13 +52,13 @@ const TextEditor = <TElement extends Element = HTMLSpanElement, TValue extends s
     
     // handlers:
     const handleChangeAsText = useMergeEvents(
-        // preserves the original `onChangeAsText` from `props`:
-        onChangeAsText,
-        
-        
-        
         // preserves the original `onChange` from `props`:
         onChange satisfies EditorChangeEventHandler<TValue, TChangeEvent>|undefined as EditorChangeEventHandler<string, TChangeEvent>|undefined,
+        
+        
+        
+        // preserves the original `onChangeAsText` from `props`:
+        onChangeAsText,
     );
     
     
