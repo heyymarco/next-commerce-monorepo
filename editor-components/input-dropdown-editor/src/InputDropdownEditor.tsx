@@ -358,13 +358,13 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         
         
         
-        // preserves the original `onChangeAsText` from `props`:
-        handleChangeAsTextInternal,
-        
-        
-        
         // preserves the original `onChange` from `props`:
         onChange,
+        
+        
+        
+        // preserves the original `onChangeAsText` from `props`:
+        handleChangeAsTextInternal,
     );
     const {
         value              : value,
