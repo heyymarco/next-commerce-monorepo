@@ -93,13 +93,13 @@ const SelectCountryEditor = <TElement extends Element = HTMLDivElement, TValue e
     
     // states:
     const handleValueChange = useMergeEvents(
-        // preserves the original `onChangeAsText` from `props`:
-        onChangeAsText satisfies EditorChangeEventHandler<string, TChangeEvent>|undefined as EditorChangeEventHandler<TValue, TChangeEvent>|undefined,
-        
-        
-        
         // preserves the original `onChange` from `props`:
         onChange,
+        
+        
+        
+        // preserves the original `onChangeAsText` from `props`:
+        onChangeAsText satisfies EditorChangeEventHandler<string, TChangeEvent>|undefined as EditorChangeEventHandler<TValue, TChangeEvent>|undefined,
     );
     const {
         value              : value,
