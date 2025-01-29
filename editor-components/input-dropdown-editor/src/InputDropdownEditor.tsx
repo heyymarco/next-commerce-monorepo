@@ -273,8 +273,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         
         defaultValue                  : defaultUncontrollableValue = ('' as TValue), // defaults to empty string
         value                         : controllableValue,
-        onChange                      : onValueChange,
-        onChangeAsText                : onTextChange,
+        onChange,
+        onChangeAsText,
         
         
         
@@ -344,25 +344,27 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
     
     
     // states:
-    const handleValueChangeInternal = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
-        // normalize: null => empty string, any TValue => toString:
-        const newValueStr = (newValue !== null) ? `${newValue}` : '' /* null => empty string */;
-        onTextChange?.(newValueStr, event);
+    const handleChangeAsTextInternal = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((newValue, event) => {
+        if (onChangeAsText) {
+            // normalize: null => empty string, any TValue => toString:
+            const newValueStr = (newValue !== null) ? `${newValue}` : '' /* null => empty string */;
+            onChangeAsText(newValueStr, event);
+        } // if
     });
-    const handleValueChange         = useMergeEvents(
+    const handleValueChange          = useMergeEvents(
         // we place `inputEditorComponent.props.onChange` here, so it receives the change event by `triggerValueChange()`:
         // preserves the original `onChange` from `inputEditorComponent`:
         inputEditorComponent.props.onChange,
         
         
         
+        // preserves the original `onChangeAsText` from `props`:
+        handleChangeAsTextInternal,
+        
+        
+        
         // preserves the original `onChange` from `props`:
-        onValueChange,
-        
-        
-        
-        // actions:
-        handleValueChangeInternal,
+        onChange,
     );
     const {
         value              : value,
