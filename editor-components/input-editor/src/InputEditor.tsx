@@ -61,8 +61,8 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
         // values:
         defaultValue,   // take, to be normalized: null => empty string, TValue => toString
         value,          // take, to be normalized: null => empty string, TValue => toString
-        onChange,       // take, will be defined by <SpecificEditor>::onChange(as TSpecific)
-        onChangeAsText, // take, will be handled by `handleValueChange()`
+        onChange,       // take, will be handled by `handleChange()`
+        onChangeAsText, // take, will be handled by `handleChange()`
         
         
         
@@ -73,16 +73,15 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
     
     
     // handlers:
-    const handleValueChange = useEvent<React.EventHandler<TChangeEvent & React.ChangeEvent<HTMLInputElement>>>((event) => {
-        onChangeAsText?.(event.target.value, event);
-        
+    const handleChange = useEvent<React.ChangeEventHandler<HTMLInputElement>>((event) => {
+        // preserves the original `onChange` from `props`:
         if (onChange) {
             const value = event.target.value;
             switch (props.type ?? 'text') {
                 case 'number':
                 case 'range' : {
                     const trimmedValue = value.trim();
-                    onChange((trimmedValue ? Number.parseFloat(trimmedValue) : null) satisfies number|null as TValue, event);
+                    onChange((trimmedValue ? Number.parseFloat(trimmedValue) : null) satisfies number|null as TValue, event as unknown as TChangeEvent);
                 } break;
                 
                 case 'date':
@@ -91,7 +90,7 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
                 case 'week':
                 case 'time': {
                     const trimmedValue = value.trim();
-                    onChange((trimmedValue ? new Date(Date.parse(trimmedValue)) : null) satisfies Date|null as TValue, event);
+                    onChange((trimmedValue ? new Date(Date.parse(trimmedValue)) : null) satisfies Date|null as TValue, event as unknown as TChangeEvent);
                 } break;
                 
                 // case 'color':
@@ -103,10 +102,15 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
                 // case 'text':
                 // case 'url':
                 default : {
-                    onChange(value satisfies string as TValue, event);
+                    onChange(value satisfies string as TValue, event as unknown as TChangeEvent);
                 } break;
             } // switch
         } // if
+        
+        
+        
+        // preserves the original `onChangeAsText` from `props`:
+        onChangeAsText?.(event.target.value, event as unknown as TChangeEvent);
     });
     
     
@@ -140,7 +144,7 @@ const InputEditor = <TElement extends Element = HTMLSpanElement, TValue extends 
             // values:
             defaultValue = {(defaultValue !== undefined) ? ((defaultValue !== null) ? `${defaultValue}` /* any TValue => toString */ : '' /* null => empty string */) : undefined}
             value        = {(value        !== undefined) ? ((value        !== null) ? `${value}`        /* any TValue => toString */ : '' /* null => empty string */) : undefined}
-            onChange     = {handleValueChange}
+            onChange     = {handleChange}
         />
     );
 };
