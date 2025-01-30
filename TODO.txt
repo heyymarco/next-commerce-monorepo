@@ -1,3 +1,6 @@
+improve hasSpecialClasses() in NumberUpDownEditor and InputDropdownEditor to inject 'fluid'/'solid' class,
+if there is no specal classes in className, classes, variantClasses, etc.
+
 add autoComplete for InputDropdownEditor
 add inputWithLabelComponent
 implement <InputWithLabel> to <AddressFields>
