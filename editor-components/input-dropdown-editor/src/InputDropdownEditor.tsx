@@ -352,12 +352,6 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         } // if
     });
     const handleValueChange          = useMergeEvents(
-        // we place `inputEditorComponent.props.onChange` here, so it receives the change event by `triggerValueChange()`:
-        // preserves the original `onChange` from `inputEditorComponent`:
-        inputEditorComponent.props.onChange,
-        
-        
-        
         // preserves the original `onChange` from `props`:
         onChange,
         
@@ -537,9 +531,8 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         if (showDropdown !== ShowDropdown.HIDE_BY_BLUR) setShowDropdown(ShowDropdown.HIDE_BY_TYPING); // autoClose the <Dropdown> when the user type on <Input>
     });
     const handleInputChange            = useMergeEvents(
-        // the code below is not required because it's already handled by `handleInputChangeInternal()` => `triggerValueChange()` => `useControllableAndUncontrollable` => `onValueChange` => `handleValueChange()` => `inputEditorComponent.props.onChange()`:
-        // // preserves the original `onChange` from `inputEditorComponent`:
-        // inputEditorComponent.props.onChange,
+        // preserves the original `onChange` from `inputEditorComponent`:
+        inputEditorComponent.props.onChange,
         
         
         
