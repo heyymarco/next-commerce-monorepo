@@ -74,7 +74,7 @@ import {
 
 
 // react components:
-export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
+export interface NumberUpDownEditorProps<out TElement extends Element = HTMLDivElement, TValue extends number|null = number|null, in TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>
     extends
         // bases:
         Pick<GroupProps<TElement>,
@@ -141,7 +141,7 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLSpan
     childrenAfterInput      ?: React.ReactNode
     childrenAfterButton     ?: React.ReactNode
 }
-const NumberUpDownEditor = <TElement extends Element = HTMLSpanElement, TValue extends number|null = number|null, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NumberUpDownEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
+const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue extends number|null = number|null, TChangeEvent extends React.SyntheticEvent<unknown, Event> = React.ChangeEvent<HTMLInputElement>>(props: NumberUpDownEditorProps<TElement, TValue, TChangeEvent>): JSX.Element|null => {
     // props:
     const {
         // refs:
