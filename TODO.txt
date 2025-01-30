@@ -1,6 +1,16 @@
 improve hasSpecialClasses() in NumberUpDownEditor and InputDropdownEditor to inject 'fluid'/'solid' class,
 if there is no specal classes in className, classes, variantClasses, etc.
 
+change the default TElement type to HTMLDivElement for text like input such as:
+* InputEditor
+* KeyActionEditor
+* TextEditor
+* NameEditor
+* EmailEditor
+* PhoneEditor
+* NumberEditor
+and change the default Input's TElement  to HTMLDivElement too
+
 add autoComplete for InputDropdownEditor
 add inputWithLabelComponent
 implement <InputWithLabel> to <AddressFields>
