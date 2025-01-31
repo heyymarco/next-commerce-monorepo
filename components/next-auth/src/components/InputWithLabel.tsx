@@ -98,6 +98,7 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
         
         
         // accessibilities:
+        'aria-label' : ariaLabel,
         title,
         
         
@@ -182,6 +183,11 @@ const InputWithLabel = <TElement extends Element = HTMLSpanElement>(props: Input
             
             // styles:
             style,
+            
+            
+            
+            // accessibilities:
+            'aria-label' : ariaLabel,
         },
         
         
