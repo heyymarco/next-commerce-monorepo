@@ -100,6 +100,9 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLDivE
             
             // styles:
             |'style'          // moved to <Group>
+            
+            // accessibilities:
+            |'aria-label'     // moved to <Group>
         >,
         Omit<NumberEditorProps<Element, TValue, TChangeEvent>,
             // refs:
@@ -124,6 +127,9 @@ export interface NumberUpDownEditorProps<out TElement extends Element = HTMLDivE
             
             // styles:
             |'style'          // moved to <Group>
+            
+            // accessibilities:
+            |'aria-label'     // moved to <Group>
         >,
         
         // components:
@@ -175,6 +181,11 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
         
         // styles:
         style,                                             // take, moved to <Group>
+        
+        
+        
+        // accessibilities:
+        'aria-label'            : ariaLabel,               // take, moved to <Group>
         
         
         
@@ -585,6 +596,11 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
                 
                 // styles:
                 style={style}
+                
+                
+                
+                // accessibilities:
+                aria-label={ariaLabel}
             >
                 {childrenBeforeButton}
                 

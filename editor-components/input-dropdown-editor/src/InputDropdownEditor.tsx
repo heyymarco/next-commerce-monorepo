@@ -122,6 +122,9 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             
             // styles:
             |'style'          // moved to <Group>
+            
+            // accessibilities:
+            |'aria-label'     // moved to <Group>
         >,
         Omit<InputEditorProps<Element, TValue, TChangeEvent>,
             // refs:
@@ -146,6 +149,9 @@ export interface InputDropdownEditorProps<out TElement extends Element = HTMLDiv
             
             // styles:
             |'style'          // moved to <Group>
+            
+            // accessibilities:
+            |'aria-label'     // moved to <Group>
         >,
         Pick<SelectDropdownEditorProps<Element, TValue, TChangeEvent, TDropdownListExpandedChangeEvent>,
             // // // ONLY NECESSARY props:
@@ -263,6 +269,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
         
         // styles:
         style,                                                           // take, moved to <Group>
+        
+        
+        
+        // accessibilities:
+        'aria-label'                  : ariaLabel,                       // take, moved to <Group>
         
         
         
@@ -852,6 +863,11 @@ const InputDropdownEditor = <TElement extends Element = HTMLDivElement, TValue e
                 
                 // styles:
                 style={style}
+                
+                
+                
+                // accessibilities:
+                aria-label={ariaLabel}
             >
                 {/* <InputEditor> */}
                 {React.cloneElement<InputEditorProps<Element, TValue, TChangeEvent>>(inputEditorComponent,
