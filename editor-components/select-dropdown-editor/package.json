@@ -1,6 +1,6 @@
 {
   "name": "@heymarco/select-dropdown-editor",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "A generic selectable dropdown editor component.",
   "keywords": [
     "generic",
@@ -56,7 +56,7 @@
     "@reusable-ui/dropdown-list-button": "^6.6.2",
     "@reusable-ui/editable-button": "^6.14.2",
     "@reusable-ui/icon": "^6.5.0",
-    "@reusable-ui/list": "^6.5.3"
+    "@reusable-ui/list": "^6.6.0"
   },
   "peerDependencies": {
     "@types/react": "^18.0.0",
