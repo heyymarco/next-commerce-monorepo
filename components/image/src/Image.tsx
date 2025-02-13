@@ -53,7 +53,7 @@ import './styles/styles.js';
 
 
 // utilities:
-const getRealSrc = (src: NextImageProps['src']|undefined):string|undefined => {
+const getRealSrc = (src: NextImageProps['src']|null|undefined):string|undefined => {
     return (
         !src
         ? undefined
@@ -108,7 +108,7 @@ export interface ImageProps<TElement extends Element = HTMLElement>
         >
 {
     // appearances:
-    src                   ?: NextImageProps['src'], // changed to optional
+    src                   ?: NextImageProps['src']|null, // changed to optional
     
     
     
@@ -491,7 +491,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
                 {
                     // appearances:
                     alt               : alt,
-                    src               : src,
+                    src               : src ?? undefined,
                     loader            : loader,
                     width             : width,
                     height            : height,

@@ -16,7 +16,7 @@ export default function Home() {
                 <br />
                 <br />
                 <br />
-                <Image src='/lorem.jpg' alt='' width={225*1.5} height={160*1.5} />
+                <Image src={'/lorem.jpg'} alt='' width={225*1.5} height={160*1.5} />
                 <br />
                 <br />
                 <br />
