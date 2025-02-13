@@ -19,6 +19,16 @@ import {
 import {
     // removes browser's default stylesheet:
     stripoutFigure,
+    
+    
+    
+    // border (stroke) stuff of UI:
+    usesBorder,
+    
+    
+    
+    // groups a list of UIs into a single UI:
+    usesGroupable,
 }                           from '@reusable-ui/core'            // a set of reusable-ui packages which are responsible for building any component
 
 // internals:
@@ -34,9 +44,28 @@ import {
 export const onImageStylesChange = watchChanges(cssImageConfig.onChange);
 
 export const usesImageLayout = () => {
+    // dependencies:
+    
+    // features:
+    const {borderRule, borderVars} = usesBorder();
+    
+    // capabilities:
+    const {groupableRule, groupableVars} = usesGroupable({
+        orientationInlineSelector : null,  // craft the <img>'s borderRadius manually
+        orientationBlockSelector  : null,  // craft the <img>'s borderRadius manually
+        itemsSelector             : 'img', // select the <img>
+    });
+    
+    
+    
     return style({
         // resets:
-        ...stripoutFigure(), // clear browser's default styling on `<figure>`
+        ...stripoutFigure(), // clear browser's default styling on `<figure>`// capabilities:
+        
+        
+        
+        // capabilities:
+        ...groupableRule(), // make a nicely rounded corners
         
         
         
@@ -66,6 +95,16 @@ export const usesImageLayout = () => {
             
             
             
+            // borders:
+            border                 : borderVars.border,
+         // borderRadius           : borderVars.borderRadius,
+            borderStartStartRadius : borderVars.borderStartStartRadius,
+            borderStartEndRadius   : borderVars.borderStartEndRadius,
+            borderEndStartRadius   : borderVars.borderEndStartRadius,
+            borderEndEndRadius     : borderVars.borderEndEndRadius,
+            
+            
+            
             // children:
             ...children([':where(img)', ':where(.status)'], {
                 // positions:
@@ -86,6 +125,15 @@ export const usesImageLayout = () => {
                 
                 
                 
+                // borders:
+                // follows <parent>'s borderRadius
+                borderStartStartRadius : groupableVars.borderStartStartRadius,
+                borderStartEndRadius   : groupableVars.borderStartEndRadius,
+                borderEndStartRadius   : groupableVars.borderEndStartRadius,
+                borderEndEndRadius     : groupableVars.borderEndEndRadius,
+                
+                
+                
                 // customize:
                 ...usesCssProps(images), // apply config's cssProps
             }),
@@ -99,6 +147,11 @@ export const usesImageLayout = () => {
                 fontSize       : '2rem',
             }),
         }),
+        
+        
+        
+        // features:
+        ...borderRule(), // must be placed at the last
     });
 };
 

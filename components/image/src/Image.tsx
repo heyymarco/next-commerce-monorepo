@@ -18,6 +18,11 @@ import {
 
 // reusable-ui core:
 import {
+    // a collection of TypeScript type utilities, assertions, and validations for ensuring type safety in reusable UI components:
+    type NoForeignProps,
+    
+    
+    
     // react helper hooks:
     useIsomorphicLayoutEffect,
     useEvent,
@@ -67,30 +72,64 @@ export interface ImageProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<GenericProps<TElement>,
+            // handlers:
             |'onLoad'|'onLoadCapture'|'onError'|'onErrorCapture' // moved to <Generic<Image>>
         >,
         Pick<GenericProps<HTMLImageElement>,
+            // handlers:
             |'onLoad'|'onLoadCapture'|'onError'|'onErrorCapture' // moved here
         >,
         
         // additional bases:
-        Omit<NextImageProps,
-            |'src'       // changed from required to optional
-            |'role'      // moved to <Generic>
-            |'key'|'ref' // React.ForwardRef
-            |keyof React.DOMAttributes<TElement> // not supported yet
+        Pick<NextImageProps,
+            // appearances:
+            |'alt'
+            // |'src' // changed to optional
+            |'loader'
+            |'width'
+            |'height'
+            |'sizes'
+            |'fill'
+            |'placeholder'
+            |'blurDataURL'
+            
+            // behaviors:
+            |'loading'
+            |'priority'
+            |'fetchPriority'
+            |'quality'
+            |'unoptimized'
+            
+            // <img>:
+            |'crossOrigin'
+            |'decoding'
+            |'referrerPolicy'
+            |'useMap'
         >
 {
     // appearances:
-    src                 ?: NextImageProps['src'], // changed to optional
+    src                   ?: NextImageProps['src'], // changed to optional
+    
+    
+    
+    // accessibilities:
+    title                 ?: string
+    label                 ?: string
+    labelNoImage          ?: string
+    labelLoading          ?: string
+    labelError            ?: string
     
     
     
     // components:
-    imageComponent      ?: React.ReactComponentElement<any, NextImageProps>
-    noImageComponent    ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    busyComponent       ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
-    errorImageComponent ?: React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>
+    imageComponent        ?: React.ReactElement<NextImageProps>
+    noImageComponent      ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    loadingImageComponent ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    /**
+     * @deprecated Renamed to `loadingImageComponent`
+     */
+    busyComponent         ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
+    errorImageComponent   ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
 }
 const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElement>) => {
     // styles:
@@ -113,9 +152,19 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         
         
         
+        // accessibilities:
+        title,
+        label               = alt,
+        labelNoImage        = 'No image',
+        labelLoading        = 'Loading image',
+        labelError          = 'Error loading image',
+        
+        
+        
         // behaviors:
         loading,
         priority,
+        fetchPriority,
         quality,
         unoptimized,
         
@@ -140,15 +189,18 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         lazyBoundary,
         // @ts-ignore
         lazyRoot,
+        // @ts-ignore
+        onLoadingComplete,
         
         
         
         // components:
         // @ts-ignore
-        imageComponent      = (<NextImage                          /> as React.ReactComponentElement<any, NextImageProps>),
-        noImageComponent    = (<Icon icon='image'        size='lg' /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        busyComponent       = (<Busy                     size='lg' /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
-        errorImageComponent = (<Icon icon='broken_image' size='lg' /> as React.ReactComponentElement<any, React.HTMLAttributes<HTMLElement>>),
+        imageComponent        = (<NextImage                          /> as React.ReactElement<NextImageProps>),
+        noImageComponent      = (<Icon icon='image'        size='lg' /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        busyComponent         = (<Busy                     size='lg' /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
+        loadingImageComponent = busyComponent,
+        errorImageComponent   = (<Icon icon='broken_image' size='lg' /> as React.ReactElement<React.HTMLAttributes<HTMLElement>>),
         
         
         
@@ -157,26 +209,30 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         onLoadCapture,
         onError,
         onErrorCapture,
-        onLoadingComplete,
-    ...restGenericProps} = props;
+        
+        
+        
+        // other props:
+        ...restImageProps
+    } = props;
     
     
     
     // states:
-    const [isLoaded, setIsLoaded] = useState<boolean|null>((): false|null => {
+    const [state, setState] = useState<boolean|0|null>((): 0|null => {
         const realSrc = getRealSrc(src);
         /*
-            * no image  => show error indicator.
-            * has image => show loading indicator => then onLoadingComplete => true => show the image
+        * no image  => show empty indicator.
+        * has image => show loading indicator => then onLoad => true => show the image
         */
-        return !realSrc ? false : null;
+        return !realSrc ? 0 : null; // 0 => no image; null => loading
     });
     
     
     
     // dom effects:
     const prevSrcRef = useRef<typeof src>(src);
-    useIsomorphicLayoutEffect(() => { // needs a fast resetter before `onError|onLoadingComplete` runs
+    useIsomorphicLayoutEffect(() => { // needs a fast resetter before `onError|onLoad` runs
         // conditions:
         if (prevSrcRef.current === src) return; // exact the same => ignore
         const prevSrc = prevSrcRef.current;
@@ -188,22 +244,22 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         
         
         // resets:
-        setIsLoaded(
+        setState(
             /*
-            * no image  => show error indicator.
-            * has image => show loading indicator => then onLoadingComplete => true => show the image
+            * no image  => show empty indicator.
+            * has image => show loading indicator => then onLoad => true => show the image
             */
-            !realSrc ? false : null
+            !realSrc ? 0 : null // 0 => no image; null => loading
         );
     }, [src]);
     
     
     
     // handlers:
-    const handleErrorInternal           = useEvent<React.ReactEventHandler<HTMLImageElement>>(() => {
-        setIsLoaded(false); // error => false
+    const handleErrorInternal = useEvent<React.ReactEventHandler<HTMLImageElement>>(() => {
+        setState(false); // error => false
     });
-    const handleError                   = useMergeEvents(
+    const handleError         = useMergeEvents(
         // preserves the original `onError`:
         onError,
         
@@ -213,17 +269,17 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         handleErrorInternal,
     );
     
-    const handleLoadingCompleteInternal = useEvent((_img: HTMLImageElement) => {
-        setIsLoaded(true); // loaded => true
+    const handleLoadInternal  = useEvent<React.ReactEventHandler<HTMLImageElement>>(() => {
+        setState(true); // loaded => true
     });
-    const handleLoadingComplete         = useMergeEvents(
-        // preserves the original `onLoadingComplete`:
-        onLoadingComplete,
+    const handleLoad          = useMergeEvents(
+        // preserves the original `onLoad`:
+        onLoad,
         
         
         
         // handlers:
-        handleLoadingCompleteInternal,
+        handleLoadInternal,
     );
     
     
@@ -331,6 +387,79 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     
     
     
+    // default props:
+    const {
+        // semantics:
+        role                     = 'img',
+        'aria-label' : ariaLabel = (() => {
+            switch (state) {
+                case 0     : return labelNoImage;
+                case null  : return labelLoading;
+                case false : return labelError;
+                default    : return label;
+            } // switch
+        })(),
+        'aria-busy'  : ariaBusy  = (state === null),
+        'aria-live'  : ariaLive  = (state === false) ? 'assertive' : 'off',
+        
+        
+        
+        // classes:
+        mainClass                = styleSheet.main,
+        
+        
+        
+        // other props:
+        ...restGenericProps
+    } = restImageProps satisfies NoForeignProps<typeof restImageProps, GenericProps<TElement>>;
+    
+    const {
+        // semantics:
+        role      : noImageComponentRole           = 'presentation',
+        
+        
+        
+        // classes:
+        className : noImageComponentClassName      = 'status',
+        
+        
+        
+        // other props:
+        ...restNoImageComponentProps
+    } = noImageComponent.props;
+    
+    const {
+        // semantics:
+        role      : loadingImageComponentRole      = 'presentation',
+        
+        
+        
+        // classes:
+        className : loadingImageComponentClassName = 'status',
+        
+        
+        
+        // other props:
+        ...restLoadingImageComponentProps
+    } = loadingImageComponent.props;
+    
+    const {
+        // semantics:
+        role      : errorImageComponentRole        = 'presentation',
+        
+        
+        
+        // classes:
+        className : errorImageComponentClassName   = 'status',
+        
+        
+        
+        // other props:
+        ...restErrorImageComponentProps
+    } = errorImageComponent.props;
+    
+    
+    
     // jsx:
     return (
         <Generic<TElement>
@@ -340,14 +469,24 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             
             
             // semantics:
-            tag={props.tag ?? 'figure'}
+            role={role}
+            aria-label={ariaLabel}
+            aria-busy={ariaBusy}
+            aria-live={ariaLive}
+            
+            
+            
+            // accessibilities:
+            // @ts-ignore
+            title={title}
             
             
             
             // classes:
-            mainClass={props.mainClass ?? styleSheet.main}
+            mainClass={mainClass}
         >
-            {(!!src) && (isLoaded !== false) && React.cloneElement<NextImageProps>(imageComponent,
+            {/* show the progressing_image or loaded_image */}
+            {((state === null) || (state === true)) && React.cloneElement<NextImageProps>(imageComponent,
                 // props:
                 {
                     // appearances:
@@ -366,6 +505,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
                     // behaviors:
                     loading           : loading,
                     priority          : priority,
+                    fetchPriority     : fetchPriority,
                     quality           : quality,
                     unoptimized       : unoptimized,
                     
@@ -390,48 +530,79 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
                     lazyBoundary      : lazyBoundary,
                     // @ts-ignore
                     lazyRoot          : lazyRoot,
+                    // @ts-ignore
+                    onLoadingComplete : onLoadingComplete,
                     
                     
                     
                     // handlers:
-                    onLoad            : onLoad,
+                    onLoad            : handleLoad,
                     onLoadCapture     : onLoadCapture,
                     onError           : handleError,
                     onErrorCapture    : onErrorCapture,
-                    onLoadingComplete : handleLoadingComplete,
                 },
             )}
             
             {/* no image => show default image: */}
-            {( !src) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
+            {(state === 0) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
                 // props:
                 {
+                    // rest props:
+                    ...restNoImageComponentProps,
+                    
+                    
+                    
+                    // semantics:
+                    role      : noImageComponentRole,
+                    
+                    
+                    
                     // classes:
-                    className : noImageComponent.props.className    ?? 'status',
+                    className : noImageComponentClassName,
                 },
             )}
             
             {/* loading: */}
-            {(!!src) && (isLoaded === null ) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(busyComponent,
+            {(state === null)  && React.cloneElement<React.HTMLAttributes<HTMLElement>>(loadingImageComponent,
                 // props:
                 {
+                    // rest props:
+                    ...restLoadingImageComponentProps,
+                    
+                    
+                    
+                    // semantics:
+                    role      : loadingImageComponentRole,
+                    
+                    
+                    
                     // classes:
-                    className : busyComponent.props.className       ?? 'status',
+                    className : loadingImageComponentClassName,
                 },
             )}
             
             {/* error: */}
-            {(!!src) && (isLoaded === false) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(errorImageComponent,
+            {(state === false) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(errorImageComponent,
                 // props:
                 {
+                    // rest props:
+                    ...restErrorImageComponentProps,
+                    
+                    
+                    
+                    // semantics:
+                    role      : errorImageComponentRole,
+                    
+                    
+                    
                     // classes:
-                    className : errorImageComponent.props.className ?? 'status',
+                    className : errorImageComponentClassName,
                 },
             )}
         </Generic>
     );
-}
+};
 export {
-    Image,
-    Image as default,
+    Image,            // named export for readibility
+    Image as default, // default export to support React.lazy
 }
