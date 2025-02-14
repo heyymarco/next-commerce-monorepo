@@ -47,13 +47,19 @@ export const usesImageLayout = () => {
     // dependencies:
     
     // features:
-    const {borderRule, borderVars} = usesBorder();
+    const {borderRule, borderVars} = usesBorder({
+        borderStyle  : 'none',        // protects from inheritance by <ancestor>'s `borderStyle`  while still be able to override via `borderVars.borderStyle`
+        borderWidth  : '0px',         // protects from inheritance by <ancestor>'s `borderWidth`  while still be able to override via `borderVars.borderWidth`
+        borderColor  : 'transparent', // protects from inheritance by <ancestor>'s `borderColor`  while still be able to override via `borderVars.borderColor`
+        borderRadius : '0px',         // protects from inheritance by <ancestor>'s `borderRadius` while still be able to override via `borderVars.borderRadius`
+    });
     
     // capabilities:
-    const {groupableRule, groupableVars} = usesGroupable({
-        orientationInlineSelector : null,  // craft the <img>'s borderRadius manually
-        orientationBlockSelector  : null,  // craft the <img>'s borderRadius manually
-        itemsSelector             : 'img', // select the <img>
+    const {groupableRule} = usesGroupable({
+        orientationInlineSelector : null,    // never
+        orientationBlockSelector  : '&',     // always
+        itemsSelector             : 'img',   // select the <img>
+        defaultOrientation        : 'block', // assumes the <Image>'s orientation is block, even if only containing single <img>
     });
     
     
@@ -127,10 +133,10 @@ export const usesImageLayout = () => {
                 
                 // borders:
                 // follows <parent>'s borderRadius
-                borderStartStartRadius : groupableVars.borderStartStartRadius,
-                borderStartEndRadius   : groupableVars.borderStartEndRadius,
-                borderEndStartRadius   : groupableVars.borderEndStartRadius,
-                borderEndEndRadius     : groupableVars.borderEndEndRadius,
+                borderStartStartRadius : borderVars.borderStartStartRadius, // will be overrden by `groupableRule()`
+                borderStartEndRadius   : borderVars.borderStartEndRadius,   // will be overrden by `groupableRule()`
+                borderEndStartRadius   : borderVars.borderEndStartRadius,   // will be overrden by `groupableRule()`
+                borderEndEndRadius     : borderVars.borderEndEndRadius,     // will be overrden by `groupableRule()`
                 
                 
                 
