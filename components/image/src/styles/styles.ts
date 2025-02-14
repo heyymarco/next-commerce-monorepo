@@ -133,10 +133,10 @@ export const usesImageLayout = () => {
                 
                 // borders:
                 // follows <parent>'s borderRadius
-                borderStartStartRadius : borderVars.borderStartStartRadius, // will be overrden by `groupableRule()`
-                borderStartEndRadius   : borderVars.borderStartEndRadius,   // will be overrden by `groupableRule()`
-                borderEndStartRadius   : borderVars.borderEndStartRadius,   // will be overrden by `groupableRule()`
-                borderEndEndRadius     : borderVars.borderEndEndRadius,     // will be overrden by `groupableRule()`
+                borderStartStartRadius : borderVars.borderStartStartRadius, // always be overrden by `groupableRule()` because of `orientationBlockSelector : '&'`
+                borderStartEndRadius   : borderVars.borderStartEndRadius,   // always be overrden by `groupableRule()` because of `orientationBlockSelector : '&'`
+                borderEndStartRadius   : borderVars.borderEndStartRadius,   // always be overrden by `groupableRule()` because of `orientationBlockSelector : '&'`
+                borderEndEndRadius     : borderVars.borderEndEndRadius,     // always be overrden by `groupableRule()` because of `orientationBlockSelector : '&'`
                 
                 
                 
