@@ -1,6 +1,7 @@
 // cssfn:
 import {
     // writes css in javascript:
+    fallback,
     children,
     style,
     
@@ -17,11 +18,6 @@ import {
 
 // reusable-ui core:
 import {
-    // removes browser's default stylesheet:
-    stripoutFigure,
-    
-    
-    
     // border (stroke) stuff of UI:
     usesBorder,
     
@@ -65,11 +61,6 @@ export const usesImageLayout = () => {
     
     
     return style({
-        // resets:
-        ...stripoutFigure(), // clear browser's default styling on `<figure>`// capabilities:
-        
-        
-        
         // capabilities:
         ...groupableRule(), // make a nicely rounded corners
         
@@ -91,8 +82,8 @@ export const usesImageLayout = () => {
             ]],
             justifyItems       : 'center',  // default center the items horizontally
             alignItems         : 'center',  // default center the items vertically
-            justifyContent     : 'stretch', // fill the whole <figure> horizontally (if the <figure> size is set manually)
-            alignContent       : 'stretch', // fill the whole <figure> vertically   (if the <figure> size is set manually)
+            justifyContent     : 'stretch', // fill the whole <wrapper> horizontally (if the <wrapper>'s size is set manually)
+            alignContent       : 'stretch', // fill the whole <wrapper> vertically   (if the <wrapper>'s size is set manually)
             
             
             
@@ -118,12 +109,18 @@ export const usesImageLayout = () => {
             }),
             ...children(':where(img)', {
                 // positions:
-                // position    : 'absolute',                 // fill the <figure> BUT can't take space
-                position       : ['relative', '!important'], // fill the <figure> AND can take space // !important : to override <NextImage>'s position
+                ...fallback({
+                    // position    : 'absolute',                 // fill the <wrapper> BUT can't take space
+                    position       : ['relative', '!important'], // fill the <wrapper> AND can take space   // !important : to override <NextImage>'s position
+                }),
                 
                 
                 
                 // sizes:
+                ...fallback({
+                    width          : ['unset'   , '!important'], // makes the <wrapper>'s size to auto_size // !important : to override <NextImage>'s width
+                    height         : ['unset'   , '!important'], // makes the <wrapper>'s size to auto_size // !important : to override <NextImage>'s height
+                }),
                 minInlineSize  : 0,      // starts growing from 0px up to "image" gridArea
                 minBlockSize   : 0,      // starts growing from 0px up to "image" gridArea
                 maxInlineSize  : '100%', // do not overflow the "image" gridArea
