@@ -69,26 +69,26 @@ export const usesImageLayout = () => {
         // layouts:
         ...style({
             // positions:
-            position           : 'relative', // suppress <NextImage>'s warning message
+            position            : 'relative', // suppress <NextImage>'s warning message
             
             
             
             // layouts:
-            display            : 'inline-grid', // use *inline* grid, so the blocking behavior is similar to native <img>
-            gridTemplate       : [[
+            display             : 'inline-grid', // use *inline* grid, so the blocking behavior is similar to native <img>
+            gridTemplate        : [[
                 '"image" auto',
                 '/',
                 'auto'
             ]],
-            justifyItems       : 'center',  // default center the items horizontally
-            alignItems         : 'center',  // default center the items vertically
-            justifyContent     : 'stretch', // fill the whole <wrapper> horizontally (if the <wrapper>'s size is set manually)
-            alignContent       : 'stretch', // fill the whole <wrapper> vertically   (if the <wrapper>'s size is set manually)
+            justifyItems        : 'center',  // default center the items horizontally
+            alignItems          : 'center',  // default center the items vertically
+            justifyContent      : 'stretch', // fill the whole <wrapper> horizontally (if the <wrapper>'s size is set manually)
+            alignContent        : 'stretch', // fill the whole <wrapper> vertically   (if the <wrapper>'s size is set manually)
             
             
             
             // scrolls:
-            overflow           : 'hidden', // a fix for chrome
+            overflow            : 'hidden', // a fix for chrome
             
             
             
@@ -110,21 +110,21 @@ export const usesImageLayout = () => {
             ...children(':where(img)', {
                 // positions:
                 ...fallback({
-                    // position    : 'absolute',                 // fill the <wrapper> BUT can't take space
-                    position       : ['relative', '!important'], // fill the <wrapper> AND can take space   // !important : to override <NextImage>'s position
+                    // position : 'absolute',                 // fill the <wrapper> BUT can't take space
+                    position    : ['relative', '!important'], // fill the <wrapper> AND can take space   // !important : to override <NextImage>'s position
                 }),
                 
                 
                 
                 // sizes:
                 ...fallback({
-                    width          : ['unset'   , '!important'], // makes the <wrapper>'s size to auto_size // !important : to override <NextImage>'s width
-                    height         : ['unset'   , '!important'], // makes the <wrapper>'s size to auto_size // !important : to override <NextImage>'s height
+                    width       : ['unset'   , '!important'], // makes the <wrapper>'s size to auto_size // !important : to override <NextImage>'s width
+                    height      : ['unset'   , '!important'], // makes the <wrapper>'s size to auto_size // !important : to override <NextImage>'s height
                 }),
-                minInlineSize  : 0,      // starts growing from 0px up to "image" gridArea
-                minBlockSize   : 0,      // starts growing from 0px up to "image" gridArea
-                maxInlineSize  : '100%', // do not overflow the "image" gridArea
-                maxBlockSize   : '100%', // do not overflow the "image" gridArea
+                minInlineSize   : 0,      // starts growing from 0px up to "image" gridArea
+                minBlockSize    : 0,      // starts growing from 0px up to "image" gridArea
+                maxInlineSize   : '100%', // do not overflow the "image" gridArea
+                maxBlockSize    : '100%', // do not overflow the "image" gridArea
                 
                 
                 
@@ -142,12 +142,12 @@ export const usesImageLayout = () => {
             }),
             ...children(':where(.status)', {
                 // positions:
-                zIndex         : 1, // placed on the top of <Image>
+                zIndex          : 1, // placed on the top of <Image>
                 
                 
                 
                 // typos:
-                fontSize       : '2rem',
+                fontSize        : '2rem',
             }),
         }),
         
