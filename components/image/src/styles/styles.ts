@@ -4,6 +4,7 @@ import {
     fallback,
     children,
     style,
+    scope,
     
     
     
@@ -33,6 +34,10 @@ import {
     images,
     cssImageConfig,
 }                           from './config.js'
+import {
+    // features:
+    usesImage,
+}                           from '../features/image.js'
 
 
 
@@ -49,6 +54,7 @@ export const usesImageLayout = () => {
         borderColor  : 'transparent', // protects from inheritance by <ancestor>'s `borderColor`  while still be able to override via `borderVars.borderColor`
         borderRadius : '0px',         // protects from inheritance by <ancestor>'s `borderRadius` while still be able to override via `borderVars.borderRadius`
     });
+    const {imageVars} = usesImage();
     
     // capabilities:
     const {groupableRule} = usesGroupable({
@@ -75,15 +81,21 @@ export const usesImageLayout = () => {
             
             // layouts:
             display             : 'inline-grid', // use *inline* grid, so the blocking behavior is similar to native <img>
-            gridTemplate        : [[
-                '"image" auto',
-                '/',
-                'auto'
-            ]],
-            justifyItems        : 'center',  // default center the items horizontally
-            alignItems          : 'center',  // default center the items vertically
-            justifyContent      : 'stretch', // fill the whole <wrapper> horizontally (if the <wrapper>'s size is set manually)
-            alignContent        : 'stretch', // fill the whole <wrapper> vertically   (if the <wrapper>'s size is set manually)
+            // gridTemplate        : [[
+            //     '"image" auto',
+            //     '/',
+            //     'auto'
+            // ]],
+            justifyItems        : 'stretch',     // fills the whole <wrapper> with <img> horizontally (in case of the <wrapper>'s size is set manually)
+            alignItems          : 'stretch',     // fills the whole <wrapper> with <img> vertically   (in case of the <wrapper>'s size is set manually)
+            
+            
+            
+            // sizes:
+            ...fallback({
+                width       : imageVars.intrinsicWidth,  // the default width  if not overriden by custom css
+                height      : imageVars.intrinsicHeight, // the default height if not overriden by custom css
+            }),
             
             
             
@@ -105,13 +117,14 @@ export const usesImageLayout = () => {
             // children:
             ...children([':where(img)', ':where(.status)'], {
                 // positions:
-                gridArea : 'image',
+                // gridArea : 'image', // cover the whole <wrapper>, in case of the <img> and <status> are shown simultaneously, so they *overlap* each other
+                gridArea : '1 / 1 / -1 / -1', // cover the whole <wrapper>, in case of the <img> and <status> are shown simultaneously, so they *overlap* each other
             }),
             ...children(':where(img)', {
                 // positions:
                 ...fallback({
-                    // position : 'absolute',                 // fill the <wrapper> BUT can't take space
-                    position    : ['relative', '!important'], // fill the <wrapper> AND can take space   // !important : to override <NextImage>'s position
+                    // position : 'absolute',                 // fills the <wrapper> BUT can't take space
+                    position    : ['relative', '!important'], // fills the <wrapper> AND can take space   // !important : to override <NextImage>'s position
                 }),
                 
                 
@@ -142,7 +155,13 @@ export const usesImageLayout = () => {
             }),
             ...children(':where(.status)', {
                 // positions:
-                zIndex          : 1, // placed on the top of <Image>
+                zIndex          : 1, // place on the top of <Image>
+                
+                
+                
+                // sizes:
+                justifySelf     : 'center', // center the status indicator, instead of filling the <wrapper>
+                alignSelf       : 'center', // center the status indicator, instead of filling the <wrapper>
                 
                 
                 
@@ -158,7 +177,8 @@ export const usesImageLayout = () => {
     });
 };
 
-export default () => style({
-    // layouts:
-    ...usesImageLayout(),
-});
+export default () => [
+    scope('main', {
+        ...usesImageLayout(),
+    }, { specificityWeight: 0 }),
+];

@@ -8,13 +8,13 @@ import {
     // hooks:
     useState,
     useRef,
+    useMemo,
 }                           from 'react'
 
-// cssfn:
+// styles:
 import {
-    // style sheets:
-    dynamicStyleSheet,
-}                           from '@cssfn/cssfn-react'               // writes css in react hook
+    useImageStyleSheets,
+}                           from './styles/loader'
 
 // reusable-ui core:
 import {
@@ -27,6 +27,7 @@ import {
     useIsomorphicLayoutEffect,
     useEvent,
     useMergeEvents,
+    useMergeStyles,
 }                           from '@reusable-ui/core'                // a set of reusable-ui packages which are responsible for building any component
 import {
     GenericProps,
@@ -38,44 +39,41 @@ import {
     Icon,
 }                           from '@reusable-ui/components'          // a set of official Reusable-UI components
 
+// internals:
+import {
+    // types:
+    type NextImageProps,
+}                           from './types.js'
+import {
+    // utilities:
+    getRealSrc,
+}                           from './utilities.js'
+import {
+    // features:
+    usesImage,
+}                           from './features/image.js'
+
 // next-js:
 import * as nextImageCommonJs from 'next/image.js' // a commonJS module
 const NextImage : typeof nextImageCommonJs.default = (nextImageCommonJs.default as any).default ?? nextImageCommonJs.default; // a *hack* for importing from commonJS module
 
 
 
-// styles:
-export const useImageStyleSheet = dynamicStyleSheet(
-    () => import(/* webpackPrefetch: true */ './styles/styles.js')
-, { id: 'm91zb0019e', specificityWeight: 0 }); // a unique salt for SSR support, ensures the server-side & client-side have the same generated class names
-import './styles/styles.js';
-
-
-
-// utilities:
-const getRealSrc = (src: NextImageProps['src']|null|undefined):string|undefined => {
-    return (
-        !src
-        ? undefined
-        : (typeof(src) === 'string')
-            ? src
-            : ('default' in src)
-                ? src.default.src
-                : src.src
-    );
-}
-
-
-
-type NextImageProps = Parameters<typeof NextImage>[0]
+// react components:
 export interface ImageProps<TElement extends Element = HTMLElement>
     extends
         // bases:
         Omit<GenericProps<TElement>,
+            // refs:
+            |'elmRef' // forwarded to <Image>
+            
             // handlers:
             |'onLoad'|'onLoadCapture'|'onError'|'onErrorCapture' // moved to <Generic<Image>>
         >,
         Pick<GenericProps<HTMLImageElement>,
+            // refs:
+            |'elmRef' // forwarded to <Image>
+            
             // handlers:
             |'onLoad'|'onLoadCapture'|'onError'|'onErrorCapture' // moved here
         >,
@@ -132,13 +130,13 @@ export interface ImageProps<TElement extends Element = HTMLElement>
     errorImageComponent   ?: React.ReactElement<React.HTMLAttributes<HTMLElement>>
 }
 const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElement>) => {
-    // styles:
-    const styleSheet = useImageStyleSheet();
-    
-    
-    
-    // rest props:
+    // props:
     const {
+        // refs:
+        elmRef,
+        
+        
+        
         // appearances:
         alt,
         src,
@@ -149,6 +147,11 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         fill                = !width && !height,
         placeholder,
         blurDataURL,
+        
+        
+        
+        // styles:
+        style,
         
         
         
@@ -218,6 +221,37 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     
     
     
+    // features:
+    const {imageVars} = usesImage();
+    
+    
+    
+    // styles:
+    const styles = useImageStyleSheets();
+    
+    const intrinsicStyle = useMemo<React.CSSProperties>(() => ({
+        [
+            imageVars.intrinsicWidth
+            .slice(4, -1) // fix: var(--customProp) => --customProp
+        ]  : `${width }px`,
+        
+        [
+            imageVars.intrinsicHeight
+            .slice(4, -1) // fix: var(--customProp) => --customProp
+        ] : `${height}px`,
+    }), [width, height]);
+    const mergedStyle = useMergeStyles(
+        // styles:
+        intrinsicStyle,
+        
+        
+        
+        // preserves the original `style` from `props` (can overwrite the `intrinsicStyle`):
+        style,
+    );
+    
+    
+    
     // states:
     const [state, setState] = useState<boolean|0|null>((): 0|null => {
         const realSrc = getRealSrc(src);
@@ -227,31 +261,6 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         */
         return !realSrc ? 0 : null; // 0 => no image; null => loading
     });
-    
-    
-    
-    // dom effects:
-    const prevSrcRef = useRef<typeof src>(src);
-    useIsomorphicLayoutEffect(() => { // needs a fast resetter before `onError|onLoad` runs
-        // conditions:
-        if (prevSrcRef.current === src) return; // exact the same => ignore
-        const prevSrc = prevSrcRef.current;
-        const realPrevSrc = getRealSrc(prevSrc);
-        const realSrc     = getRealSrc(src);
-        if (realPrevSrc === realSrc) return; // not the same but equivalent of src => ignore
-        prevSrcRef.current = src; // sync
-        
-        
-        
-        // resets:
-        setState(
-            /*
-            * no image  => show empty indicator.
-            * has image => show loading indicator => then onLoad => true => show the image
-            */
-            !realSrc ? 0 : null // 0 => no image; null => loading
-        );
-    }, [src]);
     
     
     
@@ -281,6 +290,31 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         // handlers:
         handleLoadInternal,
     );
+    
+    
+    
+    // effects:
+    const prevSrcRef = useRef<typeof src>(src);
+    useIsomorphicLayoutEffect(() => { // needs a fast resetter before `onError|onLoad` runs
+        // conditions:
+        if (prevSrcRef.current === src) return; // exact the same => ignore
+        const prevSrc = prevSrcRef.current;
+        const realPrevSrc = getRealSrc(prevSrc);
+        const realSrc     = getRealSrc(src);
+        if (realPrevSrc === realSrc) return; // not the same but equivalent of src => ignore
+        prevSrcRef.current = src; // sync
+        
+        
+        
+        // resets:
+        setState(
+            /*
+            * no image  => show empty indicator.
+            * has image => show loading indicator => then onLoad => true => show the image
+            */
+            !realSrc ? 0 : null // 0 => no image; null => loading
+        );
+    }, [src]);
     
     
     
@@ -405,7 +439,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         
         
         // classes:
-        mainClass                = styleSheet.main,
+        mainClass                = styles.main,
         
         
         
@@ -484,11 +518,21 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             
             // classes:
             mainClass={mainClass}
+            
+            
+            
+            // styles:
+            style={mergedStyle}
         >
             {/* show the progressing_image or loaded_image */}
             {((state === null) || (state === true)) && React.cloneElement<NextImageProps>(imageComponent,
                 // props:
                 {
+                    // refs:
+                    ref               : elmRef,
+                    
+                    
+                    
                     // appearances:
                     alt               : alt,
                     src               : src ?? undefined,
@@ -547,7 +591,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             {(state === 0) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(noImageComponent,
                 // props:
                 {
-                    // rest props:
+                    // other props:
                     ...restNoImageComponentProps,
                     
                     
@@ -566,7 +610,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             {(state === null)  && React.cloneElement<React.HTMLAttributes<HTMLElement>>(loadingImageComponent,
                 // props:
                 {
-                    // rest props:
+                    // other props:
                     ...restLoadingImageComponentProps,
                     
                     
@@ -585,7 +629,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             {(state === false) && React.cloneElement<React.HTMLAttributes<HTMLElement>>(errorImageComponent,
                 // props:
                 {
-                    // rest props:
+                    // other props:
                     ...restErrorImageComponentProps,
                     
                     
