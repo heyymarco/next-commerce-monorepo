@@ -424,6 +424,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
     // default props:
     const {
         // semantics:
+        tag                      = 'span', // use <span> instead of <div> so, the <Image> can be placed inside <p> without any issue
         role                     = 'img',
         'aria-label' : ariaLabel = (() => {
             switch (state) {
@@ -503,6 +504,7 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
             
             
             // semantics:
+            tag={tag}
             role={role}
             aria-label={ariaLabel}
             aria-busy={ariaBusy}
