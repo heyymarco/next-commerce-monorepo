@@ -1,6 +1,6 @@
 {
-  "name": "test-quantity-input",
-  "version": "6.5.0",
+  "name": "test-number-updown-editor",
+  "version": "7.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "next": "^14.2.24",
     "@cssfn/cssfn-dom": "^3.2.0",
-    "@heymarco/quantity-input": "^6.5.0"
+    "@heymarco/number-updown-editor": "^7.1.0"
   }
 }
