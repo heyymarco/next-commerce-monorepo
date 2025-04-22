@@ -1,6 +1,6 @@
 {
   "name": "test-number-updown-editor",
-  "version": "7.1.0",
+  "version": "7.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,6 +11,6 @@
   "dependencies": {
     "next": "^14.2.24",
     "@cssfn/cssfn-dom": "^3.2.0",
-    "@heymarco/number-updown-editor": "^7.1.0"
+    "@heymarco/number-updown-editor": "^7.1.1"
   }
 }

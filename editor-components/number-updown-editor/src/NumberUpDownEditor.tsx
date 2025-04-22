@@ -261,15 +261,15 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
     
     
     // utilities:
-    const trimValue = useEvent(<TOpt extends number|null|undefined>(value: number|TOpt): number|TOpt => {
-        return clamp(min, value, max, step);
+    const trimValue = useEvent(<TOpt extends number|null|undefined>(value: TOpt): TOpt => {
+        return clamp(min, value, max, step) as TOpt;
     });
     
     
     
     // fn props:
-    const controllableValue          : number|null|undefined = trimValue(controllableValueRaw);
-    const defaultUncontrollableValue : number|null|undefined = trimValue(defaultUncontrollableValueRaw);
+    const controllableValue          : TValue|undefined = trimValue(controllableValueRaw);
+    const defaultUncontrollableValue : TValue|undefined = trimValue(defaultUncontrollableValueRaw);
     
     
     
@@ -329,46 +329,53 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
     
     
     
-    // source of truth:
-    const valueRef         = useRef<number|null>(/*initialState: */
+    // Tracks the value changes for both controllable and uncontrollable value:
+    const valueTrackerRef  = useRef<TValue>(/*initialState: */
         (controllableValue !== undefined) // has provided `value` prop
-        ? controllableValue               // as number|null
+        ? controllableValue               // as TValue
         : (
             (defaultUncontrollableValue !== undefined) // has provided `defaultValue` prop
-            ? defaultUncontrollableValue               // as number|null
-            : null                                     // the internal default value
+            ? defaultUncontrollableValue               // as TValue
+            : (null as TValue)                         // the internal default value
         )
     );
-    const value : TValue = (valueRef.current ?? null) as TValue;
-    if (controllableValue !== undefined) valueRef.current = controllableValue; //   controllable component mode: update the source_of_truth on every_re_render -- on every [value] prop changes
-    const [triggerRender]  = useTriggerRender();                               // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
     
+    // Updates the value tracker when the controllable value changed:
+    if (controllableValue !== undefined) valueTrackerRef.current = controllableValue; //   controllable component mode: update the source_of_truth on every_re_render -- on every [value] prop changes
+    
+    // Re-render the component and re-evaluate the value tracker:
+    const [triggerRender]  = useTriggerRender();                                      // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
+    
+    // Re-evaluate the value tracker (must be placed after "Updates the value tracker"):
+    const value            : TValue = valueTrackerRef.current;
+    
+    // Updates the value and tracks for value changes and fire `onChange` event:
     type ChangeValueAction = 'setValue'|'decrease'|'increase'
     const changeValue      = useEvent((action: ChangeValueAction, amount: number|null): void => {
-        let value = valueRef.current;
+        let newValue = valueTrackerRef.current;
         const defaultValueInternal = min;
         switch (action) {
             case 'setValue': {
-                value = trimValue(amount);
+                newValue = trimValue(amount) as TValue;
             } break;
             
             case 'decrease' : {
                 if (amount !== null) { // if `amount` is `null`, nothing to decrease
-                    if (value === null) { // if `value` is blank, auto-fill with `defaultValue`
-                        value = trimValue(defaultValueInternal);
+                    if (newValue === null) { // if `newValue` is blank, auto-fill with `defaultValue`
+                        newValue = trimValue(defaultValueInternal) as TValue;
                     }
                     else {
-                        value = trimValue(value - ((step || 1) * (isReversed ? -1 : 1) * amount));
+                        newValue = trimValue(newValue - ((step || 1) * (isReversed ? -1 : 1) * amount)) as TValue;
                     } // if
                 } // if
             } break;
             case 'increase' : {
                 if (amount !== null) { // if `amount` is `null`, nothing to increase
-                    if (value === null) { // if `value` is blank, auto-fill with `defaultValue`
-                        value = trimValue(defaultValueInternal);
+                    if (newValue === null) { // if `newValue` is blank, auto-fill with `defaultValue`
+                        newValue = trimValue(defaultValueInternal) as TValue;
                     }
                     else {
-                        value = trimValue(value + ((step || 1) * (isReversed ? -1 : 1) * amount));
+                        newValue = trimValue(newValue + ((step || 1) * (isReversed ? -1 : 1) * amount)) as TValue;
                     } // if
                 } // if
             } break;
@@ -376,18 +383,18 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
         
         
         
-        // trigger `onChange` if the value changed:
-        if (valueRef.current !== value) {
-            const oldValue = valueRef.current; // react *hack* get_prev_value *before* modifying (by any re-render => fully controllable `value = valueRef.current`)
+        // trigger `onChange` event if the newValue is different from the current value:
+        if (valueTrackerRef.current !== newValue) {
+            const oldValue = valueTrackerRef.current; // react *hack* get_prev_value *before* modifying the value
             
             
             
-            if (controllableValue === undefined) { // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
-                valueRef.current = value; // update
-                triggerRender();          // sync the UI to `valueRef.current`
+            if (controllableValue === undefined) {  // uncontrollable component mode: update the source_of_truth when modified internally by internal component(s)
+                valueTrackerRef.current = newValue; // update
+                triggerRender();                    // re-render the component and re-evaluate the value tracker
             }
             // else {
-            //     // for controllable component mode: the update of [value] prop and the source_of_truth are decided by <Parent> component (on every_re_render).
+            //     // for controllable component mode: the update of value prop and the source_of_truth are decided by <Parent> component (on every_re_render).
             // }
             
             
@@ -396,12 +403,12 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
             if (inputElm) {
                 // react *hack*: trigger `onChange` event:
                 scheduleTriggerEvent(() => { // runs the `input` event *next after* current macroTask completed
-                    if (value !== null) {
+                    if (newValue !== null) {
                         // do not use `valueAsNumber`, the underlying `inputElm` is not always `type='number'`, maybe `type='text'` with `inputMode='numeric'` (in case of custom hexadecimal or non-decimal number input)
-                        // inputElm.valueAsNumber = value; // react *hack* set_value *before* firing `input` event
+                        // inputElm.valueAsNumber = newValue; // react *hack* set_value *before* firing `input` event
                         
-                        // instead, pass the value as string:
-                        inputElm.value = value.toString(); // react *hack* set_value *before* firing `input` event
+                        // instead, pass the newValue as string:
+                        inputElm.value = newValue.toString(); // react *hack* set_value *before* firing `input` event
                     }
                     else {
                         inputElm.value = '';            // react *hack* set_value *before* firing `input` event
@@ -433,7 +440,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
     
     
     // handlers:
-    const handleChangeInternal      = useEvent<EditorChangeEventHandler<number|null, TChangeEvent>>((value, event) => {
+    const handleChangeInternal      = useEvent<EditorChangeEventHandler<TValue, TChangeEvent>>((value, event) => {
         // conditions:
         if (event.defaultPrevented) return; // already handled => ignore
         if (isDisabledOrReadOnly)   return; // control is disabled or readOnly => no response required
@@ -537,7 +544,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
         
         
         // states:
-        enabled : decreaseButtonComponentEnabled = (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current > min))),
+        enabled : decreaseButtonComponentEnabled = (!isDisabledOrReadOnly && ((value === null) || (value > min))),
         
         
         
@@ -552,7 +559,7 @@ const NumberUpDownEditor = <TElement extends Element = HTMLDivElement, TValue ex
         
         
         // states:
-        enabled : increaseButtonComponentEnabled = (!isDisabledOrReadOnly && ((valueRef.current === null) || (valueRef.current < max))),
+        enabled : increaseButtonComponentEnabled = (!isDisabledOrReadOnly && ((value === null) || (value < max))),
         
         
         
