@@ -233,12 +233,12 @@ const Image = <TElement extends Element = HTMLElement>(props: ImageProps<TElemen
         [
             imageVars.intrinsicWidth
             .slice(4, -1) // fix: var(--customProp) => --customProp
-        ]  : `${width }px`,
+        ]  : ((width !== undefined) ? `${width }px` : 'unset'),
         
         [
             imageVars.intrinsicHeight
             .slice(4, -1) // fix: var(--customProp) => --customProp
-        ] : `${height}px`,
+        ] : ((height !== undefined) ? `${height}px` : 'unset'),
     }), [width, height]);
     const mergedStyle = useMergeStyles(
         // styles:
